@@ -1,0 +1,207 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!--
+ Geotag
+ Copyright (C) 2007 Andreas Schneider
+ 
+ This program is free software; you can redistribute it and/or
+ modify it under the terms of the GNU General Public License
+ as published by the Free Software Foundation; either version 2
+ of the License, or (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Geotag</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+    <!-- The Google maps key is valid for http://localhost:4321 only -->
+    <script src="http://maps.google.com/maps?file=api&v=2&key=ABQIAAAAh0IkFNUh1ieQEJZEue_qZBS03xNesDUUqKa_S-7bp9O40CrAfBSM2kqpbLyL8GxludNvULr37Z1TGg" type="text/javascript"></script>
+    <style type="text/css">
+      html, body, #map {
+        width: 100%;
+        height: 100%;
+      }
+      body {
+        margin-top: 0px;
+        margin-right: 0px;
+        margin-left: 0px;
+        margin-bottom: 0px;
+        //font-family: Verdana, Arial, sans-serif;
+        font-weight: normal;
+        font-size: 75%;
+      }
+      #instructions { 
+         top: 30px;
+         right: 7px;
+         position: absolute;
+         color: #000000;
+         background-color: #FFFFFF;
+         border: 1px solid #000000;
+         padding: 3px;
+         font-size: 75%;
+         font-weight: bold;
+      }
+      #datadiv {
+         position:absolute;
+         left:0px;
+         top:0px;
+         visibility:hidden;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+    <div id="instructions">
+      Your browser does not work with Google Maps.
+    </div>
+    
+    <div id="datadiv">
+      <iframe src="about:blank" height="0" width="0" name="dataframe"></iframe>
+    </div>
+
+    <script type="text/javascript">
+      
+      function round(number) {
+        return Math.round(number*10000000)/10000000;
+      }
+      
+      function getLatitude(marker) {
+        return round(marker.getPoint().y);
+      }
+      
+      function getLongitude(marker) {
+        return round(marker.getPoint().x);
+      }
+      
+      // change the document title, reflecting the current marker position
+      function setTitle(marker) {
+        document.title = "Geotag "+getLatitude(marker)+" "+getLongitude(marker);
+      }
+      
+      // check for compatibility
+      if (GBrowserIsCompatible()) {
+        // parse the arguments
+        var URL = String(window.location.href + "&x=x?x=x");
+        var args = String(URL.split("?")[1]); /* all of the arguments */
+        var pairs = args.split("&");  /* the name=value pairs */
+        var i;
+        var pair;
+        var name;
+        var value;
+        var latitude=51.5;
+        var longitude=0;
+        var image=0;
+        var imageWidth = 300;
+        var imageHeight = 300;
+	      var zoom=6;
+	      var language="en";
+        for (i = 0; i < pairs.length; i++) {
+          pair = pairs[i].split("=");
+          name = pair[0];
+          value = pair[1];
+          if (name == "latitude") {
+            latitude = value;
+          }
+          if (name == "longitude") {
+            longitude = value;
+          }
+          if (name == "image") {
+            image = value;
+          }
+          if (name == "width") {
+            imageWidth = value;
+          }
+          if (name == "height") {
+            imageHeight = value;
+          }
+	        if (name == "zoom") {
+	          zoom = Math.abs(value);
+	        }
+	        if (name == "language") {
+	          language = value;
+	        }
+        }
+
+	      // now the language dependent bits
+	      var title = "Geotag"; // not translatable, but might be later
+	      var instructions = "Move the marker to<br>select a different location";
+	      // Auf Deutsch bitte
+	      if (language == "de") {
+	        title = "Geotag";
+	        instructions = "Verschieben Sie die Markierung<br>um den Ort zu &auml;ndern";
+	      }
+	      document.title=title;
+	      
+	      // update the instructions div to show the instructions
+	      // Should use innerHTML, but its a bit much to do all the DOM stuff just for this one update
+	      document.getElementById("instructions").innerHTML = "<center>" + instructions +"</center>";
+
+        // create the map
+        var map = new GMap2(document.getElementById("map"));
+	      // move map to desired location and zoom level
+	      // we default to using a hybrid map - this could be a user preference, but it isn't yet
+	      map.setCenter(new GLatLng(latitude, longitude), zoom, G_HYBRID_MAP);
+	      // add a bunch of controls to the map
+        map.addControl(new GLargeMapControl());
+        map.addControl(new GMapTypeControl());
+        map.addControl(new GScaleControl());
+
+	      // make sure the map still shows the marker when resized
+	      window.onresize = function() {this.map.panTo(this.marker.getPoint())};
+
+        // create the location marker
+        var centre = map.getCenter();
+        var marker = new GMarker(centre, {draggable: true});
+        // the HTML displayed in the info window is:
+        var infoWindowHtml = '<center><img src='
+           + '"images/'
+           + image
+           + '.jpg" width="'
+           + imageWidth
+           + '" height="'
+           + imageHeight
+           + '"><br>'
+           + instructions
+           + '</center>' 
+	      marker.bindInfoWindowHtml(infoWindowHtml, {});
+        var infoText = "<b>"+instructions+"</b>";
+
+        // make sure the info window is closed if drag the marker
+        GEvent.addListener(marker, "dragstart", function() {
+          map.closeInfoWindow();
+        });
+
+        // here is what we do if the dragging of the marker has ended
+        GEvent.addListener(marker, "dragend", function() {
+	        // make a string out of the new marker location and send it to the web server
+          var url = "update/new.html?image="
+             + image
+             + "&latitude="
+             + getLatitude(marker)
+             + "&longitude="
+             + getLongitude(marker);
+          window.frames['dataframe'].window.location.replace(url);
+	        // then centre the map on the new marker location
+	        map.panTo(marker.getPoint());
+	        setTitle(marker);
+        });
+
+        // add the marker to the map
+        map.addOverlay(marker);
+        
+        setTitle(marker);
+                    
+      } else {
+        // the browser is not compatible with Google Maps
+      }
+
+    </script>
+  </body>
+</html>
