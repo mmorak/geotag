@@ -539,7 +539,7 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
       DateTimeChooser chooser = new DateTimeChooser(
           parent,
           Messages.getString("ImagesTablePopupMenu.SelectDateAndTime"), createCalendar, false); //$NON-NLS-1$
-      Calendar chosenDate = chooser.openShowDialog();
+      Calendar chosenDate = chooser.openChooser();
       if (chosenDate != null) {
         // user has picked a date for this picture
         dateFormat.setTimeZone(TimeZone.getTimeZone("GMT")); //$NON-NLS-1$

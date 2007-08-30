@@ -129,6 +129,9 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
 
   /** Menu item to add a GPX file */
   private JMenuItem addTrackItem;
+  
+  /** Menu item to open the settings dialog */
+  private JMenuItem settingsItem;
 
   /** Menu item to undo the last task */
   private JMenuItem undoItem;
@@ -291,6 +294,16 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
       }
     });
     fileMenu.add(addTrackItem);
+    
+    settingsItem = new JMenuItem(Messages.getString("MainWindow.Settings")+ELLIPSIS); //$NON-NLS-1$
+    settingsItem.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        SettingsDialog settingsDialog = new SettingsDialog(MainWindow.this);
+        settingsDialog.openDialog();
+      }
+    });
+    fileMenu.add(settingsItem);
+    
     menuBar.add(fileMenu);
 
     JMenu editMenu = new JMenu(Messages.getString("MainWindow.Edit")); //$NON-NLS-1$
@@ -349,7 +362,7 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
       public void actionPerformed(ActionEvent e) {
         StringBuilder message = new StringBuilder();
         message.append(Geotag.NAME).append(' ').append(Version.VERSION).append(
-            '\n').append('\n');
+            '\n').append(Version.BUILD_DATE).append('\n').append('\n');
         message.append(Messages.getString("MainWindow.Copyright")).append(' ') //$NON-NLS-1$
             .append('\u00a9').append(' '); // \u00a9 is the copyright symbol
         message.append(2007).append(' ');
@@ -512,6 +525,7 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
     addFileItem.setEnabled(enable);
     addDirectoryItem.setEnabled(enable);
     addTrackItem.setEnabled(enable);
+    settingsItem.setEnabled(enable);
   }
 
   /**
@@ -519,7 +533,6 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
    */
   public void backgroundTaskStarted(BackgroundTask<?> task) {
     backgroundTask = task;
-    updateMenuAvailability(false);
 
     progressBar.setMinimum(task.getMinProgress());
     progressBar.setMaximum(task.getMaxProgress());
@@ -527,9 +540,7 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
     progressBar.setString(""); //$NON-NLS-1$
 
     // disable the menu items that can cause trouble
-    addFileItem.setEnabled(false);
-    addDirectoryItem.setEnabled(false);
-    addTrackItem.setEnabled(false);
+    updateMenuAvailability(false);
     undoItem.setEnabled(false);
     redoItem.setEnabled(false);
     if (task instanceof UndoableBackgroundTask<?>) {
@@ -554,7 +565,6 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
    * @see org.fibs.geotag.tasks.BackgroundTaskListener#backgroundTaskFinished(org.fibs.geotag.tasks.BackgroundTask)
    */
   public void backgroundTaskFinished(BackgroundTask<?> task) {
-    updateMenuAvailability(true);
     progressBar.setValue(task.getMinProgress());
     String result = ""; //$NON-NLS-1$
     try {
@@ -567,9 +577,7 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
     progressBar.setString(result);
     backgroundTask = null;
     // re-enable menu items
-    addFileItem.setEnabled(true);
-    addDirectoryItem.setEnabled(true);
-    addTrackItem.setEnabled(true);
+    updateMenuAvailability(true);
     updateUndoMenuItems();
     cancelItem.setVisible(false);
     // have any external updates arrived while we were busy?

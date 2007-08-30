@@ -1,0 +1,5 @@
+2007-08-30 Release 0.001
+  Added settings dialog and made the path to exiftool configurable
+
+2007-08-29 Release 0.001
+  initial release

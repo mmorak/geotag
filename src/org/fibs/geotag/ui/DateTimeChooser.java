@@ -492,9 +492,9 @@ public class DateTimeChooser extends JDialog {
    *          The initial date
    * @return The selected date and time or null if none selected
    */
-  public Calendar openShowDialog(Calendar date) {
+  public Calendar openChooser(Calendar date) {
     displayedDate = date;
-    return openShowDialog();
+    return openChooser();
   }
 
   /**
@@ -502,7 +502,7 @@ public class DateTimeChooser extends JDialog {
    * 
    * @return The selected date and time or null if none selected
    */
-  public Calendar openShowDialog() {
+  public Calendar openChooser() {
     updateDateShown();
     pack();
     setResizable(false);

@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 import org.fibs.geotag.Messages;
+import org.fibs.geotag.Settings;
 import org.fibs.geotag.data.ImageInfo;
 import org.fibs.geotag.data.ImageInfo.DATA_SOURCE;
 import org.fibs.geotag.ui.ImagesTableModel;
@@ -69,7 +70,8 @@ public class ExifWriterTask extends BackgroundTask<ImageInfo> {
     // first we build the command
     List<String> command = new ArrayList<String>();
     // the command name
-    command.add("exiftool"); //$NON-NLS-1$
+    String exiftool = Settings.get(Settings.EXIFTOOL_PATH, "exiftool"); //$NON-NLS-1$
+    command.add(exiftool);
     // option -n: -n write values as numbers instead of words
     command.add("-n"); //$NON-NLS-1$
     // option -s: use tag names instead of descriptions

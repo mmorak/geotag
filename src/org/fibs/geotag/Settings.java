@@ -57,6 +57,9 @@ public class Settings {
 
   /** Preference key for storing the last gpx file the user opened */
   public static final String LAST_GPX_FILE_OPENED = "last_gpx_file_opened"; //$NON-NLS-1$
+  
+  /** Preference key for storing the path to the exiftool executable */
+  public static final String EXIFTOOL_PATH = "exiftool.path"; //$NON-NLS-1$
 
   /**
    * Flush (save) the settings
