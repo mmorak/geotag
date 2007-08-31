@@ -39,9 +39,9 @@ public class License {
    */
   public static List<String> licenseInfo() {
     List<String> lines = new ArrayList<String>();
-    String paragraph1 = Messages.getString("About.Paragraph1"); //$NON-NLS-1$
-    String paragraph2 = Messages.getString("About.Paragraph2"); //$NON-NLS-1$
-    String paragraph3 = Messages.getString("About.Paragraph3"); //$NON-NLS-1$
+    String paragraph1 = Messages.getString("License.Paragraph1"); //$NON-NLS-1$
+    String paragraph2 = Messages.getString("License.Paragraph2"); //$NON-NLS-1$
+    String paragraph3 = Messages.getString("License.Paragraph3"); //$NON-NLS-1$
     lines.addAll(Util.splitString(paragraph1, MAX_LINE_LENGTH));
     lines.add(new String()); // blank line
     lines.addAll(Util.splitString(paragraph2, MAX_LINE_LENGTH));

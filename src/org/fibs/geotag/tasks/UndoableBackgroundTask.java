@@ -51,9 +51,6 @@ public abstract class UndoableBackgroundTask<V> extends BackgroundTask<V>
   /** The optional (may be null) name of the task group */
   private String group;
 
-  /** The task name */
-  private String name;
-
   /** A vector of {@link UndoableEdit}s that are part of this edit */
   private Vector<UndoableEdit> edits = new Vector<UndoableEdit>();
 
@@ -66,8 +63,8 @@ public abstract class UndoableBackgroundTask<V> extends BackgroundTask<V>
    *          The name of the task
    */
   public UndoableBackgroundTask(String group, String name) {
+    super(name);
     this.group = group;
-    this.name = name;
     GlobalUndoManager.getManager().addEdit(this);
   }
 
@@ -119,7 +116,7 @@ public abstract class UndoableBackgroundTask<V> extends BackgroundTask<V>
     if (group != null) {
       presentationName += group + " - "; //$NON-NLS-1$
     }
-    presentationName += name;
+    presentationName += getName();
     return presentationName;
   }
 

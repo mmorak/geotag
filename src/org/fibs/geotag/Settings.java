@@ -57,9 +57,18 @@ public class Settings {
 
   /** Preference key for storing the last gpx file the user opened */
   public static final String LAST_GPX_FILE_OPENED = "last_gpx_file_opened"; //$NON-NLS-1$
-  
+
   /** Preference key for storing the path to the exiftool executable */
   public static final String EXIFTOOL_PATH = "exiftool.path"; //$NON-NLS-1$
+
+  /** Preference key for storing the path to the GPSBabel executable */
+  public static final String GPSBABEL_PATH = "gpsbabel.path"; //$NON-NLS-1$
+
+  /** Preferences key for the protocol used by GPSBabel (the argument for -i) */
+  public static final String GPSBABEL_PROTOCOL = "gpsbabl.prptocol"; //$NON-NLS-1$
+
+  /** Preferences key for the GPSBabel device (the argument for -f) */
+  public static final String GPSBABEL_DEVICE = "gpsbabel.device"; //$NON-NLS-1$
 
   /**
    * Flush (save) the settings

@@ -36,6 +36,9 @@ public class Geotag {
   /** the application name - should we ever feel the need to change it */
   public static final String NAME = "Geotag"; //$NON-NLS-1$
 
+  /** the applications web site */
+  public static final String WEBSITE = "http://geotag.sourceforge.net"; //$NON-NLS-1$
+
   /**
    * Application entry point
    * 

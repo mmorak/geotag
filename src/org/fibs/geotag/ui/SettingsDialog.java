@@ -15,6 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package org.fibs.geotag.ui;
 
 import java.awt.BorderLayout;
@@ -34,42 +35,56 @@ import javax.swing.JPanel;
 
 import org.fibs.geotag.Messages;
 import org.fibs.geotag.Settings;
+import org.fibs.geotag.gpsbabel.GPSBabel;
 
 /**
  * A dialog for changing the settings of the program
+ * 
  * @author Andreas Schneider
- *
+ * 
  */
 @SuppressWarnings("serial")
 public class SettingsDialog extends JDialog {
 
   /** The parent component, use to position this dialog */
   private JFrame parent;
-  
+
   /**
    * @param parent
    */
   public SettingsDialog(JFrame parent) {
-    super(parent, Messages.getString("SettingsDialog.Settings"), true); // true == modal //$NON-NLS-1$
+    // true == modal
+    super(parent, Messages.getString("SettingsDialog.Settings"), true); //$NON-NLS-1$
     this.parent = parent;
-    
     final List<SettingsPanel> panelList = new ArrayList<SettingsPanel>();
     Dimension minimumSize = parent.getSize();
-    minimumSize.setSize(minimumSize.getWidth()/2, 50);
+    minimumSize.setSize(minimumSize.getWidth() / 2, 50);
     setMinimumSize(minimumSize);
-    panelList.add(new SettingsPanel(Messages.getString("SettingsDialog.ExiftoolPath"),Settings.EXIFTOOL_PATH,"exiftool",SettingsPanel.FILE)); //$NON-NLS-1$ //$NON-NLS-2$
+    panelList
+        .add(new SettingsPanel(
+            Messages.getString("SettingsDialog.ExiftoolPath"), Settings.EXIFTOOL_PATH, "exiftool", SettingsPanel.FILE)); //$NON-NLS-1$ //$NON-NLS-2$
+    panelList
+        .add(new SettingsPanel(
+            Messages.getString("SettingsDialog.GPSBabelPath"), Settings.GPSBABEL_PATH, "gpsbabel", SettingsPanel.FILE)); //$NON-NLS-1$//$NON-NLS-2$
+    panelList
+        .add(new SettingsPanel(
+            Messages.getString("SettingsDialog.GPSBabelProtocol"), Settings.GPSBABEL_PROTOCOL, "garmin", SettingsPanel.STRING)); //$NON-NLS-1$//$NON-NLS-2$
+    panelList
+        .add(new SettingsPanel(
+            Messages.getString("SettingsDialog.GPSBabelDevice"), Settings.GPSBABEL_DEVICE, GPSBabel.getDefaultDevice(), SettingsPanel.STRING)); //$NON-NLS-1$
     // Finally a Panel with OK and Cancel buttons
     // The flow layout looks very ugly, have to find something else
     JPanel buttonPanel = new JPanel(new FlowLayout());
     String ok = Messages.getString("SettingsDialog.OK"); //$NON-NLS-1$
     String cancel = Messages.getString("SettingsDialog.Cancel"); //$NON-NLS-1$
     JButton okButton = new JButton(ok);
-    okButton.addActionListener(new ActionListener(){
+    okButton.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         for (SettingsPanel settingsPanel : panelList) {
           String setting = settingsPanel.getSetting();
           String value = settingsPanel.getValue();
-          if (! value.equals(Settings.get(setting, settingsPanel.getDefaultValue()))) {
+          if (!value.equals(Settings.get(setting, settingsPanel
+              .getDefaultValue()))) {
             Settings.put(setting, value);
           }
         }
@@ -79,20 +94,21 @@ public class SettingsDialog extends JDialog {
     });
     buttonPanel.add(okButton);
     JButton cancelButton = new JButton(cancel);
-    cancelButton.addActionListener(new ActionListener(){
+    cancelButton.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-         // just close the dialog
+        // just close the dialog
         dispose();
       }
     });
     buttonPanel.add(cancelButton);
     FontMetrics fontMetrics = okButton.getFontMetrics(okButton.getFont());
-    int preferredWidth = Math.max(fontMetrics.stringWidth(ok),fontMetrics.stringWidth(cancel)) * 2;
+    int preferredWidth = Math.max(fontMetrics.stringWidth(ok), fontMetrics
+        .stringWidth(cancel)) * 2;
     Dimension preferredSize = okButton.getPreferredSize();
     preferredSize.width = preferredWidth;
     okButton.setPreferredSize(preferredSize);
     cancelButton.setPreferredSize(preferredSize);
-    JPanel settingsPanel = new JPanel(new GridLayout(panelList.size(),1));
+    JPanel settingsPanel = new JPanel(new GridLayout(panelList.size(), 1));
     for (JPanel panel : panelList) {
       settingsPanel.add(panel);
     }
@@ -100,9 +116,9 @@ public class SettingsDialog extends JDialog {
     add(settingsPanel, BorderLayout.CENTER);
     add(buttonPanel, BorderLayout.SOUTH);
   }
-  
+
   /**
-   * open the modal settings dialog 
+   * open the modal settings dialog
    */
   public void openDialog() {
     pack();

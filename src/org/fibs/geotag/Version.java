@@ -23,9 +23,9 @@ import java.io.InputStream;
 import java.util.Properties;
 
 /**
- * A holder class for the version number and build date/time of the program.
- * The build date/time is stored in a resource file called build.info, which
- * is updated by an ant script.
+ * A holder class for the version number and build date/time of the program. The
+ * build date/time is stored in a resource file called build.info, which is
+ * updated by an ant script.
  * 
  * @author Andreas Schneider
  * 
@@ -35,25 +35,26 @@ public class Version {
   public static final int MAJOR = 0;
 
   /** The minor version number */
-  public static final int MINOR = 2;
-  
+  public static final int MINOR = 3;
+
   /** The build date of the program */
   public static final String BUILD_DATE;
-  
+
   /** The build time of the program */
   public static final String BUILD_TIME;
-  
+
   // read the build info from the build.info resource
   static {
     Properties properties = new Properties();
-    InputStream propertiesStream = Version.class.getClassLoader().getResourceAsStream("build.info"); //$NON-NLS-1$
+    InputStream propertiesStream = Version.class.getClassLoader()
+        .getResourceAsStream("build.info"); //$NON-NLS-1$
     if (propertiesStream != null) {
-        try {
-          properties.load(propertiesStream);
-        } catch (IOException e) {
-          // TODO Auto-generated catch block
-          e.printStackTrace();
-        }
+      try {
+        properties.load(propertiesStream);
+      } catch (IOException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
 
     }
     BUILD_DATE = properties.getProperty("build.date", ""); //$NON-NLS-1$ //$NON-NLS-2$

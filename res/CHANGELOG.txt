@@ -1,4 +1,9 @@
-2007-08-30 Release 0.001
+2007-08-31 Release 0.003
+  Added support for GPSBabel
+  Added possibility to save .gpx files
+  Better behaviour if exiftool is not properly configured
+  
+2007-08-30 Release 0.002
   Added settings dialog and made the path to exiftool configurable
 
 2007-08-29 Release 0.001

@@ -18,7 +18,6 @@
 
 package org.fibs.geotag.track;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -41,25 +40,29 @@ import com.topografix.gpx._1._0.Gpx.Trk.Trkseg.Trkpt;
  * 
  */
 public class TrackMatcher {
-  /** a list of known tracks */
-  private List<Trk> tracks = new ArrayList<Trk>();
+  /** The object containing all the tracks */
+  private Gpx gpx;
 
-  /**
-   * Add a list of tracks
-   * 
-   * @param newTracks
-   */
-  public void addTracks(List<Trk> newTracks) {
-    tracks.addAll(newTracks);
-  }
+//  /**
+//   * Add a list of tracks
+//   * 
+//   * @param newTracks
+//   */
+//  public void addTracks(List<Trk> newTracks) {
+//    tracks.addAll(newTracks);
+//  }
 
   /**
    * Add the contents of a GPX file to the tracks
    * 
-   * @param gpx
+   * @param newGpx
    */
-  public void addGPX(Gpx gpx) {
-    addTracks(gpx.getTrk());
+  public void addGPX(Gpx newGpx) {
+    if (gpx == null) {
+      gpx = newGpx;
+    } else {
+      gpx.getTrk().addAll(newGpx.getTrk());
+    }
   }
 
   /**
@@ -68,7 +71,7 @@ public class TrackMatcher {
    * @return True if we do
    */
   public boolean hasTracks() {
-    return tracks.size() > 0;
+    return gpx != null && gpx.getTrk().size() > 0;
   }
 
   /**
@@ -107,7 +110,7 @@ public class TrackMatcher {
     Trkpt firstPointAfter = null;
     Calendar firstPointAfterTime = null;
     // look at all the tracks
-    for (Trk trk : tracks) {
+    for (Trk trk : gpx.getTrk()) {
       // look at all track segments
       List<Trkseg> trksegs = trk.getTrkseg();
       for (Trkseg trkseg : trksegs) {
@@ -223,5 +226,12 @@ public class TrackMatcher {
       new EditGPSAltitude(imageInfo, Double.toString(altitude),
           ImageInfo.DATA_SOURCE.TRACK);
     }
+  }
+
+  /**
+   * @return the Gpx object containing the tracks
+   */
+  public Gpx getGpx() {
+    return gpx;
   }
 }

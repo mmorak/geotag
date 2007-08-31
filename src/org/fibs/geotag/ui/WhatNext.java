@@ -26,6 +26,8 @@ import javax.swing.JOptionPane;
 
 import org.fibs.geotag.Geotag;
 import org.fibs.geotag.Messages;
+import org.fibs.geotag.exiftool.Exiftool;
+import org.fibs.geotag.gpsbabel.GPSBabel;
 import org.fibs.geotag.track.TrackMatcher;
 import org.fibs.geotag.util.Util;
 
@@ -48,6 +50,8 @@ public class WhatNext {
   static void helpWhatNext(Component parentComponent,
       ImagesTableModel tableModel, TrackMatcher trackMatcher) {
     int maxLineLength = 60;
+    boolean exiftoolAvailable = Exiftool.isAvailable();
+    boolean gpsbabelAvailable = GPSBabel.isAvailable();
     boolean imagesAvailable = (tableModel.getRowCount() > 0);
     boolean tracksAvailable = trackMatcher.hasTracks();
     boolean imagesWithNewLocationAvailable = false;
@@ -82,6 +86,12 @@ public class WhatNext {
               Messages.getString("WhatNext.SuggestOpeningTrackFormat"), //$NON-NLS-1$
               Messages.getString("MainWindow.File"), Messages.getString("MainWindow.OpenTrack")); //$NON-NLS-1$ //$NON-NLS-2$
       suggestions.add(text);
+      
+      if (gpsbabelAvailable) {
+        text = String.format(Messages.getString("WhatNext.SuggestLoadingFromGPSFormat"), //$NON-NLS-1$
+              Messages.getString("MainWindow.File"), Messages.getString("MainWindow.LoadTrackFromGPS"));  //$NON-NLS-1$//$NON-NLS-2$
+        suggestions.add(text);
+      }
     }
 
     if (imagesAvailable) {
@@ -118,6 +128,16 @@ public class WhatNext {
       String text = String.format(Messages
           .getString("WhatNext.SuggestSavingFormat"), //$NON-NLS-1$
           Messages.getString("ImagesTablePopupMenu.SaveNewLocations")); //$NON-NLS-1$
+      suggestions.add(text);
+    }
+    
+    if ( ! exiftoolAvailable) {
+      String text = String.format(Messages.getString("WhatNext.SuggestFindingExiftoolFormat"),Messages.getString("MainWindow.File"),Messages.getString("MainWindow.Settings")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+      suggestions.add(text);
+    }
+    
+    if ( ! gpsbabelAvailable) {
+      String text = String.format(Messages.getString("WhatNext.SuggestFindingGPSBabel"), Messages.getString("MainWindow.File"),Messages.getString("MainWindow.Settings")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
       suggestions.add(text);
     }
 

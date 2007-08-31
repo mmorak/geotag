@@ -40,6 +40,7 @@ import javax.swing.JSeparator;
 
 import org.fibs.geotag.Messages;
 import org.fibs.geotag.data.ImageInfo;
+import org.fibs.geotag.exiftool.Exiftool;
 import org.fibs.geotag.image.ThumbnailWorker;
 import org.fibs.geotag.tasks.CopyLocationTask;
 import org.fibs.geotag.tasks.ExifWriterTask;
@@ -405,6 +406,8 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
     add(fillGapsMenu);
 
     JMenu saveLocationsMenu = new JMenu(SAVE_LOCATIONS);
+    // enable if exiftool is available
+    saveLocationsMenu.setEnabled(Exiftool.isAvailable());
 
     saveOneLocationItem = new JMenuItem(SAVE_THIS_LOCATION);
     // enabled if there is no background task, the image has a location that's
@@ -729,7 +732,7 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
    * @param images
    */
   private void saveLocations(List<ImageInfo> images) {
-    new ExifWriterTask(tableModel, images).execute();
+    new ExifWriterTask(Messages.getString("ImagesTablePopupMenu.SaveNewLocations"),tableModel, images).execute(); //$NON-NLS-1$
   }
 
   /**
