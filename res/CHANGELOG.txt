@@ -1,3 +1,6 @@
+2007-09-01 Release 0.005
+  Messed up version information - had to re-release
+  
 2007-09-01 Release 0.004
   Added support for Google Earth
   
