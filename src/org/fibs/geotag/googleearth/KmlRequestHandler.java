@@ -18,17 +18,25 @@
 
 package org.fibs.geotag.googleearth;
 
-import java.io.IOException;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
-import java.net.URI;
+import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
+import java.util.Properties;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
-import org.fibs.geotag.Geotag;
+import org.fibs.geotag.Messages;
+import org.fibs.geotag.data.ImageInfo;
+import org.fibs.geotag.external.ExternalUpdate;
+import org.fibs.geotag.external.ExternalUpdateConsumer;
+import org.fibs.geotag.webserver.ContextHandler;
+import org.fibs.geotag.webserver.WebServer;
 
 import com.google.earth.kml._2.BalloonStyleType;
 import com.google.earth.kml._2.DocumentType;
@@ -39,9 +47,9 @@ import com.google.earth.kml._2.PlacemarkType;
 import com.google.earth.kml._2.PointType;
 import com.google.earth.kml._2.StyleSelectorType;
 import com.google.earth.kml._2.StyleType;
-import com.sun.net.httpserver.Headers;
-import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
+
+import fi.iki.elonen.NanoHTTPD;
+import fi.iki.elonen.NanoHTTPD.Response;
 
 /**
  * Class to handle HttpRequests for the Webserver
@@ -49,60 +57,51 @@ import com.sun.net.httpserver.HttpHandler;
  * @author Andreas Schneider
  * 
  */
-public class KmlRequestHandler implements HttpHandler {
+public class KmlRequestHandler implements ContextHandler {
 
-  /** HTTP response OK */
-  private static final int RESPONSE_OK = 200;
+  /** Who to inform about external updates*/
+  private ExternalUpdateConsumer parent;
 
-  /** the latitude parameter */
-  private static final String LATITUDE = "latitude"; //$NON-NLS-1$
-
-  /** the longitude parameter */
-  private static final String LONGITUDE = "longitude"; //$NON-NLS-1$
-
+  /** The correct mime type for kml files*/
+  private static final String KML_MIME_TYPE = "application/vnd.google-earth.kml+xml"; //$NON-NLS-1$
+  
   /** ID for the balloon style */
   private static final String BALLOON_STYLE = "balloonStyle"; //$NON-NLS-1$
 
   /**
-   * @see com.sun.net.httpserver.HttpHandler#handle(com.sun.net.httpserver.HttpExchange)
+   * @param parent Who to informa about updates
    */
-  public void handle(HttpExchange exchange) throws IOException {
-    // only handle GET requests
-    String requestMethod = exchange.getRequestMethod();
-    if ("GET".equalsIgnoreCase(requestMethod)) { //$NON-NLS-1$
-      // what is the request?
-      URI uri = exchange.getRequestURI();
-      System.out.println(uri.getPath());
-      System.out.println(uri.getQuery());
-      // find out the data coming in from google earth
-      // store the query in a Query hash map
-      Query query = new Query(uri.getQuery());
-      // find the latitude
-      double latitude = 51.5;
-      if (query.get(LATITUDE) != null) {
-        latitude = Double.parseDouble(query.get(LATITUDE));
+  public KmlRequestHandler(ExternalUpdateConsumer parent) {
+    this.parent = parent;
+  }
+  
+  /**
+   * @see org.fibs.geotag.webserver.ContextHandler#serve(org.fibs.geotag.webserver.WebServer, java.lang.String, java.lang.String, java.util.Properties, java.util.Properties)
+   */
+  public Response serve(WebServer server, String uri, String method,
+      Properties header, Properties parameters) {
+    double latitude = 51.0 + 28.0 / 60 + 38.0 / 3600;
+    double longitude = 0.0;
+    Enumeration<Object> keys = parameters.keys();
+    while(keys.hasMoreElements()) {
+      String key = (String) keys.nextElement();
+      String value = parameters.getProperty(key);
+      if (key.equals("latitude")) { //$NON-NLS-1$
+        latitude = Double.parseDouble(value);
+      } else if (key.equals("longitude")) { //$NON-NLS-1$
+        longitude = Double.parseDouble(value);
       }
-      // find the longitude
-      double longitude = 0.0;
-      if (query.get(LONGITUDE) != null) {
-        longitude = Double.parseDouble(query.get(LONGITUDE));
-      }
-      // Set headers for response
-      Headers responseHeaders = exchange.getResponseHeaders();
-      // set the response content type to KML
-      responseHeaders.set(
-          "Content-Type", "application/vnd.google-earth.kml+xml"); //$NON-NLS-1$ //$NON-NLS-2$
-      // Mark the response as OK
-      exchange.sendResponseHeaders(RESPONSE_OK, 0);
-
-      // Get response body - so we can send an answer
-      OutputStream responseBody = exchange.getResponseBody();
-
-      // send the KML response
-      writeKml(latitude, longitude, responseBody);
-
-      responseBody.close();
     }
+    List<ExternalUpdate> externalUpdates = new ArrayList<ExternalUpdate>();
+    ExternalUpdate externalUpdate = new ExternalUpdate(GoogleEarthLauncher.getLastImageLauched().getSequenceNumber(),latitude, longitude);
+    externalUpdates.add(externalUpdate);
+    parent.processExternalUpdates(externalUpdates );
+    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+    writeKml(latitude, longitude, outputStream);
+    byte[] kml = outputStream.toByteArray();
+    ByteArrayInputStream inputStream = new ByteArrayInputStream(kml);
+    Response response = server.new Response(NanoHTTPD.HTTP_OK, KML_MIME_TYPE,inputStream);
+    return response;
   }
 
   /**
@@ -114,6 +113,7 @@ public class KmlRequestHandler implements HttpHandler {
    */
   private void writeKml(double latitude, double longitude,
       OutputStream outputStream) {
+    ImageInfo lastImageLaunched = GoogleEarthLauncher.getLastImageLauched();
     try {
       // get the correct context
       JAXBContext jaxbContext = JAXBContext.newInstance(KmlType.class
@@ -134,9 +134,15 @@ public class KmlRequestHandler implements HttpHandler {
 
       BalloonStyleType balloonStyle = factory.createBalloonStyleType();
       // TODO - the next bit needs tweaking to do something useful
-      String balloonText = "<b>$[name]</b><br/>"; //$NON-NLS-1$
-      balloonText += "<a href='http://127.0.0.1:8080/images/test.jpg'>Sample link</a><br>"; //$NON-NLS-1$
-      balloonText += "Click<a href='http://127.0.0.1:8080/geotag/accept.html'><b>here</b></a> to send coordinates to " + Geotag.NAME; //$NON-NLS-1$
+      String balloonText = "<center><b>$[name]</b><br/>"; //$NON-NLS-1$
+      balloonText += "<img src=\"http://127.0.0.1:4321/images/"; //$NON-NLS-1$
+      balloonText += Integer.toString(lastImageLaunched.getSequenceNumber());
+      balloonText += ".jpg\" width=\""; //$NON-NLS-1$
+      balloonText += lastImageLaunched.getThumbnail().getIconWidth();
+      balloonText += "\" height=\""; //$NON-NLS-1$
+      balloonText += lastImageLaunched.getThumbnail().getIconHeight();
+      balloonText += "\"></center>"; //$NON-NLS-1$
+      System.out.println(balloonText);
       balloonStyle.setText(balloonText);
       style.setBalloonStyle(balloonStyle);
 
@@ -145,7 +151,7 @@ public class KmlRequestHandler implements HttpHandler {
       styleSelectors.add(factory.createStyle(style));
       // The place mark
       PlacemarkType placemark = factory.createPlacemarkType();
-      placemark.setName(Geotag.NAME);
+      placemark.setName(Messages.getString("KmlRequestHandler.Position")); //$NON-NLS-1$
       placemark.setStyleUrl('#' + BALLOON_STYLE);
 
       PointType point = factory.createPointType();
@@ -162,14 +168,6 @@ public class KmlRequestHandler implements HttpHandler {
     } catch (JAXBException e) {
       e.printStackTrace();
     }
-  }
-
-  /**
-   * @param args
-   */
-  public static void main(String[] args) {
-    KmlRequestHandler handler = new KmlRequestHandler();
-    handler.writeKml(51.5, 0.0, System.out);
   }
 
 }

@@ -57,6 +57,7 @@ import org.fibs.geotag.data.ImageInfo;
 import org.fibs.geotag.exiftool.Exiftool;
 import org.fibs.geotag.external.ExternalUpdate;
 import org.fibs.geotag.external.ExternalUpdateConsumer;
+import org.fibs.geotag.googleearth.KmlRequestHandler;
 import org.fibs.geotag.gpsbabel.GPSBabel;
 import org.fibs.geotag.image.ImageFileFilter;
 import org.fibs.geotag.tasks.BackgroundTask;
@@ -278,6 +279,7 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
       webServer.createContext("/", new ResourceHandler()); //$NON-NLS-1$
       webServer.createContext("/images", new ThumbnailHandler()); //$NON-NLS-1$
       webServer.createContext("/update", new UpdateHandler(this)); //$NON-NLS-1$
+      webServer.createContext("/kml", new KmlRequestHandler(this)); //$NON-NLS-1$
     } catch (IOException e) {
       e.printStackTrace();
     }

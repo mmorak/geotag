@@ -41,6 +41,7 @@ import javax.swing.JSeparator;
 import org.fibs.geotag.Messages;
 import org.fibs.geotag.data.ImageInfo;
 import org.fibs.geotag.exiftool.Exiftool;
+import org.fibs.geotag.googleearth.GoogleEarthLauncher;
 import org.fibs.geotag.image.ThumbnailWorker;
 import org.fibs.geotag.tasks.CopyLocationTask;
 import org.fibs.geotag.tasks.ExifWriterTask;
@@ -76,6 +77,9 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
   /** Text for menu item */
   private static final String SHOW_ON_MAP = Messages
       .getString("ImagesTablePopupMenu.ShowOnMap"); //$NON-NLS-1$
+  
+  /** Text for menu item */
+  private static final String SHOW_IN_GOOGLEEARTH = Messages.getString("ImagesTablePopupMenu.ShowInGoogleEarth"); //$NON-NLS-1$
 
   /** Text for menu item */
   private static final String SELECT_CORRECT_TIME = Messages
@@ -181,6 +185,9 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
 
   /** The menu item used to show an image location on a map */
   private JMenuItem showOnMapItem;
+  
+  /** The menu item used to show an image location in Google Earth */
+  private JMenuItem showInGoogleEarthItem;
 
   /** The menu item used to select the correct GMT time for a picture */
   private JMenuItem chooseTimeItem;
@@ -276,6 +283,12 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
     showOnMapItem.setEnabled(enabled);
     showOnMapItem.addActionListener(this);
     add(showOnMapItem);
+    
+    showInGoogleEarthItem = new JMenuItem(SHOW_IN_GOOGLEEARTH);
+    enabled = true; // we can always do this safely
+    showInGoogleEarthItem.setEnabled(enabled);
+    showInGoogleEarthItem.addActionListener(this);
+    add(showInGoogleEarthItem);
 
     chooseTimeItem = new JMenuItem(SELECT_CORRECT_TIME + ELLIPSIS);
     enabled = !backgroundTask; // only if no background task
@@ -456,6 +469,8 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
     if (event.getSource() == showOnMapItem) {
       // show the image location on a map
       showOnMap();
+    } else if (event.getSource() == showInGoogleEarthItem) {
+      showInGoogleEarth();
     } else if (event.getSource() == chooseTimeItem) {
       // Open a DateTimeChooser to select the exact time for the image.
       chooseTime();
@@ -524,6 +539,21 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
         BareBonesBrowserLaunch.openURL(URL.toString());
       }
 
+    };
+    worker.execute();
+  }
+  
+  /**
+   * Lauch Google Earth to show the location
+   */
+  private void showInGoogleEarth() {
+    // make sure there is a thumbnail - this won't create the
+    // thumbnail again, if it already exists.
+    ThumbnailWorker worker = new ThumbnailWorker(imageInfo) {
+      @Override
+      protected void done() {
+        GoogleEarthLauncher.launch(imageInfo);
+      }
     };
     worker.execute();
   }
