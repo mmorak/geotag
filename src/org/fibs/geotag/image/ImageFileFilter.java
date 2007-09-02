@@ -59,7 +59,8 @@ public class ImageFileFilter extends FileFilter implements java.io.FileFilter {
     String extension = getExtension(file);
     if (extension != null) {
       if (extension.equals("jpeg") || //$NON-NLS-1$
-          extension.equals("jpg")) { //$NON-NLS-1$
+          extension.equals("jpg") || //$NON-NLS-1$
+          extension.equals("thm")) { //$NON-NLS-1$
         return true;
       }
     }

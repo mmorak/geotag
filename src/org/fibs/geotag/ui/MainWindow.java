@@ -411,6 +411,7 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
       public void actionPerformed(ActionEvent e) {
         StringBuilder message = new StringBuilder();
         message.append(Geotag.NAME).append(' ').append(Version.VERSION).append(
+            ' ').append('(').append(Version.BUILD_NUMBER).append(')').append(
             '\n').append(Version.BUILD_DATE).append('\n').append('\n');
         message.append(Geotag.WEBSITE).append('\n').append('\n');
         message.append(Messages.getString("MainWindow.Copyright")).append(' ') //$NON-NLS-1$

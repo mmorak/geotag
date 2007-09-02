@@ -35,13 +35,16 @@ public class Version {
   public static final int MAJOR = 0;
 
   /** The minor version number */
-  public static final int MINOR = 7;
+  public static final int MINOR = 8;
 
   /** The build date of the program */
   public static final String BUILD_DATE;
 
   /** The build time of the program */
   public static final String BUILD_TIME;
+  
+  /** the build number */
+  public static final String BUILD_NUMBER;
 
   // read the build info from the build.info resource
   static {
@@ -59,6 +62,7 @@ public class Version {
     }
     BUILD_DATE = properties.getProperty("build.date", ""); //$NON-NLS-1$ //$NON-NLS-2$
     BUILD_TIME = properties.getProperty("build.time", ""); //$NON-NLS-1$ //$NON-NLS-2$
+    BUILD_NUMBER = properties.getProperty("build.number", ""); //$NON-NLS-1$ //$NON-NLS-2$
   }
 
   /** The version formatted as a string */
