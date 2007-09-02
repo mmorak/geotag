@@ -40,7 +40,7 @@ import javax.swing.JSeparator;
 
 import org.fibs.geotag.Messages;
 import org.fibs.geotag.data.ImageInfo;
-import org.fibs.geotag.exiftool.Exiftool;
+import org.fibs.geotag.exif.Exiftool;
 import org.fibs.geotag.googleearth.GoogleEarthLauncher;
 import org.fibs.geotag.image.ThumbnailWorker;
 import org.fibs.geotag.tasks.CopyLocationTask;
@@ -77,9 +77,10 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
   /** Text for menu item */
   private static final String SHOW_ON_MAP = Messages
       .getString("ImagesTablePopupMenu.ShowOnMap"); //$NON-NLS-1$
-  
+
   /** Text for menu item */
-  private static final String SHOW_IN_GOOGLEEARTH = Messages.getString("ImagesTablePopupMenu.ShowInGoogleEarth"); //$NON-NLS-1$
+  private static final String SHOW_IN_GOOGLEEARTH = Messages
+      .getString("ImagesTablePopupMenu.ShowInGoogleEarth"); //$NON-NLS-1$
 
   /** Text for menu item */
   private static final String SELECT_CORRECT_TIME = Messages
@@ -185,7 +186,7 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
 
   /** The menu item used to show an image location on a map */
   private JMenuItem showOnMapItem;
-  
+
   /** The menu item used to show an image location in Google Earth */
   private JMenuItem showInGoogleEarthItem;
 
@@ -283,7 +284,7 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
     showOnMapItem.setEnabled(enabled);
     showOnMapItem.addActionListener(this);
     add(showOnMapItem);
-    
+
     showInGoogleEarthItem = new JMenuItem(SHOW_IN_GOOGLEEARTH);
     enabled = true; // we can always do this safely
     showInGoogleEarthItem.setEnabled(enabled);
@@ -527,14 +528,20 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
           longitude = imageInfo.getGPSLongitude();
           zoomLevel = 15;
         }
+
         String URL = "http://localhost:4321/map.html?" + //$NON-NLS-1$
             "latitude=" + latitude + //$NON-NLS-1$
             "&longitude=" + longitude + //$NON-NLS-1$
             "&zoom=" + zoomLevel + //$NON-NLS-1$
             "&image=" + imageInfo.getSequenceNumber() + //$NON-NLS-1$
-            "&width=" + imageInfo.getThumbnail().getIconWidth() + //$NON-NLS-1$
-            "&height=" + imageInfo.getThumbnail().getIconHeight() + //$NON-NLS-1$
             "&language=" + Locale.getDefault().getLanguage(); //$NON-NLS-1$
+        if (imageInfo.getThumbnail() != null) {
+          URL += "&thumbnail=true" //$NON-NLS-1$
+              + "&width=" + imageInfo.getThumbnail().getIconWidth() + //$NON-NLS-1$
+              "&height=" + imageInfo.getThumbnail().getIconHeight(); //$NON-NLS-1$
+        } else {
+          URL += "&thumbnail=false"; //$NON-NLS-1$
+        }
         // execute the command
         BareBonesBrowserLaunch.openURL(URL.toString());
       }
@@ -542,7 +549,7 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
     };
     worker.execute();
   }
-  
+
   /**
    * Lauch Google Earth to show the location
    */
@@ -593,7 +600,9 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
                 JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
               copyOffsetToAll();
             }
+            tableModel.sortRows();
           }
+
         };
         setOffsetTask.execute();
       }
@@ -762,7 +771,8 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
    * @param images
    */
   private void saveLocations(List<ImageInfo> images) {
-    new ExifWriterTask(Messages.getString("ImagesTablePopupMenu.SaveNewLocations"),tableModel, images).execute(); //$NON-NLS-1$
+    new ExifWriterTask(Messages
+        .getString("ImagesTablePopupMenu.SaveNewLocations"), tableModel, images).execute(); //$NON-NLS-1$
   }
 
   /**

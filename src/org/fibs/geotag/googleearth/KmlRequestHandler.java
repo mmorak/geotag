@@ -59,31 +59,34 @@ import fi.iki.elonen.NanoHTTPD.Response;
  */
 public class KmlRequestHandler implements ContextHandler {
 
-  /** Who to inform about external updates*/
+  /** Who to inform about external updates */
   private ExternalUpdateConsumer parent;
 
-  /** The correct mime type for kml files*/
+  /** The correct mime type for kml files */
   private static final String KML_MIME_TYPE = "application/vnd.google-earth.kml+xml"; //$NON-NLS-1$
-  
+
   /** ID for the balloon style */
   private static final String BALLOON_STYLE = "balloonStyle"; //$NON-NLS-1$
 
   /**
-   * @param parent Who to informa about updates
+   * @param parent
+   *          Who to informa about updates
    */
   public KmlRequestHandler(ExternalUpdateConsumer parent) {
     this.parent = parent;
   }
-  
+
   /**
-   * @see org.fibs.geotag.webserver.ContextHandler#serve(org.fibs.geotag.webserver.WebServer, java.lang.String, java.lang.String, java.util.Properties, java.util.Properties)
+   * @see org.fibs.geotag.webserver.ContextHandler#serve(org.fibs.geotag.webserver.WebServer,
+   *      java.lang.String, java.lang.String, java.util.Properties,
+   *      java.util.Properties)
    */
   public Response serve(WebServer server, String uri, String method,
       Properties header, Properties parameters) {
     double latitude = 51.0 + 28.0 / 60 + 38.0 / 3600;
     double longitude = 0.0;
     Enumeration<Object> keys = parameters.keys();
-    while(keys.hasMoreElements()) {
+    while (keys.hasMoreElements()) {
       String key = (String) keys.nextElement();
       String value = parameters.getProperty(key);
       if (key.equals("latitude")) { //$NON-NLS-1$
@@ -93,14 +96,16 @@ public class KmlRequestHandler implements ContextHandler {
       }
     }
     List<ExternalUpdate> externalUpdates = new ArrayList<ExternalUpdate>();
-    ExternalUpdate externalUpdate = new ExternalUpdate(GoogleEarthLauncher.getLastImageLauched().getSequenceNumber(),latitude, longitude);
+    ExternalUpdate externalUpdate = new ExternalUpdate(GoogleEarthLauncher
+        .getLastImageLauched().getSequenceNumber(), latitude, longitude);
     externalUpdates.add(externalUpdate);
-    parent.processExternalUpdates(externalUpdates );
+    parent.processExternalUpdates(externalUpdates);
     ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
     writeKml(latitude, longitude, outputStream);
     byte[] kml = outputStream.toByteArray();
     ByteArrayInputStream inputStream = new ByteArrayInputStream(kml);
-    Response response = server.new Response(NanoHTTPD.HTTP_OK, KML_MIME_TYPE,inputStream);
+    Response response = server.new Response(NanoHTTPD.HTTP_OK, KML_MIME_TYPE,
+        inputStream);
     return response;
   }
 
@@ -134,15 +139,18 @@ public class KmlRequestHandler implements ContextHandler {
 
       BalloonStyleType balloonStyle = factory.createBalloonStyleType();
       // TODO - the next bit needs tweaking to do something useful
-      String balloonText = "<center><b>$[name]</b><br/>"; //$NON-NLS-1$
-      balloonText += "<img src=\"http://127.0.0.1:4321/images/"; //$NON-NLS-1$
-      balloonText += Integer.toString(lastImageLaunched.getSequenceNumber());
-      balloonText += ".jpg\" width=\""; //$NON-NLS-1$
-      balloonText += lastImageLaunched.getThumbnail().getIconWidth();
-      balloonText += "\" height=\""; //$NON-NLS-1$
-      balloonText += lastImageLaunched.getThumbnail().getIconHeight();
-      balloonText += "\"></center>"; //$NON-NLS-1$
-      System.out.println(balloonText);
+      String balloonText = "<center><b>$[name]</b>"; //$NON-NLS-1$
+      if (lastImageLaunched.getThumbnail() != null) {
+        balloonText += "<br/>"; //$NON-NLS-1$
+        balloonText += "<img src=\"http://127.0.0.1:4321/images/"; //$NON-NLS-1$
+        balloonText += Integer.toString(lastImageLaunched.getSequenceNumber());
+        balloonText += ".jpg\" width=\""; //$NON-NLS-1$
+        balloonText += lastImageLaunched.getThumbnail().getIconWidth();
+        balloonText += "\" height=\""; //$NON-NLS-1$
+        balloonText += lastImageLaunched.getThumbnail().getIconHeight();
+        balloonText += "\">"; //$NON-NLS-1$
+      }
+      balloonText += "</center>"; //$NON-NLS-1$
       balloonStyle.setText(balloonText);
       style.setBalloonStyle(balloonStyle);
 

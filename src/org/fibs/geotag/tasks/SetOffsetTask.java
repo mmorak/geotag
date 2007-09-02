@@ -128,4 +128,15 @@ public class SetOffsetTask extends UndoableBackgroundTask<ImageInfo> {
       imagesTableModel.fireTableRowsUpdated(imageRow, imageRow);
     }
   }
+
+  /**
+   * @see javax.swing.SwingWorker#done()
+   */
+  @Override
+  protected void done() {
+    // the order of row may have changed
+    // This is safe here, as we're back on the event thread
+    imagesTableModel.sortRows();
+    super.done();
+  }
 }

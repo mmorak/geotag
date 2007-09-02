@@ -24,7 +24,7 @@ import java.util.List;
 import org.fibs.geotag.Messages;
 import org.fibs.geotag.data.ImageInfo;
 import org.fibs.geotag.data.ImageInfo.DATA_SOURCE;
-import org.fibs.geotag.exiftool.Exiftool;
+import org.fibs.geotag.exif.Exiftool;
 import org.fibs.geotag.ui.ImagesTableModel;
 
 /**
@@ -46,13 +46,13 @@ public class ExifWriterTask extends BackgroundTask<ImageInfo> {
   private int currentProgress = 0;
 
   /**
-   * @param name 
+   * @param name
    * @param imagestableModel
    * @param imageInfos
    */
   public ExifWriterTask(String name, ImagesTableModel imagestableModel,
       List<ImageInfo> imageInfos) {
-    super(name); 
+    super(name);
     this.imagesTableModel = imagestableModel;
     this.imageInfos = imageInfos;
   }

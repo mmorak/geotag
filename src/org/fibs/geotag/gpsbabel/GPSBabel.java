@@ -1,3 +1,4 @@
+
 package org.fibs.geotag.gpsbabel;
 
 import java.io.File;
@@ -12,14 +13,20 @@ import org.fibs.geotag.util.InputStreamGobbler;
 
 /**
  * A class dealing with the GPSBabel program
+ * 
  * @author Andreas Schneider
- *
+ * 
  */
 public class GPSBabel {
-  /** Indicating if GPSBabel has been found - set every time checkGPSBabelAvailable() is called  */
+  /**
+   * Indicating if GPSBabel has been found - set every time
+   * checkGPSBabelAvailable() is called
+   */
   private static boolean available;
-  /** The Process used to run GPSBabel*/
+
+  /** The Process used to run GPSBabel */
   private static Process process;
+
   /**
    * check if GPSBabel can be executed and set the available field accordingly.
    */
@@ -49,14 +56,14 @@ public class GPSBabel {
     }
     available = found;
   }
-  
+
   /**
    * @return true if GPSBabel was detected
    */
   public static boolean isAvailable() {
     return available;
   }
-  
+
   /**
    * @return a sensible guess of where the serial port is.
    */
@@ -73,17 +80,19 @@ public class GPSBabel {
     }
     return "serial"; // user should change this //$NON-NLS-1$
   }
-  
+
   /**
    * Create a File that will contain the tracks from the GPS
-   * @param gobbler The thread gobbling the output
+   * 
+   * @param gobbler
+   *          The thread gobbling the output
    * @return The file
    */
   public static File readTracks(InputStreamGobbler gobbler) {
     File file = null;
     // first we build the command
     List<String> command = new ArrayList<String>();
-    //-vs -t -i
+    // -vs -t -i
     // first the executable
     command.add(Settings.get(Settings.GPSBABEL_PATH, "gpsbabel")); //$NON-NLS-1$
     // next the undocumented -vs argument for getting progress updates
@@ -105,7 +114,7 @@ public class GPSBabel {
     // next -F to say that the next argument is the output file
     command.add("-F"); //$NON-NLS-1$
     // and finally the output file.
-    file  = new File(Geotag.NAME+".gpx"); //$NON-NLS-1$
+    file = new File(Geotag.NAME + ".gpx"); //$NON-NLS-1$
     // try to find a better name
     try {
       file = File.createTempFile(Geotag.NAME, ".gpx"); //$NON-NLS-1$
@@ -114,7 +123,8 @@ public class GPSBabel {
     }
     command.add(file.getPath());
     // now we can run GPSBabel
-    ProcessBuilder processBuilder = (new ProcessBuilder(command)).redirectErrorStream(true);
+    ProcessBuilder processBuilder = (new ProcessBuilder(command))
+        .redirectErrorStream(true);
     try {
       process = processBuilder.redirectErrorStream(true).start();
       // now start a thread that reads the input stream of the process and
@@ -137,12 +147,12 @@ public class GPSBabel {
     process = null;
     return file;
   }
-  
+
   /**
    * Can be called to forcefully terminate the GPSBabel process
    */
   public static synchronized void terminate() {
-    
+
     if (process != null) {
       process.destroy();
       process = null;

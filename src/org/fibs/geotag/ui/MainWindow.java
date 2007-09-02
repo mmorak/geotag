@@ -54,7 +54,7 @@ import org.fibs.geotag.Messages;
 import org.fibs.geotag.Settings;
 import org.fibs.geotag.Version;
 import org.fibs.geotag.data.ImageInfo;
-import org.fibs.geotag.exiftool.Exiftool;
+import org.fibs.geotag.exif.Exiftool;
 import org.fibs.geotag.external.ExternalUpdate;
 import org.fibs.geotag.external.ExternalUpdateConsumer;
 import org.fibs.geotag.googleearth.KmlRequestHandler;
@@ -62,7 +62,7 @@ import org.fibs.geotag.gpsbabel.GPSBabel;
 import org.fibs.geotag.image.ImageFileFilter;
 import org.fibs.geotag.tasks.BackgroundTask;
 import org.fibs.geotag.tasks.BackgroundTaskListener;
-import org.fibs.geotag.tasks.ExifExtractorTask;
+import org.fibs.geotag.tasks.ExifReaderTask;
 import org.fibs.geotag.tasks.ExternalUpdateTask;
 import org.fibs.geotag.tasks.GPSBabelTask;
 import org.fibs.geotag.tasks.UndoableBackgroundTask;
@@ -361,7 +361,8 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
       public void actionPerformed(ActionEvent e) {
         GlobalUndoManager.getManager().undo();
         updateUndoMenuItems();
-        tableModel.fireTableDataChanged();
+        // this will call tableModel.fireTableDataChanged() for us
+        tableModel.sortRows();
       }
     });
     editMenu.add(undoItem);
@@ -371,7 +372,7 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
       public void actionPerformed(ActionEvent e) {
         GlobalUndoManager.getManager().redo();
         updateUndoMenuItems();
-        tableModel.fireTableDataChanged();
+        tableModel.sortRows();
       }
     });
     editMenu.add(redoItem);
@@ -501,8 +502,7 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
       // just save the first selected file
       Settings.put(Settings.LAST_FILE_OPENED, files[0].getPath());
       Settings.flush();
-      ExifExtractorTask task = new ExifExtractorTask(ADD_FILE, tableModel,
-          files);
+      ExifReaderTask task = new ExifReaderTask(ADD_FILE, tableModel, files);
       task.execute();
     }
   }
@@ -525,8 +525,7 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
       Settings.put(Settings.LAST_DIRECTORY_OPENED, directory.getPath());
       Settings.flush();
       File[] files = directory.listFiles(new ImageFileFilter());
-      ExifExtractorTask task = new ExifExtractorTask(ADD_FILES, tableModel,
-          files);
+      ExifReaderTask task = new ExifReaderTask(ADD_FILES, tableModel, files);
       task.execute();
     }
   }

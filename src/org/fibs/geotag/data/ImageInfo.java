@@ -19,6 +19,7 @@
 package org.fibs.geotag.data;
 
 import java.io.File;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -191,6 +192,11 @@ public class ImageInfo implements Comparable<ImageInfo> {
    * @see java.lang.Comparable#compareTo(java.lang.Object)
    */
   public int compareTo(ImageInfo imageInfo) {
+    // the GPSDateTime shouldn't be null, but we check anyway
+    if (getGPSDateTime() != null && imageInfo.getGPSDateTime() != null) {
+      return getGPSDateTime().compareTo(imageInfo.getGPSDateTime());
+    }
+    // if that fails, compare the name
     return getName().compareTo(imageInfo.getName());
   }
 
@@ -437,6 +443,29 @@ public class ImageInfo implements Comparable<ImageInfo> {
     if (dateTime != null) {
       try {
         exactTimeGMT.setTime(dateFormat.parse(dateTime));
+      } catch (ParseException e) {
+        e.printStackTrace();
+      }
+    }
+  }
+
+  /**
+   * Set the GPSDateTime from the camera time, adjusting for the local time
+   * zone. Only do this if the GPSDateTime is unknown, but the camera time
+   * isn't. this can have public visibility as it uses an undo-able edit.
+   */
+  public void setGPSDateTime() {
+    if (GPSDateTime == null && createDate != null) {
+      // create a DateFormat for the local time zone
+      DateFormat format = new SimpleDateFormat(ImageInfo.getDateFormatPattern());
+      try {
+        // parse the date as local time zone
+        Date date = format.parse(createDate);
+        // and format it back to GMT
+        format.setTimeZone(TimeZone.getTimeZone("GMT")); //$NON-NLS-1$
+        String gmtTime = format.format(date);
+        // update
+        new EditGPSDateTime(this, gmtTime);
       } catch (ParseException e) {
         e.printStackTrace();
       }

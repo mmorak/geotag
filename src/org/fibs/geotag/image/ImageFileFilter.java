@@ -42,18 +42,17 @@ public class ImageFileFilter extends FileFilter implements java.io.FileFilter {
     if (file.isDirectory()) {
       return true;
     }
-    return isImageFile(file);
+    return isJpegFile(file) || isRawFile(file);
   }
 
   /**
-   * Check if a file is an image file. For the tim being we only support jpeg
-   * files.
+   * Check if a file is a JPEG file.
    * 
    * @param file
    *          The file to be checked
-   * @return True if the file name has an image extension
+   * @return True if the file name has a JPEG extension
    */
-  public static boolean isImageFile(File file) {
+  public static boolean isJpegFile(File file) {
     if (file.isDirectory()) {
       return false;
     }
@@ -61,6 +60,36 @@ public class ImageFileFilter extends FileFilter implements java.io.FileFilter {
     if (extension != null) {
       if (extension.equals("jpeg") || //$NON-NLS-1$
           extension.equals("jpg")) { //$NON-NLS-1$
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Check if a file is a RAW file
+   * 
+   * @param file
+   *          The file to be checked
+   * @return True if the file name has a raw file extension
+   */
+  public static boolean isRawFile(File file) {
+    if (file.isDirectory()) {
+      return false;
+    }
+    String extension = getExtension(file);
+    if (extension != null) {
+      if (extension.equals("cr2") || // Canon RAW 2 format //$NON-NLS-1$
+          //extension.equals("crw") || // Canon RAW Camera Image File Format - not working //$NON-NLS-1$
+          extension.equals("dng") || // Digital Negative //$NON-NLS-1$
+          extension.equals("erf") || // Epson RAW Format //$NON-NLS-1$
+          extension.equals("mef") || // Mamiya RAW format //$NON-NLS-1$
+          extension.equals("mrw") || // Minolta RAW Format //$NON-NLS-1$
+          extension.equals("nef") || // Nikon (RAW) Electronic Format //$NON-NLS-1$
+          extension.equals("orf") || // Olympus RAW Format //$NON-NLS-1$
+          extension.equals("pef") || // Pentax (RAW) Electronic Format //$NON-NLS-1$
+          extension.equals("raw")) { // Panasonic RAW format //$NON-NLS-1$
+        
         return true;
       }
     }

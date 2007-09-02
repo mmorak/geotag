@@ -1,3 +1,8 @@
+2007-09-02 Release 0.006
+  Added support for the following RAW file formats:
+  CR2, DNG, ERF, MEF, MRW, NEF, ORF, PEF, RAW
+  Images are now sorted by GMT time stamp rather than by name
+  
 2007-09-01 Release 0.005
   Messed up version information - had to re-release
   

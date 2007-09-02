@@ -15,6 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package org.fibs.geotag.util;
 
 import java.io.IOException;
@@ -22,32 +23,36 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 /**
- * A class that gobbles up an input stream.
- * Useful for use with ProcessBuilders where the
- * output of the process is not important.
+ * A class that gobbles up an input stream. Useful for use with ProcessBuilders
+ * where the output of the process is not important.
+ * 
  * @author Andreas Schneider
- *
+ * 
  */
 public class InputStreamGobbler extends Thread {
-  
+
   /** The InputStream to gobble up */
   protected InputStream inputStream;
-  
-  /** The OutputStream to write the gobbled up InputStream to.
-   * Can be null, in that case the InputStream is not written.
-   * This usually is System.out or null.
+
+  /**
+   * The OutputStream to write the gobbled up InputStream to. Can be null, in
+   * that case the InputStream is not written. This usually is System.out or
+   * null.
    */
   protected OutputStream outputStream;
-  
+
   /**
-   * @param inputStream The InputStream to gobble up
-   * @param outputStream The (optional) OutputStream to echo the InputStream to, can be null.
+   * @param inputStream
+   *          The InputStream to gobble up
+   * @param outputStream
+   *          The (optional) OutputStream to echo the InputStream to, can be
+   *          null.
    */
   public InputStreamGobbler(InputStream inputStream, OutputStream outputStream) {
     this.inputStream = inputStream;
     this.outputStream = outputStream;
   }
-  
+
   /**
    * @see java.lang.Thread#run()
    */
@@ -76,7 +81,8 @@ public class InputStreamGobbler extends Thread {
   }
 
   /**
-   * @param inputStream the inputStream to set
+   * @param inputStream
+   *          the inputStream to set
    */
   public void setInputStream(InputStream inputStream) {
     this.inputStream = inputStream;
@@ -90,7 +96,8 @@ public class InputStreamGobbler extends Thread {
   }
 
   /**
-   * @param outputStream the outputStream to set
+   * @param outputStream
+   *          the outputStream to set
    */
   public void setOutputStream(OutputStream outputStream) {
     this.outputStream = outputStream;

@@ -28,6 +28,10 @@ import javax.swing.undo.CannotUndoException;
 
 import org.fibs.geotag.Messages;
 import org.fibs.geotag.data.ImageInfo;
+import org.fibs.geotag.exif.ExifReader;
+import org.fibs.geotag.exif.ExiftoolReader;
+import org.fibs.geotag.exif.MetadataExtractorReader;
+import org.fibs.geotag.image.ImageFileFilter;
 import org.fibs.geotag.ui.ImagesTableModel;
 
 /**
@@ -37,7 +41,7 @@ import org.fibs.geotag.ui.ImagesTableModel;
  * @author Andreas Schneider
  * 
  */
-public abstract class ExifReaderTask extends UndoableBackgroundTask<ImageInfo> {
+public class ExifReaderTask extends UndoableBackgroundTask<ImageInfo> {
 
   /**
    * The <code>ImagesTableModel</code> that needs to be told about new EXIF
@@ -71,11 +75,24 @@ public abstract class ExifReaderTask extends UndoableBackgroundTask<ImageInfo> {
   }
 
   /**
-   * This will implement the actual reading of the data and publishing it
+   * Determine how to read the exif data and read it
    * 
-   * @return the number of images loaded
+   * @param file
+   *          The file to be examined
+   * @return The {@link ImageInfo} for the file
    */
-  protected abstract int readExifData();
+  private ImageInfo readExifData(File file) {
+    ExifReader exifReader = null;
+    if (ImageFileFilter.isJpegFile(file)) {
+      exifReader = new MetadataExtractorReader();
+    } else if (ImageFileFilter.isRawFile(file)) {
+      exifReader = new ExiftoolReader();
+    }
+    if (exifReader != null) {
+      return exifReader.readExifData(file);
+    }
+    return null;
+  }
 
   /**
    * @see org.fibs.geotag.tasks.BackgroundTask#getCurrentProgress()
@@ -107,7 +124,22 @@ public abstract class ExifReaderTask extends UndoableBackgroundTask<ImageInfo> {
   @SuppressWarnings("boxing")
   @Override
   protected String doInBackground() throws Exception {
-    int imagesPublished = readExifData();
+    ImageInfo imageInfo;
+    int imagesPublished = 0;
+    for (File file : files) {
+      if (terminate) {
+        break;
+      }
+      // keep track of progress
+      currentProgress++;
+      // give feedback via the ProgressBar
+      setProgressMessage();
+      imageInfo = readExifData(file);
+      if (imageInfo != null) {
+        publish(imageInfo);
+        imagesPublished++;
+      }
+    }
     String result = null;
     if (imagesPublished == 1) {
       result = Messages.getString("ExifReaderTask.OneImageLoaded"); //$NON-NLS-1$

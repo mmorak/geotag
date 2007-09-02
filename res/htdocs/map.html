@@ -98,6 +98,7 @@
         var latitude=51.5;
         var longitude=0;
         var image=0;
+        var thumbnail = "false";
         var imageWidth = 300;
         var imageHeight = 300;
 	      var zoom=6;
@@ -114,6 +115,9 @@
           }
           if (name == "image") {
             image = value;
+          }
+          if (name == "thumbnail") {
+            thumbnail = value;
           }
           if (name == "width") {
             imageWidth = value;
@@ -140,7 +144,7 @@
 	      document.title=title;
 	      
 	      // update the instructions div to show the instructions
-	      // Should use innerHTML, but its a bit much to do all the DOM stuff just for this one update
+	      // Shouldn't use innerHTML, but its a bit much to do all the DOM stuff just for this one update
 	      document.getElementById("instructions").innerHTML = "<center>" + instructions +"</center>";
 
         // create the map
@@ -160,7 +164,9 @@
         var centre = map.getCenter();
         var marker = new GMarker(centre, {draggable: true});
         // the HTML displayed in the info window is:
-        var infoWindowHtml = '<center><img src='
+        var infoWindowHtml = '<center>';
+        if (thumbnail == 'true') {
+          infoWindowHtml += '<img src='
            + '"images/'
            + image
            + '.jpg" width="'
@@ -168,8 +174,8 @@
            + '" height="'
            + imageHeight
            + '"><br>'
-           + instructions
-           + '</center>' 
+        }
+        infoWindowHtml += instructions + '</center>' 
 	      marker.bindInfoWindowHtml(infoWindowHtml, {});
         var infoText = "<b>"+instructions+"</b>";
 

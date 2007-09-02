@@ -15,6 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package org.fibs.geotag.track;
 
 import java.io.File;
@@ -36,20 +37,24 @@ import com.topografix.gpx._1._0.Gpx;
 
 /**
  * A class writing GPX files
+ * 
  * @author Andreas Schneider
- *
+ * 
  */
 public class GpxWriter {
   /**
-   * @param gpx The Gpx object to write to file
-   * @param file The file to write to
+   * @param gpx
+   *          The Gpx object to write to file
+   * @param file
+   *          The file to write to
    * @throws JAXBException
    * @throws IOException
    */
-  public static void writeFile(Gpx gpx, File file) throws JAXBException, IOException {
+  public static void writeFile(Gpx gpx, File file) throws JAXBException,
+      IOException {
     OutputStream outputStream = new FileOutputStream(file);
-    JAXBContext jaxbContext = JAXBContext.newInstance(Gpx.class
-        .getPackage().getName());
+    JAXBContext jaxbContext = JAXBContext.newInstance(Gpx.class.getPackage()
+        .getName());
     Marshaller marshaller = jaxbContext.createMarshaller();
     marshaller.setProperty("jaxb.formatted.output", Boolean.TRUE); //$NON-NLS-1$
     marshaller
@@ -58,7 +63,8 @@ public class GpxWriter {
     gpx.setCreator(Geotag.NAME + ' ' + Geotag.WEBSITE);
     try {
       DatatypeFactory datatypeFactory = DatatypeFactory.newInstance();
-      XMLGregorianCalendar now = datatypeFactory.newXMLGregorianCalendar(new GregorianCalendar());
+      XMLGregorianCalendar now = datatypeFactory
+          .newXMLGregorianCalendar(new GregorianCalendar());
       gpx.setTime(now);
     } catch (DatatypeConfigurationException e) {
       e.printStackTrace();

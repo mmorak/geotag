@@ -15,6 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package org.fibs.geotag.ui;
 
 import java.awt.BorderLayout;
@@ -32,35 +33,41 @@ import org.fibs.geotag.Settings;
 
 /**
  * A panel to display and edit settings
+ * 
  * @author Andreas Schneider
- *
+ * 
  */
 @SuppressWarnings("serial")
 public class SettingsPanel extends JPanel {
   /** The setting is a string value */
   public static final int STRING = 1;
+
   /** The setting is an integer */
   public static final int INTEGER = 2;
+
   /** The setting is a file name */
   public static final int FILE = 3;
 
   /** The settings key */
   private String setting;
+
   /** The settings type - one of STRING, INTEGER or FILE */
   private int type;
+
   /** The default value for this setting */
   private String defaultValue;
-  
+
   /** The text field containing the value */
   JTextField textField;
-  
+
   /**
    * @param title
    * @param setting
    * @param defaultValue
    * @param type
    */
-  public SettingsPanel(String title, String setting, String defaultValue, int type) {
+  public SettingsPanel(String title, String setting, String defaultValue,
+      int type) {
     super(new BorderLayout());
     TitledBorder border = BorderFactory.createTitledBorder(title);
     setBorder(border);
@@ -75,7 +82,7 @@ public class SettingsPanel extends JPanel {
       browseButton.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           JFileChooser fileChooser = new JFileChooser();
-          if (fileChooser.showOpenDialog(SettingsPanel.this)== JFileChooser.APPROVE_OPTION) {
+          if (fileChooser.showOpenDialog(SettingsPanel.this) == JFileChooser.APPROVE_OPTION) {
             String filename = fileChooser.getSelectedFile().getPath();
             textField.setText(filename);
           }
@@ -83,13 +90,13 @@ public class SettingsPanel extends JPanel {
       });
       filePanel.add(browseButton, BorderLayout.EAST);
       add(filePanel, BorderLayout.NORTH);
-    } else { 
+    } else {
       // default: display text field
       textField = new JTextField(Settings.get(setting, defaultValue));
       add(textField, BorderLayout.NORTH);
     }
   }
-  
+
   /**
    * @return the string value of this panel
    */

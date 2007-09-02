@@ -41,7 +41,7 @@ public abstract class BackgroundTask<V> extends SwingWorker<String, V>
 
   /** The name of the task */
   private String name;
-  
+
   /** A List of {@link BackgroundTaskListener}s */
   private static final List<BackgroundTaskListener> listeners = new ArrayList<BackgroundTaskListener>();
 
@@ -53,7 +53,8 @@ public abstract class BackgroundTask<V> extends SwingWorker<String, V>
 
   /**
    * Construct a new {@link BackgroundTask}
-   * @param name 
+   * 
+   * @param name
    */
   public BackgroundTask(String name) {
     this.name = name;
@@ -67,6 +68,7 @@ public abstract class BackgroundTask<V> extends SwingWorker<String, V>
   public String getName() {
     return name;
   }
+
   /**
    * Must be implemented by subclasses
    * 

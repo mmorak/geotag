@@ -15,7 +15,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.fibs.geotag.exiftool;
+
+package org.fibs.geotag.exif;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,20 +30,23 @@ import org.fibs.geotag.util.InputStreamGobbler;
 
 /**
  * @author Andreas Schneider
- *
+ * 
  */
 public class Exiftool {
-  
-  /** A flag indicating if exiftool is available - changed by calls to checkExiftoolAvailable() */
+
+  /**
+   * A flag indicating if exiftool is available - changed by calls to
+   * checkExiftoolAvailable()
+   */
   private static boolean available = false;
-  
+
   /**
    * @return True if exiftool has been detected
    */
   public static boolean isAvailable() {
     return available;
   }
-  
+
   /**
    * check if exiftool can be executed and set the available field accordingly.
    */
@@ -72,7 +76,7 @@ public class Exiftool {
     }
     available = found;
   }
-  
+
   /**
    * this does the work of writing the EXIF data by calling exiftool
    * 

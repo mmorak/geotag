@@ -59,6 +59,16 @@ public class ImagesTableModel extends DefaultTableModel {
       Messages.getString("ImagesTableModel.Altitude") }; //$NON-NLS-1$
 
   /**
+   * Can be called to re-sort the table (mainly when time-offsets change)
+   */
+  public void sortRows() {
+    // keep the data sorted
+    Collections.sort(values);
+    // notify the table that the data has changed
+    fireTableDataChanged();
+  }
+
+  /**
    * Add image info to the data
    * 
    * @param imageInfo
@@ -68,9 +78,7 @@ public class ImagesTableModel extends DefaultTableModel {
     // add the info
     values.add(imageInfo);
     // keep the data sorted
-    Collections.sort(values);
-    // notify the table that the data has changed
-    fireTableDataChanged();
+    sortRows();
   }
 
   /**

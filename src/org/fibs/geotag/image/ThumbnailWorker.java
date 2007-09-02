@@ -54,35 +54,50 @@ public class ThumbnailWorker extends SwingWorker<Void, ImageInfo> {
   }
 
   /**
-   * Does nothing if the thumbnail already exists
-   * 
-   * @see javax.swing.SwingWorker#doInBackground()
+   * Determine how to generate a thumbnail and generate it Does nothing if the
+   * thumbnail already exists
    */
   @Override
   protected Void doInBackground() throws Exception {
     if (imageInfo.getThumbnail() == null) {
-      try {
-        // next we try an get the image data
-        BufferedImage originalImage = ImageIO
-            .read(new File(imageInfo.getPath()));
-        // and adjust for rotation according to EXIF data
-        BufferedImage rotatedImage = (new ImageRotator(originalImage, imageInfo)
-            .rotate());
-        // note the image size
-        imageInfo.setWidth(rotatedImage.getWidth());
-        imageInfo.setHeight(rotatedImage.getHeight());
-        // now we create a thumbnail image
-        BufferedImage thumbImage = ThumbnailGenerator.createThumbnailImage(
-            rotatedImage, Settings.getInt(Settings.THUMBNAIL_SIZE,
-                DEFAULT_THUMBNAIL_SIZE));
-        ImageIcon imageIcon = new ImageIcon(thumbImage);
-        imageInfo.setThumbnail(imageIcon);
+      File imagefile = new File(imageInfo.getPath());
+      boolean success = false;
+      if (ImageFileFilter.isJpegFile(imagefile)) {
+        success = createJpegThumbnail();
+      }
+      if (success) {
         publish(imageInfo);
-      } catch (Exception e) {
-        e.printStackTrace();
       }
     }
     return null;
+  }
+
+  /**
+   * create a Jpeg thumbnail
+   * 
+   * @return True if successful
+   */
+  private boolean createJpegThumbnail() {
+    try {
+      // next we try an get the image data
+      BufferedImage originalImage = ImageIO.read(new File(imageInfo.getPath()));
+      // and adjust for rotation according to EXIF data
+      BufferedImage rotatedImage = (new ImageRotator(originalImage, imageInfo)
+          .rotate());
+      // note the image size
+      imageInfo.setWidth(rotatedImage.getWidth());
+      imageInfo.setHeight(rotatedImage.getHeight());
+      // now we create a thumbnail image
+      BufferedImage thumbImage = ThumbnailGenerator.createThumbnailImage(
+          rotatedImage, Settings.getInt(Settings.THUMBNAIL_SIZE,
+              DEFAULT_THUMBNAIL_SIZE));
+      ImageIcon imageIcon = new ImageIcon(thumbImage);
+      imageInfo.setThumbnail(imageIcon);
+      return true;
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return false;
   }
 
 }

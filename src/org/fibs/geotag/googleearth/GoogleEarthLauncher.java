@@ -60,6 +60,7 @@ public class GoogleEarthLauncher {
 
   /** The last image launched into Google Earth will receive updates */
   private static ImageInfo lastImageLauched;
+
   /**
    * Launch Google Earth for a given image info
    * 
@@ -90,50 +91,52 @@ public class GoogleEarthLauncher {
       KmlType kml = factory.createKmlType();
       // it contains one Folder
       FolderType folder = factory.createFolderType();
-      folder.setName(Geotag.NAME+' '+Messages.getString("GoogleEarthLauncher.Folder")); //$NON-NLS-1$
+      folder.setName(Geotag.NAME + ' '
+          + Messages.getString("GoogleEarthLauncher.Folder")); //$NON-NLS-1$
       folder.setOpen(new Boolean(true));
       LookAtType lookAt = factory.createLookAtType();
       lookAt.setLatitude(new Double(latitude));
       lookAt.setLongitude(new Double(longitude));
       lookAt.setAltitude(new Double(altitude));
       lookAt.setAltitudeMode(AltitudeModeEnum.ABSOLUTE);
-      // add an extra 100 meters altitude 
+      // add an extra 100 meters altitude
       lookAt.setRange(new Double(0));
       folder.setLookAt(lookAt);
       // The folder might contain another folder with images
-//      FolderType subFolder = factory.createFolderType();
-//      subFolder.setName("Images");
-//      subFolder.setOpen(new Boolean(false));
-//      //sub folder contains a place mark
-//      PlacemarkType placeMark = factory.createPlacemarkType();
-//      // the place mark is not visible
-//      placeMark.setVisibility(new Boolean(false));
-//      placeMark.setName("Invisible place");
-//      StyleType style = factory.createStyleType();
-//      IconStyleType iconStyle = factory.createIconStyleType();
-//      IconStyleIconType icon = factory.createIconStyleIconType();
-//      iconStyle.setIcon(icon);
-//      style.setIconStyle(iconStyle);
-//      placeMark.getStyleSelector().add(factory.createStyle(style));
-//      
-//      PointType point = factory.createPointType();
-//      List<String> coordinates = point.getCoordinates();
-//
-//      coordinates.add(longitude + "," + latitude); //$NON-NLS-1$
-//      placeMark.setGeometry(factory.createPoint(point));
-//      
-//      subFolder.getFeature().add(factory.createPlacemark(placeMark));
-//      
-//      folder.getFeature().add(factory.createFolder(subFolder));
-      
+      // FolderType subFolder = factory.createFolderType();
+      // subFolder.setName("Images");
+      // subFolder.setOpen(new Boolean(false));
+      // //sub folder contains a place mark
+      // PlacemarkType placeMark = factory.createPlacemarkType();
+      // // the place mark is not visible
+      // placeMark.setVisibility(new Boolean(false));
+      // placeMark.setName("Invisible place");
+      // StyleType style = factory.createStyleType();
+      // IconStyleType iconStyle = factory.createIconStyleType();
+      // IconStyleIconType icon = factory.createIconStyleIconType();
+      // iconStyle.setIcon(icon);
+      // style.setIconStyle(iconStyle);
+      // placeMark.getStyleSelector().add(factory.createStyle(style));
+      //      
+      // PointType point = factory.createPointType();
+      // List<String> coordinates = point.getCoordinates();
+      //
+      // coordinates.add(longitude + "," + latitude); //$NON-NLS-1$
+      // placeMark.setGeometry(factory.createPoint(point));
+      //      
+      // subFolder.getFeature().add(factory.createPlacemark(placeMark));
+      //      
+      // folder.getFeature().add(factory.createFolder(subFolder));
+
       // The folder also contains a network link
       NetworkLinkType networkLink = factory.createNetworkLinkType();
-      networkLink.setName(Geotag.NAME+' '+Messages.getString("GoogleEarthLauncher.Link")); //$NON-NLS-1$
+      networkLink.setName(Geotag.NAME + ' '
+          + Messages.getString("GoogleEarthLauncher.Link")); //$NON-NLS-1$
       networkLink.setOpen(new Boolean(true));
       networkLink.setVisibility(new Boolean(true));
       LinkType link = factory.createLinkType();
       link.setRefreshMode(RefreshModeEnum.ON_CHANGE);
-      //link.setRefreshInterval(new Float(5));
+      // link.setRefreshInterval(new Float(5));
       link.setHref("http://127.0.0.1:4321/kml/geotag.kml"); //$NON-NLS-1$
       link.setViewRefreshMode(ViewRefreshModeEnum.ON_STOP);
       link.setViewRefreshTime(new Float(0));
