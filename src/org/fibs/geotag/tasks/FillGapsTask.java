@@ -88,7 +88,8 @@ public class FillGapsTask extends UndoableBackgroundTask<ImageInfo> {
             publish(imageInfo);
           }
         }
-      } catch (Exception e) {
+      } catch (RuntimeException e) {
+        // catch all RuntimeExceptions
         e.printStackTrace();
       }
     }

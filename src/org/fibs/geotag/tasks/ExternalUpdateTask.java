@@ -18,6 +18,7 @@
 
 package org.fibs.geotag.tasks;
 
+import org.fibs.geotag.data.EditGPSAltitude;
 import org.fibs.geotag.data.EditGPSLatitude;
 import org.fibs.geotag.data.EditGPSLongitude;
 import org.fibs.geotag.data.ImageInfo;
@@ -78,6 +79,12 @@ public class ExternalUpdateTask extends UndoableBackgroundTask<ImageInfo> {
       new EditGPSLongitude(imageInfo,
           (new Double(externalUpdate.getLongitude())).toString(),
           ImageInfo.DATA_SOURCE.MAP);
+      // leave the altitude untouched, unless it is not set yet,
+      // in which case we set it to zero
+      if (imageInfo.getGPSAltitude() == null) {
+        new EditGPSAltitude(imageInfo, (new Double(0.0)).toString(),
+            ImageInfo.DATA_SOURCE.MAP);
+      }
       publish(imageInfo);
     }
     return getPresentationName();

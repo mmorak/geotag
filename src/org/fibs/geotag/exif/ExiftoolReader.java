@@ -160,7 +160,6 @@ public class ExiftoolReader implements ExifReader {
           // information
           if (text.startsWith(DATE_TIME_ORIGINAL_TAG)
               || text.startsWith(CREATE_DATE_TAG)) {
-            System.out.println(text);
             // don't set it twice. Exiftool honours the order of its arguments
             // so it will first deliver the DateTimeOriginal and then other
             // values

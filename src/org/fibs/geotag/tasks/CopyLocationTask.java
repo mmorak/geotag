@@ -101,14 +101,19 @@ public class CopyLocationTask extends UndoableBackgroundTask<ImageInfo> {
         break;
       }
       currentProgress++;
-      setProgressMessage();
-      new EditGPSLatitude(target, source.getGPSLatitude(),
-          ImageInfo.DATA_SOURCE.COPIED);
-      new EditGPSLongitude(target, source.getGPSLongitude(),
-          ImageInfo.DATA_SOURCE.COPIED);
-      new EditGPSAltitude(target, source.getGPSAltitude(),
-          ImageInfo.DATA_SOURCE.COPIED);
-      publish(target);
+      try {
+        setProgressMessage();
+        new EditGPSLatitude(target, source.getGPSLatitude(),
+            ImageInfo.DATA_SOURCE.COPIED);
+        new EditGPSLongitude(target, source.getGPSLongitude(),
+            ImageInfo.DATA_SOURCE.COPIED);
+        new EditGPSAltitude(target, source.getGPSAltitude(),
+            ImageInfo.DATA_SOURCE.COPIED);
+        publish(target);
+      } catch (RuntimeException e) {
+        // catch all Runtime Exceptions, so the task doesn't terminate
+        e.printStackTrace();
+      }
     }
     String result = null;
     if (currentProgress == 1) {

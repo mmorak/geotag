@@ -134,10 +134,15 @@ public class ExifReaderTask extends UndoableBackgroundTask<ImageInfo> {
       currentProgress++;
       // give feedback via the ProgressBar
       setProgressMessage();
-      imageInfo = readExifData(file);
-      if (imageInfo != null) {
-        publish(imageInfo);
-        imagesPublished++;
+      try {
+        imageInfo = readExifData(file);
+        if (imageInfo != null) {
+          publish(imageInfo);
+          imagesPublished++;
+        }
+      } catch (RuntimeException e) {
+        // catch all Runtime Exceptions - don't let the task die
+        e.printStackTrace();
       }
     }
     String result = null;

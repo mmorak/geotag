@@ -94,13 +94,18 @@ public class ExifWriterTask extends BackgroundTask<ImageInfo> {
       }
       currentProgress++;
       setProgressMessage();
-      if (Exiftool.write(imageInfo) == true) {
-        // write went OK...
-        imagesUpdated++;
-        // the location data source is now the image
-        imageInfo.setSource(DATA_SOURCE.IMAGE);
-        // tell the GUI about the change
-        publish(imageInfo);
+      try {
+        if (Exiftool.write(imageInfo) == true) {
+          // write went OK...
+          imagesUpdated++;
+          // the location data source is now the image
+          imageInfo.setSource(DATA_SOURCE.IMAGE);
+          // tell the GUI about the change
+          publish(imageInfo);
+        }
+      } catch (RuntimeException e) {
+        // catch all runtime exceptions - no need to terminate early
+        e.printStackTrace();
       }
     }
     String result = null;

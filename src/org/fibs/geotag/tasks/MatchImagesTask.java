@@ -78,9 +78,14 @@ public class MatchImagesTask extends UndoableBackgroundTask<ImageInfo> {
       }
       currentProgress++;
       setProgressMessage();
-      if (trackMatcher.match(imageInfo, true) == true) {
-        imagesMatched++;
-        publish(imageInfo);
+      try {
+        if (trackMatcher.match(imageInfo, true) == true) {
+          imagesMatched++;
+          publish(imageInfo);
+        }
+      } catch (RuntimeException e) {
+        // catch all RuntimeExceptions
+        e.printStackTrace();
       }
     }
     String result = null;

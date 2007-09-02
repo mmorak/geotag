@@ -99,10 +99,15 @@ public class SetOffsetTask extends UndoableBackgroundTask<ImageInfo> {
       }
       currentProgress++;
       setProgressMessage();
-      String gmtDate = ImageInfo.subtractOffset(imageInfo.getCreateDate(),
-          offset);
-      new EditGPSDateTime(imageInfo, gmtDate);
-      publish(imageInfo);
+      try {
+        String gmtDate = ImageInfo.subtractOffset(imageInfo.getCreateDate(),
+            offset);
+        new EditGPSDateTime(imageInfo, gmtDate);
+        publish(imageInfo);
+      } catch (RuntimeException e) {
+        // catch all RuntimeExceptions
+        e.printStackTrace();
+      }
     }
     String result = null;
     if (currentProgress == 1) {

@@ -18,8 +18,10 @@
 
 package org.fibs.geotag;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintStream;
 import java.util.Locale;
-import java.util.StringTokenizer;
 
 import javax.swing.UIManager;
 
@@ -40,36 +42,54 @@ public class Geotag {
   public static final String WEBSITE = "http://geotag.sourceforge.net"; //$NON-NLS-1$
 
   /**
+   * Normally the console output is redirected to a File, but for running the
+   * program in an IDE we want to be able to see it.
+   */
+  private static boolean redirectConsole = true;
+
+  /**
    * Application entry point
    * 
    * @param args
    *          Command line arguments
    */
   public static final void main(String[] args) {
-    // is there a two letter lower case argument?
-    if (args.length == 1 && args[0].length() == 2
-        && Character.isLowerCase(args[0].charAt(0))
-        && Character.isLowerCase(args[0].charAt(1))) {
-      // assume this is a language and use it to make a Locale
-      Locale.setDefault(new Locale(args[0]));
-    }
-    if (args.length == 1 && args[0].indexOf('=') >= 0) {
-      // argument of form a=b, use to update settings
-      StringTokenizer tokenizer = new StringTokenizer("="); //$NON-NLS-1$
-      if (tokenizer.countTokens() == 2) {
-        String key = tokenizer.nextToken();
-        // is the key a valid setting?
-        if (Settings.get(key, null) != null) {
-          // there is already a value for this key, hence the key is valid
-          String value = tokenizer.nextToken();
-          Settings.put(key, value);
-          Settings.flush();
-          System.out.println(Messages.getString("Geotag.Done")); //$NON-NLS-1$
-        } else {
-          System.out
-              .println(Messages.getString("Geotag.InvalidKey") + ' ' + key); //$NON-NLS-1$
+    // check command line arguments
+    // all of this is "developer only"
+    // use Settings instead for end users
+    for (String arg : args) {
+      // each argument must be of form -key=value
+      int equalsPos = arg.indexOf('='); // position of first equals sign
+      if (arg.length() >= 4 && // minimum -k=v
+          arg.charAt(0) == '-' && // first char is minus
+          equalsPos >= 2 && // first value at least one character long
+          equalsPos < arg.length() - 1) { // something follows the =
+        // looks good so far, let's split the argument
+        // start at 1, skipping the minus sign and going to just before
+        // the equals sign
+        String key = arg.substring(1, equalsPos);
+        // start just after the equals sign
+        String value = arg.substring(equalsPos + 1);
+        // now see what to do with them
+        if (key.equals("lang") && value.length() == 2) { //$NON-NLS-1$
+          // a two letter argument to -lang is used as the language
+          // for this program
+          Locale.setDefault(new Locale(value));
+        } else if (key.equals("console") && value.equals("yes")) { //$NON-NLS-1$ //$NON-NLS-2$
+          redirectConsole = false;
         }
-        System.exit(0);
+      }
+    }
+    // first of all we redirect the console output to a file
+    if (redirectConsole) {
+      File logFile = new File(System.getProperty("java.io.tmpdir") //$NON-NLS-1$
+          + File.separator + NAME + ".log"); //$NON-NLS-1$
+      try {
+        PrintStream printStream = new PrintStream(logFile);
+        System.setOut(printStream);
+        System.setErr(printStream);
+      } catch (FileNotFoundException e) {
+        e.printStackTrace();
       }
     }
     try {
