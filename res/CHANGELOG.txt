@@ -1,3 +1,6 @@
+2007-09-03 Release 0.009
+  Added support for dcraw external program to display RAW images
+  
 2007-09-02 Release 0.008
   Added support for .thm files (instead of .crw files which
   can't have EXIF data written to them).

@@ -62,6 +62,23 @@ public class ImageInfo implements Comparable<ImageInfo> {
     COPIED
   }
 
+  /**
+   * An enumeration for the availability of thumbnail images
+   * 
+   * @author Andreas Schneider
+   * 
+   */
+  public enum THUMBNAIL_STATUS {
+    /** Haven't tried to get a thumbnail yet */
+    UNKNOWN,
+    /** Thumnail loading is currently under way */
+    LOADING,
+    /** No thumbnail available - No need to try again */
+    FAI1LED,
+    /** Found a thumbnail and stored it */
+    AVAILABLE,
+  }
+
   /** A HashMap containing the data. We use the file path as the key */
   private static HashMap<String, ImageInfo> values = new HashMap<String, ImageInfo>();
 
@@ -91,6 +108,9 @@ public class ImageInfo implements Comparable<ImageInfo> {
 
   /** A thumbnail of the image */
   private ImageIcon thumbnail;
+
+  /** Ehat do we know about availability of a thumbnail image */
+  private THUMBNAIL_STATUS thumbNailStatus = THUMBNAIL_STATUS.UNKNOWN;
 
   /** The image width in pixels */
   private int width;
@@ -266,6 +286,21 @@ public class ImageInfo implements Comparable<ImageInfo> {
    */
   public void setName(String name) {
     this.name = name;
+  }
+
+  /**
+   * @return the thumbNailStatus
+   */
+  public THUMBNAIL_STATUS getThumbNailStatus() {
+    return thumbNailStatus;
+  }
+
+  /**
+   * @param thumbNailStatus
+   *          the thumbNailStatus to set
+   */
+  public void setThumbNailStatus(THUMBNAIL_STATUS thumbNailStatus) {
+    this.thumbNailStatus = thumbNailStatus;
   }
 
   /**

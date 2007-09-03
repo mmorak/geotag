@@ -70,6 +70,9 @@ public class Settings {
   /** Preferences key for the GPSBabel device (the argument for -f) */
   public static final String GPSBABEL_DEVICE = "gpsbabel.device"; //$NON-NLS-1$
 
+  /** Preferences key for the path to the dcraw executable */
+  public static final String DCRAW_PATH = "dcraw.path"; //$NON-NLS-1$
+
   /**
    * Flush (save) the settings
    */

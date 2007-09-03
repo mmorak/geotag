@@ -72,6 +72,9 @@ public class SettingsDialog extends JDialog {
     panelList
         .add(new SettingsPanel(
             Messages.getString("SettingsDialog.GPSBabelDevice"), Settings.GPSBABEL_DEVICE, GPSBabel.getDefaultDevice(), SettingsPanel.STRING)); //$NON-NLS-1$
+    panelList
+        .add(new SettingsPanel(
+            Messages.getString("SettingsDialog.DcrawPath"), Settings.DCRAW_PATH, "dcraw", SettingsPanel.FILE)); //$NON-NLS-1$ //$NON-NLS-2$
     // Finally a Panel with OK and Cancel buttons
     // The flow layout looks very ugly, have to find something else
     JPanel buttonPanel = new JPanel(new FlowLayout());

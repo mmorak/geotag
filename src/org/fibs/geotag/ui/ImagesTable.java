@@ -32,6 +32,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 
 import org.fibs.geotag.data.ImageInfo;
+import org.fibs.geotag.data.ImageInfo.THUMBNAIL_STATUS;
 import org.fibs.geotag.image.ThumbnailWorker;
 
 /**
@@ -118,6 +119,9 @@ public class ImagesTable extends JTable {
     ImageInfo imageInfo = ((ImagesTableModel) getModel()).getImageInfo(row);
     if (component instanceof DefaultTableCellRenderer) {
       String text = ((ImagesTableModel) getModel()).getImageInfo(row).getPath();
+      // we do the next bit, so the tooltip text changes when a thumbnail
+      // image becomes available. The tooltip won't update to a tooltip
+      // with image otherwise
       if (imageInfo.getThumbnail() != null) {
         text += ' ';
       }
@@ -139,10 +143,14 @@ public class ImagesTable extends JTable {
   public JToolTip createToolTip() {
     ImageInfo imageInfo = ((ImagesTableModel) getModel())
         .getImageInfo(mouseOnRow);
+    // It's OK if imageIcon is null at this stage, the tooltip constructor
+    // doesn't mind
     ImageIcon imageIcon = imageInfo.getThumbnail();
     final ImageToolTip tooltip = new ImageToolTip(imageIcon, imageInfo
         .getPath());
-    if (imageIcon == null) {
+    // only try loading thumnail once
+    if (imageIcon == null
+        && imageInfo.getThumbNailStatus() == THUMBNAIL_STATUS.UNKNOWN) {
       ThumbnailWorker worker = new ThumbnailWorker(imageInfo) {
         @Override
         protected void process(List<ImageInfo> chunks) {

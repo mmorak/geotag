@@ -52,16 +52,18 @@ public class ThumbnailHandler implements ContextHandler {
         int sequenceNumber = Integer.parseInt(uri.substring(1, dotPosition));
         ImageInfo imageInfo = ImageInfo.getImageInfo(sequenceNumber);
         ImageIcon thumbnail = imageInfo.getThumbnail();
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        try {
-          ImageIO.write((RenderedImage) thumbnail.getImage(),
-              "jpg", byteArrayOutputStream); //$NON-NLS-1$
-          ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(
-              byteArrayOutputStream.toByteArray());
-          return server.new Response(NanoHTTPD.HTTP_OK, server.mimeType(uri),
-              byteArrayInputStream);
-        } catch (IOException e) {
-          e.printStackTrace();
+        if (thumbnail != null) {
+          ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+          try {
+            ImageIO.write((RenderedImage) thumbnail.getImage(),
+                "jpg", byteArrayOutputStream); //$NON-NLS-1$
+            ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(
+                byteArrayOutputStream.toByteArray());
+            return server.new Response(NanoHTTPD.HTTP_OK, server.mimeType(uri),
+                byteArrayInputStream);
+          } catch (IOException e) {
+            e.printStackTrace();
+          }
         }
       }
     } catch (RuntimeException e) {

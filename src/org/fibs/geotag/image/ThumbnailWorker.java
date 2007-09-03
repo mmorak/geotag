@@ -27,6 +27,8 @@ import javax.swing.SwingWorker;
 
 import org.fibs.geotag.Settings;
 import org.fibs.geotag.data.ImageInfo;
+import org.fibs.geotag.data.ImageInfo.THUMBNAIL_STATUS;
+import org.fibs.geotag.dcraw.Dcraw;
 
 /**
  * A class to load a thumbnail image as a {@link SwingWorker}
@@ -59,17 +61,43 @@ public class ThumbnailWorker extends SwingWorker<Void, ImageInfo> {
    */
   @Override
   protected Void doInBackground() throws Exception {
-    if (imageInfo.getThumbnail() == null) {
+    // only start loading it once.. no need to do it again
+    // if status is loading, failed or available
+    if (imageInfo.getThumbNailStatus() == THUMBNAIL_STATUS.UNKNOWN) {
+      imageInfo.setThumbNailStatus(THUMBNAIL_STATUS.LOADING);
       File imagefile = new File(imageInfo.getPath());
       boolean success = false;
       if (ImageFileFilter.isJpegFile(imagefile)) {
         success = createJpegThumbnail();
+      } else if (ImageFileFilter.isRawFile(imagefile)) {
+        success = createRawThumbnail();
       }
       if (success) {
         publish(imageInfo);
+        imageInfo.setThumbNailStatus(THUMBNAIL_STATUS.AVAILABLE);
+      } else {
+        imageInfo.setThumbNailStatus(THUMBNAIL_STATUS.FAI1LED);
       }
     }
     return null;
+  }
+
+  /**
+   * @param originalImage
+   */
+  private void createThumbnail(BufferedImage originalImage) {
+    BufferedImage rotatedImage = (new ImageRotator(originalImage, imageInfo)
+        .rotate());
+    // note the image size
+    imageInfo.setWidth(rotatedImage.getWidth());
+    imageInfo.setHeight(rotatedImage.getHeight());
+    // now we create a thumbnail image
+    BufferedImage thumbImage = ThumbnailGenerator.createThumbnailImage(
+        rotatedImage, Settings.getInt(Settings.THUMBNAIL_SIZE,
+            DEFAULT_THUMBNAIL_SIZE));
+    ImageIcon imageIcon = new ImageIcon(thumbImage);
+    imageInfo.setThumbnail(imageIcon);
+    imageInfo.setThumbNailStatus(THUMBNAIL_STATUS.AVAILABLE);
   }
 
   /**
@@ -82,19 +110,29 @@ public class ThumbnailWorker extends SwingWorker<Void, ImageInfo> {
       // next we try an get the image data
       BufferedImage originalImage = ImageIO.read(new File(imageInfo.getPath()));
       // and adjust for rotation according to EXIF data
-      BufferedImage rotatedImage = (new ImageRotator(originalImage, imageInfo)
-          .rotate());
-      // note the image size
-      imageInfo.setWidth(rotatedImage.getWidth());
-      imageInfo.setHeight(rotatedImage.getHeight());
-      // now we create a thumbnail image
-      BufferedImage thumbImage = ThumbnailGenerator.createThumbnailImage(
-          rotatedImage, Settings.getInt(Settings.THUMBNAIL_SIZE,
-              DEFAULT_THUMBNAIL_SIZE));
-      ImageIcon imageIcon = new ImageIcon(thumbImage);
-      imageInfo.setThumbnail(imageIcon);
+      createThumbnail(originalImage);
       return true;
     } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return false;
+  }
+
+  /**
+   * Use dcraw to extract a thumbnail from a RAW image
+   * 
+   * @return True if and only if a thumbnail could be create
+   */
+  private boolean createRawThumbnail() {
+    try {
+      BufferedImage originalImage = Dcraw.getEmbeddedImage(new File(imageInfo
+          .getPath()));
+      if (originalImage != null) {
+        createThumbnail(originalImage);
+        return true;
+      }
+      System.out.println("No thumbnail for " + imageInfo.getPath()); //$NON-NLS-1$
+    } catch (RuntimeException e) {
       e.printStackTrace();
     }
     return false;

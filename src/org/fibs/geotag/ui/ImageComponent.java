@@ -146,6 +146,8 @@ public class ImageComponent extends Component {
           BufferedImage rotatedImage = (new ImageRotator(bufferedImage,
               imageInfo)).rotate();
           setImage(rotatedImage);
+        } else {
+          setImage(bufferedImage); // i.e. null
         }
       }
     }.execute();

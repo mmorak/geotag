@@ -25,6 +25,9 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.SwingWorker;
 
+import org.fibs.geotag.dcraw.Dcraw;
+import org.fibs.geotag.image.ImageFileFilter;
+
 /**
  * A class to load image files in the background. Instances should override the
  * done() method to receive the result
@@ -55,7 +58,11 @@ public class ImageLoaderTask extends SwingWorker<Void, BufferedImage> {
   @Override
   protected Void doInBackground() throws Exception {
     try {
-      image = ImageIO.read(file);
+      if (ImageFileFilter.isJpegFile(file)) {
+        image = ImageIO.read(file);
+      } else if (ImageFileFilter.isRawFile(file)) {
+        image = Dcraw.getEmbeddedImage(file);
+      }
     } catch (IOException e) {
       e.printStackTrace();
     }

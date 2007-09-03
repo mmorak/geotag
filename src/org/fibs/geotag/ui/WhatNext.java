@@ -19,6 +19,7 @@
 package org.fibs.geotag.ui;
 
 import java.awt.Component;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,8 +27,10 @@ import javax.swing.JOptionPane;
 
 import org.fibs.geotag.Geotag;
 import org.fibs.geotag.Messages;
+import org.fibs.geotag.dcraw.Dcraw;
 import org.fibs.geotag.exif.Exiftool;
 import org.fibs.geotag.gpsbabel.GPSBabel;
+import org.fibs.geotag.image.ImageFileFilter;
 import org.fibs.geotag.track.TrackMatcher;
 import org.fibs.geotag.util.Util;
 
@@ -52,12 +55,21 @@ public class WhatNext {
     int maxLineLength = 60;
     boolean exiftoolAvailable = Exiftool.isAvailable();
     boolean gpsbabelAvailable = GPSBabel.isAvailable();
+    boolean dcrawAvailable = Dcraw.isAvailable();
     boolean imagesAvailable = (tableModel.getRowCount() > 0);
     boolean tracksAvailable = trackMatcher.hasTracks();
     boolean imagesWithNewLocationAvailable = false;
     for (int row = 0; row < tableModel.getRowCount(); row++) {
       if (tableModel.getImageInfo(row).hasNewLocation()) {
         imagesWithNewLocationAvailable = true;
+        break;
+      }
+    }
+    boolean rawImagesAvailable = false;
+    for (int row = 0; row < tableModel.getRowCount(); row++) {
+      File file = new File(tableModel.getImageInfo(row).getPath());
+      if (ImageFileFilter.isRawFile(file)) {
+        rawImagesAvailable = true;
         break;
       }
     }
@@ -143,7 +155,14 @@ public class WhatNext {
     if (!gpsbabelAvailable) {
       String text = String
           .format(
-              Messages.getString("WhatNext.SuggestFindingGPSBabel"), Messages.getString("MainWindow.File"), Messages.getString("MainWindow.Settings")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+              Messages.getString("WhatNext.SuggestFindingGPSBabelFormat"), Messages.getString("MainWindow.File"), Messages.getString("MainWindow.Settings")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+      suggestions.add(text);
+    }
+
+    if (!dcrawAvailable && rawImagesAvailable) {
+      String text = String
+          .format(
+              Messages.getString("WhatNext.SuggestFindingDcrawFormat"), Messages.getString("MainWindow.File"), Messages.getString("MainWindow.Settings")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
       suggestions.add(text);
     }
 

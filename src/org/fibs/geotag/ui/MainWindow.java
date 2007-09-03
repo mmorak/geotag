@@ -54,6 +54,8 @@ import org.fibs.geotag.Messages;
 import org.fibs.geotag.Settings;
 import org.fibs.geotag.Version;
 import org.fibs.geotag.data.ImageInfo;
+import org.fibs.geotag.data.ImageInfo.THUMBNAIL_STATUS;
+import org.fibs.geotag.dcraw.Dcraw;
 import org.fibs.geotag.exif.Exiftool;
 import org.fibs.geotag.external.ExternalUpdate;
 import org.fibs.geotag.external.ExternalUpdateConsumer;
@@ -164,6 +166,7 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
     // It needs to be done before the menu bar is set up.
     Exiftool.checkExiftoolAvailable();
     GPSBabel.checkGPSBabelAvailable();
+    Dcraw.checkDcrawAvailable();
     // now we can deal with the menu bar
     setupMenuBar();
     setJMenuBar(menuBar);
@@ -339,12 +342,25 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
         Messages.getString("MainWindow.Settings") + ELLIPSIS); //$NON-NLS-1$
     settingsItem.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
+        // remember availability of dcraw
+        boolean dcrawAvailable = Dcraw.isAvailable();
         SettingsDialog settingsDialog = new SettingsDialog(MainWindow.this);
         settingsDialog.openDialog();
         // after the settings dialog has closed we might need to check again
         // if the external programs are still available
         Exiftool.checkExiftoolAvailable();
         GPSBabel.checkGPSBabelAvailable();
+        Dcraw.checkDcrawAvailable();
+        if (dcrawAvailable == false && Dcraw.isAvailable() == true) {
+          // dcraw wasn't available, but now it isn't
+          for (int row = 0; row < tableModel.getRowCount(); row++) {
+            if (tableModel.getImageInfo(row).getThumbNailStatus() == THUMBNAIL_STATUS.FAI1LED) {
+              // now that dcraw is available, loading the thumbnail might work
+              tableModel.getImageInfo(row).setThumbNailStatus(
+                  THUMBNAIL_STATUS.UNKNOWN);
+            }
+          }
+        }
         // the menu item to load tracks from the GPS should
         // only be enabled if GPSBabel is available
         loadTrackFromGpsItem.setEnabled(GPSBabel.isAvailable());
