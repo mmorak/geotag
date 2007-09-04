@@ -81,23 +81,71 @@ public class ImageFileFilter extends FileFilter implements java.io.FileFilter {
     }
     String extension = FileUtil.getExtension(file);
     if (extension != null) {
-      if (extension.equals("cr2") || // Canon RAW 2 format //$NON-NLS-1$
-          //extension.equals("crw") || // Canon RAW Camera Image File Format - not working //$NON-NLS-1$
-          extension.equals("dng") || // Digital Negative //$NON-NLS-1$
-          extension.equals("erf") || // Epson RAW Format //$NON-NLS-1$
-          extension.equals("mef") || // Mamiya RAW format //$NON-NLS-1$
-          extension.equals("mrw") || // Minolta RAW Format //$NON-NLS-1$
-          extension.equals("nef") || // Nikon (RAW) Electronic Format //$NON-NLS-1$
-          extension.equals("orf") || // Olympus RAW Format //$NON-NLS-1$
-          extension.equals("pef") || // Pentax (RAW) Electronic Format //$NON-NLS-1$
-          extension.equals("raw")) { // Panasonic RAW format //$NON-NLS-1$
-        
+      // Sony Alpha RAW format - read only
+      if (extension.equals("arw") || //$NON-NLS-1$
+          // Canon RAW 2 format
+          extension.equals("cr2") || //$NON-NLS-1$
+          // Kodak Digital Camera RAW - read only
+          extension.equals("dcr") || //$NON-NLS-1$
+          // Digital Negative
+          extension.equals("dng") || //$NON-NLS-1$
+          // Epson RAW Format
+          extension.equals("erf") || //$NON-NLS-1$
+          // Mamiya RAW format
+          extension.equals("mef") || //$NON-NLS-1$
+          // Minolta RAW Format
+          extension.equals("mrw") || //$NON-NLS-1$
+          // Nikon (RAW) Electronic Format
+          extension.equals("nef") || //$NON-NLS-1$
+          // Olympus RAW Format
+          extension.equals("orf") || //$NON-NLS-1$
+          // Pentax (RAW) Electronic Format
+          extension.equals("pef") || //$NON-NLS-1$
+          // FujiFilm RAW Format - read only
+          extension.equals("raf") || //$NON-NLS-1$
+          // Panasonic RAW format
+          extension.equals("raw") || //$NON-NLS-1$
+          // Sony RAW 2 format - read only
+          extension.equals("sr2") || //$NON-NLS-1$
+          // Sony RAW Format - read only
+          extension.equals("srf") || //$NON-NLS-1$
+          // Sigma/Foveon RAW format - read only
+          extension.equals("x3f")) { //$NON-NLS-1$
         return true;
       }
     }
     return false;
   }
-  
+
+  /**
+   * @param file
+   *          The file to be checked
+   * @return True, if the RAW file is read only in exiftool
+   */
+  public static boolean isReadOnlyRawFile(File file) {
+    if (file.isDirectory()) {
+      return false;
+    }
+    String extension = FileUtil.getExtension(file);
+    if (extension != null) {
+      // Sony Alpha RAW format - read only
+      if (extension.equals("arw") || //$NON-NLS-1$
+          // Kodak Digital Camera RAW - read only
+          extension.equals("dcr") || //$NON-NLS-1$
+          // FujiFilm RAW Format - read only
+          extension.equals("raf") || //$NON-NLS-1$
+          // Sony RAW 2 format - read only
+          extension.equals("sr2") || //$NON-NLS-1$
+          // Sony RAW Format - read only
+          extension.equals("srf") || //$NON-NLS-1$
+          // Sigma/Foveon RAW format - read only
+          extension.equals("x3f")) { //$NON-NLS-1$
+        return true;
+      }
+    }
+    return false;
+  }
+
   /**
    * Check if a file is an XMP file
    * 
@@ -117,7 +165,6 @@ public class ImageFileFilter extends FileFilter implements java.io.FileFilter {
     }
     return false;
   }
-  
 
   /**
    * @see javax.swing.filechooser.FileFilter#getDescription()

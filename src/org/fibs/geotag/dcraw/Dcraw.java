@@ -107,6 +107,7 @@ public class Dcraw {
     command.add("-e"); //$NON-NLS-1$
     // finally the file path
     command.add(rawFile.getPath());
+
     ProcessBuilder processBuilder = new ProcessBuilder(command);
     try {
       Process process = processBuilder.redirectErrorStream(true).start();
@@ -114,14 +115,23 @@ public class Dcraw {
       // writes it to stdout
       InputStream inputStream = process.getInputStream();
       ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-      new InputStreamGobbler(inputStream, outputStream).start();
+      InputStreamGobbler gobbler = new InputStreamGobbler(inputStream,
+          outputStream);
+      gobbler.start();
       // we wait for the process to finish
       process.waitFor();
+      while (gobbler.isAlive()) {
+        Thread.sleep(10);
+      }
       // there should now be some image data ready in the output stream
       byte[] imageData = outputStream.toByteArray();
       // create an InputStream to read an image from the data
       ByteArrayInputStream imageStream = new ByteArrayInputStream(imageData);
       BufferedImage bufferedImage = ImageIO.read(imageStream);
+      if (bufferedImage == null) {
+        System.err
+            .println("Null thumbnail for " + rawFile.getName() + ' ' + imageData.length + " bytes"); //$NON-NLS-1$ //$NON-NLS-2$
+      }
       return bufferedImage;
     } catch (IOException e) {
       e.printStackTrace();

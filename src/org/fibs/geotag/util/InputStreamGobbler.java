@@ -68,6 +68,7 @@ public class InputStreamGobbler extends Thread {
           outputStream.write(b);
         }
       }
+      outputStream.flush();
     } catch (IOException e) {
       e.printStackTrace();
     }

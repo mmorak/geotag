@@ -27,6 +27,7 @@ import java.util.StringTokenizer;
 
 import org.fibs.geotag.Settings;
 import org.fibs.geotag.data.ImageInfo;
+import org.fibs.geotag.image.ImageFileFilter;
 import org.fibs.geotag.util.FileUtil;
 import org.fibs.geotag.util.InputStreamGobbler;
 
@@ -45,6 +46,7 @@ public class ExifWriter {
    */
   public boolean write(ImageInfo imageInfo) {
     // check for existence of XMP sidecar file
+    File imageFile = new File(imageInfo.getPath());
     File xmpFile = null;
     String xmpFileName = FileUtil.replaceExtension(imageInfo.getPath(), "xmp"); //$NON-NLS-1$
     if (xmpFileName != null) {
@@ -54,10 +56,13 @@ public class ExifWriter {
     if (xmpFilesOnly && xmpFile != null) {
       // Must write XMP
       return writeXMP(imageInfo, xmpFile);
+    } else if (xmpFile != null && ImageFileFilter.isReadOnlyRawFile(imageFile)) {
+      // can't write to image file, must write XMP
+      return writeXMP(imageInfo, xmpFile);
     } else if (xmpFile != null && xmpFile.exists()) {
       // Can write XMP
       return writeXMP(imageInfo, xmpFile);
-    } else if (!xmpFilesOnly) {
+    } else if (!xmpFilesOnly && !ImageFileFilter.isReadOnlyRawFile(imageFile)) {
       // Won't write XMP;
       return writeEXIF(imageInfo);
     }

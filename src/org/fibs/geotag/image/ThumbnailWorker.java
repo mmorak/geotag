@@ -76,7 +76,9 @@ public class ThumbnailWorker extends SwingWorker<Void, ImageInfo> {
         publish(imageInfo);
         imageInfo.setThumbNailStatus(THUMBNAIL_STATUS.AVAILABLE);
       } else {
-        imageInfo.setThumbNailStatus(THUMBNAIL_STATUS.FAI1LED);
+        // sometimes retrying seems to be necessary.
+        // Ideally we'd like to set this to STATUS.FAILED
+        imageInfo.setThumbNailStatus(THUMBNAIL_STATUS.UNKNOWN);
       }
     }
     return null;
