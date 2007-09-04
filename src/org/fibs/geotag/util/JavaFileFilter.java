@@ -56,7 +56,7 @@ public class JavaFileFilter extends FileFilter implements java.io.FileFilter {
     if (file.isDirectory()) {
       return false;
     }
-    String extension = getExtension(file);
+    String extension = FileUtil.getExtension(file);
     if (extension != null) {
       if (extension.equals("java")) {
         return true;
@@ -73,21 +73,4 @@ public class JavaFileFilter extends FileFilter implements java.io.FileFilter {
     return "Java files";
   }
 
-  /**
-   * Determine the extension of a file
-   * 
-   * @param file
-   *          The file to be examined
-   * @return The extension if found, null otherwise
-   */
-  private static String getExtension(File file) {
-    String extension = null;
-    String fileName = file.getName();
-    int index = fileName.lastIndexOf('.');
-
-    if (index > 0 && index < fileName.length() - 1) {
-      extension = fileName.substring(index + 1).toLowerCase();
-    }
-    return extension;
-  }
 }

@@ -36,6 +36,7 @@ import javax.swing.JPanel;
 import org.fibs.geotag.Messages;
 import org.fibs.geotag.Settings;
 import org.fibs.geotag.gpsbabel.GPSBabel;
+import org.fibs.geotag.ui.SettingsPanel.TYPE;
 
 /**
  * A dialog for changing the settings of the program
@@ -62,19 +63,20 @@ public class SettingsDialog extends JDialog {
     setMinimumSize(minimumSize);
     panelList
         .add(new SettingsPanel(
-            Messages.getString("SettingsDialog.ExiftoolPath"), Settings.EXIFTOOL_PATH, "exiftool", SettingsPanel.FILE)); //$NON-NLS-1$ //$NON-NLS-2$
+            Messages.getString("SettingsDialog.ExiftoolPath"), Settings.EXIFTOOL_PATH, "exiftool", TYPE.FILE)); //$NON-NLS-1$ //$NON-NLS-2$
     panelList
         .add(new SettingsPanel(
-            Messages.getString("SettingsDialog.GPSBabelPath"), Settings.GPSBABEL_PATH, "gpsbabel", SettingsPanel.FILE)); //$NON-NLS-1$//$NON-NLS-2$
+            Messages.getString("SettingsDialog.GPSBabelPath"), Settings.GPSBABEL_PATH, "gpsbabel", TYPE.FILE)); //$NON-NLS-1$//$NON-NLS-2$
     panelList
         .add(new SettingsPanel(
-            Messages.getString("SettingsDialog.GPSBabelProtocol"), Settings.GPSBABEL_PROTOCOL, "garmin", SettingsPanel.STRING)); //$NON-NLS-1$//$NON-NLS-2$
+            Messages.getString("SettingsDialog.GPSBabelProtocol"), Settings.GPSBABEL_PROTOCOL, "garmin", TYPE.STRING)); //$NON-NLS-1$//$NON-NLS-2$
     panelList
         .add(new SettingsPanel(
-            Messages.getString("SettingsDialog.GPSBabelDevice"), Settings.GPSBABEL_DEVICE, GPSBabel.getDefaultDevice(), SettingsPanel.STRING)); //$NON-NLS-1$
+            Messages.getString("SettingsDialog.GPSBabelDevice"), Settings.GPSBABEL_DEVICE, GPSBabel.getDefaultDevice(), TYPE.STRING)); //$NON-NLS-1$
     panelList
         .add(new SettingsPanel(
-            Messages.getString("SettingsDialog.DcrawPath"), Settings.DCRAW_PATH, "dcraw", SettingsPanel.FILE)); //$NON-NLS-1$ //$NON-NLS-2$
+            Messages.getString("SettingsDialog.DcrawPath"), Settings.DCRAW_PATH, "dcraw", TYPE.FILE)); //$NON-NLS-1$ //$NON-NLS-2$
+    panelList.add(new SettingsPanel(Messages.getString("SettingsDialog.XmpFilesOnly"), Settings.XMP_FILES_ONLY,"false", TYPE.BOOLEAN));  //$NON-NLS-1$//$NON-NLS-2$
     // Finally a Panel with OK and Cancel buttons
     // The flow layout looks very ugly, have to find something else
     JPanel buttonPanel = new JPanel(new FlowLayout());

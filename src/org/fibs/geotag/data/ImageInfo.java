@@ -157,10 +157,10 @@ public class ImageInfo implements Comparable<ImageInfo> {
     instancesCreated++;
     sequenceNumber = instancesCreated;
     instances.add(this);
-    values.put(path, this);
     // first some trivial information about the image
     this.name = file.getName();
     this.path = file.getPath();
+    values.put(path, this);
   }
 
   /**
@@ -237,6 +237,15 @@ public class ImageInfo implements Comparable<ImageInfo> {
   public static ImageInfo getImageInfo(int sequenceNumer) {
     /* sequence numbers start at 1, array indices start at 0 */
     return instances.get(sequenceNumer - 1);
+  }
+  
+  /**
+   * Return the ImageInfo for a file
+   * @param filePath The file's path
+   * @return The ImageInfo for that file, or null if not found
+   */
+  public static ImageInfo getImageInfo(String filePath) {
+    return values.get(filePath);
   }
 
   /**

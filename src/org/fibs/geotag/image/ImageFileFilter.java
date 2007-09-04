@@ -23,6 +23,7 @@ import java.io.File;
 import javax.swing.filechooser.FileFilter;
 
 import org.fibs.geotag.Messages;
+import org.fibs.geotag.util.FileUtil;
 
 /**
  * A class to determine if a file is an image or not
@@ -56,7 +57,7 @@ public class ImageFileFilter extends FileFilter implements java.io.FileFilter {
     if (file.isDirectory()) {
       return false;
     }
-    String extension = getExtension(file);
+    String extension = FileUtil.getExtension(file);
     if (extension != null) {
       if (extension.equals("jpeg") || //$NON-NLS-1$
           extension.equals("jpg") || //$NON-NLS-1$
@@ -78,7 +79,7 @@ public class ImageFileFilter extends FileFilter implements java.io.FileFilter {
     if (file.isDirectory()) {
       return false;
     }
-    String extension = getExtension(file);
+    String extension = FileUtil.getExtension(file);
     if (extension != null) {
       if (extension.equals("cr2") || // Canon RAW 2 format //$NON-NLS-1$
           //extension.equals("crw") || // Canon RAW Camera Image File Format - not working //$NON-NLS-1$
@@ -96,6 +97,27 @@ public class ImageFileFilter extends FileFilter implements java.io.FileFilter {
     }
     return false;
   }
+  
+  /**
+   * Check if a file is an XMP file
+   * 
+   * @param file
+   *          The file to be checked
+   * @return True if the file name has an xmp file extension
+   */
+  public static boolean isXmpFile(File file) {
+    if (file.isDirectory()) {
+      return false;
+    }
+    String extension = FileUtil.getExtension(file);
+    if (extension != null) {
+      if (extension.equals("xmp")) { //$NON-NLS-1$
+        return true;
+      }
+    }
+    return false;
+  }
+  
 
   /**
    * @see javax.swing.filechooser.FileFilter#getDescription()
@@ -105,21 +127,4 @@ public class ImageFileFilter extends FileFilter implements java.io.FileFilter {
     return Messages.getString("ImageFileFilter.ImageFiles"); //$NON-NLS-1$
   }
 
-  /**
-   * Determine the extension of a file
-   * 
-   * @param file
-   *          The file to be examined
-   * @return The extension if found, null otherwise
-   */
-  private static String getExtension(File file) {
-    String extension = null;
-    String fileName = file.getName();
-    int index = fileName.lastIndexOf('.');
-
-    if (index > 0 && index < fileName.length() - 1) {
-      extension = fileName.substring(index + 1).toLowerCase();
-    }
-    return extension;
-  }
 }

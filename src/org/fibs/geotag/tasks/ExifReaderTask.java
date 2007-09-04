@@ -33,6 +33,7 @@ import org.fibs.geotag.exif.ExiftoolReader;
 import org.fibs.geotag.exif.MetadataExtractorReader;
 import org.fibs.geotag.image.ImageFileFilter;
 import org.fibs.geotag.ui.ImagesTableModel;
+import org.fibs.geotag.util.FileUtil;
 
 /**
  * This class handles reading EXIF data from image files. We call exiftool for
@@ -82,6 +83,7 @@ public class ExifReaderTask extends UndoableBackgroundTask<ImageInfo> {
    * @return The {@link ImageInfo} for the file
    */
   private ImageInfo readExifData(File file) {
+    ImageInfo result = null;
     ExifReader exifReader = null;
     if (ImageFileFilter.isJpegFile(file)) {
       exifReader = new MetadataExtractorReader();
@@ -89,9 +91,19 @@ public class ExifReaderTask extends UndoableBackgroundTask<ImageInfo> {
       exifReader = new ExiftoolReader();
     }
     if (exifReader != null) {
-      return exifReader.readExifData(file);
+      result = exifReader.readExifData(file, null);
+      // now check if there is an XMP sidecar file for our file
+      String xmpFileName = FileUtil.replaceExtension(file.getPath(), "xmp"); //$NON-NLS-1$
+      if (xmpFileName != null) {
+        File xmpFile = new File(xmpFileName);
+        if (xmpFile.exists()) {
+          System.out.println(xmpFileName);
+          exifReader = new ExiftoolReader();
+          result = exifReader.readExifData(xmpFile, result);
+        }
+      }
     }
-    return null;
+    return result;
   }
 
   /**
@@ -165,8 +177,13 @@ public class ExifReaderTask extends UndoableBackgroundTask<ImageInfo> {
   @Override
   protected void process(List<ImageInfo> chunks) {
     for (ImageInfo imageInfo : chunks) {
-      images.add(imageInfo);
-      tableModel.addImageInfo(imageInfo);
+      int row = tableModel.getRow(imageInfo);
+      if (row == -1) {
+        images.add(imageInfo);
+        tableModel.addImageInfo(imageInfo);
+      } else {
+        tableModel.fireTableRowsUpdated(row, row);
+      }
     }
   }
 

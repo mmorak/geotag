@@ -23,6 +23,7 @@ import java.io.File;
 import javax.swing.filechooser.FileFilter;
 
 import org.fibs.geotag.Messages;
+import org.fibs.geotag.util.FileUtil;
 
 /**
  * A class to determine if a file is a GPX file or not
@@ -57,7 +58,7 @@ public class GpxFileFilter extends FileFilter implements java.io.FileFilter {
     if (file.isDirectory()) {
       return false;
     }
-    String extension = getExtension(file);
+    String extension = FileUtil.getExtension(file);
     if (extension != null) {
       if (extension.equals("gpx")) { //$NON-NLS-1$
         return true;
@@ -74,21 +75,4 @@ public class GpxFileFilter extends FileFilter implements java.io.FileFilter {
     return Messages.getString("GpxFileFilter.GpxFiles"); //$NON-NLS-1$
   }
 
-  /**
-   * Determine the extension of a file
-   * 
-   * @param file
-   *          The file to be examined
-   * @return The extension if found, null otherwise
-   */
-  private static String getExtension(File file) {
-    String extension = null;
-    String fileName = file.getName();
-    int index = fileName.lastIndexOf('.');
-
-    if (index > 0 && index < fileName.length() - 1) {
-      extension = fileName.substring(index + 1).toLowerCase();
-    }
-    return extension;
-  }
 }

@@ -1,3 +1,6 @@
+2007-09-04 Release 0.010
+  Added support for XMP sidecar files
+  
 2007-09-03 Release 0.009
   Added support for dcraw external program to display RAW images
   

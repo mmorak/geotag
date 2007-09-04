@@ -35,14 +35,14 @@ public class Version {
   public static final int MAJOR = 0;
 
   /** The minor version number */
-  public static final int MINOR = 9;
+  public static final int MINOR = 10;
 
   /** The build date of the program */
   public static final String BUILD_DATE;
 
   /** The build time of the program */
   public static final String BUILD_TIME;
-  
+
   /** the build number */
   public static final String BUILD_NUMBER;
 

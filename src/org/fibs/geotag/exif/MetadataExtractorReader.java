@@ -61,14 +61,22 @@ public class MetadataExtractorReader implements ExifReader {
   /**
    * @param file
    *          The file being examined
+   * @param reuseImageInfo
+   *          reuse this ImageInfo if not null, otherwise create a new one
    * @return The {@link ImageInfo} for that file
    */
   @SuppressWarnings("unchecked")
   // because we use the pre Java 5 MetadataExtractor API
-  public ImageInfo readExifData(File file) {
+  public ImageInfo readExifData(File file, ImageInfo reuseImageInfo) {
     // process all files
-    // create an ImageInfo object
-    ImageInfo imageInfo = new ImageInfo(file);
+    ImageInfo imageInfo = reuseImageInfo;
+    if (imageInfo == null) {
+      // get or create create an ImageInfo object
+      imageInfo = ImageInfo.getImageInfo(file.getPath());
+      if (imageInfo == null) {
+        imageInfo = new ImageInfo(file);
+      }
+    }
     try {
       Metadata metadata = JpegMetadataReader.readMetadata(file);
       // iterate through metadata directories

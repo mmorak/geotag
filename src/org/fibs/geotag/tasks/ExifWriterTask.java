@@ -24,7 +24,7 @@ import java.util.List;
 import org.fibs.geotag.Messages;
 import org.fibs.geotag.data.ImageInfo;
 import org.fibs.geotag.data.ImageInfo.DATA_SOURCE;
-import org.fibs.geotag.exif.Exiftool;
+import org.fibs.geotag.exif.ExifWriter;
 import org.fibs.geotag.ui.ImagesTableModel;
 
 /**
@@ -95,7 +95,8 @@ public class ExifWriterTask extends BackgroundTask<ImageInfo> {
       currentProgress++;
       setProgressMessage();
       try {
-        if (Exiftool.write(imageInfo) == true) {
+        ExifWriter exifWriter = new ExifWriter();
+        if (exifWriter.write(imageInfo) == true) {
           // write went OK...
           imagesUpdated++;
           // the location data source is now the image

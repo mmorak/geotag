@@ -31,11 +31,14 @@ import org.fibs.geotag.data.ImageInfo;
 public interface ExifReader {
   /**
    * Read EXIf info from the given file and create an {@link ImageInfo} object
-   * containing it
+   * containing it. If an {@link ImageInfo} object for the file already exists,
+   * the reader must update it and not create a new one.
    * 
    * @param file
    *          The image file to be read
+   * @param reuseImageInfo
+   *          Store results in this ImageInfo, if it is not null
    * @return The {@link ImageInfo} containg the EXIF data
    */
-  ImageInfo readExifData(File file);
+  ImageInfo readExifData(File file, ImageInfo reuseImageInfo);
 }

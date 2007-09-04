@@ -73,6 +73,9 @@ public class Settings {
   /** Preferences key for the path to the dcraw executable */
   public static final String DCRAW_PATH = "dcraw.path"; //$NON-NLS-1$
 
+  /** Preference key for always writing locations to XMP files */
+  public static final String XMP_FILES_ONLY = "xmp.files.only"; //$NON-NLS-1$
+
   /**
    * Flush (save) the settings
    */
@@ -118,5 +121,22 @@ public class Settings {
    */
   public static void put(String key, String value) {
     preferences.put(key, value);
+  }
+
+  /**
+   * @param key
+   * @param defaultValue
+   * @return The value
+   */
+  public static boolean getBoolean(String key, boolean defaultValue) {
+    return preferences.getBoolean(key, defaultValue);
+  }
+
+  /**
+   * @param key
+   * @param value
+   */
+  public static void put(String key, boolean value) {
+    preferences.putBoolean(key, value);
   }
 }

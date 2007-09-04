@@ -31,6 +31,7 @@ import org.fibs.geotag.data.EditGPSDateTime;
 import org.fibs.geotag.data.EditGPSLatitude;
 import org.fibs.geotag.data.EditGPSLongitude;
 import org.fibs.geotag.data.ImageInfo;
+import org.fibs.geotag.image.ImageFileFilter;
 
 /**
  * @author Andreas Schneider
@@ -59,47 +60,76 @@ public class ExiftoolReader implements ExifReader {
   /** exiftool GPSDatetime output lines start with this text */
   private static final String GPS_DATE_TIME_TAG = "GPSDateTime: "; //$NON-NLS-1$
 
+  /** exiftool XMP:GPSTimeStamp output lines start with this text */
+  private static final String GPS_TIME_STAMP_TAG = "GPSTimeStamp: "; //$NON-NLS-1$
+
   /** exiftool Orientation output lines start with this text */
   private static final String ORIENTATION_TAG = "Orientation: "; //$NON-NLS-1$
 
   /**
-   * An enum for the exiftool command line arguments (without the leading dash)
+   * the exiftool command line arguments
    */
-  private enum EXIFTOOL_ARGUMENTS {
-    /** -S generates short output */
-    S,
-    /** -n generates numeric output (not descriptive) */
-    n,
-    /** retrieve the DateTimeOriginal first */
-    DateTimeOriginal,
-    /** retrieve the CreateDate */
-    CreateDate,
-    /** retrieve the latitude */
-    GPSLatitude,
-    /** retrieve the longitude */
-    GPSLongitude,
-    /** retrieve the altitude */
-    GPSAltitude,
-    /** retrieve the GPS date/time */
-    GPSDateTime,
-    /** retrieve the image orientation */
-    Orientation
-  }
+  private String[] exifToolArguments = new String[] { // -S generates short
+  // output
+      "-S", //$NON-NLS-1$
+      // -n generates numeric output (not descriptive)
+      "-n", //$NON-NLS-1$
+      // retrieve the CreateDate first */
+      "-CreateDate", //$NON-NLS-1$
+      // then retrieve the DateTimeOriginal to override it
+      "-DateTimeOriginal", //$NON-NLS-1$
+      // retrieve the latitude
+      "-GPSLatitude", //$NON-NLS-1$
+      // retrieve the longitude
+      "-GPSLongitude", //$NON-NLS-1$
+      // retrieve the altitude
+      "-GPSAltitude", //$NON-NLS-1$
+      // retrieve the GPS date/time
+      "-GPSDateTime", //$NON-NLS-1$
+      // retrieve the image orientation
+      "-Orientation" //$NON-NLS-1$
+  };
+
+  /**
+   * the exiftool XMP command line arguments
+   */
+  private String[] exifToolXmpArguments = new String[] { // -S generates short
+  // output
+      "-S", //$NON-NLS-1$
+      // -n generates numeric output (not descriptive)
+      "-n", //$NON-NLS-1$
+      // retrieve the latitude
+      "-XMP:GPSLatitude", //$NON-NLS-1$
+      // retrieve the longitude
+      "-XMP:GPSLongitude", //$NON-NLS-1$
+      // retrieve the altitude
+      "-XMP:GPSAltitude", //$NON-NLS-1$
+      // retrieve the GPS date/time
+      "-XMP:GPSTimeStamp", //$NON-NLS-1$
+      // retrieve the image orientation
+      "-XMP:Orientation" //$NON-NLS-1$
+  };
 
   /**
    * Read EXIF data from a file and create an {@link ImageInfo} object
    * 
    * @param file
    *          The file to be examined
+   * @param reuseImageInfo
+   *          Reuse this ImageInfo if not null, create new one otherwise
    * @return The {@link ImageInfo} for that file
    */
-  public ImageInfo readExifData(File file) {
+  public ImageInfo readExifData(File file, ImageInfo reuseImageInfo) {
+    ImageInfo imageInfo = reuseImageInfo;
     // First we build the command line
     List<String> command = new ArrayList<String>();
     command.add(Settings.get(Settings.EXIFTOOL_PATH, "exiftool")); //$NON-NLS-1$
-    for (int i = 0; i < EXIFTOOL_ARGUMENTS.values().length; i++) {
-      EXIFTOOL_ARGUMENTS argument = EXIFTOOL_ARGUMENTS.values()[i];
-      command.add("-" + argument.toString()); //$NON-NLS-1$
+    String[] arguments = exifToolArguments;
+    if (ImageFileFilter.isXmpFile(file)) {
+      arguments = exifToolXmpArguments;
+    }
+    for (String argument : arguments) {
+      command.add(argument);
     }
     // add the filename
     command.add(file.getPath());
@@ -107,7 +137,7 @@ public class ExiftoolReader implements ExifReader {
     try {
       Process process = processBuilder.redirectErrorStream(true).start();
       InputStream stream = process.getInputStream();
-      ImageInfo imageInfo = readExifData(file, stream);
+      imageInfo = readExifData(file, stream, imageInfo);
       stream.close();
       return imageInfo;
     } catch (IOException e) {
@@ -124,11 +154,20 @@ public class ExiftoolReader implements ExifReader {
    *          The file being examined by exiftool
    * @param stream
    *          The stream containing the output of exiftool
+   * @param reuseImageInfo
+   *          Reuse this ImageInfo for results if not null
    * @return The {@link ImageInfo} for the file
    */
-  private ImageInfo readExifData(File file, InputStream stream) {
+  private ImageInfo readExifData(File file, InputStream stream,
+      ImageInfo reuseImageInfo) {
     // The ImageInfo object holding information about the current file
-    ImageInfo imageInfo = new ImageInfo(file);
+    ImageInfo imageInfo = reuseImageInfo;
+    if (imageInfo == null) {
+      imageInfo = ImageInfo.getImageInfo(file.getPath());
+      if (imageInfo == null) {
+        imageInfo = new ImageInfo(file);
+      }
+    }
     // we read the data into a array of bytes - this is its size
     int bufferSize = 256;
     // and this is the buffer itself
@@ -160,23 +199,20 @@ public class ExiftoolReader implements ExifReader {
           // information
           if (text.startsWith(DATE_TIME_ORIGINAL_TAG)
               || text.startsWith(CREATE_DATE_TAG)) {
-            // don't set it twice. Exiftool honours the order of its arguments
-            // so it will first deliver the DateTimeOriginal and then other
-            // values
-            // DateTimeOriginal is the one we want most of all
-            if (imageInfo.getCreateDate() == null) {
-              String createDate;
-              if (text.startsWith(DATE_TIME_ORIGINAL_TAG)) {
-                createDate = text.substring(DATE_TIME_ORIGINAL_TAG.length());
-              } else {
-                // CreateDate is the only option left
-                createDate = text.substring(CREATE_DATE_TAG.length());
-              }
-              new EditCreateDate(imageInfo, createDate);
-              // we also set the GPS date to a good guess if it hasn't been
-              // set yet.
-              imageInfo.setGPSDateTime();
+            // Exiftool honours the order of arguments
+            // So the CreateDate will come first and the
+            // DateTimeOriginal second.
+            String createDate;
+            if (text.startsWith(DATE_TIME_ORIGINAL_TAG)) {
+              createDate = text.substring(DATE_TIME_ORIGINAL_TAG.length());
+            } else {
+              // CreateDate is the only option left
+              createDate = text.substring(CREATE_DATE_TAG.length());
             }
+            new EditCreateDate(imageInfo, createDate);
+            // we also set the GPS date to a good guess if it hasn't been
+            // set yet.
+            imageInfo.setGPSDateTime();
           } else if (text.startsWith(GPS_LATITUDE_TAG)) {
             new EditGPSLatitude(imageInfo, text.substring(GPS_LATITUDE_TAG
                 .length()), ImageInfo.DATA_SOURCE.IMAGE);
@@ -189,6 +225,20 @@ public class ExiftoolReader implements ExifReader {
           } else if (text.startsWith(GPS_DATE_TIME_TAG)) {
             new EditGPSDateTime(imageInfo, text.substring(GPS_DATE_TIME_TAG
                 .length()));
+          } else if (text.startsWith(GPS_TIME_STAMP_TAG)) {
+            // now this needs a little explanation. There are two different
+            // GPSTimeStamp tags. One in the EXIF data which is the time only
+            // and one in the XMP data which is date and time.
+            // We never ask for the EXIF GPSTimeStamp, so when we see this
+            // it has to be the XMP one
+            // We also insist, that the GPS time is in GMT, i.e the
+            // String we receive must end with Z
+            if (text.endsWith("Z")) { //$NON-NLS-1$
+              // drop the Z
+              String gpsDateTime = text.substring(GPS_TIME_STAMP_TAG.length(),
+                  text.length() - 1);
+              new EditGPSDateTime(imageInfo, gpsDateTime);
+            }
           } else if (text.startsWith(ORIENTATION_TAG)) {
             imageInfo.setOrientation(text.substring(ORIENTATION_TAG.length()));
           } else if (text.startsWith(ERROR_TAG)) {
