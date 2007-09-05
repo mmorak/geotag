@@ -18,6 +18,11 @@
 
 package org.fibs.geotag.dcraw;
 
+import java.awt.Frame;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.MediaTracker;
+import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -31,6 +36,8 @@ import javax.imageio.ImageIO;
 
 import org.fibs.geotag.Settings;
 import org.fibs.geotag.util.InputStreamGobbler;
+
+import com.acme.JPM.Decoders.PpmDecoder;
 
 /**
  * A class handling the dcraw external program
@@ -119,23 +126,59 @@ public class Dcraw {
           outputStream);
       gobbler.start();
       // we wait for the process to finish
-      process.waitFor();
-      while (gobbler.isAlive()) {
-        Thread.sleep(10);
+      try {
+        process.waitFor();
+        // wait until the gobbler is done gobbling
+        while (gobbler.isAlive()) {
+          Thread.sleep(10);
+        }
+      } catch (InterruptedException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
       }
       // there should now be some image data ready in the output stream
       byte[] imageData = outputStream.toByteArray();
+      // there might be an error message in there though, which we check first
+      String imageDataString = new String(imageData);
+      if (imageDataString.startsWith(rawFile.getPath())) {
+        // The image path is certainly not part of the image
+        // dcraw error messages however start with it.
+        System.err.println(imageDataString);
+        return null;
+      }
       // create an InputStream to read an image from the data
       ByteArrayInputStream imageStream = new ByteArrayInputStream(imageData);
+      // read the image from the stream - this only works for jpegs
       BufferedImage bufferedImage = ImageIO.read(imageStream);
+      imageStream.close();
+      if (bufferedImage == null) {
+        // could nor read jpeg - try ppm
+        imageStream = new ByteArrayInputStream(imageData);
+        PpmDecoder producer = new PpmDecoder(imageStream);
+        Image image = Toolkit.getDefaultToolkit().createImage(producer);
+        MediaTracker mediaTracker = new MediaTracker(new Frame());
+        mediaTracker.addImage(image, 0);
+        try {
+          mediaTracker.waitForID(0);
+        } catch (InterruptedException e) {
+          e.printStackTrace();
+        }
+        int imageWidth = image.getWidth(null);
+        int imageHeight = image.getHeight(null);
+        if (imageWidth > 0 && imageHeight > 0) {
+          bufferedImage = new BufferedImage(imageWidth, imageHeight,
+              BufferedImage.TYPE_INT_RGB);
+          Graphics g = bufferedImage.getGraphics();
+          g.drawImage(image, 0, 0, null);
+        }
+        imageStream.close();
+      }
       if (bufferedImage == null) {
         System.err
-            .println("Null thumbnail for " + rawFile.getName() + ' ' + imageData.length + " bytes"); //$NON-NLS-1$ //$NON-NLS-2$
+            .println("No thumbnail for " + rawFile.getName() + ' ' + imageData.length + " bytes"); //$NON-NLS-1$ //$NON-NLS-2$
       }
       return bufferedImage;
     } catch (IOException e) {
-      e.printStackTrace();
-    } catch (InterruptedException e) {
       e.printStackTrace();
     }
     return null;

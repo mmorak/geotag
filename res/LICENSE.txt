@@ -16,7 +16,11 @@ Released as public domain software
 
 com.jgoodies.looks:
 JGoodies Looks by Karsten Lentzsch
-Released under a BSd license - see individual files
+Released under a BSD license - see individual files
+
+com.acme.JPM.Decoders:
+A few classes from Acme.JPM by Jef Poskanzer
+Released under a BSD license - see individual files
 
 Thanks to the above authors for making their
 software freely available.

@@ -1,3 +1,6 @@
+2007-09-05 Release 0.012
+  Added handling of PPM thumbnail images.
+  
 2007-09-04 Release 0.011
   Added support for the following RAW file formats:
   ARW, DCR, RAF, SR2, SRF, X3F. Exiftool can only read those files,
