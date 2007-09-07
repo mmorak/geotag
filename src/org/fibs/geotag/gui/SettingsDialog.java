@@ -71,6 +71,10 @@ public class SettingsDialog extends JDialog {
     panelList
         .add(new SettingsPanel(
             parent,
+            Messages.getString("SettingsDialog.AdditionalExiftoolArguments"), SETTING.EXIFTOOL_ARGUMENTS, "", TYPE.STRING)); //$NON-NLS-1$//$NON-NLS-2$
+    panelList
+        .add(new SettingsPanel(
+            parent,
             Messages.getString("SettingsDialog.GPSBabelPath"), SETTING.GPSBABEL_PATH, "gpsbabel", TYPE.FILE)); //$NON-NLS-1$//$NON-NLS-2$
     panelList
         .add(new SettingsPanel(

@@ -51,6 +51,8 @@ public class Settings {
     LAST_GPX_FILE_OPENED,
     /** Preference key for storing the path to the exiftool executable */
     EXIFTOOL_PATH,
+    /** Preferences key for additional exiftool arguments */
+    EXIFTOOL_ARGUMENTS,
     /** Preference key for storing the path to the GPSBabel executable */
     GPSBABEL_PATH,
     /** Preferences key for the protocol used by GPSBabel (the argument for -i) */

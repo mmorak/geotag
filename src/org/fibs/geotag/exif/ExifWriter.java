@@ -89,6 +89,19 @@ public class ExifWriter {
     command.add("-n"); //$NON-NLS-1$
     // option -s: use tag names instead of descriptions
     command.add("-s"); //$NON-NLS-1$
+    // there might be additional exiftool arguments required
+    String additionalArguments = Settings.get(SETTING.EXIFTOOL_ARGUMENTS, ""); //$NON-NLS-1$
+    if (additionalArguments.length() > 0) {
+      StringTokenizer tokenizer = new StringTokenizer(additionalArguments);
+      while (tokenizer.hasMoreTokens()) {
+        String argument = tokenizer.nextToken();
+        command.add(argument);
+      }
+    }
+    for (String string : command) {
+      System.out.print(string + ' ');
+    }
+    System.out.println();
     // the GPSVersion needs to be set to 2.2.0.0
     command.add("-GPSVersionID=2 2 0 0"); //$NON-NLS-1$
     // the latitude
@@ -160,6 +173,19 @@ public class ExifWriter {
     command.add("-n"); //$NON-NLS-1$
     // option -s: use tag names instead of descriptions
     command.add("-s"); //$NON-NLS-1$
+    // there might be additional exiftool arguments required
+    String additionalArguments = Settings.get(SETTING.EXIFTOOL_ARGUMENTS, ""); //$NON-NLS-1$
+    if (additionalArguments.length() > 0) {
+      StringTokenizer tokenizer = new StringTokenizer(additionalArguments);
+      while (tokenizer.hasMoreTokens()) {
+        String argument = tokenizer.nextToken();
+        command.add(argument);
+      }
+    }
+    for (String string : command) {
+      System.out.print(string + ' ');
+    }
+    System.out.println();
     // the GPSVersion needs to be set to 2.2.0.0
     command.add("-XMP:GPSVersionID=2.2.0.0"); //$NON-NLS-1$
     // the latitude

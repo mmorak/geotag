@@ -1,3 +1,6 @@
+2007-09-07 Release 0.014
+  Added possibility to specify additional exiftool arguments.
+  
 2007-09-07 Release 0.013
   The column headers now have tool tips.  
   Column widths are now saved as preferences.
