@@ -16,15 +16,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.fibs.geotag.ui;
+package org.fibs.geotag.table;
 
 import java.util.ArrayList;
 import java.util.Collections;
 
-import javax.swing.table.DefaultTableModel;
+import javax.swing.table.AbstractTableModel;
 
 import org.fibs.geotag.Messages;
 import org.fibs.geotag.data.ImageInfo;
+import org.fibs.geotag.table.ImagesTableColumns.COLUMN;
+import org.fibs.geotag.util.Util;
 
 /**
  * A representation of the data displayed by the main Window
@@ -33,7 +35,7 @@ import org.fibs.geotag.data.ImageInfo;
  * 
  */
 @SuppressWarnings("serial")
-public class ImagesTableModel extends DefaultTableModel {
+public class ImagesTableModel extends AbstractTableModel {
 
   /**
    * An enumeration of columns
@@ -41,9 +43,6 @@ public class ImagesTableModel extends DefaultTableModel {
    * @author Andreas Schneider
    * 
    */
-
-  /** The number of columns */
-  public static final int NUM_COLUMNS = ImagesTableColumns.values().length;
 
   /** The data to be displayed */
   private ArrayList<ImageInfo> values = new ArrayList<ImageInfo>();
@@ -57,6 +56,15 @@ public class ImagesTableModel extends DefaultTableModel {
       Messages.getString("ImagesTableModel.Latitude"), //$NON-NLS-1$
       Messages.getString("ImagesTableModel.Longitude"), //$NON-NLS-1$
       Messages.getString("ImagesTableModel.Altitude") }; //$NON-NLS-1$
+
+  /** How many decimals of the latitude to display */
+  public static final int LATITUDE_DECIMALS = 7;
+
+  /** How many decimals of the longitude to display */
+  public static final int LONGITUDE_DECIMALS = 7;
+
+  /** How many decimals of the altitude to display */
+  public static final int ALTITUDE_DECIMALS = 1;
 
   /**
    * Can be called to re-sort the table (mainly when time-offsets change)
@@ -93,9 +101,11 @@ public class ImagesTableModel extends DefaultTableModel {
   }
 
   /**
-   * @see javax.swing.table.DefaultTableModel#removeRow(int)
+   * Remove a row from the table model
+   * 
+   * @param row
+   *          the index of the row to be removed
    */
-  @Override
   public void removeRow(int row) {
     values.remove(row);
   }
@@ -174,23 +184,47 @@ public class ImagesTableModel extends DefaultTableModel {
   @Override
   public Object getValueAt(int row, int column) {
     ImageInfo imageInfo = values.get(row);
-    switch (ImagesTableColumns.values()[column]) {
-      case IMAGE_NAME_COLUMN:
+    switch (COLUMN.values()[column]) {
+      case IMAGE_NAME:
         return imageInfo.getName();
-      case CREATE_DATE_COLUMN:
-        return values.get(row).getCreateDate();
-      case GPS_DATE_COLUMN:
+      case CAMERA_DATE:
+        return values.get(row).getCameraDate();
+      case GPS_DATE:
         return values.get(row).getGPSDateTime();
-      case TIME_OFFSET_COLUMN:
+      case TIME_OFFSET:
         return values.get(row).getOffsetString();
-      case LATITUDE_COLUMN:
-        return values.get(row).getGPSLatitude();
-      case LONGITUDE_COLUMN:
-        return values.get(row).getGPSLongitude();
-      case ALTITUDE_COLUMN:
-        return values.get(row).getGPSAltitude();
+      case LATITUDE:
+        return round(values.get(row).getGPSLatitude(), LATITUDE_DECIMALS);
+      case LONGITUDE:
+        return round(values.get(row).getGPSLongitude(), LONGITUDE_DECIMALS);
+      case ALTITUDE:
+        return round(values.get(row).getGPSAltitude(), ALTITUDE_DECIMALS);
     }
     return null;
+  }
+
+  /**
+   * We don't need to display latitude, longitude and altitude to all available
+   * decimals. this method cuts off the String after the specified number of
+   * decimals after the decimal point
+   * 
+   * @param value
+   * @param decimals
+   * @return The rounded value
+   */
+  private String round(String value, int decimals) {
+    String result = value;
+    if (value != null && value.length() > 0) {
+      try {
+        double theValue = Double.parseDouble(value);
+        double factor = Util.powerOf10(decimals);
+        double rounded = Math.round(factor * theValue) / factor;
+        result = Double.toString(rounded);
+      } catch (NumberFormatException e) {
+        e.printStackTrace();
+      }
+    }
+    return result;
   }
 
 }

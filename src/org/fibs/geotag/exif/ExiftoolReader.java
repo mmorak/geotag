@@ -25,7 +25,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.fibs.geotag.Settings;
-import org.fibs.geotag.data.EditCreateDate;
+import org.fibs.geotag.Settings.SETTING;
+import org.fibs.geotag.data.EditCameraDate;
 import org.fibs.geotag.data.EditGPSAltitude;
 import org.fibs.geotag.data.EditGPSDateTime;
 import org.fibs.geotag.data.EditGPSLatitude;
@@ -123,7 +124,7 @@ public class ExiftoolReader implements ExifReader {
     ImageInfo imageInfo = reuseImageInfo;
     // First we build the command line
     List<String> command = new ArrayList<String>();
-    command.add(Settings.get(Settings.EXIFTOOL_PATH, "exiftool")); //$NON-NLS-1$
+    command.add(Settings.get(SETTING.EXIFTOOL_PATH, "exiftool")); //$NON-NLS-1$
     String[] arguments = exifToolArguments;
     if (ImageFileFilter.isXmpFile(file)) {
       arguments = exifToolXmpArguments;
@@ -202,14 +203,14 @@ public class ExiftoolReader implements ExifReader {
             // Exiftool honours the order of arguments
             // So the CreateDate will come first and the
             // DateTimeOriginal second.
-            String createDate;
+            String cameraDate;
             if (text.startsWith(DATE_TIME_ORIGINAL_TAG)) {
-              createDate = text.substring(DATE_TIME_ORIGINAL_TAG.length());
+              cameraDate = text.substring(DATE_TIME_ORIGINAL_TAG.length());
             } else {
               // CreateDate is the only option left
-              createDate = text.substring(CREATE_DATE_TAG.length());
+              cameraDate = text.substring(CREATE_DATE_TAG.length());
             }
-            new EditCreateDate(imageInfo, createDate);
+            new EditCameraDate(imageInfo, cameraDate);
             // we also set the GPS date to a good guess if it hasn't been
             // set yet.
             imageInfo.setGPSDateTime();

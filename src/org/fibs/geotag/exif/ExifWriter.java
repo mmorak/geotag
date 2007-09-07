@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 import org.fibs.geotag.Settings;
+import org.fibs.geotag.Settings.SETTING;
 import org.fibs.geotag.data.ImageInfo;
 import org.fibs.geotag.image.ImageFileFilter;
 import org.fibs.geotag.util.FileUtil;
@@ -52,7 +53,7 @@ public class ExifWriter {
     if (xmpFileName != null) {
       xmpFile = new File(xmpFileName);
     }
-    boolean xmpFilesOnly = Settings.getBoolean(Settings.XMP_FILES_ONLY, false);
+    boolean xmpFilesOnly = Settings.get(SETTING.XMP_FILES_ONLY, false);
     if (xmpFilesOnly && xmpFile != null) {
       // Must write XMP
       return writeXMP(imageInfo, xmpFile);
@@ -82,7 +83,7 @@ public class ExifWriter {
     // first we build the command
     List<String> command = new ArrayList<String>();
     // the command name
-    String exiftool = Settings.get(Settings.EXIFTOOL_PATH, "exiftool"); //$NON-NLS-1$
+    String exiftool = Settings.get(SETTING.EXIFTOOL_PATH, "exiftool"); //$NON-NLS-1$
     command.add(exiftool);
     // option -n: -n write values as numbers instead of words
     command.add("-n"); //$NON-NLS-1$
@@ -153,7 +154,7 @@ public class ExifWriter {
     // first we build the command
     List<String> command = new ArrayList<String>();
     // the command name
-    String exiftool = Settings.get(Settings.EXIFTOOL_PATH, "exiftool"); //$NON-NLS-1$
+    String exiftool = Settings.get(SETTING.EXIFTOOL_PATH, "exiftool"); //$NON-NLS-1$
     command.add(exiftool);
     // option -n: -n write values as numbers instead of words
     command.add("-n"); //$NON-NLS-1$

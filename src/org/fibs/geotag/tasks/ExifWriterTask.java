@@ -25,7 +25,7 @@ import org.fibs.geotag.Messages;
 import org.fibs.geotag.data.ImageInfo;
 import org.fibs.geotag.data.ImageInfo.DATA_SOURCE;
 import org.fibs.geotag.exif.ExifWriter;
-import org.fibs.geotag.ui.ImagesTableModel;
+import org.fibs.geotag.table.ImagesTableModel;
 
 /**
  * A class writing the location information for an image to the EXIF data of the

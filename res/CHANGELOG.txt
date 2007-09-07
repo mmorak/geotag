@@ -1,3 +1,9 @@
+2007-09-07 Release 0.013
+  The column headers now have tool tips.  
+  Column widths are now saved as preferences.
+  Column positions are now saved as preferences.
+  The table font can now be changed.
+  
 2007-09-05 Release 0.012
   Added handling of PPM thumbnail images.
   

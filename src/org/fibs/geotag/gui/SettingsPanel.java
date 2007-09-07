@@ -16,9 +16,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.fibs.geotag.ui;
+package org.fibs.geotag.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -26,11 +27,14 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
 
 import org.fibs.geotag.Settings;
+import org.fibs.geotag.Settings.SETTING;
+import org.fibs.geotag.util.FontUtil;
 
 /**
  * A panel to display and edit settings
@@ -40,56 +44,54 @@ import org.fibs.geotag.Settings;
  */
 @SuppressWarnings("serial")
 public class SettingsPanel extends JPanel {
-  
+
   /**
-   * An enum for the type of setting 
+   * An enum for the type of setting
    */
   public enum TYPE {
     /** Setting type String */
     STRING,
     /** Setting type Integer */
     INTEGER,
+    /** Setting type Boolean */
+    BOOLEAN,
     /** Setting type File */
     FILE,
-    /** Setting type Boolean */
-    BOOLEAN
+    /** Setting type Font */
+    FONT
   }
-  
-//  /** The setting is a string value */
-//  public static final int STRING = 1;
-//
-//  /** The setting is an integer */
-//  public static final int INTEGER = 2;
-//
-//  /** The setting is a file name */
-//  public static final int FILE = 3;
-  
-  
+
+  /** the parent frame */
+  JFrame parent;
+
   /** The settings key */
-  private String setting;
+  SETTING setting;
 
   /** The settings type - one of STRING, INTEGER or FILE */
-  private TYPE type;
+  TYPE type;
 
   /** The default value for this setting */
-  private String defaultValue;
+  String defaultValue;
 
   /** The text field containing the value */
   JTextField textField;
 
   /** The check box for boolean values */
   JCheckBox checkBox;
+
   /**
+   * @param parent
    * @param title
    * @param setting
    * @param defaultValue
    * @param type
    */
-  public SettingsPanel(String title, String setting, String defaultValue,
-      TYPE type) {
+  public SettingsPanel(JFrame parent, String title, SETTING setting,
+      String defaultValue, TYPE type) {
     super(new BorderLayout());
     TitledBorder border = BorderFactory.createTitledBorder(title);
     setBorder(border);
+    this.parent = parent;
     this.setting = setting;
     this.type = type;
     this.defaultValue = defaultValue;
@@ -109,9 +111,29 @@ public class SettingsPanel extends JPanel {
       });
       filePanel.add(browseButton, BorderLayout.EAST);
       add(filePanel, BorderLayout.NORTH);
+    } else if (type == TYPE.FONT) {
+      JPanel fontPanel = new JPanel(new BorderLayout());
+      textField = new JTextField(Settings.get(setting, defaultValue));
+      fontPanel.add(textField, BorderLayout.CENTER);
+      JButton browseButton = new JButton("..."); //$NON-NLS-1$
+      browseButton.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          Font font = FontUtil.fontFromID(Settings.get(
+              SettingsPanel.this.setting, SettingsPanel.this.defaultValue));
+          FontChooser fontChooser = new FontChooser(SettingsPanel.this.parent,
+              font);
+          if (fontChooser.showDialog() != null) {
+            Font selectedFont = fontChooser.getSelectedFont();
+            textField.setText(FontUtil.fontToID(selectedFont));
+          }
+        }
+      });
+      fontPanel.add(browseButton, BorderLayout.EAST);
+      add(fontPanel, BorderLayout.NORTH);
     } else if (type == TYPE.BOOLEAN) {
       checkBox = new JCheckBox(title);
-      boolean selelected = Boolean.parseBoolean(Settings.get(setting, defaultValue));
+      boolean selelected = Boolean.parseBoolean(Settings.get(setting,
+          defaultValue));
       checkBox.setSelected(selelected);
       add(checkBox, BorderLayout.NORTH);
     } else {
@@ -134,7 +156,7 @@ public class SettingsPanel extends JPanel {
   /**
    * @return the setting
    */
-  public String getSetting() {
+  public SETTING getSetting() {
     return setting;
   }
 

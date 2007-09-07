@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.fibs.geotag.ui;
+package org.fibs.geotag.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -53,6 +53,7 @@ import org.fibs.geotag.License;
 import org.fibs.geotag.Messages;
 import org.fibs.geotag.Settings;
 import org.fibs.geotag.Version;
+import org.fibs.geotag.Settings.SETTING;
 import org.fibs.geotag.data.ImageInfo;
 import org.fibs.geotag.data.ImageInfo.THUMBNAIL_STATUS;
 import org.fibs.geotag.dcraw.Dcraw;
@@ -62,6 +63,8 @@ import org.fibs.geotag.external.ExternalUpdateConsumer;
 import org.fibs.geotag.googleearth.KmlRequestHandler;
 import org.fibs.geotag.gpsbabel.GPSBabel;
 import org.fibs.geotag.image.ImageFileFilter;
+import org.fibs.geotag.table.ImagesTable;
+import org.fibs.geotag.table.ImagesTableModel;
 import org.fibs.geotag.tasks.BackgroundTask;
 import org.fibs.geotag.tasks.BackgroundTaskListener;
 import org.fibs.geotag.tasks.ExifReaderTask;
@@ -212,12 +215,12 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
     });
     Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
     int width = (int) (screenSize.getWidth() / 2);
-    width = Settings.getInt(Settings.MAIN_WINDOW_WIDHT, width);
+    width = Settings.get(SETTING.MAIN_WINDOW_WIDHTH, width);
     int height = (int) (screenSize.getHeight() * 0.95);
-    height = Settings.getInt(Settings.MAIN_WINDOW_HEIGHT, height);
+    height = Settings.get(SETTING.MAIN_WINDOW_HEIGHT, height);
     setSize(width, height);
-    int x = Settings.getInt(Settings.MAIN_WINDOW_X, 0);
-    int y = Settings.getInt(Settings.MAIN_WINDOW_Y, 0);
+    int x = Settings.get(SETTING.MAIN_WINDOW_X, 0);
+    int y = Settings.get(SETTING.MAIN_WINDOW_Y, 0);
     setLocation(x, y);
     tableScrollPane = new JScrollPane(table);
     previewComponent = new ImageComponent(Messages
@@ -242,7 +245,7 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
         super.windowOpened(e);
         // the preview component should have a 4:3 aspect ratio by default
         int previewHeight = (int) (getWidth() / 4.0 * 3.0);
-        previewHeight = Settings.getInt(Settings.PREVIEW_HEIGHT, previewHeight);
+        previewHeight = Settings.get(SETTING.PREVIEW_HEIGHT, previewHeight);
         splitPane.setDividerLocation((getHeight() - previewHeight));
       }
 
@@ -252,12 +255,13 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
             .getString("MainWindow.DoYouReallyWantToExit"), //$NON-NLS-1$
             Messages.getString("MainWindow.ExitProgram"), //$NON-NLS-1$
             JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-          Settings.putInt(Settings.MAIN_WINDOW_X, getLocation().x);
-          Settings.putInt(Settings.MAIN_WINDOW_Y, getLocation().y);
-          Settings.putInt(Settings.MAIN_WINDOW_HEIGHT, getHeight());
-          Settings.putInt(Settings.MAIN_WINDOW_WIDHT, getWidth());
-          Settings.putInt(Settings.PREVIEW_HEIGHT, getHeight()
+          Settings.put(SETTING.MAIN_WINDOW_X, getLocation().x);
+          Settings.put(SETTING.MAIN_WINDOW_Y, getLocation().y);
+          Settings.put(SETTING.MAIN_WINDOW_HEIGHT, getHeight());
+          Settings.put(SETTING.MAIN_WINDOW_WIDHTH, getWidth());
+          Settings.put(SETTING.PREVIEW_HEIGHT, getHeight()
               - splitPane.getDividerLocation());
+          table.saveColumnSettings();
           Settings.flush();
           System.exit(0);
         }
@@ -364,6 +368,8 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
         // the menu item to load tracks from the GPS should
         // only be enabled if GPSBabel is available
         loadTrackFromGpsItem.setEnabled(GPSBabel.isAvailable());
+        // we might need to change the font
+        table.usePreferredFont();
       }
     });
     fileMenu.add(settingsItem);
@@ -505,7 +511,7 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
    */
   void addFile() {
     JFileChooser chooser = new JFileChooser();
-    String fileName = Settings.get(Settings.LAST_FILE_OPENED, null);
+    String fileName = Settings.get(SETTING.LAST_FILE_OPENED, null);
     if (fileName != null) {
       File file = new File(fileName);
       if (file.exists()) {
@@ -517,7 +523,7 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
     if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
       File[] files = chooser.getSelectedFiles();
       // just save the first selected file
-      Settings.put(Settings.LAST_FILE_OPENED, files[0].getPath());
+      Settings.put(SETTING.LAST_FILE_OPENED, files[0].getPath());
       Settings.flush();
       ExifReaderTask task = new ExifReaderTask(ADD_FILE, tableModel, files);
       task.execute();
@@ -529,7 +535,7 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
    */
   void addDirectory() {
     JFileChooser chooser = new JFileChooser();
-    String directoryName = Settings.get(Settings.LAST_DIRECTORY_OPENED, null);
+    String directoryName = Settings.get(SETTING.LAST_DIRECTORY_OPENED, null);
     if (directoryName != null) {
       File directory = new File(directoryName);
       if (directory.exists() && directory.isDirectory()) {
@@ -539,7 +545,7 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
     chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
     if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
       File directory = chooser.getSelectedFile();
-      Settings.put(Settings.LAST_DIRECTORY_OPENED, directory.getPath());
+      Settings.put(SETTING.LAST_DIRECTORY_OPENED, directory.getPath());
       Settings.flush();
       File[] files = directory.listFiles(new ImageFileFilter());
       ExifReaderTask task = new ExifReaderTask(ADD_FILES, tableModel, files);
@@ -552,7 +558,7 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
    */
   void addTrackFromFile() {
     JFileChooser chooser = new JFileChooser();
-    String lastFile = Settings.get(Settings.LAST_GPX_FILE_OPENED, null);
+    String lastFile = Settings.get(SETTING.LAST_GPX_FILE_OPENED, null);
     if (lastFile != null) {
       File file = new File(lastFile);
       if (file.exists()) {
@@ -563,7 +569,7 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
     chooser.setMultiSelectionEnabled(true);
     if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
       File file = chooser.getSelectedFile();
-      Settings.put(Settings.LAST_GPX_FILE_OPENED, file.getPath());
+      Settings.put(SETTING.LAST_GPX_FILE_OPENED, file.getPath());
       Settings.flush();
       Gpx gpx = GpxReader.readFile(file);
       int numTrackpoints = 0;
@@ -587,7 +593,7 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
    */
   void saveTrack() {
     JFileChooser chooser = new JFileChooser();
-    String lastFile = Settings.get(Settings.LAST_GPX_FILE_OPENED, null);
+    String lastFile = Settings.get(SETTING.LAST_GPX_FILE_OPENED, null);
     if (lastFile != null) {
       File file = new File(lastFile);
       if (file.exists() && file.getParentFile() != null) {

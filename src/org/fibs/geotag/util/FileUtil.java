@@ -15,14 +15,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package org.fibs.geotag.util;
 
 import java.io.File;
 
 /**
  * A utility class dealing with files
+ * 
  * @author Andreas Schneider
- *
+ * 
  */
 public class FileUtil {
   /**
@@ -36,10 +38,11 @@ public class FileUtil {
     return getExtension(file.getName());
   }
 
-
   /**
    * Determine the extension of a file name
-   * @param fileName the name of the file
+   * 
+   * @param fileName
+   *          the name of the file
    * @return The extension if found, null otherwise
    */
   private static String getExtension(String fileName) {
@@ -50,22 +53,24 @@ public class FileUtil {
     }
     return extension;
   }
-  
-  
+
   /**
    * Create a file name where the file's extension is replaced
-   * @param fileName The original file name
-   * @param replacement The new extesion
+   * 
+   * @param fileName
+   *          The original file name
+   * @param replacement
+   *          The new extesion
    * @return The file name with a new extension, or null if not possible
    */
-  public static String replaceExtension(String fileName,String replacement) {
+  public static String replaceExtension(String fileName, String replacement) {
     String extension = getExtension(fileName);
     if (extension == null) {
       return null;
     }
-    String basename = fileName.substring(0, fileName.length() - extension.length());
-    return basename+replacement;
+    String basename = fileName.substring(0, fileName.length()
+        - extension.length());
+    return basename + replacement;
   }
-  
 
 }

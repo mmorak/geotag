@@ -118,8 +118,8 @@ public class ImageInfo implements Comparable<ImageInfo> {
   /** The image height in pixels */
   private int height;
 
-  /** The CreateDate EXIF entry */
-  private String createDate;
+  /** The CameraDate entry */
+  private String cameraDate;
 
   /** THE GPSLatitude EXIF entry */
   private String GPSLatitude;
@@ -238,10 +238,12 @@ public class ImageInfo implements Comparable<ImageInfo> {
     /* sequence numbers start at 1, array indices start at 0 */
     return instances.get(sequenceNumer - 1);
   }
-  
+
   /**
    * Return the ImageInfo for a file
-   * @param filePath The file's path
+   * 
+   * @param filePath
+   *          The file's path
    * @return The ImageInfo for that file, or null if not found
    */
   public static ImageInfo getImageInfo(String filePath) {
@@ -362,7 +364,7 @@ public class ImageInfo implements Comparable<ImageInfo> {
    *         Returns <code>Double.NaN</code> if the difference is undefined.
    */
   public int getOffset() {
-    return calculateOffset(getGPSDateTime(), getCreateDate());
+    return calculateOffset(getGPSDateTime(), getCameraDate());
   }
 
   /**
@@ -393,20 +395,20 @@ public class ImageInfo implements Comparable<ImageInfo> {
   }
 
   /**
-   * @return the createDate
+   * @return the cameraDate
    */
-  public String getCreateDate() {
-    return createDate;
+  public String getCameraDate() {
+    return cameraDate;
   }
 
   /**
    * This has package visibility to force the use of undo-able edits
    * 
-   * @param createDate
-   *          the createDate to set
+   * @param cameraDate
+   *          the camera date to set
    */
-  void setCreateDate(String createDate) {
-    this.createDate = createDate;
+  void setCameraDate(String cameraDate) {
+    this.cameraDate = cameraDate;
   }
 
   /**
@@ -499,12 +501,12 @@ public class ImageInfo implements Comparable<ImageInfo> {
    * isn't. this can have public visibility as it uses an undo-able edit.
    */
   public void setGPSDateTime() {
-    if (GPSDateTime == null && createDate != null) {
+    if (GPSDateTime == null && cameraDate != null) {
       // create a DateFormat for the local time zone
       DateFormat format = new SimpleDateFormat(ImageInfo.getDateFormatPattern());
       try {
         // parse the date as local time zone
-        Date date = format.parse(createDate);
+        Date date = format.parse(cameraDate);
         // and format it back to GMT
         format.setTimeZone(TimeZone.getTimeZone("GMT")); //$NON-NLS-1$
         String gmtTime = format.format(date);

@@ -32,7 +32,7 @@ import org.fibs.geotag.exif.ExifReader;
 import org.fibs.geotag.exif.ExiftoolReader;
 import org.fibs.geotag.exif.MetadataExtractorReader;
 import org.fibs.geotag.image.ImageFileFilter;
-import org.fibs.geotag.ui.ImagesTableModel;
+import org.fibs.geotag.table.ImagesTableModel;
 import org.fibs.geotag.util.FileUtil;
 
 /**

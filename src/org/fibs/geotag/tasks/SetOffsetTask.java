@@ -24,7 +24,7 @@ import java.util.List;
 import org.fibs.geotag.Messages;
 import org.fibs.geotag.data.EditGPSDateTime;
 import org.fibs.geotag.data.ImageInfo;
-import org.fibs.geotag.ui.ImagesTableModel;
+import org.fibs.geotag.table.ImagesTableModel;
 
 /**
  * a background task for changing the time offset for a list of images
@@ -100,7 +100,7 @@ public class SetOffsetTask extends UndoableBackgroundTask<ImageInfo> {
       currentProgress++;
       setProgressMessage();
       try {
-        String gmtDate = ImageInfo.subtractOffset(imageInfo.getCreateDate(),
+        String gmtDate = ImageInfo.subtractOffset(imageInfo.getCameraDate(),
             offset);
         new EditGPSDateTime(imageInfo, gmtDate);
         publish(imageInfo);

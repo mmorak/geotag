@@ -26,6 +26,7 @@ import javax.swing.ImageIcon;
 import javax.swing.SwingWorker;
 
 import org.fibs.geotag.Settings;
+import org.fibs.geotag.Settings.SETTING;
 import org.fibs.geotag.data.ImageInfo;
 import org.fibs.geotag.data.ImageInfo.THUMBNAIL_STATUS;
 import org.fibs.geotag.dcraw.Dcraw;
@@ -95,7 +96,7 @@ public class ThumbnailWorker extends SwingWorker<Void, ImageInfo> {
     imageInfo.setHeight(rotatedImage.getHeight());
     // now we create a thumbnail image
     BufferedImage thumbImage = ThumbnailGenerator.createThumbnailImage(
-        rotatedImage, Settings.getInt(Settings.THUMBNAIL_SIZE,
+        rotatedImage, Settings.get(SETTING.THUMBNAIL_SIZE,
             DEFAULT_THUMBNAIL_SIZE));
     ImageIcon imageIcon = new ImageIcon(thumbImage);
     imageInfo.setThumbnail(imageIcon);

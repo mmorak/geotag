@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.fibs.geotag.Geotag;
 import org.fibs.geotag.Settings;
+import org.fibs.geotag.Settings.SETTING;
 import org.fibs.geotag.util.InputStreamGobbler;
 
 /**
@@ -34,7 +35,7 @@ public class GPSBabel {
     boolean found = true; // set to false if we fail to run it
     // first we build the command
     List<String> command = new ArrayList<String>();
-    String exiftool = Settings.get(Settings.GPSBABEL_PATH, "gpsbabel"); //$NON-NLS-1$
+    String exiftool = Settings.get(SETTING.GPSBABEL_PATH, "gpsbabel"); //$NON-NLS-1$
     command.add(exiftool);
     // option -V: write version information
     command.add("-V"); //$NON-NLS-1$
@@ -94,7 +95,7 @@ public class GPSBabel {
     List<String> command = new ArrayList<String>();
     // -vs -t -i
     // first the executable
-    command.add(Settings.get(Settings.GPSBABEL_PATH, "gpsbabel")); //$NON-NLS-1$
+    command.add(Settings.get(SETTING.GPSBABEL_PATH, "gpsbabel")); //$NON-NLS-1$
     // next the undocumented -vs argument for getting progress updates
     command.add("-vs"); //$NON-NLS-1$
     // next -t to indicate that we're interested in tracks
@@ -102,11 +103,11 @@ public class GPSBabel {
     // next -i to say that the next argument is the input format
     command.add("-i"); //$NON-NLS-1$
     // next the input format/protocol - garmin seems a sensible default
-    command.add(Settings.get(Settings.GPSBABEL_PROTOCOL, "garmin")); //$NON-NLS-1$
+    command.add(Settings.get(SETTING.GPSBABEL_PROTOCOL, "garmin")); //$NON-NLS-1$
     // next -f to indicate that the next argument will be the input file/device
     command.add("-f"); //$NON-NLS-1$
     // now the input device or file
-    command.add(Settings.get(Settings.GPSBABEL_DEVICE, getDefaultDevice()));
+    command.add(Settings.get(SETTING.GPSBABEL_DEVICE, getDefaultDevice()));
     // next -o to say that next argument is the output format
     command.add("-o"); //$NON-NLS-1$
     // next the output format. We insist on GPX.

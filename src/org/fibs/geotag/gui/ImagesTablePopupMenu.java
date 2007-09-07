@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.fibs.geotag.ui;
+package org.fibs.geotag.gui;
 
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -43,6 +43,8 @@ import org.fibs.geotag.data.ImageInfo;
 import org.fibs.geotag.exif.Exiftool;
 import org.fibs.geotag.googleearth.GoogleEarthLauncher;
 import org.fibs.geotag.image.ThumbnailWorker;
+import org.fibs.geotag.table.ImagesTable;
+import org.fibs.geotag.table.ImagesTableModel;
 import org.fibs.geotag.tasks.CopyLocationTask;
 import org.fibs.geotag.tasks.ExifWriterTask;
 import org.fibs.geotag.tasks.FillGapsTask;
@@ -573,9 +575,9 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
     DateFormat dateFormat = new SimpleDateFormat(ImageInfo
         .getDateFormatPattern());
     try {
-      Date createDate = dateFormat.parse(imageInfo.getCreateDate());
+      Date cameraDate = dateFormat.parse(imageInfo.getCameraDate());
       Calendar createCalendar = Calendar.getInstance();
-      createCalendar.setTime(createDate);
+      createCalendar.setTime(cameraDate);
       DateTimeChooser chooser = new DateTimeChooser(
           parent,
           Messages.getString("ImagesTablePopupMenu.SelectDateAndTime"), createCalendar, false); //$NON-NLS-1$
@@ -585,7 +587,7 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
         dateFormat.setTimeZone(TimeZone.getTimeZone("GMT")); //$NON-NLS-1$
         String gmtTime = dateFormat.format(chosenDate.getTime());
         final int offset = ImageInfo.calculateOffset(gmtTime, imageInfo
-            .getCreateDate());
+            .getCameraDate());
         List<ImageInfo> imageList = new ArrayList<ImageInfo>();
         imageList.add(imageInfo);
         SetOffsetTask setOffsetTask = new SetOffsetTask(null,

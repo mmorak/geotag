@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.fibs.geotag.Settings;
+import org.fibs.geotag.Settings.SETTING;
 import org.fibs.geotag.util.InputStreamGobbler;
 
 /**
@@ -52,7 +53,7 @@ public class Exiftool {
     boolean found = true; // set to false if we fail to run it
     // first we build the command
     List<String> command = new ArrayList<String>();
-    String exiftool = Settings.get(Settings.EXIFTOOL_PATH, "exiftool"); //$NON-NLS-1$
+    String exiftool = Settings.get(SETTING.EXIFTOOL_PATH, "exiftool"); //$NON-NLS-1$
     command.add(exiftool);
     // option -ver: just write the version number
     command.add("-ver"); //$NON-NLS-1$

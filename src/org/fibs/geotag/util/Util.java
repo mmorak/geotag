@@ -107,6 +107,22 @@ public class Util {
   }
 
   /**
+   * Calculate 10 to the power of a number Could call Math.pow, but that would
+   * be a waste of CPU resources.
+   * 
+   * @param number
+   *          An integer
+   * @return 10 to the power of that integer
+   */
+  public static long powerOf10(int number) {
+    long result = 1;
+    for (int i = 1; i <= number; i++) {
+      result *= 10;
+    }
+    return result;
+  }
+
+  /**
    * Split a line of text in lines no longer than maxLength characters. this
    * routine assumes that there are no words longer than maxLength.
    * 

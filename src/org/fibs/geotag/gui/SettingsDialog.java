@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.fibs.geotag.ui;
+package org.fibs.geotag.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -32,11 +32,14 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.UIManager;
 
 import org.fibs.geotag.Messages;
 import org.fibs.geotag.Settings;
+import org.fibs.geotag.Settings.SETTING;
 import org.fibs.geotag.gpsbabel.GPSBabel;
-import org.fibs.geotag.ui.SettingsPanel.TYPE;
+import org.fibs.geotag.gui.SettingsPanel.TYPE;
+import org.fibs.geotag.util.FontUtil;
 
 /**
  * A dialog for changing the settings of the program
@@ -63,20 +66,32 @@ public class SettingsDialog extends JDialog {
     setMinimumSize(minimumSize);
     panelList
         .add(new SettingsPanel(
-            Messages.getString("SettingsDialog.ExiftoolPath"), Settings.EXIFTOOL_PATH, "exiftool", TYPE.FILE)); //$NON-NLS-1$ //$NON-NLS-2$
+            parent,
+            Messages.getString("SettingsDialog.ExiftoolPath"), SETTING.EXIFTOOL_PATH, "exiftool", TYPE.FILE)); //$NON-NLS-1$ //$NON-NLS-2$
     panelList
         .add(new SettingsPanel(
-            Messages.getString("SettingsDialog.GPSBabelPath"), Settings.GPSBABEL_PATH, "gpsbabel", TYPE.FILE)); //$NON-NLS-1$//$NON-NLS-2$
+            parent,
+            Messages.getString("SettingsDialog.GPSBabelPath"), SETTING.GPSBABEL_PATH, "gpsbabel", TYPE.FILE)); //$NON-NLS-1$//$NON-NLS-2$
     panelList
         .add(new SettingsPanel(
-            Messages.getString("SettingsDialog.GPSBabelProtocol"), Settings.GPSBABEL_PROTOCOL, "garmin", TYPE.STRING)); //$NON-NLS-1$//$NON-NLS-2$
+            parent,
+            Messages.getString("SettingsDialog.GPSBabelProtocol"), SETTING.GPSBABEL_PROTOCOL, "garmin", TYPE.STRING)); //$NON-NLS-1$//$NON-NLS-2$
     panelList
         .add(new SettingsPanel(
-            Messages.getString("SettingsDialog.GPSBabelDevice"), Settings.GPSBABEL_DEVICE, GPSBabel.getDefaultDevice(), TYPE.STRING)); //$NON-NLS-1$
+            parent,
+            Messages.getString("SettingsDialog.GPSBabelDevice"), SETTING.GPSBABEL_DEVICE, GPSBabel.getDefaultDevice(), TYPE.STRING)); //$NON-NLS-1$
     panelList
         .add(new SettingsPanel(
-            Messages.getString("SettingsDialog.DcrawPath"), Settings.DCRAW_PATH, "dcraw", TYPE.FILE)); //$NON-NLS-1$ //$NON-NLS-2$
-    panelList.add(new SettingsPanel(Messages.getString("SettingsDialog.XmpFilesOnly"), Settings.XMP_FILES_ONLY,"false", TYPE.BOOLEAN));  //$NON-NLS-1$//$NON-NLS-2$
+            parent,
+            Messages.getString("SettingsDialog.DcrawPath"), SETTING.DCRAW_PATH, "dcraw", TYPE.FILE)); //$NON-NLS-1$ //$NON-NLS-2$
+    panelList
+        .add(new SettingsPanel(
+            parent,
+            Messages.getString("SettingsDialog.Font"), SETTING.FONT, FontUtil.fontToID(UIManager.getLookAndFeel().getDefaults().getFont("Table.font")), TYPE.FONT)); //$NON-NLS-1$ //$NON-NLS-2$
+    panelList
+        .add(new SettingsPanel(
+            parent,
+            Messages.getString("SettingsDialog.XmpFilesOnly"), SETTING.XMP_FILES_ONLY, "false", TYPE.BOOLEAN)); //$NON-NLS-1$//$NON-NLS-2$
     // Finally a Panel with OK and Cancel buttons
     // The flow layout looks very ugly, have to find something else
     JPanel buttonPanel = new JPanel(new FlowLayout());
@@ -86,7 +101,7 @@ public class SettingsDialog extends JDialog {
     okButton.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         for (SettingsPanel settingsPanel : panelList) {
-          String setting = settingsPanel.getSetting();
+          SETTING setting = settingsPanel.getSetting();
           String value = settingsPanel.getValue();
           if (!value.equals(Settings.get(setting, settingsPanel
               .getDefaultValue()))) {

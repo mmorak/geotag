@@ -26,7 +26,7 @@ import org.fibs.geotag.data.EditGPSAltitude;
 import org.fibs.geotag.data.EditGPSLatitude;
 import org.fibs.geotag.data.EditGPSLongitude;
 import org.fibs.geotag.data.ImageInfo;
-import org.fibs.geotag.ui.ImagesTableModel;
+import org.fibs.geotag.table.ImagesTableModel;
 
 /**
  * a background task for copying the location from one image to others

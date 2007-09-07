@@ -23,8 +23,8 @@ import java.util.List;
 
 import org.fibs.geotag.Messages;
 import org.fibs.geotag.data.ImageInfo;
+import org.fibs.geotag.table.ImagesTableModel;
 import org.fibs.geotag.track.TrackMatcher;
-import org.fibs.geotag.ui.ImagesTableModel;
 
 /**
  * A background task for filling gaps between image locations

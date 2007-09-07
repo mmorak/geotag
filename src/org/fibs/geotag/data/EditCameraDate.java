@@ -25,31 +25,31 @@ import javax.swing.undo.CannotUndoException;
 import org.fibs.geotag.GlobalUndoManager;
 
 /**
- * A class encapsulating CreateDate updates
+ * A class encapsulating CameraDate updates
  * 
  * @author Andreas Schneider
  * 
  */
 @SuppressWarnings("serial")
-public class EditCreateDate extends AbstractUndoableEdit {
-  /** the {@link ImageInfo} whose CreateDate will be updated */
+public class EditCameraDate extends AbstractUndoableEdit {
+  /** the {@link ImageInfo} whose CameraDate will be updated */
   private ImageInfo imageInfo;
 
-  /** A copy of the previous CreateDate value */
-  private String oldCreateDate;
+  /** A copy of the previous CameraDate value */
+  private String oldCameraDate;
 
-  /** The new CreateDate */
-  private String newCreateDate;
+  /** The new CameraDate */
+  private String newCameraDate;
 
   /**
    * @param imageInfo
-   * @param newCreateDate
+   * @param newCameraDate
    */
-  public EditCreateDate(ImageInfo imageInfo, String newCreateDate) {
+  public EditCameraDate(ImageInfo imageInfo, String newCameraDate) {
     this.imageInfo = imageInfo;
-    this.oldCreateDate = imageInfo.getCreateDate();
-    imageInfo.setCreateDate(newCreateDate);
-    this.newCreateDate = imageInfo.getCreateDate();
+    this.oldCameraDate = imageInfo.getCameraDate();
+    imageInfo.setCameraDate(newCameraDate);
+    this.newCameraDate = imageInfo.getCameraDate();
     GlobalUndoManager.getManager().addEdit(this);
   }
 
@@ -68,7 +68,7 @@ public class EditCreateDate extends AbstractUndoableEdit {
   @Override
   public void redo() throws CannotRedoException {
     super.redo();
-    imageInfo.setCreateDate(newCreateDate);
+    imageInfo.setCameraDate(newCameraDate);
   }
 
   /**
@@ -77,6 +77,6 @@ public class EditCreateDate extends AbstractUndoableEdit {
   @Override
   public void undo() throws CannotUndoException {
     super.undo();
-    imageInfo.setCreateDate(oldCreateDate);
+    imageInfo.setCameraDate(oldCameraDate);
   }
 }

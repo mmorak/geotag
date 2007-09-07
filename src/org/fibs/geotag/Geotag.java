@@ -25,7 +25,7 @@ import java.util.Locale;
 
 import javax.swing.UIManager;
 
-import org.fibs.geotag.ui.MainWindow;
+import org.fibs.geotag.gui.MainWindow;
 
 import com.jgoodies.looks.plastic.Plastic3DLookAndFeel;
 

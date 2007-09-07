@@ -16,12 +16,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.fibs.geotag.ui;
+package org.fibs.geotag.gui;
 
 import java.awt.AWTEvent;
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Container;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -118,8 +117,7 @@ public class DateTimeChooser extends JDialog {
     // store the date
     displayedDate = date;
     // we use a BorderLayout
-    Container container = getContentPane();
-    container.setLayout(new BorderLayout());
+    setLayout(new BorderLayout());
     // the content pane holds 3 JPanels. From top to bottom:
     // one for the the calendar, one for the time and one for the buttons
     // First we create the panel for the calendar
@@ -239,7 +237,7 @@ public class DateTimeChooser extends JDialog {
     // That's the daysPanel done - add it at the bottom of the calendarPanel
     calendarPanel.add(daysPanel, BorderLayout.SOUTH);
     // The calendarPanel goes at the top the container
-    container.add(calendarPanel, BorderLayout.NORTH);
+    add(calendarPanel, BorderLayout.NORTH);
     // at the centre of the container is the timePanel
     timePanel = new JPanel();
     // there are two components in there one for the time and one for the time
@@ -320,7 +318,7 @@ public class DateTimeChooser extends JDialog {
     timezoneComboBox.addActionListener(timezoneComboBox);
     timePanel.add(timezoneComboBox);
     // finally add the timePanel to the centre of the container
-    container.add(timePanel, BorderLayout.CENTER);
+    add(timePanel, BorderLayout.CENTER);
     // at the bottom of the dialog we place two or three buttons
     buttonPanel = new JPanel();
     buttonPanel.setLayout(new GridLayout(1, hasNowButton ? 3 : 2));
@@ -369,7 +367,7 @@ public class DateTimeChooser extends JDialog {
       buttonPanel.add(nowButton);
     }
     // add the buttonPanel at the bottom of the container
-    container.add(buttonPanel, BorderLayout.SOUTH);
+    add(buttonPanel, BorderLayout.SOUTH);
   }
 
   /**

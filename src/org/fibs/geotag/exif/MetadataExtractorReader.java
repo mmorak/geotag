@@ -24,7 +24,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
 
-import org.fibs.geotag.data.EditCreateDate;
+import org.fibs.geotag.data.EditCameraDate;
 import org.fibs.geotag.data.EditGPSAltitude;
 import org.fibs.geotag.data.EditGPSDateTime;
 import org.fibs.geotag.data.EditGPSLatitude;
@@ -85,32 +85,32 @@ public class MetadataExtractorReader implements ExifReader {
         Directory directory = (Directory) directories.next();
         // we're interested in two directories:
         if (directory.getName().equals("Exif")) { //$NON-NLS-1$
-          // The Exif directory should contain the createDate of the image
+          // The Exif directory should contain the camera date of the image
           // It's found in the DatetimeOriginal Tag and can be retrieved
           // as a simple string
-          String createDate = directory
+          String cameraDate = directory
               .getString(ExifDirectory.TAG_DATETIME_ORIGINAL);
-          if (createDate == null) {
+          if (cameraDate == null) {
             // If DateTimeOriginal is not found, we settle for DateTimeDigitized
             // which should be the same for digital cameras
-            createDate = directory
+            cameraDate = directory
                 .getString(ExifDirectory.TAG_DATETIME_DIGITIZED);
           }
-          if (createDate == null) {
+          if (cameraDate == null) {
             // Still nothing, try the DateTime tag
-            createDate = directory.getString(ExifDirectory.TAG_DATETIME);
+            cameraDate = directory.getString(ExifDirectory.TAG_DATETIME);
           }
-          if (createDate == null) {
+          if (cameraDate == null) {
             // as a last resort we use the file date
             long lastModified = file.lastModified();
             // create a DateFormat for the local time zone
             DateFormat dateFormat = new SimpleDateFormat(ImageInfo
                 .getDateFormatPattern());
             Date date = new Date(lastModified);
-            createDate = dateFormat.format(date);
+            cameraDate = dateFormat.format(date);
           }
           // update the imageinfo/exifdata
-          new EditCreateDate(imageInfo, createDate);
+          new EditCameraDate(imageInfo, cameraDate);
           // we also set the GPS date to a good guess if it hasn't been
           // set yet.
           imageInfo.setGPSDateTime();

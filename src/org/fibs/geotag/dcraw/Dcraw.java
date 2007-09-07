@@ -35,6 +35,7 @@ import java.util.List;
 import javax.imageio.ImageIO;
 
 import org.fibs.geotag.Settings;
+import org.fibs.geotag.Settings.SETTING;
 import org.fibs.geotag.util.InputStreamGobbler;
 
 import com.acme.JPM.Decoders.PpmDecoder;
@@ -68,7 +69,7 @@ public class Dcraw {
     // dcraw doesn't have an option to print a version number, so we
     // create a command that prints a short error message
     List<String> command = new ArrayList<String>();
-    String dcraw = Settings.get(Settings.DCRAW_PATH, "dcraw"); //$NON-NLS-1$
+    String dcraw = Settings.get(SETTING.DCRAW_PATH, "dcraw"); //$NON-NLS-1$
     command.add(dcraw);
     // option -v: irrelevant, but generates output
     command.add("-v"); //$NON-NLS-1$
@@ -106,7 +107,7 @@ public class Dcraw {
     // build the command to be executed
     List<String> command = new ArrayList<String>();
     // Start with the command name
-    String dcraw = Settings.get(Settings.DCRAW_PATH, "dcraw"); //$NON-NLS-1$
+    String dcraw = Settings.get(SETTING.DCRAW_PATH, "dcraw"); //$NON-NLS-1$
     command.add(dcraw);
     // option -c - Write image data to standard output
     command.add("-c"); //$NON-NLS-1$

@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.fibs.geotag.ui;
+package org.fibs.geotag.gui;
 
 import java.awt.Component;
 import java.io.File;
@@ -31,6 +31,7 @@ import org.fibs.geotag.dcraw.Dcraw;
 import org.fibs.geotag.exif.Exiftool;
 import org.fibs.geotag.gpsbabel.GPSBabel;
 import org.fibs.geotag.image.ImageFileFilter;
+import org.fibs.geotag.table.ImagesTableModel;
 import org.fibs.geotag.track.TrackMatcher;
 import org.fibs.geotag.util.Util;
 
