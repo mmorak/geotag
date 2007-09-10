@@ -1,0 +1,85 @@
+/**
+ * Geotag
+ * Copyright (C) 2007 Andreas Schneider
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+package org.fibs.geotag.gui.settings;
+
+import java.awt.BorderLayout;
+
+import javax.swing.BorderFactory;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.border.TitledBorder;
+
+import org.fibs.geotag.Settings.SETTING;
+
+/**
+ * A panel to display and edit settings
+ * 
+ * @author Andreas Schneider
+ * 
+ */
+@SuppressWarnings("serial")
+public abstract class SettingsPanel extends JPanel {
+
+  /** the parent frame */
+  JFrame parent;
+
+  /** The settings key */
+  SETTING setting;
+
+  /** The default value for this setting */
+  String defaultValue;
+  
+  /** The title for this panel */
+  String title;
+
+  /**
+   * @param parent
+   * @param title
+   * @param setting
+   * @param defaultValue
+   */
+  public SettingsPanel(JFrame parent, String title, SETTING setting,
+      String defaultValue) {
+    super(new BorderLayout());
+    TitledBorder border = BorderFactory.createTitledBorder(title);
+    setBorder(border);
+    this.parent = parent;
+    this.setting = setting;
+    this.defaultValue = defaultValue;
+  }
+  
+  /**
+   * @return the string value of this panel
+   */
+  public abstract String getValue();
+
+  /**
+   * @return the setting
+   */
+  public SETTING getSetting() {
+    return setting;
+  }
+
+  /**
+   * @return the defaultValue
+   */
+  public String getDefaultValue() {
+    return defaultValue;
+  }
+}

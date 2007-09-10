@@ -1,3 +1,8 @@
+2007-09-09 release 0.015
+  Added ability to display GPS tracks on Google Maps.
+  The last selected Google Maps zoom level is now reported back
+  to Geotag and used for the next image opened in the browser.
+  
 2007-09-07 Release 0.014
   Added possibility to specify additional exiftool arguments.
   

@@ -92,7 +92,11 @@ public class Settings {
     /** Preferences key for the altitude column position */
     ALTITUDE_POSITION,
     /** Preferences key for the font used */
-    FONT;
+    FONT,
+    /** Preferences key for the last zoom level used in Google Maps */
+    LAST_GOOGLE_MAPS_ZOOM_LEVEL,
+    /** Preferences key for the tracks to be draw on Google Maps */
+    GOOGLE_MAP_TRACKS_CHOICE;
 
     /**
      * For the actual key I prefer lower case keys with dots

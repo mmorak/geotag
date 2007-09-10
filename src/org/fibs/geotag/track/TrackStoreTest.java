@@ -1,0 +1,65 @@
+/**
+ * Geotag
+ * Copyright (C) 2007 Andreas Schneider
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+package org.fibs.geotag.track;
+
+import java.io.InputStream;
+
+import org.fibs.geotag.webserver.WebServer;
+
+import com.topografix.gpx._1._0.BoundsType;
+import com.topografix.gpx._1._0.Gpx;
+import com.topografix.gpx._1._0.Gpx.Trk;
+import com.topografix.gpx._1._0.Gpx.Trk.Trkseg;
+
+import junit.framework.TestCase;
+
+/**
+ * @author Andreas Schneider
+ *
+ */
+public class TrackStoreTest extends TestCase {
+  /**
+   * 
+   */
+  public void testTrackStore() {
+    // first test the empty track store
+    assertNotNull(TrackStore.getTrackStore());
+    assertFalse(TrackStore.getTrackStore().hasTracks());
+    assertNull(TrackStore.getTrackStore().getGpx());
+    assertNull(TrackStore.getTrackStore().getTracks());
+    // now test putting some data into it - This needs a file called all.gpx in the resources directory
+    InputStream stream = WebServer.class.getClassLoader().getResourceAsStream("all.gpx"); //$NON-NLS-1$
+    assertNotNull(stream);
+    Gpx gpx = GpxReader.read(stream);
+    assertNotNull(gpx);
+    TrackStore.getTrackStore().addGPX(gpx);
+    assertTrue(TrackStore.getTrackStore().hasTracks());
+    assertNotNull(TrackStore.getTrackStore().getGpx());
+    assertNotNull(TrackStore.getTrackStore().getTracks());
+    // now test the intersects() Method
+    BoundsType gpxBounds = gpx.getBounds();
+    for (Trk track : TrackStore.getTrackStore().getTracks()) {
+      for (Trkseg segment : track.getTrkseg()) {
+        BoundsType segmentBounds = TrackStore.getTrackStore().getSegmentBounds(segment);
+        if (segmentBounds != null) {
+          assertTrue(TrackStore.getTrackStore().intersect(gpxBounds, segmentBounds));
+        }
+      }
+    }
+  }
+}  

@@ -26,6 +26,7 @@ import org.fibs.geotag.data.ImageInfo;
 import org.fibs.geotag.table.ImagesTable;
 import org.fibs.geotag.table.ImagesTableModel;
 import org.fibs.geotag.track.TrackMatcher;
+import org.fibs.geotag.track.TrackMatcher.Match;
 
 /**
  * A background task for matching a list of images to positions
@@ -79,7 +80,9 @@ public class MatchImagesTask extends UndoableBackgroundTask<ImageInfo> {
       currentProgress++;
       setProgressMessage();
       try {
-        if (trackMatcher.match(imageInfo, true) == true) {
+        Match match = trackMatcher.findMatch(imageInfo.getTimeGMT());
+        if (match != null && match.getMatchingSegment() != null) {
+          trackMatcher.performMatch(imageInfo, match);
           imagesMatched++;
           publish(imageInfo);
         }

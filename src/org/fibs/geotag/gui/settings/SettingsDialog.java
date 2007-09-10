@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.fibs.geotag.gui;
+package org.fibs.geotag.gui.settings;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -38,8 +38,8 @@ import org.fibs.geotag.Messages;
 import org.fibs.geotag.Settings;
 import org.fibs.geotag.Settings.SETTING;
 import org.fibs.geotag.gpsbabel.GPSBabel;
-import org.fibs.geotag.gui.SettingsPanel.TYPE;
 import org.fibs.geotag.util.FontUtil;
+import org.fibs.geotag.webserver.TracksHandler;
 
 /**
  * A dialog for changing the settings of the program
@@ -65,37 +65,39 @@ public class SettingsDialog extends JDialog {
     minimumSize.setSize(minimumSize.getWidth() / 2, 50);
     setMinimumSize(minimumSize);
     panelList
-        .add(new SettingsPanel(
+        .add(new FileSettingsPanel(
             parent,
-            Messages.getString("SettingsDialog.ExiftoolPath"), SETTING.EXIFTOOL_PATH, "exiftool", TYPE.FILE)); //$NON-NLS-1$ //$NON-NLS-2$
+            Messages.getString("SettingsDialog.ExiftoolPath"), SETTING.EXIFTOOL_PATH, "exiftool")); //$NON-NLS-1$ //$NON-NLS-2$
     panelList
-        .add(new SettingsPanel(
+        .add(new StringSettingsPanel(
             parent,
-            Messages.getString("SettingsDialog.AdditionalExiftoolArguments"), SETTING.EXIFTOOL_ARGUMENTS, "", TYPE.STRING)); //$NON-NLS-1$//$NON-NLS-2$
+            Messages.getString("SettingsDialog.AdditionalExiftoolArguments"), SETTING.EXIFTOOL_ARGUMENTS, "")); //$NON-NLS-1$//$NON-NLS-2$
     panelList
-        .add(new SettingsPanel(
+        .add(new FileSettingsPanel(
             parent,
-            Messages.getString("SettingsDialog.GPSBabelPath"), SETTING.GPSBABEL_PATH, "gpsbabel", TYPE.FILE)); //$NON-NLS-1$//$NON-NLS-2$
+            Messages.getString("SettingsDialog.GPSBabelPath"), SETTING.GPSBABEL_PATH, "gpsbabel")); //$NON-NLS-1$//$NON-NLS-2$
     panelList
-        .add(new SettingsPanel(
+        .add(new StringSettingsPanel(
             parent,
-            Messages.getString("SettingsDialog.GPSBabelProtocol"), SETTING.GPSBABEL_PROTOCOL, "garmin", TYPE.STRING)); //$NON-NLS-1$//$NON-NLS-2$
+            Messages.getString("SettingsDialog.GPSBabelProtocol"), SETTING.GPSBABEL_PROTOCOL, "garmin")); //$NON-NLS-1$//$NON-NLS-2$
     panelList
-        .add(new SettingsPanel(
+        .add(new StringSettingsPanel(
             parent,
-            Messages.getString("SettingsDialog.GPSBabelDevice"), SETTING.GPSBABEL_DEVICE, GPSBabel.getDefaultDevice(), TYPE.STRING)); //$NON-NLS-1$
+            Messages.getString("SettingsDialog.GPSBabelDevice"), SETTING.GPSBABEL_DEVICE, GPSBabel.getDefaultDevice())); //$NON-NLS-1$
+    panelList.add(new FileSettingsPanel(parent, Messages
+        .getString("SettingsDialog.DcrawPath"), SETTING.DCRAW_PATH, "dcraw")); //$NON-NLS-1$ //$NON-NLS-2$
     panelList
-        .add(new SettingsPanel(
+        .add(new FontSettingsPanel(
             parent,
-            Messages.getString("SettingsDialog.DcrawPath"), SETTING.DCRAW_PATH, "dcraw", TYPE.FILE)); //$NON-NLS-1$ //$NON-NLS-2$
+            Messages.getString("SettingsDialog.Font"), SETTING.FONT, FontUtil.fontToID(UIManager.getLookAndFeel().getDefaults().getFont("Table.font")))); //$NON-NLS-1$ //$NON-NLS-2$
     panelList
-        .add(new SettingsPanel(
+        .add(new BooleanSettingsPanel(
             parent,
-            Messages.getString("SettingsDialog.Font"), SETTING.FONT, FontUtil.fontToID(UIManager.getLookAndFeel().getDefaults().getFont("Table.font")), TYPE.FONT)); //$NON-NLS-1$ //$NON-NLS-2$
-    panelList
-        .add(new SettingsPanel(
-            parent,
-            Messages.getString("SettingsDialog.XmpFilesOnly"), SETTING.XMP_FILES_ONLY, "false", TYPE.BOOLEAN)); //$NON-NLS-1$//$NON-NLS-2$
+            Messages.getString("SettingsDialog.XmpFilesOnly"), SETTING.XMP_FILES_ONLY, "false")); //$NON-NLS-1$//$NON-NLS-2$
+    panelList.add(new ChoiceSettingsPanel(parent,
+        Messages.getString("SettingsDialog.TracksToShowOnGoogleMaps"), SETTING.GOOGLE_MAP_TRACKS_CHOICE, //$NON-NLS-1$
+        TracksHandler.GOOGLE_MAP_TRACK_CHOICES,
+        TracksHandler.GOOGLE_MAP_TRACK_CHOICES[1]));
     // Finally a Panel with OK and Cancel buttons
     // The flow layout looks very ugly, have to find something else
     JPanel buttonPanel = new JPanel(new FlowLayout());

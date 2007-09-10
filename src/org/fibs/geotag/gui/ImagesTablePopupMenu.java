@@ -39,6 +39,8 @@ import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
 
 import org.fibs.geotag.Messages;
+import org.fibs.geotag.Settings;
+import org.fibs.geotag.Settings.SETTING;
 import org.fibs.geotag.data.ImageInfo;
 import org.fibs.geotag.exif.Exiftool;
 import org.fibs.geotag.googleearth.GoogleEarthLauncher;
@@ -52,6 +54,7 @@ import org.fibs.geotag.tasks.MatchImagesTask;
 import org.fibs.geotag.tasks.SetOffsetTask;
 import org.fibs.geotag.tasks.UndoableBackgroundTask;
 import org.fibs.geotag.track.TrackMatcher;
+import org.fibs.geotag.track.TrackStore;
 
 import com.centerkey.utils.BareBonesBrowserLaunch;
 
@@ -265,6 +268,8 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
     this.imagesTable = imagesTable;
     this.tableModel = (ImagesTableModel) imagesTable.getModel();
     this.trackMatcher = trackMatcher;
+    // where are the tracks stored?
+    TrackStore trackStore = TrackStore.getTrackStore();
     // find out which rows are selected. Some popups only make sense if rows are
     // selected.
     selectedRows = imagesTable.getSelectedRows();
@@ -320,14 +325,14 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
 
     matchTrackToOneImageItem = new JMenuItem(MATCH_TRACK_THIS);
     // enable if there is no background task and tracks have been loaded
-    enabled = !backgroundTask && trackMatcher.hasTracks();
+    enabled = !backgroundTask && trackStore.hasTracks();
     matchTrackToOneImageItem.setEnabled(enabled);
     matchTrackToOneImageItem.addActionListener(this);
     matchTracksMenu.add(matchTrackToOneImageItem);
 
     matchTrackToSelectedImagesItem = new JMenuItem(MATCH_TRACK_SELECTED);
     // enable if there is no background task, there are tracks and a selection
-    enabled = !backgroundTask && trackMatcher.hasTracks()
+    enabled = !backgroundTask && trackStore.hasTracks()
         && (selectedRows.length > 0);
     matchTrackToSelectedImagesItem.setEnabled(enabled);
     matchTrackToSelectedImagesItem.addActionListener(this);
@@ -335,7 +340,7 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
 
     matchTrackToAllImagesItem = new JMenuItem(MATCH_TRACK_ALL);
     // enable if there is no background task and there are tracks available
-    enabled = !backgroundTask && trackMatcher.hasTracks();
+    enabled = !backgroundTask && trackStore.hasTracks();
     matchTrackToAllImagesItem.setEnabled(enabled);
     matchTrackToAllImagesItem.addActionListener(this);
     matchTracksMenu.add(matchTrackToAllImagesItem);
@@ -384,7 +389,7 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
     fillThisGapItem = new JMenuItem(FILL_THIS_GAP);
     // Enable if there is no background task, there is track data available and
     // we don't have coordinates for this image yet.
-    enabled = !backgroundTask && trackMatcher.hasTracks()
+    enabled = !backgroundTask && trackStore.hasTracks()
         && imageInfo.hasLocation() == false;
     fillThisGapItem.setEnabled(enabled);
     fillThisGapItem.addActionListener(this);
@@ -397,7 +402,7 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
     enabled = false;
     for (int i = 0; i < selectedRows.length; i++) {
       if (tableModel.getImageInfo(selectedRows[i]).hasLocation() == false) {
-        enabled = !backgroundTask && trackMatcher.hasTracks();
+        enabled = !backgroundTask && trackStore.hasTracks();
         break;
       }
     }
@@ -411,7 +416,7 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
     enabled = false;
     for (int i = 0; i < tableModel.getRowCount(); i++) {
       if (tableModel.getImageInfo(i).hasLocation() == false) {
-        enabled = !backgroundTask && trackMatcher.hasTracks();
+        enabled = !backgroundTask && trackStore.hasTracks();
         break;
       }
     }
@@ -528,7 +533,7 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
             && imageInfo.getGPSLongitude() != null) {
           latitude = imageInfo.getGPSLatitude();
           longitude = imageInfo.getGPSLongitude();
-          zoomLevel = 15;
+          zoomLevel = Settings.get(SETTING.LAST_GOOGLE_MAPS_ZOOM_LEVEL, 15);
         }
 
         String URL = "http://localhost:4321/map.html?" + //$NON-NLS-1$

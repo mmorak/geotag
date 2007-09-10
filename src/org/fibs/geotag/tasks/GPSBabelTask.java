@@ -128,7 +128,7 @@ public class GPSBabelTask extends BackgroundTask<Gpx> {
     File file = GPSBabel.readTracks(new Gobbler());
     // now we have to read that file
     if (file != null) {
-      Gpx gpx = GpxReader.readFile(file);
+      Gpx gpx = GpxReader.read(file);
       if (gpx != null) {
         publish(gpx);
       }

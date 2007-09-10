@@ -22,7 +22,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
     <!-- The Google maps key is valid for http://localhost:4321 only -->
-    <script src="http://maps.google.com/maps?file=api&v=2&key=ABQIAAAAh0IkFNUh1ieQEJZEue_qZBS03xNesDUUqKa_S-7bp9O40CrAfBSM2kqpbLyL8GxludNvULr37Z1TGg" type="text/javascript"></script>
+    <script src="http://maps.google.com/maps?file=api&v=2.x&key=ABQIAAAAh0IkFNUh1ieQEJZEue_qZBS03xNesDUUqKa_S-7bp9O40CrAfBSM2kqpbLyL8GxludNvULr37Z1TGg" type="text/javascript"></script>
     <style type="text/css">
       html, body, #map {
         width: 100%;
@@ -33,7 +33,6 @@
         margin-right: 0px;
         margin-left: 0px;
         margin-bottom: 0px;
-        //font-family: Verdana, Arial, sans-serif;
         font-weight: normal;
         font-size: 75%;
       }
@@ -48,22 +47,12 @@
          font-size: 75%;
          font-weight: bold;
       }
-      #datadiv {
-         position:absolute;
-         left:0px;
-         top:0px;
-         visibility:hidden;
-      }
     </style>
   </head>
   <body>
     <div id="map"></div>
     <div id="instructions">
       Your browser does not work with Google Maps.
-    </div>
-    
-    <div id="datadiv">
-      <iframe src="about:blank" height="0" width="0" name="dataframe"></iframe>
     </div>
 
     <script type="text/javascript">
@@ -149,6 +138,7 @@
 
         // create the map
         var map = new GMap2(document.getElementById("map"));
+        
 	      // move map to desired location and zoom level
 	      // we default to using a hybrid map - this could be a user preference, but it isn't yet
 	      map.setCenter(new GLatLng(latitude, longitude), zoom, G_HYBRID_MAP);
@@ -178,7 +168,7 @@
         infoWindowHtml += instructions + '</center>' 
 	      marker.bindInfoWindowHtml(infoWindowHtml, {});
         var infoText = "<b>"+instructions+"</b>";
-
+        
         // make sure the info window is closed if drag the marker
         GEvent.addListener(marker, "dragstart", function() {
           map.closeInfoWindow();
@@ -193,7 +183,9 @@
              + getLatitude(marker)
              + "&longitude="
              + getLongitude(marker);
-          window.frames['dataframe'].window.location.replace(url);
+          var request = GXmlHttp.create();
+          request.open("GET", url, true);
+          request.send(null);
 	        // then centre the map on the new marker location
 	        map.panTo(marker.getPoint());
 	        setTitle(marker);
@@ -201,6 +193,68 @@
 
         // add the marker to the map
         map.addOverlay(marker);
+        
+        // we can display GPS tracks as well
+        var tracksDisplayed = [];
+        
+        // a function to be called every time the map changes
+        mapChanged = function () {
+          // collect information about the map
+          var bounds = map.getBounds();
+          var south = bounds.getSouthWest().lat();
+          var west = bounds.getSouthWest().lng();
+          var north = bounds.getNorthEast().lat();
+          var east = bounds.getNorthEast().lng();
+          var size = map.getSize();
+          // tell Geotag about it
+          var tracksURL = "http://localhost:4321/tracks/tracks.kml?south="
+            + south + "&west=" + west + "&north=" + north + "&east=" + east
+            + "&width=" +size.width + "&height=" + size.height + "&image=" + image;
+          var request = GXmlHttp.create();
+          request.open("GET", tracksURL, true);
+          // Geotag will send tracks for this map
+          request.onreadystatechange = function() {
+            // only interested if the request has completed
+            if (request.readyState == 4) {
+              // first we remove all tracks currently displayed
+              for (var trackIndex = 0; trackIndex < tracksDisplayed.length; trackIndex++) {
+                map.removeOverlay(tracksDisplayed[trackIndex]);
+              } 
+              // a new empty array
+              tracksDisplayed = [];
+              var numPoints = 0;
+              // parse the document
+              var xmlDocument = GXml.parse(request.responseText);
+              // get the tracks
+              var tracks = xmlDocument.documentElement.getElementsByTagName("track");
+              // loop through the tracks
+              for (var trackIndex = 0; trackIndex < tracks.length; trackIndex++) {
+                var points = tracks[trackIndex].getElementsByTagName("point");
+                var linePoints = [];
+                for (var pointIndex = 0; pointIndex < points.length; pointIndex++ ) {
+                  numPoints ++;
+                  linePoints[pointIndex] = new GLatLng(parseFloat(points[pointIndex].getAttribute("latitude")),
+                                   parseFloat(points[pointIndex].getAttribute("longitude")))
+                }
+                tracksDisplayed[trackIndex] = new GPolyline(linePoints,"#0000FF",5,0.5);
+                map.addOverlay(tracksDisplayed[trackIndex]);
+              }
+              //GLog.write( "Tracks: "+tracks.length+" Points: "+numPoints);
+            }
+          }
+          request.send(null);
+        }
+        
+        GEvent.addListener(map, "moveend", mapChanged);
+        GEvent.addListener(map, "load", mapChanged);
+        mapChanged();
+        
+        GEvent.addListener(map, "zoomend", function(oldLevel, newLevel) {
+          var request = GXmlHttp.create();
+          request.open("GET", "http://localhost:4321/zoom/zoom.html?zoom="+newLevel, true);
+          request.send(null);
+          //GLog.write("New zoom level: "+newLevel);
+        });
         
         setTitle(marker);
                     

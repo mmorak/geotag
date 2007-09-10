@@ -62,6 +62,7 @@ import org.fibs.geotag.external.ExternalUpdate;
 import org.fibs.geotag.external.ExternalUpdateConsumer;
 import org.fibs.geotag.googleearth.KmlRequestHandler;
 import org.fibs.geotag.gpsbabel.GPSBabel;
+import org.fibs.geotag.gui.settings.SettingsDialog;
 import org.fibs.geotag.image.ImageFileFilter;
 import org.fibs.geotag.table.ImagesTable;
 import org.fibs.geotag.table.ImagesTableModel;
@@ -75,10 +76,13 @@ import org.fibs.geotag.track.GpxFileFilter;
 import org.fibs.geotag.track.GpxReader;
 import org.fibs.geotag.track.GpxWriter;
 import org.fibs.geotag.track.TrackMatcher;
+import org.fibs.geotag.track.TrackStore;
 import org.fibs.geotag.webserver.ResourceHandler;
 import org.fibs.geotag.webserver.ThumbnailHandler;
+import org.fibs.geotag.webserver.TracksHandler;
 import org.fibs.geotag.webserver.UpdateHandler;
 import org.fibs.geotag.webserver.WebServer;
+import org.fibs.geotag.webserver.ZoomLevelHandler;
 
 import com.topografix.gpx._1._0.Gpx;
 import com.topografix.gpx._1._0.Gpx.Trk;
@@ -287,6 +291,8 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
       webServer.createContext("/images", new ThumbnailHandler()); //$NON-NLS-1$
       webServer.createContext("/update", new UpdateHandler(this)); //$NON-NLS-1$
       webServer.createContext("/kml", new KmlRequestHandler(this)); //$NON-NLS-1$
+      webServer.createContext("/tracks", new TracksHandler()); //$NON-NLS-1$
+      webServer.createContext("/zoom", new ZoomLevelHandler()); //$NON-NLS-1$
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -421,7 +427,7 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
         .getString("MainWindow.WhatNext")); //$NON-NLS-1$
     whatNextItem.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        WhatNext.helpWhatNext(MainWindow.this, tableModel, trackMatcher);
+        WhatNext.helpWhatNext(MainWindow.this, tableModel);
       }
     });
 
@@ -571,7 +577,7 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
       File file = chooser.getSelectedFile();
       Settings.put(SETTING.LAST_GPX_FILE_OPENED, file.getPath());
       Settings.flush();
-      Gpx gpx = GpxReader.readFile(file);
+      Gpx gpx = GpxReader.read(file);
       int numTrackpoints = 0;
       List<Trk> tracks = gpx.getTrk();
       for (Trk trk : tracks) {
@@ -582,7 +588,7 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
       }
       String message = "" + numTrackpoints + ' ' + Messages.getString("MainWindow.LocationsLoaded"); //$NON-NLS-1$ //$NON-NLS-2$
       progressBar.setString(message);
-      trackMatcher.addGPX(gpx);
+      TrackStore.getTrackStore().addGPX(gpx);
       // now that we have a track, we are allowed to save it
       saveTrackItem.setEnabled(true);
     }
@@ -610,7 +616,7 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
           // not a gpx file selected - add .gpx suffix
           outputFile = new File(chooser.getSelectedFile().getPath() + ".gpx"); //$NON-NLS-1$
         }
-        GpxWriter.writeFile(trackMatcher.getGpx(), outputFile);
+        GpxWriter.writeFile(TrackStore.getTrackStore().getGpx(), outputFile);
         String message = String.format(Messages
             .getString("MainWindow.TracksSavedFormat"), outputFile.getPath()); //$NON-NLS-1$
         progressBar.setString(message);
@@ -633,7 +639,7 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
       protected void process(List<Gpx> chunks) {
         int numTrackpoints = 0;
         for (Gpx gpx : chunks) {
-          trackMatcher.addGPX(gpx);
+          TrackStore.getTrackStore().addGPX(gpx);
           List<Trk> tracks = gpx.getTrk();
           for (Trk trk : tracks) {
             List<Trkseg> segments = trk.getTrkseg();

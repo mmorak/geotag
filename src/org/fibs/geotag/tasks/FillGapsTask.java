@@ -83,7 +83,9 @@ public class FillGapsTask extends UndoableBackgroundTask<ImageInfo> {
         if (imageInfo.hasLocation() == false) {
           // no coordinates yet... fill the gap
           // tell trackMatcher that exact matches are not required
-          if (trackMatcher.match(imageInfo, false) == true) {
+          TrackMatcher.Match match = trackMatcher.findMatch(imageInfo.getTimeGMT());
+          if (match != null) {
+            trackMatcher.performMatch(imageInfo, match);
             gapsFilled++;
             publish(imageInfo);
           }

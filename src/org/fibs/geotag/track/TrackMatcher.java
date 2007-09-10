@@ -28,7 +28,6 @@ import org.fibs.geotag.data.ImageInfo;
 import org.fibs.geotag.data.ImageInfo.DATA_SOURCE;
 import org.fibs.geotag.util.Util;
 
-import com.topografix.gpx._1._0.Gpx;
 import com.topografix.gpx._1._0.Gpx.Trk;
 import com.topografix.gpx._1._0.Gpx.Trk.Trkseg;
 import com.topografix.gpx._1._0.Gpx.Trk.Trkseg.Trkpt;
@@ -41,8 +40,7 @@ import com.topografix.gpx._1._0.Gpx.Trk.Trkseg.Trkpt;
  */
 public class TrackMatcher {
   /** The object containing all the tracks */
-  private Gpx gpx;
-
+  // private Gpx gpx;
   // /**
   // * Add a list of tracks
   // *
@@ -53,56 +51,34 @@ public class TrackMatcher {
   // }
 
   /**
-   * Add the contents of a GPX file to the tracks
+   * Checks if the GMT time lies between the times of two track points
    * 
-   * @param newGpx
-   */
-  public void addGPX(Gpx newGpx) {
-    if (gpx == null) {
-      gpx = newGpx;
-    } else {
-      gpx.getTrk().addAll(newGpx.getTrk());
-    }
-  }
-
-  /**
-   * Check if we know any tracks
-   * 
-   * @return True if we do
-   */
-  public boolean hasTracks() {
-    return gpx != null && gpx.getTrk().size() > 0;
-  }
-
-  /**
-   * Checks if the time from an imageInfo lies between the times of two track
-   * points
-   * 
-   * @param imageInfo
+   * @param gmt
    * @param startPoint
    * @param endPoint
    * @return True if the track point interval contains the imageInfo time
    */
-  private boolean isBetweenTrackPoints(ImageInfo imageInfo, Trkpt startPoint,
+  private boolean isBetweenTrackPoints(Calendar gmt, Trkpt startPoint,
       Trkpt endPoint) {
     Calendar startTime = startPoint.getTime().toGregorianCalendar();
     Calendar endTime = endPoint.getTime().toGregorianCalendar();
-    boolean matches = (startTime.compareTo(imageInfo.getTimeGMT()) <= 0 && endTime
-        .compareTo(imageInfo.getTimeGMT()) >= 0);
+    boolean matches = (startTime.compareTo(gmt) <= 0 && endTime.compareTo(gmt) >= 0);
     return matches;
   }
 
   /**
    * Try and find the location given an imageInfo The imageInfo's time must fall
    * within a track segment
+   * @param timeGMT The GMT time we try to find in the tracks
+   * @return The best match we coud find
    * 
-   * @param imageInfo
-   *          The imageInfo we want to match with our tracks
-   * @param exact
-   *          Only return a match if the image is inside a track segment
-   * @return true if a match was found
    */
-  public boolean match(ImageInfo imageInfo, boolean exact) {
+  public Match findMatch(Calendar timeGMT) {
+    // no tracks - no can match...
+    if ( ! TrackStore.getTrackStore().hasTracks()) {
+      return null;
+    }
+    Match match = new Match();
     // we keep track of the track segments closest
     // to the image time, in case we don't find a proper interval match
     Trkpt lastPointBefore = null;
@@ -110,63 +86,78 @@ public class TrackMatcher {
     Trkpt firstPointAfter = null;
     Calendar firstPointAfterTime = null;
     // look at all the tracks
-    for (Trk trk : gpx.getTrk()) {
+    for (Trk track : TrackStore.getTrackStore().getTracks()) {
       // look at all track segments
-      List<Trkseg> trksegs = trk.getTrkseg();
-      for (Trkseg trkseg : trksegs) {
+      List<Trkseg> segments = track.getTrkseg();
+      for (Trkseg segment : segments) {
         // retrieve the track points of this segment
-        List<Trkpt> trkpts = trkseg.getTrkpt();
+        List<Trkpt> trackPoints = segment.getTrkpt();
+
         // first we see if our candidate lies between the first and last
         // track point of this track segment
-        if (trkpts.size() > 1) {
-          Trkpt startPoint = trkpts.get(0);
-          Trkpt endPoint = trkpts.get(trkpts.size() - 1);
-          if (isBetweenTrackPoints(imageInfo, startPoint, endPoint)) {
+        if (trackPoints.size() > 1 && match.getMatchingSegment() == null) {
+          Trkpt startPoint = trackPoints.get(0);
+          Trkpt endPoint = trackPoints.get(trackPoints.size() - 1);
+          if (isBetweenTrackPoints(timeGMT, startPoint, endPoint)) {
             // the image was taken in this segment - have a closer look
             // now we look at pairs of track points and see if their
             // time stamps make an interval containing the image time
-            for (int i = 0; i < trkpts.size() - 1; i++) {
-              startPoint = trkpts.get(i);
-              endPoint = trkpts.get(i + 1);
-              if (isBetweenTrackPoints(imageInfo, startPoint, endPoint)) {
-                performMatch(imageInfo, startPoint, endPoint);
-                // return true, because we found a match
-                return true;
+            for (int i = 0; i < trackPoints.size() - 1; i++) {
+              startPoint = trackPoints.get(i);
+              endPoint = trackPoints.get(i + 1);
+              if (isBetweenTrackPoints(timeGMT, startPoint,
+                  endPoint)) {
+                match.setMatchingSegment(segment);
+                match.setPreviousPoint(startPoint);
+                match.setNextPoint(endPoint);
+                // no need to look at other trackpoints
+                break;
               }
+            }
+            if (match.getMatchingSegment() != null) {
+              // skip the rest of the for loop and continue with next segment
+              continue;
             }
           }
         }
+
         // our image is not in this interval, or there are less than
         // two track points in the segment
-        if (trkpts.size() > 0) {
-          Trkpt startPoint = trkpts.get(0);
-          Trkpt endPoint = trkpts.get(trkpts.size() - 1);
+        if (trackPoints.size() > 0) {
+          Trkpt startPoint = trackPoints.get(0);
+          Trkpt endPoint = trackPoints.get(trackPoints.size() - 1);
           Calendar startTime = startPoint.getTime().toGregorianCalendar();
           Calendar endTime = endPoint.getTime().toGregorianCalendar();
-          if (startTime.compareTo(imageInfo.getTimeGMT()) >= 0) {
+          if (startTime.compareTo(timeGMT) >= 0) {
             // start time is after or exactly the same as image time
             if (firstPointAfter == null || firstPointAfterTime == null
                 || firstPointAfterTime.after(startTime)) {
               firstPointAfter = startPoint;
               firstPointAfterTime = startTime;
+              match.setPreviousSegment(segment);
             }
           }
-          if (endTime.compareTo(imageInfo.getTimeGMT()) <= 0) {
+          if (endTime.compareTo(timeGMT) <= 0) {
             // end time is before or exactly the same as image time
             if (lastPointBefore == null || lastPointBeforeTime == null
                 || lastPointBeforeTime.before(endTime)) {
               lastPointBefore = endPoint;
               lastPointBeforeTime = endTime;
+              match.setNextSegment(segment);
             }
           }
         }
       }
     }
-    if (exact == false && lastPointBefore != null && firstPointAfter != null) {
-      performMatch(imageInfo, lastPointBefore, firstPointAfter);
-      return true;
+    if (match.getMatchingSegment() != null) {
+      return match;
     }
-    return false;
+    if (lastPointBefore != null && firstPointAfter != null) {
+      match.setPreviousPoint(lastPointBefore);
+      match.setNextPoint(firstPointAfter);
+      return match;
+    }
+    return null;
   }
 
   /**
@@ -174,13 +165,11 @@ public class TrackMatcher {
    * 
    * @param imageInfo
    *          The ImageInfo that will get new coordinates
-   * @param startPoint
-   *          Track point before imageInfo
-   * @param endPoint
-   *          Track point after imageInfo
+   * @param match The match determined by the matcher
    */
-  private void performMatch(ImageInfo imageInfo, Trkpt startPoint,
-      Trkpt endPoint) {
+  public void performMatch(ImageInfo imageInfo, Match match) {
+    Trkpt startPoint = match.getPreviousPoint();
+    Trkpt endPoint = match.getNextPoint();
     Calendar startTime = startPoint.getTime().toGregorianCalendar();
     Calendar endTime = endPoint.getTime().toGregorianCalendar();
     // we found the two readings before and after the image was
@@ -229,9 +218,98 @@ public class TrackMatcher {
   }
 
   /**
-   * @return the Gpx object containing the tracks
+   * A class holding the information found out by the matcher
    */
-  public Gpx getGpx() {
-    return gpx;
+  public class Match {
+    /** The latest segment before the requested time not containing it */
+    private Trkseg previousSegment;
+
+    /** The earliest segment after the requested time not containing it */
+    private Trkseg nextSegment;
+
+    /** The matching segment */
+    private Trkseg matchingSegment;
+
+    /** The last track point before the requested time*/
+    private Trkpt previousPoint;
+
+    /** the next track point after the requested time */
+    private Trkpt nextPoint;
+
+    /**
+     * @return the previousSegment
+     */
+    public Trkseg getPreviousSegment() {
+      return previousSegment;
+    }
+
+    /**
+     * @param previousSegment
+     *          the previousSegment to set
+     */
+    public void setPreviousSegment(Trkseg previousSegment) {
+      this.previousSegment = previousSegment;
+    }
+
+    /**
+     * @return the nextSegment
+     */
+    public Trkseg getNextSegment() {
+      return nextSegment;
+    }
+
+    /**
+     * @param nextSegment
+     *          the nextSegment to set
+     */
+    public void setNextSegment(Trkseg nextSegment) {
+      this.nextSegment = nextSegment;
+    }
+
+    /**
+     * @return the matchingSegment
+     */
+    public Trkseg getMatchingSegment() {
+      return matchingSegment;
+    }
+
+    /**
+     * @param matchingSegment
+     *          the matchingSegment to set
+     */
+    public void setMatchingSegment(Trkseg matchingSegment) {
+      this.matchingSegment = matchingSegment;
+    }
+
+    /**
+     * @return the previousPoint
+     */
+    public Trkpt getPreviousPoint() {
+      return previousPoint;
+    }
+
+    /**
+     * @param previousPoint
+     *          the previousPoint to set
+     */
+    public void setPreviousPoint(Trkpt previousPoint) {
+      this.previousPoint = previousPoint;
+    }
+
+    /**
+     * @return the nextPoint
+     */
+    public Trkpt getNextPoint() {
+      return nextPoint;
+    }
+
+    /**
+     * @param nextPoint
+     *          the nextPoint to set
+     */
+    public void setNextPoint(Trkpt nextPoint) {
+      this.nextPoint = nextPoint;
+    }
   }
+
 }

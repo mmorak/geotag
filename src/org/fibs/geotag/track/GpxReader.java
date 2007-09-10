@@ -21,6 +21,7 @@ package org.fibs.geotag.track;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.InputStream;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -36,13 +37,28 @@ import com.topografix.gpx._1._0.Gpx;
  */
 public class GpxReader {
   /**
-   * Read in a gpx file
-   * 
    * @param file
    *          The file to be read
+   * @return the data contained as a {@link Gpx} object
+   */
+  public static Gpx read(File file) {
+    try {
+      return read(new FileInputStream(file));
+    } catch (FileNotFoundException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    return null;
+  }
+
+  /**
+   * Read in a gpx from an InputStream
+   * 
+   * @param inputStream
+   *          The InputStream to be read
    * @return The data contained as a {@link Gpx} object
    */
-  public static Gpx readFile(File file) {
+  public static Gpx read(InputStream inputStream) {
     Gpx gpx = null;
     try {
       // create a JAXB context for GPX files
@@ -51,13 +67,12 @@ public class GpxReader {
       // create an Unmarshaller for the context
       Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
       // unmarshall (read) the file
-      gpx = (Gpx) unmarshaller.unmarshal(new FileInputStream(file));
+      gpx = (Gpx) unmarshaller.unmarshal(inputStream);
       // That's all.
     } catch (JAXBException e) {
-      e.printStackTrace();
-    } catch (FileNotFoundException e) {
       e.printStackTrace();
     }
     return gpx;
   }
+
 }

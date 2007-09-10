@@ -32,7 +32,7 @@ import org.fibs.geotag.exif.Exiftool;
 import org.fibs.geotag.gpsbabel.GPSBabel;
 import org.fibs.geotag.image.ImageFileFilter;
 import org.fibs.geotag.table.ImagesTableModel;
-import org.fibs.geotag.track.TrackMatcher;
+import org.fibs.geotag.track.TrackStore;
 import org.fibs.geotag.util.Util;
 
 /**
@@ -49,16 +49,15 @@ public class WhatNext {
    * 
    * @param parentComponent
    * @param tableModel
-   * @param trackMatcher
    */
   static void helpWhatNext(Component parentComponent,
-      ImagesTableModel tableModel, TrackMatcher trackMatcher) {
+      ImagesTableModel tableModel) {
     int maxLineLength = 60;
     boolean exiftoolAvailable = Exiftool.isAvailable();
     boolean gpsbabelAvailable = GPSBabel.isAvailable();
     boolean dcrawAvailable = Dcraw.isAvailable();
     boolean imagesAvailable = (tableModel.getRowCount() > 0);
-    boolean tracksAvailable = trackMatcher.hasTracks();
+    boolean tracksAvailable = TrackStore.getTrackStore().hasTracks();
     boolean imagesWithNewLocationAvailable = false;
     for (int row = 0; row < tableModel.getRowCount(); row++) {
       if (tableModel.getImageInfo(row).hasNewLocation()) {
