@@ -33,7 +33,9 @@ import org.fibs.geotag.Settings;
 import org.fibs.geotag.Settings.SETTING;
 import org.fibs.geotag.data.ImageInfo;
 import org.fibs.geotag.track.TrackMatcher;
+import org.fibs.geotag.track.TrackStore;
 import org.fibs.geotag.track.TrackMatcher.Match;
+import org.fibs.geotag.util.BoundsTypeUtil;
 
 import com.topografix.gpx._1._0.BoundsType;
 import com.topografix.gpx._1._0.ObjectFactory;
@@ -51,11 +53,11 @@ public class TracksHandler implements ContextHandler {
 
   /** The choices we have for displaying tracks */
   public static final String[] GOOGLE_MAP_TRACK_CHOICES = {
-    Messages.getString("TracksHandler.None"), //$NON-NLS-1$
-    Messages.getString("TracksHandler.MatchingSegment"), //$NON-NLS-1$
-    Messages.getString("TracksHandler.MatchingSegmentAndNeighbours") //$NON-NLS-1$
-    //"All tracks"
-  };
+      Messages.getString("TracksHandler.None"), //$NON-NLS-1$
+      Messages.getString("TracksHandler.MatchingSegment"), //$NON-NLS-1$
+      Messages.getString("TracksHandler.MatchingSegmentAndNeighbours"), //$NON-NLS-1$
+      Messages.getString("TracksHandler.AllTracks") }; //$NON-NLS-1$
+
   /** The MIME type for XML files */
   private static final String XML_MIME_TYPE = "application/xml"; //$NON-NLS-1$
 
@@ -72,8 +74,8 @@ public class TracksHandler implements ContextHandler {
     Double west = null;
     Double north = null;
     Double east = null;
-    Double width = null;
-    Double height = null;
+    Integer width = null;
+    Integer height = null;
     Integer image = null;
     Enumeration<Object> parameters = parms.keys();
     while (parameters.hasMoreElements()) {
@@ -88,17 +90,21 @@ public class TracksHandler implements ContextHandler {
       } else if (parameter.equals("east")) { //$NON-NLS-1$
         east = new Double(Double.parseDouble(value));
       } else if (parameter.equals("width")) { //$NON-NLS-1$
-        width = new Double(Double.parseDouble(value));
+        width = new Integer(Integer.parseInt(value));
       } else if (parameter.equals("height")) { //$NON-NLS-1$
-        height = new Double(Double.parseDouble(value));
+        height = new Integer(Integer.parseInt(value));
       } else if (parameter.equals("image")) { //$NON-NLS-1$
         image = new Integer(Integer.parseInt(value));
       }
     }
     ObjectFactory gpxObjectFactory = new ObjectFactory();
-    BoundsType bounds = gpxObjectFactory.createBoundsType();
     if (south != null && west != null && north != null && east != null
         && width != null && height != null) {
+      BoundsType mapBounds = gpxObjectFactory.createBoundsType();
+      mapBounds.setMinlat(new BigDecimal(south));
+      mapBounds.setMaxlat(new BigDecimal(north));
+      mapBounds.setMinlon(new BigDecimal(west));
+      mapBounds.setMaxlon(new BigDecimal(east));
       int tracksChoice = Settings.get(SETTING.GOOGLE_MAP_TRACKS_CHOICE, 1);
       List<Trkseg> segments = new ArrayList<Trkseg>();
       ImageInfo imageInfo = ImageInfo.getImageInfo(image);
@@ -127,20 +133,21 @@ public class TracksHandler implements ContextHandler {
               segments.add(match.getNextSegment());
             }
           }
+          break;
+        case 3: // All tracks
+          for (Trkseg segment : TrackStore.getTrackStore()
+              .getIntersectingTrackSegments(mapBounds)) {
+            segments.add(segment);
+          }
+          break;
       }
-      bounds.setMinlat(new BigDecimal(south));
-      bounds.setMaxlat(new BigDecimal(north));
-      bounds.setMinlon(new BigDecimal(west));
-      bounds.setMaxlon(new BigDecimal(east));
-      
-      
-      // get track segments whose bounds intersect with the map bounds
-      
-
+      // trim down the tracks to bare minimum
+      List<Trkseg> filteredSegments = filterSegments(mapBounds, segments,
+          width, height);
       // now that we have segments, write to out
       ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
       try {
-        writeTracks(segments, byteArrayOutputStream);
+        writeTracks(filteredSegments, byteArrayOutputStream);
         ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(
             byteArrayOutputStream.toByteArray());
         return server.new Response(NanoHTTPD.HTTP_OK, XML_MIME_TYPE,
@@ -151,6 +158,105 @@ public class TracksHandler implements ContextHandler {
     }
     return server.new Response(NanoHTTPD.HTTP_NOTFOUND,
         NanoHTTPD.MIME_PLAINTEXT, WebServer.FILE_NOT_FOUND);
+  }
+
+  /**
+   * @param trackPoint
+   * @param mapBounds
+   * @return True if the traclPoint is within the mapBounds
+   */
+  private boolean isOnMap(Trkpt trackPoint, BoundsType mapBounds) {
+    BigDecimal latitude = trackPoint.getLat();
+    BigDecimal longitude = trackPoint.getLon();
+    // check the scenarios where the track point is not on the map
+    if (latitude.compareTo(mapBounds.getMinlat()) < 0) {
+      // latitude is smaller that the smallest map latitude
+      return false;
+    }
+    if (latitude.compareTo(mapBounds.getMaxlat()) > 0) {
+      // latitude is bigger than biggest latitude on map
+      return false;
+    }
+    // now the same check for longitudes
+    if (longitude.compareTo(mapBounds.getMinlon()) < 0) {
+      return false;
+    }
+    if (longitude.compareTo(mapBounds.getMaxlon()) > 0) {
+      return false;
+    }
+    // no condition for being within the map violated
+    return true;
+  }
+
+  /**
+   * This is where we filter the tracks. There is no need to send parts of the
+   * tracks that are off screen and we also want to avoid sending consecutive
+   * track points that at the current zoom factor are too close together.
+   * 
+   * @param mapBounds
+   * @param segments
+   * @param mapWidth
+   * @param mapHeight
+   * @return the filtered list of tracks
+   */
+  private List<Trkseg> filterSegments(BoundsType mapBounds,
+      List<Trkseg> segments, int mapWidth, int mapHeight) {
+    int numberUnfiltered = 0;
+    int numberFiltered = 0;
+    List<Trkseg> filteredList = new ArrayList<Trkseg>();
+    ObjectFactory gpxObjectFactory = new ObjectFactory();
+    // loop over all tracks
+    for (Trkseg segment : segments) {
+      Trkseg filteredSegment = gpxObjectFactory.createGpxTrkTrkseg();
+      // go through the track points
+      // we want to add the last point off the map to the track
+      // to get a line that starts off the map if possible
+      Trkpt lastPointOffMap = null;
+      // we need to compare the pixel distance to the last point on the map
+      Trkpt lastPointOnMap = null;
+      // we need to keep track of the last point added to see how close it is to
+      // the current one
+      Trkpt lastPointAdded = null;
+      for (Trkpt trackPoint : segment.getTrkpt()) {
+        numberUnfiltered++;
+        if (isOnMap(trackPoint, mapBounds)) {
+          lastPointOnMap = trackPoint;
+          // if we got here from a point off the map we use that point
+          if (lastPointOffMap != null) {
+            filteredSegment.getTrkpt().add(lastPointOffMap);
+            lastPointAdded = lastPointOffMap;
+            // don't add that point again
+            lastPointOffMap = null;
+          }
+          // this point is on the map, but it might me too close to the last
+          // point added
+          if (lastPointAdded == null
+              || BoundsTypeUtil.pixelDistance(lastPointAdded, trackPoint,
+                  mapBounds, mapWidth, mapHeight) > 10) {
+            filteredSegment.getTrkpt().add(trackPoint);
+            lastPointAdded = trackPoint;
+          }
+        } else {
+          // point is not on map
+          lastPointOffMap = trackPoint;
+          if (lastPointOnMap != null) {
+            // this is the first off map point after one or more on map points -
+            // keep it
+            filteredSegment.getTrkpt().add(trackPoint);
+            // don't add any more off map points
+            lastPointOnMap = null;
+          }
+        }
+      }
+      // only add the segment to the list if its not empty after all the
+      // filtering
+      if (filteredSegment.getTrkpt().size() > 0) {
+        filteredList.add(filteredSegment);
+        numberFiltered += filteredSegment.getTrkpt().size();
+      }
+    }
+    System.out.println("Filter: " + numberUnfiltered + "->" + numberFiltered); //$NON-NLS-1$ //$NON-NLS-2$
+    return filteredList;
   }
 
   /**

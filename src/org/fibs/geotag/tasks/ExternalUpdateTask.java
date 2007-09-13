@@ -19,6 +19,7 @@
 package org.fibs.geotag.tasks;
 
 import org.fibs.geotag.data.EditGPSAltitude;
+import org.fibs.geotag.data.EditGPSImgDirection;
 import org.fibs.geotag.data.EditGPSLatitude;
 import org.fibs.geotag.data.EditGPSLongitude;
 import org.fibs.geotag.data.ImageInfo;
@@ -84,6 +85,10 @@ public class ExternalUpdateTask extends UndoableBackgroundTask<ImageInfo> {
       if (imageInfo.getGPSAltitude() == null) {
         new EditGPSAltitude(imageInfo, (new Double(0.0)).toString(),
             ImageInfo.DATA_SOURCE.MAP);
+      }
+      if (externalUpdate.getDirection() != Double.NaN) {
+        new EditGPSImgDirection(imageInfo, (new Double(externalUpdate
+            .getDirection()).toString()));
       }
       publish(imageInfo);
     }

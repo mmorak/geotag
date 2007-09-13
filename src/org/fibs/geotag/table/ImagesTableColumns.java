@@ -48,7 +48,9 @@ public class ImagesTableColumns {
     /** The column for the longitude */
     LONGITUDE,
     /** THe column for the altitude */
-    ALTITUDE
+    ALTITUDE,
+    /** The column for the direction */
+    DIRECTION
   }
 
   /**
@@ -71,6 +73,8 @@ public class ImagesTableColumns {
         return Messages.getString("ImagesTableColumns.TooltipLongitude"); //$NON-NLS-1$
       case ALTITUDE:
         return Messages.getString("ImagesTableColumns.TooltipAltitude"); //$NON-NLS-1$
+      case DIRECTION:
+        return Messages.getString("ImagesTableColumns.TooltipDirection"); //$NON-NLS-1$
     }
     return null;
   }

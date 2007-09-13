@@ -129,13 +129,16 @@ public class ImageInfo implements Comparable<ImageInfo> {
 
   /** The GPSAltitude EXIF entry */
   private String GPSAltitude;
+  
+  /** Th eGPSImgDirection EXIF entry */
+  private String GPSImgDirection;
 
   /** The GPSDateTime EXIF entry */
   private String GPSDateTime;
 
   /** The Orientation EXIF entry */
   private String orientation;
-
+  
   /** Where does the location data come from */
   private DATA_SOURCE source = DATA_SOURCE.NONE;
 
@@ -469,6 +472,22 @@ public class ImageInfo implements Comparable<ImageInfo> {
   void setGPSAltitude(String altitude, DATA_SOURCE source) {
     GPSAltitude = altitude;
     this.source = source;
+  }
+  
+  /**
+   * This has package visibility to force the use of undo-able edits
+   * 
+   * @return the GPS image direction
+   */
+  public String getGPSImgDirection() {
+    return GPSImgDirection;
+  }
+  
+  /**
+   * @param direction The direction to set
+   */
+  void setGPSImgDirection(String direction) {
+    GPSImgDirection = direction;
   }
 
   /**

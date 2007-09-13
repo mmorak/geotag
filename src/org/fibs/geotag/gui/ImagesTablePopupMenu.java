@@ -84,6 +84,10 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
       .getString("ImagesTablePopupMenu.ShowOnMap"); //$NON-NLS-1$
 
   /** Text for menu item */
+  private static final String SHOW_ON_MAP_WITH_DIRECTION = Messages
+      .getString("ImagesTablePopupMenu.ShowOnMapWithDirection"); //$NON-NLS-1$
+
+  /** Text for menu item */
   private static final String SHOW_IN_GOOGLEEARTH = Messages
       .getString("ImagesTablePopupMenu.ShowInGoogleEarth"); //$NON-NLS-1$
 
@@ -192,6 +196,9 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
   /** The menu item used to show an image location on a map */
   private JMenuItem showOnMapItem;
 
+  /** The menu item used to show an image location and direction on a map */
+  private JMenuItem showOnMapWithDirectionItem;
+
   /** The menu item used to show an image location in Google Earth */
   private JMenuItem showInGoogleEarthItem;
 
@@ -291,6 +298,12 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
     showOnMapItem.setEnabled(enabled);
     showOnMapItem.addActionListener(this);
     add(showOnMapItem);
+
+    showOnMapWithDirectionItem = new JMenuItem(SHOW_ON_MAP_WITH_DIRECTION);
+    enabled = true; // we can always do this safely
+    showOnMapWithDirectionItem.setEnabled(enabled);
+    showOnMapWithDirectionItem.addActionListener(this);
+    add(showOnMapWithDirectionItem);
 
     showInGoogleEarthItem = new JMenuItem(SHOW_IN_GOOGLEEARTH);
     enabled = true; // we can always do this safely
@@ -476,7 +489,9 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
     // determine which menu item was selected
     if (event.getSource() == showOnMapItem) {
       // show the image location on a map
-      showOnMap();
+      showOnMap(false);
+    } else if (event.getSource() == showOnMapWithDirectionItem) {
+      showOnMap(true);
     } else if (event.getSource() == showInGoogleEarthItem) {
       showInGoogleEarth();
     } else if (event.getSource() == chooseTimeItem) {
@@ -517,8 +532,11 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
 
   /**
    * Open a web browser and show the image location on a map
+   * 
+   * @param showDirection
+   *          If the image direction should be shown as well
    */
-  private void showOnMap() {
+  private void showOnMap(final boolean showDirection) {
     // make sure there is a thumbnail - this won't create the
     // thumbnail again, if it already exists.
     ThumbnailWorker worker = new ThumbnailWorker(imageInfo) {
@@ -535,13 +553,25 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
           longitude = imageInfo.getGPSLongitude();
           zoomLevel = Settings.get(SETTING.LAST_GOOGLE_MAPS_ZOOM_LEVEL, 15);
         }
-
+        String direction = "false"; //$NON-NLS-1$
+        if (showDirection) {
+          if (imageInfo.getGPSImgDirection() == null) {
+            // show direction, but can't supply initial value
+            direction = "true"; //$NON-NLS-1$
+          } else {
+            // the initial value
+            direction = imageInfo.getGPSImgDirection();
+          }
+        }
         String URL = "http://localhost:4321/map.html?" + //$NON-NLS-1$
-            "latitude=" + latitude + //$NON-NLS-1$
-            "&longitude=" + longitude + //$NON-NLS-1$
-            "&zoom=" + zoomLevel + //$NON-NLS-1$
-            "&image=" + imageInfo.getSequenceNumber() + //$NON-NLS-1$
-            "&language=" + Locale.getDefault().getLanguage(); //$NON-NLS-1$
+            "latitude=" //$NON-NLS-1$
+            + latitude + "&longitude=" //$NON-NLS-1$
+            + longitude + "&direction=" //$NON-NLS-1$
+            + direction + "&zoom=" //$NON-NLS-1$
+            + zoomLevel + "&image=" //$NON-NLS-1$
+            + imageInfo.getSequenceNumber() + "&language=" //$NON-NLS-1$
+            + Locale.getDefault().getLanguage() + "&maptype=" //$NON-NLS-1$
+            + Settings.get(SETTING.LAST_GOOGLE_MAPS_MAP_TYPE, "Hybrid"); //$NON-NLS-1$
         if (imageInfo.getThumbnail() != null) {
           URL += "&thumbnail=true" //$NON-NLS-1$
               + "&width=" + imageInfo.getThumbnail().getIconWidth() + //$NON-NLS-1$

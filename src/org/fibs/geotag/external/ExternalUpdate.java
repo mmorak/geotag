@@ -33,6 +33,9 @@ public class ExternalUpdate {
 
   /** the new longitude */
   private double longitude;
+  
+  /** the new direction or NaN if not given*/
+  private double direction = Double.NaN;
 
   /**
    * Create a {@link ExternalUpdate} object
@@ -40,11 +43,13 @@ public class ExternalUpdate {
    * @param imageNumber
    * @param latitude
    * @param longitude
+   * @param direction Set this to Double.NaN if not applicable
    */
-  public ExternalUpdate(int imageNumber, double latitude, double longitude) {
+  public ExternalUpdate(int imageNumber, double latitude, double longitude, double direction) {
     this.imageNumber = imageNumber;
     this.latitude = latitude;
     this.longitude = longitude;
+    this.direction = direction;
   }
 
   /**
@@ -66,5 +71,12 @@ public class ExternalUpdate {
    */
   public double getLongitude() {
     return longitude;
+  }
+  
+  /**
+   * @return the direction or Double.NaN if not known
+   */
+  public double getDirection() {
+    return direction;
   }
 }

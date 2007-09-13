@@ -116,6 +116,12 @@ public class ExifWriter {
     double altitude = Double.parseDouble(imageInfo.getGPSAltitude());
     command.add("-GPSAltitudeRef=" + (altitude >= 0.0 ? '0' : '1')); //$NON-NLS-1$
     command.add("-GPSAltitude=" + Math.abs(altitude)); //$NON-NLS-1$
+    // the direction if we have one
+    if (imageInfo.getGPSImgDirection()!=null) {
+      double direction = Double.parseDouble(imageInfo.getGPSImgDirection());
+      command.add("-GPSImgDirection="+direction); //$NON-NLS-1$
+      command.add("-GPSImgDirectionRef=T"); //$NON-NLS-1$
+    }
     // the map datum is always set to WGS-84
     command.add("-GPSMapDatum=WGS-84"); //$NON-NLS-1$
     // and finally we set the GPS date and time

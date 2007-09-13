@@ -19,6 +19,7 @@ package org.fibs.geotag.track;
 
 import java.io.InputStream;
 
+import org.fibs.geotag.util.BoundsTypeUtil;
 import org.fibs.geotag.webserver.WebServer;
 
 import com.topografix.gpx._1._0.BoundsType;
@@ -57,7 +58,7 @@ public class TrackStoreTest extends TestCase {
       for (Trkseg segment : track.getTrkseg()) {
         BoundsType segmentBounds = TrackStore.getTrackStore().getSegmentBounds(segment);
         if (segmentBounds != null) {
-          assertTrue(TrackStore.getTrackStore().intersect(gpxBounds, segmentBounds));
+          assertTrue(BoundsTypeUtil.intersect(gpxBounds, segmentBounds));
         }
       }
     }

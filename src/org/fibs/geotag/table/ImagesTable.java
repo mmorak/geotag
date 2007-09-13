@@ -169,6 +169,9 @@ public class ImagesTable extends JTable {
         case ALTITUDE:
           preferredWidth = defaultAltitudeWidth(fontMetrics);
           break;
+        case DIRECTION:
+          preferredWidth = defaultDirectionWith(fontMetrics);
+          break;
         case GPS_DATE:
           preferredWidth = defaultDateWidth(fontMetrics);
           break;
@@ -275,6 +278,15 @@ public class ImagesTable extends JTable {
   private int defaultAltitudeWidth(FontMetrics fontMetrics) {
     return fontMetrics.stringWidth("19999." //$NON-NLS-1$
         + zeros.substring(0, ImagesTableModel.ALTITUDE_DECIMALS));
+  }
+
+  /**
+   * @param fontMetrics
+   * @return the default direction string width
+   */
+  private int defaultDirectionWith(FontMetrics fontMetrics) {
+    return fontMetrics.stringWidth("359." //$NON-NLS-1$
+        + zeros.substring(0, ImagesTableModel.DIRECTION_DECIMALS));
   }
 
   /**

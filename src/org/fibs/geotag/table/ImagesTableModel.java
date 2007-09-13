@@ -55,7 +55,8 @@ public class ImagesTableModel extends AbstractTableModel {
       Messages.getString("ImagesTableModel.CameraTime"), //$NON-NLS-1$
       Messages.getString("ImagesTableModel.Latitude"), //$NON-NLS-1$
       Messages.getString("ImagesTableModel.Longitude"), //$NON-NLS-1$
-      Messages.getString("ImagesTableModel.Altitude") }; //$NON-NLS-1$
+      Messages.getString("ImagesTableModel.Altitude"), //$NON-NLS-1$
+      Messages.getString("ImagesTableModel.Direction") }; //$NON-NLS-1$
 
   /** How many decimals of the latitude to display */
   public static final int LATITUDE_DECIMALS = 7;
@@ -65,6 +66,9 @@ public class ImagesTableModel extends AbstractTableModel {
 
   /** How many decimals of the altitude to display */
   public static final int ALTITUDE_DECIMALS = 1;
+
+  /** How many decimals of the direction to display */
+  public static final int DIRECTION_DECIMALS = 2;
 
   /**
    * Can be called to re-sort the table (mainly when time-offsets change)
@@ -199,6 +203,8 @@ public class ImagesTableModel extends AbstractTableModel {
         return round(values.get(row).getGPSLongitude(), LONGITUDE_DECIMALS);
       case ALTITUDE:
         return round(values.get(row).getGPSAltitude(), ALTITUDE_DECIMALS);
+      case DIRECTION:
+        return round(values.get(row).getGPSImgDirection(), DIRECTION_DECIMALS);
     }
     return null;
   }

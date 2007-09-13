@@ -97,7 +97,7 @@ public class KmlRequestHandler implements ContextHandler {
     }
     List<ExternalUpdate> externalUpdates = new ArrayList<ExternalUpdate>();
     ExternalUpdate externalUpdate = new ExternalUpdate(GoogleEarthLauncher
-        .getLastImageLauched().getSequenceNumber(), latitude, longitude);
+        .getLastImageLauched().getSequenceNumber(), latitude, longitude, Double.NaN);
     externalUpdates.add(externalUpdate);
     parent.processExternalUpdates(externalUpdates);
     ByteArrayOutputStream outputStream = new ByteArrayOutputStream();

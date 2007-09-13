@@ -24,6 +24,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.fibs.geotag.util.BoundsTypeUtil;
+
 import com.topografix.gpx._1._0.BoundsType;
 import com.topografix.gpx._1._0.Gpx;
 import com.topografix.gpx._1._0.ObjectFactory;
@@ -150,26 +152,6 @@ public class TrackStore {
   }
 
   /**
-   * @param bounds1
-   * @param bounds2
-   * @return True if the the two bounds intersect
-   */
-  boolean intersect(BoundsType bounds1, BoundsType bounds2) {
-    // there are four ways the rectangles don't intersect
-    boolean dontIntersect =
-    // bottom of first is above top of second
-    bounds1.getMinlat().compareTo(bounds2.getMaxlat()) > 0 ||
-    // bottom of second is above top of first
-        bounds2.getMinlat().compareTo(bounds1.getMaxlat()) > 0 ||
-        // left of first is greater than right of second
-        bounds1.getMinlon().compareTo(bounds2.getMaxlon()) > 0 ||
-        // left of second is greater than right of first
-        bounds2.getMinlon().compareTo(bounds1.getMaxlon()) > 0;
-    // they intersect if the don't don't intersect
-    return !dontIntersect;
-  }
-
-  /**
    * Given the bounds (of a map) this method returns all stored track
    * segments whose bounds intersect the map bounds.
    * @param mapBounds The bounds of a map
@@ -182,7 +164,7 @@ public class TrackStore {
         for (Trkseg segment : track.getTrkseg()) {
           BoundsType bounds = segmentBounds.get(segment);
           if (bounds != null) {
-            if (intersect(mapBounds, bounds)) {
+            if (BoundsTypeUtil.intersect(mapBounds, bounds)) {
               // part or all of segment might be on map
               result.add(segment);
             }

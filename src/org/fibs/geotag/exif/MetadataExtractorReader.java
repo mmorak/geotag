@@ -27,6 +27,7 @@ import java.util.Iterator;
 import org.fibs.geotag.data.EditCameraDate;
 import org.fibs.geotag.data.EditGPSAltitude;
 import org.fibs.geotag.data.EditGPSDateTime;
+import org.fibs.geotag.data.EditGPSImgDirection;
 import org.fibs.geotag.data.EditGPSLatitude;
 import org.fibs.geotag.data.EditGPSLongitude;
 import org.fibs.geotag.data.ImageInfo;
@@ -141,6 +142,16 @@ public class MetadataExtractorReader implements ExifReader {
                 ImageInfo.DATA_SOURCE.IMAGE);
           } catch (Exception e) {
             // catch all Exceptions
+            e.printStackTrace();
+          }
+          try {
+            // the image direction is stored as one Rational
+            Rational rational = directory.getRational(GpsDirectory.TAG_GPS_IMG_DIRECTION);
+            // convert to a double
+            double direction = rational.doubleValue();
+            // and update
+            new EditGPSImgDirection(imageInfo, Double.toString(direction));
+          } catch (Exception e) {
             e.printStackTrace();
           }
           try {

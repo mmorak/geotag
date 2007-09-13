@@ -94,7 +94,17 @@ public class WebServer extends NanoHTTPD {
    */
   @Override
   public Response serve(String uri, String method, Properties header,
-      Properties parms) {
+      Properties parameters) {
+    // uncomment the following lines for debugging:
+    // System.out.print(uri + ' ');
+    // Enumeration<Object> keys = parameters.keys();
+    // while (keys.hasMoreElements()) {
+    // String key = (String) keys.nextElement();
+    // String value = parameters.getProperty(key);
+    // System.out.print(key + "=" + value + ' ');
+    // }
+    //     System.out.println();
+
     // find the longest matching context
     String context = new String(); // empty string
     for (String candidate : contexts) {
@@ -110,7 +120,7 @@ public class WebServer extends NanoHTTPD {
       }
       // find the context handler and handle the context
       return contextHandlers.get(context).serve(this, contextUri, method,
-          header, parms);
+          header, parameters);
     }
     // no context found
     return new Response(HTTP_NOTFOUND, MIME_PLAINTEXT, FILE_NOT_FOUND);

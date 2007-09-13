@@ -22,6 +22,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.fibs.geotag.track.TrackStoreTest;
+import org.fibs.geotag.util.BoundsTypeUtilTest;
 import org.fibs.geotag.util.FileUtilTest;
 import org.fibs.geotag.util.FontUtilTest;
 
@@ -38,6 +39,7 @@ public class AllTests extends TestSuite {
     suite.addTestSuite(FileUtilTest.class);
     suite.addTestSuite(FontUtilTest.class);
     suite.addTestSuite(TrackStoreTest.class);
+    suite.addTestSuite(BoundsTypeUtilTest.class);
     return suite;
   }
 }

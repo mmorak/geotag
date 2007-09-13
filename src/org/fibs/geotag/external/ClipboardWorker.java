@@ -113,15 +113,19 @@ public class ClipboardWorker extends SwingWorker<Void, ExternalUpdate> {
         // try to split the clipboard text into tokens
         double latitude = Double.NaN;
         double longitude = Double.NaN;
+        double direction = Double.NaN;
         int imageNumber = 0;
         try {
           StringTokenizer tokenizer = new StringTokenizer(clipboardText, " :"); //$NON-NLS-1$
           latitude = Double.parseDouble(tokenizer.nextToken());
           longitude = Double.parseDouble(tokenizer.nextToken());
           imageNumber = Integer.parseInt(tokenizer.nextToken());
+          if (tokenizer.hasMoreTokens()) {
+            direction = Double.parseDouble(tokenizer.nextToken());
+          }
           // we got all the tokens - notify listeners
           ExternalUpdate update = new ExternalUpdate(imageNumber, latitude,
-              longitude);
+              longitude, direction);
           publish(update);
         } catch (Exception e) {
           // e.printStackTrace();

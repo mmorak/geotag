@@ -1,4 +1,11 @@
-2007-09-09 release 0.015
+2007-09-13 Release 0.016
+  Now can set the image direction with Google Maps.
+  Now can handle displaying all tracks on a Google map.
+  Done by not sending points to the maps are are so close
+  in the track, that they make no visual difference.
+  Now reporting back and remembering changes in map type in Google maps
+  
+2007-09-09 Release 0.015
   Added ability to display GPS tracks on Google Maps.
   The last selected Google Maps zoom level is now reported back
   to Geotag and used for the next image opened in the browser.

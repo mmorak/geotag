@@ -29,6 +29,7 @@ import org.fibs.geotag.Settings.SETTING;
 import org.fibs.geotag.data.EditCameraDate;
 import org.fibs.geotag.data.EditGPSAltitude;
 import org.fibs.geotag.data.EditGPSDateTime;
+import org.fibs.geotag.data.EditGPSImgDirection;
 import org.fibs.geotag.data.EditGPSLatitude;
 import org.fibs.geotag.data.EditGPSLongitude;
 import org.fibs.geotag.data.ImageInfo;
@@ -57,6 +58,9 @@ public class ExiftoolReader implements ExifReader {
 
   /** exiftool GPSAltitude output lines start with this text */
   private static final String GPS_ALTITUDE_TAG = "GPSAltitude: "; //$NON-NLS-1$
+
+  /** exiftool GPSImgDirection output lines start with this text */
+  private static final String GPS_IMG_DIRECTION_TAG = "GPSImgDirection: "; //$NON-NLS-1$
 
   /** exiftool GPSDatetime output lines start with this text */
   private static final String GPS_DATE_TIME_TAG = "GPSDateTime: "; //$NON-NLS-1$
@@ -223,6 +227,9 @@ public class ExiftoolReader implements ExifReader {
           } else if (text.startsWith(GPS_ALTITUDE_TAG)) {
             new EditGPSAltitude(imageInfo, text.substring(GPS_ALTITUDE_TAG
                 .length()), ImageInfo.DATA_SOURCE.IMAGE);
+          } else if (text.startsWith(GPS_IMG_DIRECTION_TAG)) {
+            new EditGPSImgDirection(imageInfo, text
+                .substring(GPS_IMG_DIRECTION_TAG.length()));
           } else if (text.startsWith(GPS_DATE_TIME_TAG)) {
             new EditGPSDateTime(imageInfo, text.substring(GPS_DATE_TIME_TAG
                 .length()));

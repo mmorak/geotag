@@ -58,6 +58,7 @@ public class UpdateHandler implements ContextHandler {
       Properties header, Properties parms) {
     Double latitude = null;
     Double longitude = null;
+    Double direction = null;
     Integer image = null;
     Enumeration<Object> parameters = parms.keys();
     while (parameters.hasMoreElements()) {
@@ -69,11 +70,13 @@ public class UpdateHandler implements ContextHandler {
         longitude = new Double(Double.parseDouble(value));
       } else if (parameter.equals("image")) { //$NON-NLS-1$
         image = new Integer(Integer.parseInt(value));
+      } else if (parameter.equals("direction")) { //$NON-NLS-1$
+        direction = new Double(Double.parseDouble(value));
       }
     }
     if (latitude != null && longitude != null && image != null) {
       ExternalUpdate externalUpdate = new ExternalUpdate(image.intValue(),
-          latitude.doubleValue(), longitude.doubleValue());
+          latitude.doubleValue(), longitude.doubleValue(), direction == null? Double.NaN : direction.doubleValue());
       final List<ExternalUpdate> updateList = new ArrayList<ExternalUpdate>();
       updateList.add(externalUpdate);
       // Notify the parent, but make sure its done in the event thread

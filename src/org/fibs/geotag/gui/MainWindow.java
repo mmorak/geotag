@@ -77,6 +77,7 @@ import org.fibs.geotag.track.GpxReader;
 import org.fibs.geotag.track.GpxWriter;
 import org.fibs.geotag.track.TrackMatcher;
 import org.fibs.geotag.track.TrackStore;
+import org.fibs.geotag.webserver.MapTypeHandler;
 import org.fibs.geotag.webserver.ResourceHandler;
 import org.fibs.geotag.webserver.ThumbnailHandler;
 import org.fibs.geotag.webserver.TracksHandler;
@@ -293,6 +294,7 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
       webServer.createContext("/kml", new KmlRequestHandler(this)); //$NON-NLS-1$
       webServer.createContext("/tracks", new TracksHandler()); //$NON-NLS-1$
       webServer.createContext("/zoom", new ZoomLevelHandler()); //$NON-NLS-1$
+      webServer.createContext("/maptype", new MapTypeHandler()); //$NON-NLS-1$
     } catch (IOException e) {
       e.printStackTrace();
     }

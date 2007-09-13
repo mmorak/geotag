@@ -77,6 +77,8 @@ public class Settings {
     LONGITUDE_WIDTH,
     /** Preferences key for the altitude column width */
     ALTITUDE_WIDTH,
+    /** Preferences key for the direction column width */
+    DIRECTION_WIDTH,
     /** Preferences key for the image name column position */
     IMAGE_NAME_POSITION,
     /** Preferences key for the GPS time column position */
@@ -91,10 +93,14 @@ public class Settings {
     LONGITUDE_POSITION,
     /** Preferences key for the altitude column position */
     ALTITUDE_POSITION,
+    /** Preferences key for the direction column position */
+    DIRECTION_POSITION,
     /** Preferences key for the font used */
     FONT,
     /** Preferences key for the last zoom level used in Google Maps */
     LAST_GOOGLE_MAPS_ZOOM_LEVEL,
+    /** Preferences key for the last map type used in Google Maps */
+    LAST_GOOGLE_MAPS_MAP_TYPE,
     /** Preferences key for the tracks to be draw on Google Maps */
     GOOGLE_MAP_TRACKS_CHOICE;
 
