@@ -23,6 +23,7 @@ import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.Locale;
 
+import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
 import org.fibs.geotag.gui.MainWindow;
@@ -96,6 +97,16 @@ public class Geotag {
       UIManager.setLookAndFeel(new Plastic3DLookAndFeel());
     } catch (Exception e) {
       e.printStackTrace();
+    }
+    // check for new version
+    String latestVersion = Version.updateAvaiable();
+    String message = "<html><center>" //$NON-NLS-1$
+        + String.format(Messages.getString("Geotag.NewVersionFormat"), //$NON-NLS-1$
+            latestVersion, NAME, WEBSITE) + "</center></html>"; //$NON-NLS-1$
+    if (latestVersion != null) {
+      JOptionPane.showMessageDialog(null, message, Messages
+          .getString("Geotag.NewVersion"), //$NON-NLS-1$
+          JOptionPane.INFORMATION_MESSAGE);
     }
     MainWindow mainWindow = new MainWindow();
     mainWindow.setVisible(true);

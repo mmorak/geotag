@@ -1,3 +1,7 @@
+2007-09-17 Release 0.018
+  Added check for a new version on program start-up.
+  This can be turned off in the Settings dialog.
+  
 2007-09-17 Release 0.017
   Mainly a bugfix/usability release.
   Main difference: When showing an image without coordinates

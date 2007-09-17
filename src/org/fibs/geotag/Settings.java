@@ -106,7 +106,9 @@ public class Settings {
     /** Preferences key for the last longitude set from Google Maps */
     LAST_GOOGLE_MAPS_LONGITUDE,
     /** Preferences key for the tracks to be draw on Google Maps */
-    GOOGLE_MAP_TRACKS_CHOICE;
+    GOOGLE_MAP_TRACKS_CHOICE,
+    /** Preferences key for checking for new versions */
+    CHECK_FOR_NEW_VERSION;
 
     /**
      * For the actual key I prefer lower case keys with dots

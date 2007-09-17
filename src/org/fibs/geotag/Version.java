@@ -18,9 +18,15 @@
 
 package org.fibs.geotag;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Properties;
+
+import org.fibs.geotag.Settings.SETTING;
 
 /**
  * A holder class for the version number and build date/time of the program. The
@@ -35,7 +41,7 @@ public class Version {
   public static final int MAJOR = 0;
 
   /** The minor version number */
-  public static final int MINOR = 17;
+  public static final int MINOR = 18;
 
   /** The build date of the program */
   public static final String BUILD_DATE;
@@ -68,4 +74,31 @@ public class Version {
   /** The version formatted as a string */
   @SuppressWarnings( { "boxing", "nls" })
   public static final String VERSION = String.format("%d.%03d", MAJOR, MINOR);
+
+  /**
+   * Check a website to see if an update is available
+   * 
+   * @return The new version number if available, null otherwise
+   */
+  public static String updateAvaiable() {
+    if (Settings.get(SETTING.CHECK_FOR_NEW_VERSION, true)) {
+      try {
+        URL versionFile = new URL(Geotag.WEBSITE + "/version.txt"); //$NON-NLS-1$
+        InputStream inputStream = versionFile.openStream();
+        InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+        BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+        String versionLine = bufferedReader.readLine();
+        bufferedReader.close();
+        // no exception so far..
+        if (versionLine != null && VERSION.compareTo(versionLine) < 0) {
+          return versionLine;
+        }
+      } catch (MalformedURLException e) {
+        e.printStackTrace();
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+    }
+    return null;
+  }
 }
