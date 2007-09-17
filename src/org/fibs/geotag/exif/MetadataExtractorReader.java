@@ -24,12 +24,12 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
 
-import org.fibs.geotag.data.EditCameraDate;
-import org.fibs.geotag.data.EditGPSAltitude;
-import org.fibs.geotag.data.EditGPSDateTime;
-import org.fibs.geotag.data.EditGPSImgDirection;
-import org.fibs.geotag.data.EditGPSLatitude;
-import org.fibs.geotag.data.EditGPSLongitude;
+import org.fibs.geotag.data.UpdateCameraDate;
+import org.fibs.geotag.data.UpdateGPSAltitude;
+import org.fibs.geotag.data.UpdateGPSDateTime;
+import org.fibs.geotag.data.UpdateGPSImgDirection;
+import org.fibs.geotag.data.UpdateGPSLatitude;
+import org.fibs.geotag.data.UpdateGPSLongitude;
 import org.fibs.geotag.data.ImageInfo;
 
 import com.drew.imaging.jpeg.JpegMetadataReader;
@@ -111,7 +111,7 @@ public class MetadataExtractorReader implements ExifReader {
             cameraDate = dateFormat.format(date);
           }
           // update the imageinfo/exifdata
-          new EditCameraDate(imageInfo, cameraDate);
+          new UpdateCameraDate(imageInfo, cameraDate);
           // we also set the GPS date to a good guess if it hasn't been
           // set yet.
           imageInfo.setGPSDateTime();
@@ -138,7 +138,7 @@ public class MetadataExtractorReader implements ExifReader {
               altitude = -altitude;
             }
             // and finally to string used to update the ImageInfo
-            new EditGPSAltitude(imageInfo, Double.toString(altitude),
+            new UpdateGPSAltitude(imageInfo, Double.toString(altitude),
                 ImageInfo.DATA_SOURCE.IMAGE);
           } catch (Exception e) {
             // catch all Exceptions
@@ -146,11 +146,12 @@ public class MetadataExtractorReader implements ExifReader {
           }
           try {
             // the image direction is stored as one Rational
-            Rational rational = directory.getRational(GpsDirectory.TAG_GPS_IMG_DIRECTION);
+            Rational rational = directory
+                .getRational(GpsDirectory.TAG_GPS_IMG_DIRECTION);
             // convert to a double
             double direction = rational.doubleValue();
             // and update
-            new EditGPSImgDirection(imageInfo, Double.toString(direction));
+            new UpdateGPSImgDirection(imageInfo, Double.toString(direction));
           } catch (Exception e) {
             e.printStackTrace();
           }
@@ -166,7 +167,7 @@ public class MetadataExtractorReader implements ExifReader {
             if (ref == 'S') {
               latitude = -latitude;
             }
-            new EditGPSLatitude(imageInfo, Double.toString(latitude),
+            new UpdateGPSLatitude(imageInfo, Double.toString(latitude),
                 ImageInfo.DATA_SOURCE.IMAGE);
           } catch (Exception e) {
             e.printStackTrace();
@@ -181,7 +182,7 @@ public class MetadataExtractorReader implements ExifReader {
             if (ref == 'W') {
               longitude = -longitude;
             }
-            new EditGPSLongitude(imageInfo, Double.toString(longitude),
+            new UpdateGPSLongitude(imageInfo, Double.toString(longitude),
                 ImageInfo.DATA_SOURCE.IMAGE);
           } catch (Exception e) {
             e.printStackTrace();
@@ -213,7 +214,7 @@ public class MetadataExtractorReader implements ExifReader {
           // if we were able to retrieve both date and time
           if (date != null && time != null) {
             // we update the ImageInfo
-            new EditGPSDateTime(imageInfo, date + ' ' + time);
+            new UpdateGPSDateTime(imageInfo, date + ' ' + time);
           }
         }
       }

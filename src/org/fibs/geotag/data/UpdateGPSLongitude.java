@@ -25,31 +25,41 @@ import javax.swing.undo.CannotUndoException;
 import org.fibs.geotag.GlobalUndoManager;
 
 /**
- * A class encapsulating GPSDateTime updates
+ * A class encapsulating longitude updates
  * 
  * @author Andreas Schneider
  * 
  */
 @SuppressWarnings("serial")
-public class EditGPSDateTime extends AbstractUndoableEdit {
-  /** The {@link ImageInfo} whose GPSdateTime will be updated */
+public class UpdateGPSLongitude extends AbstractUndoableEdit {
+  /** the {@link ImageInfo} whose longitude will be updated */
   private ImageInfo imageInfo;
 
-  /** A copy of the previous value */
-  private String oldDateTime;
+  /** A copy of the previous longitude value */
+  private String oldLongitude;
 
-  /** The new value */
-  private String newDateTime;
+  /** The previous data source value */
+  private ImageInfo.DATA_SOURCE oldDataSource;
+
+  /** The new longitude value */
+  private String newLongitude;
+
+  /** The new data source value */
+  private ImageInfo.DATA_SOURCE newDataSource;
 
   /**
    * @param imageInfo
-   * @param newDateTime
+   * @param newLongitude
+   * @param newDataSource
    */
-  public EditGPSDateTime(ImageInfo imageInfo, String newDateTime) {
+  public UpdateGPSLongitude(ImageInfo imageInfo, String newLongitude,
+      ImageInfo.DATA_SOURCE newDataSource) {
     this.imageInfo = imageInfo;
-    this.oldDateTime = imageInfo.getGPSDateTime();
-    imageInfo.setGPSDateTime(newDateTime);
-    this.newDateTime = imageInfo.getGPSDateTime();
+    this.oldLongitude = imageInfo.getGPSLongitude();
+    this.oldDataSource = imageInfo.getSource();
+    imageInfo.setGPSLongitude(newLongitude, newDataSource);
+    this.newLongitude = imageInfo.getGPSLongitude();
+    this.newDataSource = imageInfo.getSource();
     GlobalUndoManager.getManager().addEdit(this);
   }
 
@@ -58,7 +68,7 @@ public class EditGPSDateTime extends AbstractUndoableEdit {
    */
   @Override
   public boolean isSignificant() {
-    // these individual updates are not significant
+    // these individual updates are never significant
     return false;
   }
 
@@ -68,7 +78,7 @@ public class EditGPSDateTime extends AbstractUndoableEdit {
   @Override
   public void redo() throws CannotRedoException {
     super.redo();
-    imageInfo.setGPSDateTime(newDateTime);
+    imageInfo.setGPSLongitude(newLongitude, newDataSource);
   }
 
   /**
@@ -77,6 +87,6 @@ public class EditGPSDateTime extends AbstractUndoableEdit {
   @Override
   public void undo() throws CannotUndoException {
     super.undo();
-    imageInfo.setGPSDateTime(oldDateTime);
+    imageInfo.setGPSLongitude(oldLongitude, oldDataSource);
   }
 }

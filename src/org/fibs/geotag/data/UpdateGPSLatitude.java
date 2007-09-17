@@ -31,7 +31,7 @@ import org.fibs.geotag.GlobalUndoManager;
  * 
  */
 @SuppressWarnings("serial")
-public class EditGPSLatitude extends AbstractUndoableEdit {
+public class UpdateGPSLatitude extends AbstractUndoableEdit {
   /** The {@link ImageInfo} */
   private ImageInfo imageInfo;
 
@@ -52,7 +52,7 @@ public class EditGPSLatitude extends AbstractUndoableEdit {
    * @param newLatitude
    * @param newDataSource
    */
-  public EditGPSLatitude(ImageInfo imageInfo, String newLatitude,
+  public UpdateGPSLatitude(ImageInfo imageInfo, String newLatitude,
       ImageInfo.DATA_SOURCE newDataSource) {
     this.imageInfo = imageInfo;
     this.oldLatitude = imageInfo.getGPSLatitude();

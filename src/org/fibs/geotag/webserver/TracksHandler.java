@@ -18,10 +18,6 @@
 
 package org.fibs.geotag.webserver;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -57,9 +53,6 @@ public class TracksHandler implements ContextHandler {
       Messages.getString("TracksHandler.MatchingSegment"), //$NON-NLS-1$
       Messages.getString("TracksHandler.MatchingSegmentAndNeighbours"), //$NON-NLS-1$
       Messages.getString("TracksHandler.AllTracks") }; //$NON-NLS-1$
-
-  /** The MIME type for XML files */
-  private static final String XML_MIME_TYPE = "application/xml"; //$NON-NLS-1$
 
   /**
    * @see org.fibs.geotag.webserver.ContextHandler#serve(org.fibs.geotag.webserver.WebServer,
@@ -144,17 +137,8 @@ public class TracksHandler implements ContextHandler {
       // trim down the tracks to bare minimum
       List<Trkseg> filteredSegments = filterSegments(mapBounds, segments,
           width, height);
-      // now that we have segments, write to out
-      ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-      try {
-        writeTracks(filteredSegments, byteArrayOutputStream);
-        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(
-            byteArrayOutputStream.toByteArray());
-        return server.new Response(NanoHTTPD.HTTP_OK, XML_MIME_TYPE,
-            byteArrayInputStream);
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
+      // now that we have segments, create a response
+      return server.xmlResponse(tracksToXml(filteredSegments));
     }
     return server.new Response(NanoHTTPD.HTTP_NOTFOUND,
         NanoHTTPD.MIME_PLAINTEXT, WebServer.FILE_NOT_FOUND);
@@ -260,16 +244,13 @@ public class TracksHandler implements ContextHandler {
   }
 
   /**
-   * Write a list of segments to an ouput stream in XML format
+   * Convert a list of segments to a string in XML format
    * 
    * @param segments
    *          the list of segments
-   * @param stream
-   *          The output stream
-   * @throws IOException
+   * @return The XML representation of the track segment list
    */
-  private void writeTracks(List<Trkseg> segments, OutputStream stream)
-      throws IOException {
+  private String tracksToXml(List<Trkseg> segments) {
     StringBuilder stringBuilder = new StringBuilder();
     stringBuilder.append("<tracks>\n"); //$NON-NLS-1$
     int trackPoints = 0;
@@ -287,7 +268,7 @@ public class TracksHandler implements ContextHandler {
       stringBuilder.append(" </track>\n"); //$NON-NLS-1$
     }
     stringBuilder.append("</tracks>"); //$NON-NLS-1$
-    stream.write(stringBuilder.toString().getBytes());
+    return stringBuilder.toString();
   }
 
 }

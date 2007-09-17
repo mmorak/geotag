@@ -25,41 +25,31 @@ import javax.swing.undo.CannotUndoException;
 import org.fibs.geotag.GlobalUndoManager;
 
 /**
- * A class encapsulating altitude updates
+ * A class encapsulating CameraDate updates
  * 
  * @author Andreas Schneider
  * 
  */
 @SuppressWarnings("serial")
-public class EditGPSAltitude extends AbstractUndoableEdit {
-  /** The {@link ImageInfo} whose altitude will be changed */
+public class UpdateCameraDate extends AbstractUndoableEdit {
+  /** the {@link ImageInfo} whose CameraDate will be updated */
   private ImageInfo imageInfo;
 
-  /** A copy of the previous altitude value */
-  private String oldAltitude;
+  /** A copy of the previous CameraDate value */
+  private String oldCameraDate;
 
-  /** A copy of the previous data source value */
-  private ImageInfo.DATA_SOURCE oldDataSource;
-
-  /** The new value for the altitude */
-  private String newAltitude;
-
-  /** The new value for the data source */
-  private ImageInfo.DATA_SOURCE newDataSource;
+  /** The new CameraDate */
+  private String newCameraDate;
 
   /**
    * @param imageInfo
-   * @param newAltitude
-   * @param newDataSource
+   * @param newCameraDate
    */
-  public EditGPSAltitude(ImageInfo imageInfo, String newAltitude,
-      ImageInfo.DATA_SOURCE newDataSource) {
+  public UpdateCameraDate(ImageInfo imageInfo, String newCameraDate) {
     this.imageInfo = imageInfo;
-    this.oldAltitude = imageInfo.getGPSAltitude();
-    this.oldDataSource = imageInfo.getSource();
-    imageInfo.setGPSAltitude(newAltitude, newDataSource);
-    this.newAltitude = imageInfo.getGPSAltitude();
-    this.newDataSource = imageInfo.getSource();
+    this.oldCameraDate = imageInfo.getCameraDate();
+    imageInfo.setCameraDate(newCameraDate);
+    this.newCameraDate = imageInfo.getCameraDate();
     GlobalUndoManager.getManager().addEdit(this);
   }
 
@@ -68,7 +58,7 @@ public class EditGPSAltitude extends AbstractUndoableEdit {
    */
   @Override
   public boolean isSignificant() {
-    // individual updates ar not significant
+    // these individual updates are never significant
     return false;
   }
 
@@ -78,7 +68,7 @@ public class EditGPSAltitude extends AbstractUndoableEdit {
   @Override
   public void redo() throws CannotRedoException {
     super.redo();
-    imageInfo.setGPSAltitude(newAltitude, newDataSource);
+    imageInfo.setCameraDate(newCameraDate);
   }
 
   /**
@@ -87,6 +77,6 @@ public class EditGPSAltitude extends AbstractUndoableEdit {
   @Override
   public void undo() throws CannotUndoException {
     super.undo();
-    imageInfo.setGPSAltitude(oldAltitude, oldDataSource);
+    imageInfo.setCameraDate(oldCameraDate);
   }
 }

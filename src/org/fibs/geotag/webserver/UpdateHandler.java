@@ -25,6 +25,8 @@ import java.util.Properties;
 
 import javax.swing.SwingUtilities;
 
+import org.fibs.geotag.Settings;
+import org.fibs.geotag.Settings.SETTING;
 import org.fibs.geotag.external.ExternalUpdate;
 import org.fibs.geotag.external.ExternalUpdateConsumer;
 
@@ -76,7 +78,8 @@ public class UpdateHandler implements ContextHandler {
     }
     if (latitude != null && longitude != null && image != null) {
       ExternalUpdate externalUpdate = new ExternalUpdate(image.intValue(),
-          latitude.doubleValue(), longitude.doubleValue(), direction == null? Double.NaN : direction.doubleValue());
+          latitude.doubleValue(), longitude.doubleValue(),
+          direction == null ? Double.NaN : direction.doubleValue());
       final List<ExternalUpdate> updateList = new ArrayList<ExternalUpdate>();
       updateList.add(externalUpdate);
       // Notify the parent, but make sure its done in the event thread
@@ -85,8 +88,14 @@ public class UpdateHandler implements ContextHandler {
           parent.processExternalUpdates(updateList);
         }
       });
+      // finally we kept a copy of the latitude and longitude in the
+      // settings, to use it for the best guess for images without
+      // proper coordinates
+      Settings.put(SETTING.LAST_GOOGLE_MAPS_LATITUDE, latitude.toString());
+      Settings.put(SETTING.LAST_GOOGLE_MAPS_LONGITUDE, longitude.toString());
     }
-    return null;
+    // send back a non-null response
+    return server.xmlResponse("<ok/>"); //$NON-NLS-1$
   }
 
 }

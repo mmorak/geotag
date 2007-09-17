@@ -101,6 +101,10 @@ public class Settings {
     LAST_GOOGLE_MAPS_ZOOM_LEVEL,
     /** Preferences key for the last map type used in Google Maps */
     LAST_GOOGLE_MAPS_MAP_TYPE,
+    /** Preferences key for the last latitude set from Google Maps */
+    LAST_GOOGLE_MAPS_LATITUDE,
+    /** Preferences key for the last longitude set from Google Maps */
+    LAST_GOOGLE_MAPS_LONGITUDE,
     /** Preferences key for the tracks to be draw on Google Maps */
     GOOGLE_MAP_TRACKS_CHOICE;
 

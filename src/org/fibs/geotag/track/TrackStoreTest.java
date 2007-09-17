@@ -19,15 +19,14 @@ package org.fibs.geotag.track;
 
 import java.io.InputStream;
 
+import junit.framework.TestCase;
+
 import org.fibs.geotag.util.BoundsTypeUtil;
-import org.fibs.geotag.webserver.WebServer;
 
 import com.topografix.gpx._1._0.BoundsType;
 import com.topografix.gpx._1._0.Gpx;
 import com.topografix.gpx._1._0.Gpx.Trk;
 import com.topografix.gpx._1._0.Gpx.Trk.Trkseg;
-
-import junit.framework.TestCase;
 
 /**
  * @author Andreas Schneider
@@ -44,7 +43,7 @@ public class TrackStoreTest extends TestCase {
     assertNull(TrackStore.getTrackStore().getGpx());
     assertNull(TrackStore.getTrackStore().getTracks());
     // now test putting some data into it - This needs a file called all.gpx in the resources directory
-    InputStream stream = WebServer.class.getClassLoader().getResourceAsStream("all.gpx"); //$NON-NLS-1$
+    InputStream stream = TrackStoreTest.class.getClassLoader().getResourceAsStream("all.gpx"); //$NON-NLS-1$
     assertNotNull(stream);
     Gpx gpx = GpxReader.read(stream);
     assertNotNull(gpx);

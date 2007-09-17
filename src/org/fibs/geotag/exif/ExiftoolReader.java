@@ -26,12 +26,12 @@ import java.util.List;
 
 import org.fibs.geotag.Settings;
 import org.fibs.geotag.Settings.SETTING;
-import org.fibs.geotag.data.EditCameraDate;
-import org.fibs.geotag.data.EditGPSAltitude;
-import org.fibs.geotag.data.EditGPSDateTime;
-import org.fibs.geotag.data.EditGPSImgDirection;
-import org.fibs.geotag.data.EditGPSLatitude;
-import org.fibs.geotag.data.EditGPSLongitude;
+import org.fibs.geotag.data.UpdateCameraDate;
+import org.fibs.geotag.data.UpdateGPSAltitude;
+import org.fibs.geotag.data.UpdateGPSDateTime;
+import org.fibs.geotag.data.UpdateGPSImgDirection;
+import org.fibs.geotag.data.UpdateGPSLatitude;
+import org.fibs.geotag.data.UpdateGPSLongitude;
 import org.fibs.geotag.data.ImageInfo;
 import org.fibs.geotag.image.ImageFileFilter;
 
@@ -214,24 +214,24 @@ public class ExiftoolReader implements ExifReader {
               // CreateDate is the only option left
               cameraDate = text.substring(CREATE_DATE_TAG.length());
             }
-            new EditCameraDate(imageInfo, cameraDate);
+            new UpdateCameraDate(imageInfo, cameraDate);
             // we also set the GPS date to a good guess if it hasn't been
             // set yet.
             imageInfo.setGPSDateTime();
           } else if (text.startsWith(GPS_LATITUDE_TAG)) {
-            new EditGPSLatitude(imageInfo, text.substring(GPS_LATITUDE_TAG
+            new UpdateGPSLatitude(imageInfo, text.substring(GPS_LATITUDE_TAG
                 .length()), ImageInfo.DATA_SOURCE.IMAGE);
           } else if (text.startsWith(GPS_LONGITUDE_TAG)) {
-            new EditGPSLongitude(imageInfo, text.substring(GPS_LONGITUDE_TAG
+            new UpdateGPSLongitude(imageInfo, text.substring(GPS_LONGITUDE_TAG
                 .length()), ImageInfo.DATA_SOURCE.IMAGE);
           } else if (text.startsWith(GPS_ALTITUDE_TAG)) {
-            new EditGPSAltitude(imageInfo, text.substring(GPS_ALTITUDE_TAG
+            new UpdateGPSAltitude(imageInfo, text.substring(GPS_ALTITUDE_TAG
                 .length()), ImageInfo.DATA_SOURCE.IMAGE);
           } else if (text.startsWith(GPS_IMG_DIRECTION_TAG)) {
-            new EditGPSImgDirection(imageInfo, text
+            new UpdateGPSImgDirection(imageInfo, text
                 .substring(GPS_IMG_DIRECTION_TAG.length()));
           } else if (text.startsWith(GPS_DATE_TIME_TAG)) {
-            new EditGPSDateTime(imageInfo, text.substring(GPS_DATE_TIME_TAG
+            new UpdateGPSDateTime(imageInfo, text.substring(GPS_DATE_TIME_TAG
                 .length()));
           } else if (text.startsWith(GPS_TIME_STAMP_TAG)) {
             // now this needs a little explanation. There are two different
@@ -245,7 +245,7 @@ public class ExiftoolReader implements ExifReader {
               // drop the Z
               String gpsDateTime = text.substring(GPS_TIME_STAMP_TAG.length(),
                   text.length() - 1);
-              new EditGPSDateTime(imageInfo, gpsDateTime);
+              new UpdateGPSDateTime(imageInfo, gpsDateTime);
             }
           } else if (text.startsWith(ORIENTATION_TAG)) {
             imageInfo.setOrientation(text.substring(ORIENTATION_TAG.length()));

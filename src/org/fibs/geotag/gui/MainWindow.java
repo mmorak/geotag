@@ -45,7 +45,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.WindowConstants;
 import javax.swing.undo.UndoManager;
-import javax.xml.bind.JAXBException;
 
 import org.fibs.geotag.Geotag;
 import org.fibs.geotag.GlobalUndoManager;
@@ -618,13 +617,11 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
           // not a gpx file selected - add .gpx suffix
           outputFile = new File(chooser.getSelectedFile().getPath() + ".gpx"); //$NON-NLS-1$
         }
-        GpxWriter.writeFile(TrackStore.getTrackStore().getGpx(), outputFile);
+        new GpxWriter().write(TrackStore.getTrackStore().getGpx(), outputFile);
         String message = String.format(Messages
             .getString("MainWindow.TracksSavedFormat"), outputFile.getPath()); //$NON-NLS-1$
         progressBar.setString(message);
-      } catch (JAXBException e) {
-        e.printStackTrace();
-      } catch (IOException e) {
+      } catch (Exception e) {
         e.printStackTrace();
       }
     }

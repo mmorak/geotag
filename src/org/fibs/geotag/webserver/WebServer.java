@@ -18,6 +18,8 @@
 
 package org.fibs.geotag.webserver;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -40,6 +42,9 @@ import fi.iki.elonen.NanoHTTPD;
  * 
  */
 public class WebServer extends NanoHTTPD {
+
+  /** The MIME type for XML files */
+  public static final String XML_MIME_TYPE = "application/xml"; //$NON-NLS-1$
 
   /** Message to send if file or resource not found */
   public static final String FILE_NOT_FOUND = Messages
@@ -103,7 +108,7 @@ public class WebServer extends NanoHTTPD {
     // String value = parameters.getProperty(key);
     // System.out.print(key + "=" + value + ' ');
     // }
-    //     System.out.println();
+    // System.out.println();
 
     // find the longest matching context
     String context = new String(); // empty string
@@ -142,6 +147,27 @@ public class WebServer extends NanoHTTPD {
       type = MIME_DEFAULT_BINARY;
     }
     return type;
+  }
+
+  /**
+   * Convenience method.
+   * 
+   * @param xml
+   *          An xml string
+   * @return A response with that content and MIME type application/xml
+   */
+  public Response xmlResponse(String xml) {
+    ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+    try {
+      byteArrayOutputStream.write(xml.getBytes());
+      ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(
+          byteArrayOutputStream.toByteArray());
+      return new Response(NanoHTTPD.HTTP_OK, WebServer.XML_MIME_TYPE,
+          byteArrayInputStream);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    return null;
   }
 
 }

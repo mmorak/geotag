@@ -21,9 +21,9 @@ package org.fibs.geotag.track;
 import java.util.Calendar;
 import java.util.List;
 
-import org.fibs.geotag.data.EditGPSAltitude;
-import org.fibs.geotag.data.EditGPSLatitude;
-import org.fibs.geotag.data.EditGPSLongitude;
+import org.fibs.geotag.data.UpdateGPSAltitude;
+import org.fibs.geotag.data.UpdateGPSLatitude;
+import org.fibs.geotag.data.UpdateGPSLongitude;
 import org.fibs.geotag.data.ImageInfo;
 import org.fibs.geotag.data.ImageInfo.DATA_SOURCE;
 import org.fibs.geotag.util.Util;
@@ -208,11 +208,11 @@ public class TrackMatcher {
       }
     }
     if (update) {
-      new EditGPSLatitude(imageInfo, Double.toString(latitude),
+      new UpdateGPSLatitude(imageInfo, Double.toString(latitude),
           ImageInfo.DATA_SOURCE.TRACK);
-      new EditGPSLongitude(imageInfo, Double.toString(longitude),
+      new UpdateGPSLongitude(imageInfo, Double.toString(longitude),
           ImageInfo.DATA_SOURCE.TRACK);
-      new EditGPSAltitude(imageInfo, Double.toString(altitude),
+      new UpdateGPSAltitude(imageInfo, Double.toString(altitude),
           ImageInfo.DATA_SOURCE.TRACK);
     }
   }

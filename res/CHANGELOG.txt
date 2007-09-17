@@ -1,3 +1,10 @@
+2007-09-17 Release 0.017
+  Mainly a bugfix/usability release.
+  Main difference: When showing an image without coordinates
+  in Google Maps, the last displayed coordinates at a lower 
+  zoom level are now displayed (assuming the image is in the
+  same general area as the previous one)
+  
 2007-09-13 Release 0.016
   Now can set the image direction with Google Maps.
   Now can handle displaying all tracks on a Google map.

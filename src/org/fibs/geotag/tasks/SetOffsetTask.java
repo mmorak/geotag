@@ -22,7 +22,7 @@ import java.util.IllegalFormatException;
 import java.util.List;
 
 import org.fibs.geotag.Messages;
-import org.fibs.geotag.data.EditGPSDateTime;
+import org.fibs.geotag.data.UpdateGPSDateTime;
 import org.fibs.geotag.data.ImageInfo;
 import org.fibs.geotag.table.ImagesTableModel;
 
@@ -102,7 +102,7 @@ public class SetOffsetTask extends UndoableBackgroundTask<ImageInfo> {
       try {
         String gmtDate = ImageInfo.subtractOffset(imageInfo.getCameraDate(),
             offset);
-        new EditGPSDateTime(imageInfo, gmtDate);
+        new UpdateGPSDateTime(imageInfo, gmtDate);
         publish(imageInfo);
       } catch (RuntimeException e) {
         // catch all RuntimeExceptions

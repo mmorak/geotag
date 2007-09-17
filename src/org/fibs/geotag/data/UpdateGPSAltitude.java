@@ -25,40 +25,40 @@ import javax.swing.undo.CannotUndoException;
 import org.fibs.geotag.GlobalUndoManager;
 
 /**
- * A class encapsulating longitude updates
+ * A class encapsulating altitude updates
  * 
  * @author Andreas Schneider
  * 
  */
 @SuppressWarnings("serial")
-public class EditGPSLongitude extends AbstractUndoableEdit {
-  /** the {@link ImageInfo} whose longitude will be updated */
+public class UpdateGPSAltitude extends AbstractUndoableEdit {
+  /** The {@link ImageInfo} whose altitude will be changed */
   private ImageInfo imageInfo;
 
-  /** A copy of the previous longitude value */
-  private String oldLongitude;
+  /** A copy of the previous altitude value */
+  private String oldAltitude;
 
-  /** The previous data source value */
+  /** A copy of the previous data source value */
   private ImageInfo.DATA_SOURCE oldDataSource;
 
-  /** The new longitude value */
-  private String newLongitude;
+  /** The new value for the altitude */
+  private String newAltitude;
 
-  /** The new data source value */
+  /** The new value for the data source */
   private ImageInfo.DATA_SOURCE newDataSource;
 
   /**
    * @param imageInfo
-   * @param newLongitude
+   * @param newAltitude
    * @param newDataSource
    */
-  public EditGPSLongitude(ImageInfo imageInfo, String newLongitude,
+  public UpdateGPSAltitude(ImageInfo imageInfo, String newAltitude,
       ImageInfo.DATA_SOURCE newDataSource) {
     this.imageInfo = imageInfo;
-    this.oldLongitude = imageInfo.getGPSLongitude();
+    this.oldAltitude = imageInfo.getGPSAltitude();
     this.oldDataSource = imageInfo.getSource();
-    imageInfo.setGPSLongitude(newLongitude, newDataSource);
-    this.newLongitude = imageInfo.getGPSLongitude();
+    imageInfo.setGPSAltitude(newAltitude, newDataSource);
+    this.newAltitude = imageInfo.getGPSAltitude();
     this.newDataSource = imageInfo.getSource();
     GlobalUndoManager.getManager().addEdit(this);
   }
@@ -68,7 +68,7 @@ public class EditGPSLongitude extends AbstractUndoableEdit {
    */
   @Override
   public boolean isSignificant() {
-    // these individual updates are never significant
+    // individual updates ar not significant
     return false;
   }
 
@@ -78,7 +78,7 @@ public class EditGPSLongitude extends AbstractUndoableEdit {
   @Override
   public void redo() throws CannotRedoException {
     super.redo();
-    imageInfo.setGPSLongitude(newLongitude, newDataSource);
+    imageInfo.setGPSAltitude(newAltitude, newDataSource);
   }
 
   /**
@@ -87,6 +87,6 @@ public class EditGPSLongitude extends AbstractUndoableEdit {
   @Override
   public void undo() throws CannotUndoException {
     super.undo();
-    imageInfo.setGPSLongitude(oldLongitude, oldDataSource);
+    imageInfo.setGPSAltitude(oldAltitude, oldDataSource);
   }
 }

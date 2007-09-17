@@ -56,7 +56,8 @@ public class ZoomLevelHandler implements ContextHandler {
     if (zoomLevel != null) {
       Settings.put(SETTING.LAST_GOOGLE_MAPS_ZOOM_LEVEL, zoomLevel);
     }
-    return null;
+    // send back a non-null response
+    return server.xmlResponse("<ok/>"); //$NON-NLS-1$
   }
 
 }

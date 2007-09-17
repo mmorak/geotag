@@ -25,31 +25,31 @@ import javax.swing.undo.CannotUndoException;
 import org.fibs.geotag.GlobalUndoManager;
 
 /**
- * A class encapsulating image direction updates
+ * A class encapsulating GPSDateTime updates
  * 
  * @author Andreas Schneider
  * 
  */
 @SuppressWarnings("serial")
-public class EditGPSImgDirection extends AbstractUndoableEdit {
-  /** The {@link ImageInfo} whose image direction will be changed */
+public class UpdateGPSDateTime extends AbstractUndoableEdit {
+  /** The {@link ImageInfo} whose GPSdateTime will be updated */
   private ImageInfo imageInfo;
 
-  /** A copy of the previous direction value */
-  private String oldDirection;
+  /** A copy of the previous value */
+  private String oldDateTime;
 
-  /** The new value for the direction */
-  private String newDirection;
+  /** The new value */
+  private String newDateTime;
 
   /**
    * @param imageInfo
-   * @param newDirection
+   * @param newDateTime
    */
-  public EditGPSImgDirection(ImageInfo imageInfo, String newDirection) {
+  public UpdateGPSDateTime(ImageInfo imageInfo, String newDateTime) {
     this.imageInfo = imageInfo;
-    this.oldDirection = imageInfo.getGPSImgDirection();
-    imageInfo.setGPSImgDirection(newDirection);
-    this.newDirection = imageInfo.getGPSImgDirection();
+    this.oldDateTime = imageInfo.getGPSDateTime();
+    imageInfo.setGPSDateTime(newDateTime);
+    this.newDateTime = imageInfo.getGPSDateTime();
     GlobalUndoManager.getManager().addEdit(this);
   }
 
@@ -58,7 +58,7 @@ public class EditGPSImgDirection extends AbstractUndoableEdit {
    */
   @Override
   public boolean isSignificant() {
-    // individual updates are not significant
+    // these individual updates are not significant
     return false;
   }
 
@@ -68,7 +68,7 @@ public class EditGPSImgDirection extends AbstractUndoableEdit {
   @Override
   public void redo() throws CannotRedoException {
     super.redo();
-    imageInfo.setGPSImgDirection(newDirection);
+    imageInfo.setGPSDateTime(newDateTime);
   }
 
   /**
@@ -77,6 +77,6 @@ public class EditGPSImgDirection extends AbstractUndoableEdit {
   @Override
   public void undo() throws CannotUndoException {
     super.undo();
-    imageInfo.setGPSImgDirection(oldDirection);
+    imageInfo.setGPSDateTime(oldDateTime);
   }
 }

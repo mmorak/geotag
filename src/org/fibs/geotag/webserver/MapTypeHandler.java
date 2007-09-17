@@ -55,7 +55,8 @@ public class MapTypeHandler implements ContextHandler {
     if (mapType != null) {
       Settings.put(SETTING.LAST_GOOGLE_MAPS_MAP_TYPE, mapType);
     }
-    return null;
+    // return a non=null response
+    return server.xmlResponse("<ok/>"); //$NON-NLS-1$
   }
 
 }

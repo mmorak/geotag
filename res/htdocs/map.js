@@ -226,7 +226,7 @@ if (GBrowserIsCompatible()) {
     var x = directionCoordinates.x - cameraCoordinates.x;
     var y = directionCoordinates.y - cameraCoordinates.y;
     var theta = (Math.atan2(y, x) + Math.PI * 5.0 / 2.0) % (Math.PI * 2.0);
-    direction = theta / Math.PI * 180;
+    var direction = theta / Math.PI * 180;
     // make a string out of the new marker location and send it to the web server
     var url = "update/new.html?image="
        + image
@@ -317,6 +317,8 @@ if (GBrowserIsCompatible()) {
   GEvent.addListener(map, "zoomend", function(oldLevel, newLevel) {
     var request = GXmlHttp.create();
     request.open("GET", "http://localhost:4321/zoom/zoom.html?zoom="+newLevel, true);
+    // leave out the request.onreadystatechange = function() bit
+    // we're not interested in the response from the server
     request.send(null);
     //GLog.write("New zoom level: "+newLevel);
   });
@@ -325,6 +327,7 @@ if (GBrowserIsCompatible()) {
     var request = GXmlHttp.create();
     request.open("GET", "http://localhost:4321/maptype/maptype.html?maptype=" 
        +map.getCurrentMapType().getName());
+    // not interested in server response, just send the request
     request.send(null);
   });
   

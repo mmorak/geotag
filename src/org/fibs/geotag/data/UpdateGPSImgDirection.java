@@ -25,31 +25,31 @@ import javax.swing.undo.CannotUndoException;
 import org.fibs.geotag.GlobalUndoManager;
 
 /**
- * A class encapsulating CameraDate updates
+ * A class encapsulating image direction updates
  * 
  * @author Andreas Schneider
  * 
  */
 @SuppressWarnings("serial")
-public class EditCameraDate extends AbstractUndoableEdit {
-  /** the {@link ImageInfo} whose CameraDate will be updated */
+public class UpdateGPSImgDirection extends AbstractUndoableEdit {
+  /** The {@link ImageInfo} whose image direction will be changed */
   private ImageInfo imageInfo;
 
-  /** A copy of the previous CameraDate value */
-  private String oldCameraDate;
+  /** A copy of the previous direction value */
+  private String oldDirection;
 
-  /** The new CameraDate */
-  private String newCameraDate;
+  /** The new value for the direction */
+  private String newDirection;
 
   /**
    * @param imageInfo
-   * @param newCameraDate
+   * @param newDirection
    */
-  public EditCameraDate(ImageInfo imageInfo, String newCameraDate) {
+  public UpdateGPSImgDirection(ImageInfo imageInfo, String newDirection) {
     this.imageInfo = imageInfo;
-    this.oldCameraDate = imageInfo.getCameraDate();
-    imageInfo.setCameraDate(newCameraDate);
-    this.newCameraDate = imageInfo.getCameraDate();
+    this.oldDirection = imageInfo.getGPSImgDirection();
+    imageInfo.setGPSImgDirection(newDirection);
+    this.newDirection = imageInfo.getGPSImgDirection();
     GlobalUndoManager.getManager().addEdit(this);
   }
 
@@ -58,7 +58,7 @@ public class EditCameraDate extends AbstractUndoableEdit {
    */
   @Override
   public boolean isSignificant() {
-    // these individual updates are never significant
+    // individual updates are not significant
     return false;
   }
 
@@ -68,7 +68,7 @@ public class EditCameraDate extends AbstractUndoableEdit {
   @Override
   public void redo() throws CannotRedoException {
     super.redo();
-    imageInfo.setCameraDate(newCameraDate);
+    imageInfo.setGPSImgDirection(newDirection);
   }
 
   /**
@@ -77,6 +77,6 @@ public class EditCameraDate extends AbstractUndoableEdit {
   @Override
   public void undo() throws CannotUndoException {
     super.undo();
-    imageInfo.setCameraDate(oldCameraDate);
+    imageInfo.setGPSImgDirection(oldDirection);
   }
 }

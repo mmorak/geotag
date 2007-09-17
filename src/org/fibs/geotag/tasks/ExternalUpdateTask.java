@@ -18,10 +18,10 @@
 
 package org.fibs.geotag.tasks;
 
-import org.fibs.geotag.data.EditGPSAltitude;
-import org.fibs.geotag.data.EditGPSImgDirection;
-import org.fibs.geotag.data.EditGPSLatitude;
-import org.fibs.geotag.data.EditGPSLongitude;
+import org.fibs.geotag.data.UpdateGPSAltitude;
+import org.fibs.geotag.data.UpdateGPSImgDirection;
+import org.fibs.geotag.data.UpdateGPSLatitude;
+import org.fibs.geotag.data.UpdateGPSLongitude;
 import org.fibs.geotag.data.ImageInfo;
 import org.fibs.geotag.external.ExternalUpdate;
 
@@ -75,19 +75,19 @@ public class ExternalUpdateTask extends UndoableBackgroundTask<ImageInfo> {
     ImageInfo imageInfo = ImageInfo.getImageInfo(externalUpdate
         .getImageNumber());
     if (imageInfo != null) {
-      new EditGPSLatitude(imageInfo, (new Double(externalUpdate.getLatitude()))
-          .toString(), ImageInfo.DATA_SOURCE.MAP);
-      new EditGPSLongitude(imageInfo,
-          (new Double(externalUpdate.getLongitude())).toString(),
+      new UpdateGPSLatitude(imageInfo,
+          (new Double(externalUpdate.getLatitude())).toString(),
           ImageInfo.DATA_SOURCE.MAP);
+      new UpdateGPSLongitude(imageInfo, (new Double(externalUpdate
+          .getLongitude())).toString(), ImageInfo.DATA_SOURCE.MAP);
       // leave the altitude untouched, unless it is not set yet,
       // in which case we set it to zero
       if (imageInfo.getGPSAltitude() == null) {
-        new EditGPSAltitude(imageInfo, (new Double(0.0)).toString(),
+        new UpdateGPSAltitude(imageInfo, (new Double(0.0)).toString(),
             ImageInfo.DATA_SOURCE.MAP);
       }
       if (externalUpdate.getDirection() != Double.NaN) {
-        new EditGPSImgDirection(imageInfo, (new Double(externalUpdate
+        new UpdateGPSImgDirection(imageInfo, (new Double(externalUpdate
             .getDirection()).toString()));
       }
       publish(imageInfo);

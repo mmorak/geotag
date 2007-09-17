@@ -543,10 +543,20 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
       @Override
       protected void done() {
         // as default we use a good example to demonstrate the difference
-        // the Airy and WGS84 geoids :-)
+        // between the Airy and WGS84 geoids :-)
         String latitude = Double.toString(51.0 + 28.0 / 60 + 38.0 / 3600);
         String longitude = "0.0"; //$NON-NLS-1$
-        int zoomLevel = 2;
+        int zoomLevel = 5;
+        // see if we can find a better default in the settings
+        // use the last position set via Google maps
+        latitude = Settings.get(SETTING.LAST_GOOGLE_MAPS_LATITUDE, latitude);
+        longitude = Settings.get(SETTING.LAST_GOOGLE_MAPS_LONGITUDE, longitude);
+        zoomLevel = Settings
+            .get(SETTING.LAST_GOOGLE_MAPS_ZOOM_LEVEL, zoomLevel);
+        // and zoom a bit out
+        if (zoomLevel > 6) {
+          zoomLevel -= 2;
+        }
         if (imageInfo.getGPSLatitude() != null
             && imageInfo.getGPSLongitude() != null) {
           latitude = imageInfo.getGPSLatitude();
@@ -737,7 +747,7 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
   }
 
   /**
-   * Copy the location to all seleted images
+   * Copy the location to all selected images
    */
   private void copyLocationToSelected() {
     List<ImageInfo> imageList = new ArrayList<ImageInfo>();

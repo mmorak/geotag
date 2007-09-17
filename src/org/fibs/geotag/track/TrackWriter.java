@@ -15,33 +15,30 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+package org.fibs.geotag.track;
 
-package org.fibs.geotag;
+import java.io.File;
+import java.io.OutputStream;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
-import org.fibs.geotag.track.KmlTest;
-import org.fibs.geotag.track.TrackStoreTest;
-import org.fibs.geotag.util.BoundsTypeUtilTest;
-import org.fibs.geotag.util.FileUtilTest;
-import org.fibs.geotag.util.FontUtilTest;
+import com.topografix.gpx._1._0.Gpx;
 
 /**
+ * An interface for classes writing tracks to files and streams
  * @author Andreas Schneider
- * 
  */
-public class AllTests extends TestSuite {
+public interface TrackWriter {
   /**
-   * @return test suite
+   * Write the tracks from a GPX object to a file
+   * @param gpx The GPX object containing the tracks
+   * @param file the file to write to
+   * @throws Exception
    */
-  public static Test suite() {
-    TestSuite suite = new TestSuite();
-    suite.addTestSuite(FileUtilTest.class);
-    suite.addTestSuite(FontUtilTest.class);
-    suite.addTestSuite(TrackStoreTest.class);
-    suite.addTestSuite(BoundsTypeUtilTest.class);
-    suite.addTestSuite(KmlTest.class);
-    return suite;
-  }
+  public void write(Gpx gpx, File file) throws Exception;
+  /**
+   * Write the tracks from a GPX object to an output stream
+   * @param gpx The GPX object containing the tracks
+   * @param outputStream The output stream to write to
+   * @throws Exception
+   */
+  public void write(Gpx gpx, OutputStream outputStream) throws Exception;
 }

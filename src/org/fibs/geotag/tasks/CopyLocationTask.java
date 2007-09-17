@@ -22,9 +22,9 @@ import java.util.IllegalFormatException;
 import java.util.List;
 
 import org.fibs.geotag.Messages;
-import org.fibs.geotag.data.EditGPSAltitude;
-import org.fibs.geotag.data.EditGPSLatitude;
-import org.fibs.geotag.data.EditGPSLongitude;
+import org.fibs.geotag.data.UpdateGPSAltitude;
+import org.fibs.geotag.data.UpdateGPSLatitude;
+import org.fibs.geotag.data.UpdateGPSLongitude;
 import org.fibs.geotag.data.ImageInfo;
 import org.fibs.geotag.table.ImagesTableModel;
 
@@ -103,11 +103,11 @@ public class CopyLocationTask extends UndoableBackgroundTask<ImageInfo> {
       currentProgress++;
       try {
         setProgressMessage();
-        new EditGPSLatitude(target, source.getGPSLatitude(),
+        new UpdateGPSLatitude(target, source.getGPSLatitude(),
             ImageInfo.DATA_SOURCE.COPIED);
-        new EditGPSLongitude(target, source.getGPSLongitude(),
+        new UpdateGPSLongitude(target, source.getGPSLongitude(),
             ImageInfo.DATA_SOURCE.COPIED);
-        new EditGPSAltitude(target, source.getGPSAltitude(),
+        new UpdateGPSAltitude(target, source.getGPSAltitude(),
             ImageInfo.DATA_SOURCE.COPIED);
         publish(target);
       } catch (RuntimeException e) {
