@@ -1,3 +1,7 @@
+2007-09-18 Release 0.019
+  Images without coordinates will not automatically accept
+  the default coordinates when shown in Google Earth.
+  
 2007-09-17 Release 0.018
   Added check for a new version on program start-up.
   This can be turned off in the Settings dialog.

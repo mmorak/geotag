@@ -33,6 +33,7 @@ import javax.xml.bind.Marshaller;
 import org.fibs.geotag.Geotag;
 import org.fibs.geotag.Messages;
 import org.fibs.geotag.data.ImageInfo;
+import org.fibs.geotag.util.Airy;
 
 import com.google.earth.kml._2.AltitudeModeEnum;
 import com.google.earth.kml._2.FolderType;
@@ -68,8 +69,8 @@ public class GoogleEarthLauncher {
    */
   public static void launch(ImageInfo imageInfo) {
     lastImageLauched = imageInfo;
-    double latitude = 51.0 + 28.0 / 60 + 38.0 / 3600;
-    double longitude = 0.0;
+    double latitude = Airy.LATITUDE;
+    double longitude = Airy.LONGITUDE;
     double altitude = 100;
     if (imageInfo.hasLocation()) {
       try {

@@ -55,6 +55,7 @@ import org.fibs.geotag.tasks.SetOffsetTask;
 import org.fibs.geotag.tasks.UndoableBackgroundTask;
 import org.fibs.geotag.track.TrackMatcher;
 import org.fibs.geotag.track.TrackStore;
+import org.fibs.geotag.util.Airy;
 
 import com.centerkey.utils.BareBonesBrowserLaunch;
 
@@ -544,8 +545,8 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
       protected void done() {
         // as default we use a good example to demonstrate the difference
         // between the Airy and WGS84 geoids :-)
-        String latitude = Double.toString(51.0 + 28.0 / 60 + 38.0 / 3600);
-        String longitude = "0.0"; //$NON-NLS-1$
+        String latitude = Double.toString(Airy.LATITUDE);
+        String longitude = Double.toString(Airy.LONGITUDE);
         int zoomLevel = 5;
         // see if we can find a better default in the settings
         // use the last position set via Google maps

@@ -23,7 +23,10 @@ import org.fibs.geotag.data.UpdateGPSImgDirection;
 import org.fibs.geotag.data.UpdateGPSLatitude;
 import org.fibs.geotag.data.UpdateGPSLongitude;
 import org.fibs.geotag.data.ImageInfo;
+import org.fibs.geotag.data.ImageInfo.DATA_SOURCE;
 import org.fibs.geotag.external.ExternalUpdate;
+import org.fibs.geotag.util.Airy;
+import org.fibs.geotag.util.Util;
 
 /**
  * @author Andreas Schneider
@@ -75,20 +78,29 @@ public class ExternalUpdateTask extends UndoableBackgroundTask<ImageInfo> {
     ImageInfo imageInfo = ImageInfo.getImageInfo(externalUpdate
         .getImageNumber());
     if (imageInfo != null) {
-      new UpdateGPSLatitude(imageInfo,
-          (new Double(externalUpdate.getLatitude())).toString(),
-          ImageInfo.DATA_SOURCE.MAP);
-      new UpdateGPSLongitude(imageInfo, (new Double(externalUpdate
-          .getLongitude())).toString(), ImageInfo.DATA_SOURCE.MAP);
-      // leave the altitude untouched, unless it is not set yet,
-      // in which case we set it to zero
-      if (imageInfo.getGPSAltitude() == null) {
-        new UpdateGPSAltitude(imageInfo, (new Double(0.0)).toString(),
-            ImageInfo.DATA_SOURCE.MAP);
-      }
-      if (externalUpdate.getDirection() != Double.NaN) {
-        new UpdateGPSImgDirection(imageInfo, (new Double(externalUpdate
-            .getDirection()).toString()));
+      System.out.println(Util.greatCircleDistance(externalUpdate.getLatitude(),
+          externalUpdate.getLongitude(), Airy.LATITUDE, Airy.LONGITUDE));
+      // first the case that the location is exactly our default (within 10cm)
+      if (Util.greatCircleDistance(externalUpdate.getLatitude(), externalUpdate
+          .getLongitude(), Airy.LATITUDE, Airy.LONGITUDE) < 0.1) {
+        new UpdateGPSLatitude(imageInfo, null, DATA_SOURCE.NONE);
+        new UpdateGPSLongitude(imageInfo, null, DATA_SOURCE.NONE);
+        new UpdateGPSAltitude(imageInfo, null, DATA_SOURCE.NONE);
+      } else {
+        new UpdateGPSLatitude(imageInfo, (new Double(externalUpdate
+            .getLatitude())).toString(), DATA_SOURCE.MAP);
+        new UpdateGPSLongitude(imageInfo, (new Double(externalUpdate
+            .getLongitude())).toString(), DATA_SOURCE.MAP);
+        // leave the altitude untouched, unless it is not set yet,
+        // in which case we set it to zero
+        if (imageInfo.getGPSAltitude() == null) {
+          new UpdateGPSAltitude(imageInfo, (new Double(0.0)).toString(),
+              DATA_SOURCE.MAP);
+        }
+        if (externalUpdate.getDirection() != Double.NaN) {
+          new UpdateGPSImgDirection(imageInfo, (new Double(externalUpdate
+              .getDirection()).toString()));
+        }
       }
       publish(imageInfo);
     }

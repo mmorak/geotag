@@ -35,6 +35,7 @@ import org.fibs.geotag.Messages;
 import org.fibs.geotag.data.ImageInfo;
 import org.fibs.geotag.external.ExternalUpdate;
 import org.fibs.geotag.external.ExternalUpdateConsumer;
+import org.fibs.geotag.util.Airy;
 import org.fibs.geotag.webserver.ContextHandler;
 import org.fibs.geotag.webserver.WebServer;
 
@@ -83,8 +84,8 @@ public class KmlRequestHandler implements ContextHandler {
    */
   public Response serve(WebServer server, String uri, String method,
       Properties header, Properties parameters) {
-    double latitude = 51.0 + 28.0 / 60 + 38.0 / 3600;
-    double longitude = 0.0;
+    double latitude = Airy.LATITUDE;
+    double longitude = Airy.LONGITUDE;
     Enumeration<Object> keys = parameters.keys();
     while (keys.hasMoreElements()) {
       String key = (String) keys.nextElement();
@@ -97,7 +98,8 @@ public class KmlRequestHandler implements ContextHandler {
     }
     List<ExternalUpdate> externalUpdates = new ArrayList<ExternalUpdate>();
     ExternalUpdate externalUpdate = new ExternalUpdate(GoogleEarthLauncher
-        .getLastImageLauched().getSequenceNumber(), latitude, longitude, Double.NaN);
+        .getLastImageLauched().getSequenceNumber(), latitude, longitude,
+        Double.NaN);
     externalUpdates.add(externalUpdate);
     parent.processExternalUpdates(externalUpdates);
     ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
