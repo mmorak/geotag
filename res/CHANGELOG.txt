@@ -1,3 +1,7 @@
+2007-09-19 Release 0.020
+  Bug fix release: Fixed problem with image direction
+  when using with Google Earth
+  
 2007-09-18 Release 0.019
   Images without coordinates will not automatically accept
   the default coordinates when shown in Google Earth.
@@ -7,7 +11,7 @@
   This can be turned off in the Settings dialog.
   
 2007-09-17 Release 0.017
-  Mainly a bugfix/usability release.
+  Mainly a bug fix/usability release.
   Main difference: When showing an image without coordinates
   in Google Maps, the last displayed coordinates at a lower 
   zoom level are now displayed (assuming the image is in the

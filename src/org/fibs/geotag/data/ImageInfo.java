@@ -480,6 +480,10 @@ public class ImageInfo implements Comparable<ImageInfo> {
    * @return the GPS image direction
    */
   public String getGPSImgDirection() {
+    // return null if the image direction is NaN
+    if (GPSImgDirection != null && "NaN".equals(GPSImgDirection)) { //$NON-NLS-1$
+      return null;
+    }
     return GPSImgDirection;
   }
 
