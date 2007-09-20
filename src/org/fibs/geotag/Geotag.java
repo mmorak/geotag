@@ -98,6 +98,18 @@ public class Geotag {
     } catch (Exception e) {
       e.printStackTrace();
     }
+    // check that the program has enough memory available
+    int maxMemory = (int) Math.round(Runtime.getRuntime().maxMemory()
+        / (1024.0 * 1024));
+    if (maxMemory < 127) {
+      String message = "<html><center>" //$NON-NLS-1$
+          + String.format(Messages.getString("Geotag.MemoryWarningFormat") //$NON-NLS-1$
+              + "<br><b><code>java -Xmx256M -jar geotag.jar</code></b>", //$NON-NLS-1$
+              NAME, new Integer(maxMemory), WEBSITE) + "</center></html>"; //$NON-NLS-1$
+      JOptionPane.showMessageDialog(null, message, Messages
+          .getString("Geotag.NotEnoughMemory"), //$NON-NLS-1$
+          JOptionPane.WARNING_MESSAGE);
+    }
     // check for new version
     String latestVersion = Version.updateAvaiable();
     String message = "<html><center>" //$NON-NLS-1$

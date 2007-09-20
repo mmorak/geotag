@@ -150,6 +150,7 @@ public class GoogleEarthLauncher {
       // a better choice is a temporary file
       try {
         file = File.createTempFile(Geotag.NAME, ".kml"); //$NON-NLS-1$
+        file.deleteOnExit();
       } catch (IOException e) {
         e.printStackTrace();
       }

@@ -119,6 +119,7 @@ public class GPSBabel {
     // try to find a better name
     try {
       file = File.createTempFile(Geotag.NAME, ".gpx"); //$NON-NLS-1$
+      file.deleteOnExit();
     } catch (IOException e) {
       e.printStackTrace();
     }
