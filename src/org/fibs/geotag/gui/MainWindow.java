@@ -84,6 +84,7 @@ import org.fibs.geotag.webserver.UpdateHandler;
 import org.fibs.geotag.webserver.WebServer;
 import org.fibs.geotag.webserver.ZoomLevelHandler;
 
+import com.centerkey.utils.BareBonesBrowserLaunch;
 import com.topografix.gpx._1._0.Gpx;
 import com.topografix.gpx._1._0.Gpx.Trk;
 import com.topografix.gpx._1._0.Gpx.Trk.Trkseg;
@@ -459,6 +460,16 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
 
     helpMenu.add(aboutItem);
 
+    JMenuItem websiteItem = new JMenuItem(String.format(Messages
+        .getString("MainWindow.WebSiteFormat") + ELLIPSIS, Geotag.NAME)); //$NON-NLS-1$
+    websiteItem.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        BareBonesBrowserLaunch.openURL(Geotag.WEBSITE);
+      }
+    });
+
+    helpMenu.add(websiteItem);
+
     menuBar.add(helpMenu);
   }
 
@@ -580,12 +591,19 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
       Settings.flush();
       Gpx gpx = GpxReader.read(file);
       int numTrackpoints = 0;
-      List<Trk> tracks = gpx.getTrk();
-      for (Trk trk : tracks) {
-        List<Trkseg> segments = trk.getTrkseg();
-        for (Trkseg segment : segments) {
-          numTrackpoints += segment.getTrkpt().size();
+      if (gpx != null) {
+        List<Trk> tracks = gpx.getTrk();
+        for (Trk trk : tracks) {
+          List<Trkseg> segments = trk.getTrkseg();
+          for (Trkseg segment : segments) {
+            numTrackpoints += segment.getTrkpt().size();
+          }
         }
+      } else {
+        JOptionPane.showMessageDialog(this, Messages
+            .getString("MainWindow.CouldNotReadGpxFile") + ":\n" //$NON-NLS-1$ //$NON-NLS-2$
+            + file.getPath(),
+            Messages.getString("MainWindow.Error"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
       }
       String message = "" + numTrackpoints + ' ' + Messages.getString("MainWindow.LocationsLoaded"); //$NON-NLS-1$ //$NON-NLS-2$
       progressBar.setString(message);
