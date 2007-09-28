@@ -30,7 +30,7 @@ import org.fibs.geotag.Messages;
 import org.fibs.geotag.dcraw.Dcraw;
 import org.fibs.geotag.exif.Exiftool;
 import org.fibs.geotag.gpsbabel.GPSBabel;
-import org.fibs.geotag.image.ImageFileFilter;
+import org.fibs.geotag.image.FileTypes;
 import org.fibs.geotag.table.ImagesTableModel;
 import org.fibs.geotag.track.TrackStore;
 import org.fibs.geotag.util.Util;
@@ -68,7 +68,9 @@ public class WhatNext {
     boolean rawImagesAvailable = false;
     for (int row = 0; row < tableModel.getRowCount(); row++) {
       File file = new File(tableModel.getImageInfo(row).getPath());
-      if (ImageFileFilter.isRawFile(file)) {
+      FileTypes fileType = FileTypes.fileType(file);
+      if (fileType == FileTypes.RAW_READ_WRITE
+          || fileType == FileTypes.RAW_READ_ONLY) {
         rawImagesAvailable = true;
         break;
       }

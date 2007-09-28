@@ -48,10 +48,8 @@ import javax.swing.undo.UndoManager;
 
 import org.fibs.geotag.Geotag;
 import org.fibs.geotag.GlobalUndoManager;
-import org.fibs.geotag.License;
 import org.fibs.geotag.Messages;
 import org.fibs.geotag.Settings;
-import org.fibs.geotag.Version;
 import org.fibs.geotag.Settings.SETTING;
 import org.fibs.geotag.data.ImageInfo;
 import org.fibs.geotag.data.ImageInfo.THUMBNAIL_STATUS;
@@ -435,26 +433,11 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
 
     helpMenu.add(whatNextItem);
 
-    JMenuItem aboutItem = new JMenuItem(
-        Messages.getString("MainWindow.About") + ' ' + Geotag.NAME + ELLIPSIS); //$NON-NLS-1$
+    final String about = Messages.getString("MainWindow.About") + ' ' + Geotag.NAME; //$NON-NLS-1$
+    JMenuItem aboutItem = new JMenuItem(about + ELLIPSIS);
     aboutItem.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        StringBuilder message = new StringBuilder();
-        message.append(Geotag.NAME).append(' ').append(Version.VERSION).append(
-            ' ').append('(').append(Version.BUILD_NUMBER).append(')').append(
-            '\n').append(Version.BUILD_DATE).append('\n').append('\n');
-        message.append(Geotag.WEBSITE).append('\n').append('\n');
-        message.append(Messages.getString("MainWindow.Copyright")).append(' ') //$NON-NLS-1$
-            .append('\u00a9').append(' '); // \u00a9 is the copyright symbol
-        message.append(2007).append(' ');
-        message.append("Andreas Schneider\n\n"); //$NON-NLS-1$
-        List<String> licenseInfo = License.licenseInfo();
-        for (String line : licenseInfo) {
-          message.append(line).append('\n');
-        }
-        JOptionPane.showMessageDialog(MainWindow.this, message.toString(),
-            Messages.getString("MainWindow.About") + ' ' + Geotag.NAME, //$NON-NLS-1$
-            JOptionPane.INFORMATION_MESSAGE);
+        (new AboutDialog(MainWindow.this, about)).setVisible(true);
       }
     });
 

@@ -41,6 +41,10 @@ public class InputStreamGobbler extends Thread {
    */
   protected OutputStream outputStream;
 
+  /** The size of the buffer used to read the input stream */
+  protected int bufferSize = 1024; // small buffer size for reading process
+                                    // output
+
   /**
    * @param inputStream
    *          The InputStream to gobble up
@@ -58,19 +62,19 @@ public class InputStreamGobbler extends Thread {
    */
   @Override
   public void run() {
-    try {
-      for (;;) {
-        int b = inputStream.read();
-        if (b == -1) {
-          break; // lost stream - process probably gone
+    byte[] buffer = new byte[bufferSize];
+    for (;;) {
+      try {
+        int read = inputStream.read(buffer);
+        if (read == -1) {
+          break;
         }
         if (outputStream != null) {
-          outputStream.write(b);
+          outputStream.write(buffer, 0, read);
         }
+      } catch (IOException e) {
+        e.printStackTrace();
       }
-      outputStream.flush();
-    } catch (IOException e) {
-      e.printStackTrace();
     }
   }
 

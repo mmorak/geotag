@@ -26,14 +26,14 @@ import java.util.List;
 
 import org.fibs.geotag.Settings;
 import org.fibs.geotag.Settings.SETTING;
+import org.fibs.geotag.data.ImageInfo;
 import org.fibs.geotag.data.UpdateCameraDate;
 import org.fibs.geotag.data.UpdateGPSAltitude;
 import org.fibs.geotag.data.UpdateGPSDateTime;
 import org.fibs.geotag.data.UpdateGPSImgDirection;
 import org.fibs.geotag.data.UpdateGPSLatitude;
 import org.fibs.geotag.data.UpdateGPSLongitude;
-import org.fibs.geotag.data.ImageInfo;
-import org.fibs.geotag.image.ImageFileFilter;
+import org.fibs.geotag.image.FileTypes;
 
 /**
  * @author Andreas Schneider
@@ -130,7 +130,7 @@ public class ExiftoolReader implements ExifReader {
     List<String> command = new ArrayList<String>();
     command.add(Settings.get(SETTING.EXIFTOOL_PATH, "exiftool")); //$NON-NLS-1$
     String[] arguments = exifToolArguments;
-    if (ImageFileFilter.isXmpFile(file)) {
+    if (FileTypes.fileType(file) == FileTypes.XMP) {
       arguments = exifToolXmpArguments;
     }
     for (String argument : arguments) {

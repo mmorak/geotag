@@ -31,7 +31,7 @@ import org.fibs.geotag.data.ImageInfo;
 import org.fibs.geotag.exif.ExifReader;
 import org.fibs.geotag.exif.ExiftoolReader;
 import org.fibs.geotag.exif.MetadataExtractorReader;
-import org.fibs.geotag.image.ImageFileFilter;
+import org.fibs.geotag.image.FileTypes;
 import org.fibs.geotag.table.ImagesTableModel;
 import org.fibs.geotag.util.FileUtil;
 
@@ -85,10 +85,18 @@ public class ExifReaderTask extends UndoableBackgroundTask<ImageInfo> {
   private ImageInfo readExifData(File file) {
     ImageInfo result = null;
     ExifReader exifReader = null;
-    if (ImageFileFilter.isJpegFile(file)) {
-      exifReader = new MetadataExtractorReader();
-    } else if (ImageFileFilter.isRawFile(file)) {
-      exifReader = new ExiftoolReader();
+    switch (FileTypes.fileType(file)) {
+      case JPEG:
+        exifReader = new MetadataExtractorReader();
+        break;
+      case RAW_READ_ONLY:
+      case RAW_READ_WRITE:
+      case TIFF:
+        exifReader = new ExiftoolReader();
+        break;
+      case UNKOWN:
+      case XMP:
+        break;
     }
     if (exifReader != null) {
       result = exifReader.readExifData(file, null);

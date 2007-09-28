@@ -22,11 +22,10 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
-import javax.imageio.ImageIO;
 import javax.swing.SwingWorker;
 
-import org.fibs.geotag.dcraw.Dcraw;
-import org.fibs.geotag.image.ImageFileFilter;
+import org.fibs.geotag.image.ImageFile;
+import org.fibs.geotag.image.ImageFileFactory;
 
 /**
  * A class to load image files in the background. Instances should override the
@@ -41,7 +40,7 @@ public class ImageLoaderTask extends SwingWorker<Void, BufferedImage> {
   private File file;
 
   /** the result of loading the image */
-  private BufferedImage image;
+  private BufferedImage bufferedImage;
 
   /**
    * Create a new image loader task
@@ -58,10 +57,9 @@ public class ImageLoaderTask extends SwingWorker<Void, BufferedImage> {
   @Override
   protected Void doInBackground() throws Exception {
     try {
-      if (ImageFileFilter.isJpegFile(file)) {
-        image = ImageIO.read(file);
-      } else if (ImageFileFilter.isRawFile(file)) {
-        image = Dcraw.getEmbeddedImage(file);
+      ImageFile imageFile = ImageFileFactory.createImageFile(file);
+      if (imageFile != null) {
+        bufferedImage = imageFile.read();
       }
     } catch (IOException e) {
       e.printStackTrace();
@@ -73,7 +71,7 @@ public class ImageLoaderTask extends SwingWorker<Void, BufferedImage> {
    * @return The resulting image or null if an exception occured
    */
   public BufferedImage getImage() {
-    return image;
+    return bufferedImage;
   }
 
 }

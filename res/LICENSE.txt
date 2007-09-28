@@ -22,5 +22,14 @@ com.acme.JPM.Decoders:
 A few classes from Acme.JPM by Jef Poskanzer
 Released under a BSD license - see individual files
 
+
+fi.iki.elonen:
+NanoHTTPD by Jarno Elonen
+Released under modified BSD license
+
+com.lizardworks:
+The Lizardworks TIFF library by Lizardworks.
+Relased under LGPL.
+
 Thanks to the above authors for making their
 software freely available.

@@ -19,7 +19,6 @@
 package org.fibs.geotag.dcraw;
 
 import java.awt.Frame;
-import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.MediaTracker;
 import java.awt.Toolkit;
@@ -36,6 +35,8 @@ import javax.imageio.ImageIO;
 
 import org.fibs.geotag.Settings;
 import org.fibs.geotag.Settings.SETTING;
+import org.fibs.geotag.util.ImageInputStreamGobbler;
+import org.fibs.geotag.util.ImageUtil;
 import org.fibs.geotag.util.InputStreamGobbler;
 
 import com.acme.JPM.Decoders.PpmDecoder;
@@ -123,7 +124,7 @@ public class Dcraw {
       // writes it to stdout
       InputStream inputStream = process.getInputStream();
       ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-      InputStreamGobbler gobbler = new InputStreamGobbler(inputStream,
+      InputStreamGobbler gobbler = new ImageInputStreamGobbler(inputStream,
           outputStream);
       gobbler.start();
       // we wait for the process to finish
@@ -153,7 +154,7 @@ public class Dcraw {
       BufferedImage bufferedImage = ImageIO.read(imageStream);
       imageStream.close();
       if (bufferedImage == null) {
-        // could nor read jpeg - try ppm
+        // could not read jpeg - try ppm
         imageStream = new ByteArrayInputStream(imageData);
         PpmDecoder producer = new PpmDecoder(imageStream);
         Image image = Toolkit.getDefaultToolkit().createImage(producer);
@@ -164,14 +165,7 @@ public class Dcraw {
         } catch (InterruptedException e) {
           e.printStackTrace();
         }
-        int imageWidth = image.getWidth(null);
-        int imageHeight = image.getHeight(null);
-        if (imageWidth > 0 && imageHeight > 0) {
-          bufferedImage = new BufferedImage(imageWidth, imageHeight,
-              BufferedImage.TYPE_INT_RGB);
-          Graphics g = bufferedImage.getGraphics();
-          g.drawImage(image, 0, 0, null);
-        }
+        bufferedImage = ImageUtil.bufferImage(image);
         imageStream.close();
       }
       if (bufferedImage == null) {
