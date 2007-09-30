@@ -33,6 +33,7 @@ import org.fibs.geotag.data.UpdateGPSDateTime;
 import org.fibs.geotag.data.UpdateGPSImgDirection;
 import org.fibs.geotag.data.UpdateGPSLatitude;
 import org.fibs.geotag.data.UpdateGPSLongitude;
+import org.fibs.geotag.data.ImageInfo.DATA_SOURCE;
 import org.fibs.geotag.image.FileTypes;
 
 /**
@@ -229,7 +230,7 @@ public class ExiftoolReader implements ExifReader {
                 .length()), ImageInfo.DATA_SOURCE.IMAGE);
           } else if (text.startsWith(GPS_IMG_DIRECTION_TAG)) {
             new UpdateGPSImgDirection(imageInfo, text
-                .substring(GPS_IMG_DIRECTION_TAG.length()));
+                .substring(GPS_IMG_DIRECTION_TAG.length()), DATA_SOURCE.IMAGE);
           } else if (text.startsWith(GPS_DATE_TIME_TAG)) {
             new UpdateGPSDateTime(imageInfo, text.substring(GPS_DATE_TIME_TAG
                 .length()));

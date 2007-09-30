@@ -1,3 +1,12 @@
+2007-09-30 Release 0.024
+  More than one image can now be opened on a
+  single Google Map.
+  Displaying tracks on Google maps is now either
+  on or off. The other choices didn't make sense
+  with more than one image displayed.
+  Image direction can now be edited manually, either
+  as an angle or a cardinal direction (e.g NNW).
+
 2007-09-28 Release 0.023
   Added to ability to display and tag TIFF images.
   New About dialog with working hyperlinks.

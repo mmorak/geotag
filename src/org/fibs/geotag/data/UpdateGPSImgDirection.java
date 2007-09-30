@@ -23,6 +23,7 @@ import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
 
 import org.fibs.geotag.GlobalUndoManager;
+import org.fibs.geotag.data.ImageInfo.DATA_SOURCE;
 
 /**
  * A class encapsulating image direction updates
@@ -38,18 +39,29 @@ public class UpdateGPSImgDirection extends AbstractUndoableEdit {
   /** A copy of the previous direction value */
   private String oldDirection;
 
+  /** The old source of the update */
+  private DATA_SOURCE oldDataSource;
+
   /** The new value for the direction */
   private String newDirection;
+
+  /** the new source of the update */
+  private DATA_SOURCE newDataSource;
 
   /**
    * @param imageInfo
    * @param newDirection
+   * @param source
    */
-  public UpdateGPSImgDirection(ImageInfo imageInfo, String newDirection) {
+  public UpdateGPSImgDirection(ImageInfo imageInfo, String newDirection,
+      DATA_SOURCE source) {
     this.imageInfo = imageInfo;
     this.oldDirection = imageInfo.getGPSImgDirection();
+    this.oldDataSource = imageInfo.getSource();
     imageInfo.setGPSImgDirection(newDirection);
+    imageInfo.setSource(source);
     this.newDirection = imageInfo.getGPSImgDirection();
+    this.newDataSource = imageInfo.getSource();
     GlobalUndoManager.getManager().addEdit(this);
   }
 
@@ -69,6 +81,7 @@ public class UpdateGPSImgDirection extends AbstractUndoableEdit {
   public void redo() throws CannotRedoException {
     super.redo();
     imageInfo.setGPSImgDirection(newDirection);
+    imageInfo.setSource(newDataSource);
   }
 
   /**
@@ -78,5 +91,6 @@ public class UpdateGPSImgDirection extends AbstractUndoableEdit {
   public void undo() throws CannotUndoException {
     super.undo();
     imageInfo.setGPSImgDirection(oldDirection);
+    imageInfo.setSource(oldDataSource);
   }
 }

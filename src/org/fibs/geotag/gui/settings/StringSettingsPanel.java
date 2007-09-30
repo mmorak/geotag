@@ -15,6 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package org.fibs.geotag.gui.settings;
 
 import java.awt.BorderLayout;
@@ -27,14 +28,14 @@ import org.fibs.geotag.Settings.SETTING;
 
 /**
  * @author Andreas Schneider
- *
+ * 
  */
 @SuppressWarnings("serial")
 public class StringSettingsPanel extends SettingsPanel {
 
   /** The JTextField to hold the value */
   private JTextField textField;
-  
+
   /**
    * @param parent
    * @param title

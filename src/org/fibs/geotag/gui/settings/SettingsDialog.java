@@ -39,7 +39,6 @@ import org.fibs.geotag.Settings;
 import org.fibs.geotag.Settings.SETTING;
 import org.fibs.geotag.gpsbabel.GPSBabel;
 import org.fibs.geotag.util.FontUtil;
-import org.fibs.geotag.webserver.TracksHandler;
 
 /**
  * A dialog for changing the settings of the program
@@ -99,11 +98,9 @@ public class SettingsDialog extends JDialog {
             parent,
             Messages.getString("SettingsDialog.CheckForUpdates"), SETTING.CHECK_FOR_NEW_VERSION, "true")); //$NON-NLS-1$//$NON-NLS-2$
     panelList
-        .add(new ChoiceSettingsPanel(
+        .add(new BooleanSettingsPanel(
             parent,
-            Messages.getString("SettingsDialog.TracksToShowOnGoogleMaps"), SETTING.GOOGLE_MAP_TRACKS_CHOICE, //$NON-NLS-1$
-            TracksHandler.GOOGLE_MAP_TRACK_CHOICES,
-            TracksHandler.GOOGLE_MAP_TRACK_CHOICES[1]));
+            Messages.getString("SettingsDialog.ShowTracksOnGoogleMaps"), SETTING.GOOGLE_MAP_SHOW_TRACKS, "false")); //$NON-NLS-1$ //$NON-NLS-2$
     // Finally a Panel with OK and Cancel buttons
     // The flow layout looks very ugly, have to find something else
     JPanel buttonPanel = new JPanel(new FlowLayout());

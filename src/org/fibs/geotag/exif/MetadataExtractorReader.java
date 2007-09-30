@@ -31,6 +31,7 @@ import org.fibs.geotag.data.UpdateGPSImgDirection;
 import org.fibs.geotag.data.UpdateGPSLatitude;
 import org.fibs.geotag.data.UpdateGPSLongitude;
 import org.fibs.geotag.data.ImageInfo;
+import org.fibs.geotag.data.ImageInfo.DATA_SOURCE;
 
 import com.drew.imaging.jpeg.JpegMetadataReader;
 import com.drew.imaging.jpeg.JpegProcessingException;
@@ -146,12 +147,15 @@ public class MetadataExtractorReader implements ExifReader {
           }
           try {
             // the image direction is stored as one Rational
-            Rational rational = directory
-                .getRational(GpsDirectory.TAG_GPS_IMG_DIRECTION);
-            // convert to a double
-            double direction = rational.doubleValue();
-            // and update
-            new UpdateGPSImgDirection(imageInfo, Double.toString(direction));
+            if (directory.containsTag(GpsDirectory.TAG_GPS_IMG_DIRECTION)) {
+              Rational rational = directory
+                  .getRational(GpsDirectory.TAG_GPS_IMG_DIRECTION);
+              // convert to a double
+              double direction = rational.doubleValue();
+              // and update
+              new UpdateGPSImgDirection(imageInfo, Double.toString(direction),
+                  DATA_SOURCE.IMAGE);
+            }
           } catch (Exception e) {
             e.printStackTrace();
           }

@@ -15,6 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package org.fibs.geotag.gui.settings;
 
 import java.awt.BorderLayout;
@@ -33,10 +34,10 @@ public class ChoiceSettingsPanel extends SettingsPanel {
 
   /** The choices to display */
   String[] choices;
-  
+
   /** The combo box to display them in */
   JComboBox comboBox;
-  
+
   /**
    * @param parent
    * @param title
@@ -49,7 +50,7 @@ public class ChoiceSettingsPanel extends SettingsPanel {
     super(parent, title, setting, defaultValue);
     this.choices = choices;
     comboBox = new JComboBox(choices);
-    //comboBox.set
+    // comboBox.set
     int defaultIndex = 0;
     for (int index = 0; index < choices.length; index++) {
       if (choices[index].equals(defaultValue)) {

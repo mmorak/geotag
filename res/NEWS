@@ -1,4 +1,4 @@
-Version 0.016 of the the Geotag program has just been released.
+Version 0.024 of the the Geotag program has just been released.
 
 Geotag is a platform independent, GUI based application that compares date/time
 information captured by a digital camera with tracks recorded by a GPS unit and
@@ -8,9 +8,9 @@ Geotag allows fine tuning of locations in external programs like Google Maps
 in a web browser or Google Earth.
 
 Major new feature:
-Geotag can now use Google Maps to set the image direction, i.e. the direction
-your camera was pointing when you took the picture. To achieve this, you drag
-a second marker to the location of the image subject and Geotag does the rest.
+More than one image can now be adjusted on a single Google Map. This reduces the
+number of Maps that need to be opened in the web browser, resulting in faster
+work flow and reduced memory usage.
 
 Visit our web site at http://geotag.sourceforge.net to see what the
 program is all about.

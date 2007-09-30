@@ -21,6 +21,8 @@ package org.fibs.geotag.util;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.fibs.geotag.Messages;
+
 /**
  * A class for small convenience methods that are used in several places
  * 
@@ -150,6 +152,39 @@ public class Util {
     }
     lines.add(text);
     return lines;
+  }
+
+  /**
+   * Given a cardinal direction (e.g. NNW) calculate the angle in degress
+   * 
+   * @param direction
+   *          the cardinal direction as a string
+   * @return The direction in degrees or Double.NaN
+   */
+  public static double degreesFromCardinalDirection(String direction) {
+    String[] cardinalDirections = { Messages.getString("Util.N"), //$NON-NLS-1$
+        Messages.getString("Util.NNE"), //$NON-NLS-1$
+        Messages.getString("Util.NE"), //$NON-NLS-1$
+        Messages.getString("Util.ENE"), //$NON-NLS-1$
+        Messages.getString("Util.E"), //$NON-NLS-1$
+        Messages.getString("Util.ESE"), //$NON-NLS-1$
+        Messages.getString("Util.SE"), //$NON-NLS-1$
+        Messages.getString("Util.SSE"), //$NON-NLS-1$
+        Messages.getString("Util.S"), //$NON-NLS-1$
+        Messages.getString("Util.SSW"), //$NON-NLS-1$
+        Messages.getString("Util.SW"), //$NON-NLS-1$
+        Messages.getString("Util.WSW"), //$NON-NLS-1$
+        Messages.getString("Util.W"), //$NON-NLS-1$
+        Messages.getString("Util.WNW"), //$NON-NLS-1$
+        Messages.getString("Util.NW"), //$NON-NLS-1$
+        Messages.getString("Util.NNW") //$NON-NLS-1$
+    };
+    for (int i = 0; i < cardinalDirections.length; i++) {
+      if (direction.equalsIgnoreCase(cardinalDirections[i])) {
+        return 360.0 / 16.0 * i;
+      }
+    }
+    return Double.NaN;
   }
 
 }

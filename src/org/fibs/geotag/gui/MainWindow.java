@@ -74,6 +74,7 @@ import org.fibs.geotag.track.GpxReader;
 import org.fibs.geotag.track.GpxWriter;
 import org.fibs.geotag.track.TrackMatcher;
 import org.fibs.geotag.track.TrackStore;
+import org.fibs.geotag.webserver.ImageInfoHandler;
 import org.fibs.geotag.webserver.MapTypeHandler;
 import org.fibs.geotag.webserver.ResourceHandler;
 import org.fibs.geotag.webserver.ThumbnailHandler;
@@ -293,6 +294,7 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
       webServer.createContext("/tracks", new TracksHandler()); //$NON-NLS-1$
       webServer.createContext("/zoom", new ZoomLevelHandler()); //$NON-NLS-1$
       webServer.createContext("/maptype", new MapTypeHandler()); //$NON-NLS-1$
+      webServer.createContext("/imageinfo", new ImageInfoHandler()); //$NON-NLS-1$
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -387,10 +389,14 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
     undoItem = new JMenuItem();
     undoItem.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
+        String action = GlobalUndoManager.getManager()
+            .getUndoPresentationName();
         GlobalUndoManager.getManager().undo();
         updateUndoMenuItems();
         // this will call tableModel.fireTableDataChanged() for us
         tableModel.sortRows();
+        progressBar
+            .setString(Messages.getString("MainWindow.Done") + ": " + action); //$NON-NLS-1$ //$NON-NLS-2$
       }
     });
     editMenu.add(undoItem);
@@ -398,9 +404,13 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
     redoItem = new JMenuItem();
     redoItem.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
+        String action = GlobalUndoManager.getManager()
+            .getRedoPresentationName();
         GlobalUndoManager.getManager().redo();
         updateUndoMenuItems();
         tableModel.sortRows();
+        progressBar
+            .setString(Messages.getString("MainWindow.Done") + ": " + action); //$NON-NLS-1$ //$NON-NLS-2$
       }
     });
     editMenu.add(redoItem);
@@ -692,6 +702,7 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
    * @see org.fibs.geotag.tasks.BackgroundTaskListener#backgroundTaskStarted(org.fibs.geotag.tasks.BackgroundTask)
    */
   public void backgroundTaskStarted(BackgroundTask<?> task) {
+    // System.out.println("Started "+task.getName());
     backgroundTask = task;
 
     progressBar.setMinimum(task.getMinProgress());
@@ -728,6 +739,7 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
    * @see org.fibs.geotag.tasks.BackgroundTaskListener#backgroundTaskFinished(org.fibs.geotag.tasks.BackgroundTask)
    */
   public void backgroundTaskFinished(BackgroundTask<?> task) {
+    // System.out.println("Finished "+task.getName());
     progressBar.setValue(task.getMinProgress());
     String result = ""; //$NON-NLS-1$
     try {

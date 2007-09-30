@@ -98,11 +98,21 @@ public abstract class BackgroundTask<V> extends SwingWorker<String, V>
   }
 
   /**
-   * Set a new progress message for this task and notify property listeners
+   * Set a new progress message for this task and notify property listeners. The
+   * message will be something like 'Image 1 of 42'
    */
   public void setProgressMessage() {
-    String progressMessage = Messages.getString("BackgroundTask.Image") + ' '//$NON-NLS-1$
-        + getCurrentProgress() + ' '
+    setProgressMessage(Messages.getString("BackgroundTask.Image")); //$NON-NLS-1$
+  }
+
+  /**
+   * Set a new progress message for this task and notify property listeners. The
+   * message will be something like 'prefix 1 of 42'
+   * 
+   * @param prefix
+   */
+  public void setProgressMessage(String prefix) {
+    String progressMessage = prefix + ' ' + getCurrentProgress() + ' '
         + Messages.getString("BackgroundTask.Of") + ' ' //$NON-NLS-1$
         + getMaxProgress();
     firePropertyChange(

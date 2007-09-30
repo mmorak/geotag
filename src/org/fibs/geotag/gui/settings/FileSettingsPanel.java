@@ -15,6 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package org.fibs.geotag.gui.settings;
 
 import java.awt.BorderLayout;
@@ -32,14 +33,14 @@ import org.fibs.geotag.Settings.SETTING;
 
 /**
  * @author Andreas Schneider
- *
+ * 
  */
 @SuppressWarnings("serial")
 public class FileSettingsPanel extends SettingsPanel {
-  
+
   /** The text field for the file name */
   JTextField textField;
-  
+
   /**
    * @param parent
    * @param title

@@ -16,248 +16,357 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
  
-function round(number) {
-  return Math.round(number*10000000)/10000000;
-}
-
-function getLatitude(marker) {
-  return round(marker.getPoint().y);
-}
-
-function getLongitude(marker) {
-  return round(marker.getPoint().x);
-}
-
-// change the document title, reflecting the current marker position
-function setTitle(marker) {
-  document.title = "Geotag "+getLatitude(marker)+" "+getLongitude(marker);
-}
-
 // check for compatibility
 if (GBrowserIsCompatible()) {
-  // parse the arguments
-  var URL = String(window.location.href + "&x=x?x=x");
-  var args = String(URL.split("?")[1]); /* all of the arguments */
-  var pairs = args.split("&");  /* the name=value pairs */
-  var i;
-  var pair;
-  var name;
-  var value;
-  var latitude=51.5;
-  var longitude=0;
-  var direction = -1.0;
-  var showDirection = false;
-  var image=0;
-  var thumbnail = false;
-  var imageWidth = 300;
-  var imageHeight = 300;
-  var zoom=6;
-  var userMapType = "Hybrid"; // default Hybrid map
-  var language="en";
-  for (i = 0; i < pairs.length; i++) {
-    pair = pairs[i].split("=");
-    name = pair[0];
-    value = pair[1];
-    if (name == "latitude") {
-      latitude = parseFloat(value);
-    }
-    if (name == "longitude") {
-      longitude = parseFloat(value);
-    }
-    if (name == "image") {
-      image = parseInt(value);
-    }
-    if (name == "thumbnail") {
-      thumbnail = (value == "true");
-    }
-    if (name == "width") {
-      imageWidth = parseInt(value);
-    }
-    if (name == "height") {
-      imageHeight = parseInt(value);
-    }
-    if (name == "zoom") {
-      zoom = Math.abs(parseInt(value));
-    }
-    if (name == "maptype") {
-      userMapType = value;
-    }
-    if (name == "direction") {
-    	// direction can have three different values:
-    	if (value == "true") {
-    		// show direction, but we don't have an initial value
-    		showDirection = true;
-    	} else if (value == "false") {
-    		// don't show direction (is already default)
-    	} else {
-    		// showDirection with an initial value
-    		showDirection = true;
-        direction = parseFloat(value);
-    	}
-    }
-    if (name == "language") {
-      language = value;
-    }
-  }
-  // now the language dependent bits
-  var title = "Geotag"; // not translatable, but might be later
-  var instructions;
-  if (showDirection) {
-  	instructions = "Move camera marker to<br>select a different location.<br>Move other marker to<br>change image direction.";
-  } else {
-  	instructions = "Move the marker to<br>select a different location";
-  }
-  // Auf Deutsch bitte
-  if (language == "de") {
-    title = "Geotag";
-    if (showDirection) {
-    	instructions = "Verschieben Sie die Kamera um<br>den Ort zu &auml;ndern.<br>Verschieben Sie die Markierung<br>um die Richtung zu &auml;ndern";
-    } else {
-      instructions = "Verschieben Sie die Markierung<br>um den Ort zu &auml;ndern";
-    }
-  }
-  document.title=title;
-  
-  // update the instructions div to show the instructions
-  // Shouldn't use innerHTML, but its a bit much to do all the DOM stuff just for this one update
-  document.getElementById("instructions").innerHTML = "<center>" + instructions +"</center>";
-
-  // create the map
+	
+	var language = "en"; // default language
+	var showDirection = false;
+	
+	// create the map
   var map = new GMap2(document.getElementById("map"));
+  // the image the map will be centred on
+  var activeImage = null;
   
-  // move map to desired location and zoom level
-  // determine which map type to use
-  var mapType = G_HYBRID_MAP;
-  if (userMapType == "Satellite") {
-    mapType = G_SATELLITE_MAP;
-  }
-  if (userMapType == "Map") {
-    mapType = G_NORMAL_MAP;
-  }
-  
-  map.setCenter(new GLatLng(latitude, longitude), zoom, mapType);
-  // add a bunch of controls to the map
-  map.addControl(new GLargeMapControl());
-  map.addControl(new GMapTypeControl());
-  map.addControl(new GScaleControl());
-
-  // make sure the map still shows the marker when resized
-  window.onresize = function() {this.map.panTo(this.cameraMarker.getPoint())};
-  
-  var centre = map.getCenter();
-  
-  var lineFromCamera = new GPolyline([centre, centre], '#ff0000');
-  map.addOverlay(lineFromCamera);
-  
-  function newLineFromCamera(fromMarker, toMarker) {
+  // create the instructions (depening on language and showDirection) 
+  function getInstructions(showDirection) {
+  	var instructions;
     if (showDirection) {
-      lineFromCamera = new GPolyline([fromMarker.getPoint(), toMarker.getPoint()], '#ff0000');
-      map.addOverlay(lineFromCamera);
+      instructions = "Move camera marker to<br>select a different location.<br>Move other marker to<br>change image direction.";
+    } else {
+      instructions = "Move the marker to<br>select a different location";
+    }
+    if (language == "de") {
+    	// Auf Deutsch bitte..
+    	if (showDirection) {
+        instructions = "Verschieben Sie die Kamera um<br>den Ort zu &auml;ndern.<br>Verschieben Sie die Markierung<br>um die Richtung zu &auml;ndern";
+      } else {
+        instructions = "Verschieben Sie die Markierung<br>um den Ort zu &auml;ndern";
+      }
+    }
+    return instructions;
+  }
+  
+  // a simple ArrayList class
+  function ArrayList() {
+    count = 0;
+    array = new Array();
+    this.add = function add(image) {
+      array[count]=image;
+      count++;
+    }
+    this.getAll = function getAll() {
+      return array;
+    }
+    this.get = function(index) {
+    	return array[index];
+    }
+    this.size = function() {
+    	return count;
     }
   }
   
+  // a list of all the images
+  var imageInfos = new ArrayList();
   
-  var directionMarker;
-  // the direction marker needs to know where to place itself
-  //  = new GMarker(centre, {draggable: true});
-  if (showDirection == false || direction < 0) {
-  	directionMarker = new GMarker(centre, {draggable: true});
-  } else {
-  	var centreCoordinates = map.fromLatLngToDivPixel(centre);
-  	// as the radius we use half the map height - minus icon height
-  	var radius = map.getSize().height / 2 - G_DEFAULT_ICON.iconSize.height;
-  	var theta = (direction - 90.0) / 180 * Math.PI;
-  	var x = radius * Math.cos(theta);
-  	var y = radius * Math.sin(theta);
-  	var point = new GPoint(centreCoordinates.x + x, centreCoordinates.y +y);
-  	var coordinates = map.fromDivPixelToLatLng(point);
-  	directionMarker = new GMarker(coordinates, {draggable: true});
+  // the correct icon to use for the location marker
+  function getLocationIcon() {
+  	var icon = new GIcon(G_DEFAULT_ICON,
+    showDirection?"http://maps.google.com/mapfiles/kml/pal4/icon46.png":null,
+    null,
+    showDirection?"http://maps.google.com/mapfiles/kml/pal4/icon46s.png":null);
+ 
+    if (showDirection == true) {
+      icon.iconSize = new GSize(32,32);
+      icon.showSize = new GSize(56,32);
+      icon.iconAnchor = new GPoint(16,32);
+      icon.infoWindowAnchor = new GPoint(16,0);
+    }
+    return icon;
   }
   
-  var cameraMarkerIcon = G_DEFAULT_ICON;
-  if (showDirection) {
-    // show a little camera picture if we use camera position and direction to object
-    cameraMarkerIcon = new GIcon(G_DEFAULT_ICON, "http://maps.google.com/mapfiles/kml/pal4/icon46.png",
-    null, "http://maps.google.com/mapfiles/kml/pal4/icon46s.png");
-    cameraMarkerIcon.iconSize = new GSize(32,32);
-    cameraMarkerIcon.showSize = new GSize(56,32);
-    cameraMarkerIcon.iconAnchor = new GPoint(16,32);
-    cameraMarkerIcon.infoWindowAnchor = new GPoint(16,0);
+  // the icon to use for the direction marker
+  function getDirectionIcon() {
+  	return G_DEFAULT_ICON;
   }
   
-  // create the location marker
-  
-  var cameraMarker = new GMarker(centre, {icon: cameraMarkerIcon, draggable: true});
-  // the HTML displayed in the info window is:
-  var infoWindowHtml = '<center>';
-  if (thumbnail == true) {
-    infoWindowHtml += '<img src='
-     + '"images/'
-     + image
-     + '.jpg" width="'
-     + imageWidth
-     + '" height="'
-     + imageHeight
-     + '"><br>'
+  // the line between location and direction marker
+  function createDirectionLine(imageInfo) {
+    return new GPolyline([imageInfo.locationMarker.getLatLng(), imageInfo.directionMarker.getLatLng()], '#ff0000');
   }
-  infoWindowHtml += instructions + '</center>' 
-  cameraMarker.bindInfoWindowHtml(infoWindowHtml, {});
-  var infoText = "<b>"+instructions+"</b>";
   
-  function dragStartListener() {
-  	// close info window if open
+  // what to do when a marker starts being dragged
+  function dragStart(imageInfo) {
+    // close info window if open
     map.closeInfoWindow();
     // remove line from camera to subject
     if (showDirection) {
-      map.removeOverlay(lineFromCamera);
+      map.removeOverlay(imageInfo.directionLine);
     }
   }
   
-  // make sure the info window is closed if drag the marker
-  GEvent.addListener(cameraMarker, "dragstart", dragStartListener);
-  GEvent.addListener(directionMarker ,"dragstart", dragStartListener);
-
-  // here is what we do if the dragging of the marker has ended
-  
-  function dragendListener() {
-  	 // need to calculate a new direction
-    var cameraCoordinates = map.fromLatLngToDivPixel(cameraMarker.getPoint());
-    var directionCoordinates = map.fromLatLngToDivPixel(directionMarker.getPoint());
+  // what to to when a marker finished being dragged
+  function dragEnd(imageInfo) {
+    // need to calculate a new direction
+    var cameraCoordinates = map.fromLatLngToDivPixel(imageInfo.locationMarker.getPoint());
+    var directionCoordinates = map.fromLatLngToDivPixel(imageInfo.directionMarker.getPoint());
     var x = directionCoordinates.x - cameraCoordinates.x;
     var y = directionCoordinates.y - cameraCoordinates.y;
     var theta = (Math.atan2(y, x) + Math.PI * 5.0 / 2.0) % (Math.PI * 2.0);
-    var direction = theta / Math.PI * 180;
+    var newDirection = theta / Math.PI * 180;
     // make a string out of the new marker location and send it to the web server
     var url = "update/new.html?image="
-       + image
+       + imageInfo.id
        + "&latitude="
-       + getLatitude(cameraMarker)
+       + getLatitude(imageInfo.locationMarker)
        + "&longitude="
-       + getLongitude(cameraMarker);
+       + getLongitude(imageInfo.locationMarker);
     if (showDirection) {
-      url += "&direction=" + direction;
+      url += "&direction=" + newDirection;
     }
     var request = GXmlHttp.create();
     request.open("GET", url, true);
     request.send(null);
     // adjust the line from camera to marker
-    newLineFromCamera(cameraMarker, directionMarker);
+    imageInfo.directionLine = createDirectionLine(imageInfo);
+    map.addOverlay(imageInfo.directionLine);
+    if (showDirection == false) {
+      imageInfo.directionLine.hide();
+    }
     // then centre the map on the new (or old) camera marker location
-    map.panTo(cameraMarker.getPoint());
-    setTitle(cameraMarker);
+    activeImage = imageInfo;
+    map.panTo(imageInfo.locationMarker.getPoint());
+    setTitle(imageInfo.locationMarker);
   };
-  
-  GEvent.addListener(cameraMarker, "dragend", dragendListener);
-  GEvent.addListener(directionMarker, "dragend", dragendListener);
 
-  // add the camera marker to the map
-  map.addOverlay(cameraMarker);
-  // and the subject marker if requested
-  if (showDirection) {
-    map.addOverlay(directionMarker);
+  // the HTML displayed in the info window for a marker is:  
+  function infoWindowHtml(imageInfo) {
+    var html = '<center>';
+    if (imageInfo.hasThumbnail == true) {
+      html += '<img src='
+       + '"images/'
+       + imageInfo.id
+       + '.jpg" width="'
+       + imageInfo.width
+       + '" height="'
+       + imageInfo.height
+       + '"><br>'
+    }
+    html += imageInfo.filename + '</center>'
+    return html;   	
   }
-  // draw the line for the first time
-  newLineFromCamera(cameraMarker, directionMarker);
+
+  // create a location marker
+  function createLocationMarker(imageInfo) {
+    var icon = getLocationIcon(showDirection);
+    var location = new GLatLng(imageInfo.latitude, imageInfo.longitude);  	
+    var marker = new GMarker(location, {icon: icon, draggable: true});  	
+    marker.bindInfoWindowHtml(infoWindowHtml(imageInfo), {});
+    return marker;
+  }
+
+  // create a direction marker
+  function createDirectionMarker(imageInfo) {
+  	var location = new GLatLng(imageInfo.latitude, imageInfo.longitude);
+    var directionMarker;
+    // the direction marker needs to know where to place itself
+    if (imageInfo.direction < 0) {
+      directionMarker = new GMarker(location, {draggable: true});
+    } else {
+      var centreCoordinates = map.fromLatLngToDivPixel(location);
+      // as the radius we use half the map height or width - minus icon height
+      var radius = Math.min(map.getSize().height, map.getSize().width) / 2 - G_DEFAULT_ICON.iconSize.height;
+      var theta = (imageInfo.direction - 90.0) / 180 * Math.PI;
+      var x = radius * Math.cos(theta);
+      var y = radius * Math.sin(theta);
+      var point = new GPoint(centreCoordinates.x + x, centreCoordinates.y +y);
+      var coordinates = map.fromDivPixelToLatLng(point);
+      directionMarker = new GMarker(coordinates, {draggable: true});
+    }
+    directionMarker.bindInfoWindowHtml(infoWindowHtml(imageInfo), {});
+    return directionMarker;
+  }
+  
+  // ImageInfo class
+  function ImageInfo(id) {
+  	var instance = this;
+    // store the id
+    this.id = id;
+    this.dragStartListener = function() {
+    	dragStart(instance);
+    }
+    this.dragEndListener = function() {
+    	dragEnd(instance);
+    }
+  }
+
+  // ask Geotag about the images to be displayed
+  function requestImageInfos(imageInfoList) {
+  	// request information about the image
+    var URL = "http://localhost:4321/imageinfo/imageinfo.xml?ids=";
+    for (var index = 0; index < imageInfoList.size(); index++) {
+    	URL += index == 0 ? "" : ",";
+    	URL += imageInfoList.get(index).id;
+    }
+    var request = GXmlHttp.create();
+    request.open("GET", URL, true);
+    request.onreadystatechange = function() {
+      // only interested if the request has completed
+      if (request.readyState == 4) {
+        // parse the information
+        xmlDocument = GXml.parse(request.responseText);
+        infos = xmlDocument.documentElement.getElementsByTagName("image");
+        for (var index = 0; index < infos.length; index++) {
+          info = infos[index];
+          id = parseFloat(info.getAttribute("id"));
+          // find the imageInfo with that id
+          imageInfo = null;
+          for (var index2 = 0; index2 < imageInfoList.size(); index2++) {
+          	if (imageInfoList.get(index2).id == id) {
+          		imageInfo = imageInfoList.get(index2);
+          		break;
+          	}
+          }
+          // store information with the imageInfo
+          if (imageInfo != null) {
+            imageInfo.filename = info.getAttribute("name");
+            imageInfo.width = parseInt(info.getAttribute("width"));
+            imageInfo.height = parseInt(info.getAttribute("height"));
+            imageInfo.hasThumbnail = (this.width != 0 && this.height != 0);
+            imageInfo.latitude = parseFloat(info.getAttribute("latitude"));
+            imageInfo.longitude = parseFloat(info.getAttribute("longitude"));
+            imageInfo.direction = parseFloat(info.getAttribute("direction"));
+            // create the location marker for this image
+            imageInfo.locationMarker = createLocationMarker(imageInfo);
+            // and add it to the map
+            map.addOverlay(imageInfo.locationMarker);
+            // Do the same for the direction marker...
+            imageInfo.directionMarker = createDirectionMarker(imageInfo);
+            map.addOverlay(imageInfo.directionMarker);
+            // ...and the line between them
+            imageInfo.directionLine = createDirectionLine(imageInfo);
+            map.addOverlay(imageInfo.directionLine);
+            // If we don't show directions we hide the marker and the line
+            if (showDirection == false) {
+              imageInfo.directionMarker.hide();
+              imageInfo.directionLine.hide();
+            }
+            // now we add listeners to the markers
+            GEvent.addListener(imageInfo.locationMarker, "dragstart", imageInfo.dragStartListener);
+            GEvent.addListener(imageInfo.directionMarker, "dragstart", imageInfo.dragStartListener);
+            GEvent.addListener(imageInfo.locationMarker, "dragend", imageInfo.dragEndListener);
+            GEvent.addListener(imageInfo.directionMarker, "dragend", imageInfo.dragEndListener);
+            //GLog.write(requst.responseText);
+            activeImage = imageInfo;
+          }
+        }
+      }
+    }
+    request.send(null);
+  }    
+  
+  // parse the URL arguments
+  function arguments() {
+    var URL = String(window.location.href + "&x=x?x=x");
+    var argumentArray = String(URL.split("?")[1]); /* all of the arguments */
+    var pairs = argumentArray.split("&");  /* the name=value pairs */
+    this.latitude=51.5;
+    this.longitude=0;
+    this.zoom=6;
+    for (var i = 0; i < pairs.length; i++) {
+      pair = pairs[i].split("=");
+      name = pair[0];
+      value = pair[1];
+      if (name == "latitude") {
+        this.latitude = parseFloat(value);
+      }
+      if (name == "longitude") {
+        this.longitude = parseFloat(value);
+      }
+      if (name == "images") {
+      	imageIds = value.split("_");
+      	for (var image = 0; image < imageIds.length; image++) {
+      		id = parseInt(imageIds[image]);
+      		imageInfos.add(new ImageInfo(id));
+      	}
+      }
+      if (name == "zoom") {
+        this.zoom = Math.abs(parseInt(value));
+      }
+      if (name == "maptype") {
+        this.mapType = G_HYBRID_MAP;
+        if (value == "Satellite") {
+          this.mapType = G_SATELLITE_MAP;
+        }
+        if (value == "Map") {
+          this.mapType = G_NORMAL_MAP;
+        }
+      }
+      if (name == "direction") {
+        // direction can have three different values:
+        if (value == "true") {
+          // show direction, but we don't have an initial value
+          showDirection = true;
+        }
+      }
+      if (name == "language") {
+        language = value;
+      }
+    }
+  }
+  
+  // parse the arguments from the URL  
+  var args = new arguments();
+
+  // a few utility functions
+
+  function round(number) {
+    return Math.round(number*10000000)/10000000;
+  }
+
+  function getLatitude(marker) {
+    return round(marker.getPoint().y);
+  }
+
+  function getLongitude(marker) {
+    return round(marker.getPoint().x);
+  }
+  
+  // change the document title, reflecting the current marker position
+  function setTitle(marker) {
+    document.title = "Geotag "+getLatitude(marker)+" "+getLongitude(marker);
+  }
+  
+  requestImageInfos(imageInfos);
+  
+  // move map to desired location and zoom level
+
+  map.setCenter(new GLatLng(args.latitude, args.longitude), args.zoom, args.mapType);
+  // add a bunch of controls to the map
+  map.addControl(new GLargeMapControl());
+  map.addControl(new GMapTypeControl());
+  map.addControl(new GScaleControl());
+  
+  // now the language dependent bits
+  var title = "Geotag"; // not translated, but might be later
+
+  // Auf Deutsch bitte
+  if (language == "de") {
+    title = "Geotag";
+  }
+
+  document.title=title;
+  
+  // update the instructions div to show the instructions
+  // Shouldn't use innerHTML, but its a bit much to do all the DOM stuff just for this one update
+  var instructions = getInstructions(showDirection);
+  document.getElementById("instructions").innerHTML = "<center>" + instructions +"</center>";
+
+  // make sure the map still shows the marker when resized
+  window.onresize = function() {
+  	if (activeImage != null) {
+  		map.panTo(activeImage.locationMarker.getPoint())
+  	}
+  };  
   
   // we can display GPS tracks as well
   var tracksDisplayed = [];
@@ -274,7 +383,7 @@ if (GBrowserIsCompatible()) {
     // tell Geotag about it
     var tracksURL = "http://localhost:4321/tracks/tracks.kml?south="
       + south + "&west=" + west + "&north=" + north + "&east=" + east
-      + "&width=" +size.width + "&height=" + size.height + "&image=" + image;
+      + "&width=" +size.width + "&height=" + size.height;
     var request = GXmlHttp.create();
     request.open("GET", tracksURL, true);
     // Geotag will send tracks for this map
@@ -304,7 +413,6 @@ if (GBrowserIsCompatible()) {
           tracksDisplayed[trackIndex] = new GPolyline(linePoints,"#0000FF",5,0.5);
           map.addOverlay(tracksDisplayed[trackIndex]);
         }
-        //GLog.write( "Tracks: "+tracks.length+" Points: "+numPoints);
       }
     }
     request.send(null);
@@ -320,7 +428,6 @@ if (GBrowserIsCompatible()) {
     // leave out the request.onreadystatechange = function() bit
     // we're not interested in the response from the server
     request.send(null);
-    //GLog.write("New zoom level: "+newLevel);
   });
   
   GEvent.addListener(map, "maptypechanged", function() {
@@ -331,8 +438,6 @@ if (GBrowserIsCompatible()) {
     request.send(null);
   });
   
-  setTitle(cameraMarker);
-              
 } else {
   // the browser is not compatible with Google Maps
 }

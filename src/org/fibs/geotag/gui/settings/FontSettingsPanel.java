@@ -15,6 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package org.fibs.geotag.gui.settings;
 
 import java.awt.BorderLayout;
@@ -34,14 +35,14 @@ import org.fibs.geotag.util.FontUtil;
 
 /**
  * @author Andreas Schneider
- *
+ * 
  */
 @SuppressWarnings("serial")
 public class FontSettingsPanel extends SettingsPanel {
 
   /** The TextField for the Font name */
   JTextField textField;
-  
+
   /**
    * @param parent
    * @param title
@@ -57,10 +58,11 @@ public class FontSettingsPanel extends SettingsPanel {
     JButton browseButton = new JButton("..."); //$NON-NLS-1$
     browseButton.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        Font font = FontUtil.fontFromID(Settings.get(
-            FontSettingsPanel.this.setting, FontSettingsPanel.this.defaultValue));
-        FontChooser fontChooser = new FontChooser(FontSettingsPanel.this.parent,
-            font);
+        Font font = FontUtil.fontFromID(Settings
+            .get(FontSettingsPanel.this.setting,
+                FontSettingsPanel.this.defaultValue));
+        FontChooser fontChooser = new FontChooser(
+            FontSettingsPanel.this.parent, font);
         if (fontChooser.showDialog() != null) {
           Font selectedFont = fontChooser.getSelectedFont();
           textField.setText(FontUtil.fontToID(selectedFont));

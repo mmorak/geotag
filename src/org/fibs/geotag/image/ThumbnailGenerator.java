@@ -21,6 +21,14 @@ package org.fibs.geotag.image;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
+import java.io.File;
+
+import javax.swing.ImageIcon;
+
+import org.fibs.geotag.Settings;
+import org.fibs.geotag.Settings.SETTING;
+import org.fibs.geotag.data.ImageInfo;
+import org.fibs.geotag.data.ImageInfo.THUMBNAIL_STATUS;
 
 /**
  * this class is used to generate image thumbnails
@@ -29,6 +37,13 @@ import java.awt.image.BufferedImage;
  * 
  */
 public class ThumbnailGenerator {
+
+  /**
+   * Default for the longest size of thumbnails - in case we don't have a
+   * preference yet
+   */
+  public static final int DEFAULT_THUMBNAIL_SIZE = 150;
+
   /**
    * Create a thumbnail image
    * 
@@ -59,5 +74,41 @@ public class ThumbnailGenerator {
     Graphics2D graphics2D = thumbImage.createGraphics();
     graphics2D.drawImage(originalImage, transform, null);
     return thumbImage;
+  }
+
+  /**
+   * Load the thumbnail for an image
+   * 
+   * @param imageInfo
+   * @return true if thumbnail could be created
+   */
+  public static boolean loadThumbnail(ImageInfo imageInfo) {
+    try {
+      imageInfo.setThumbNailStatus(THUMBNAIL_STATUS.LOADING);
+      File file = new File(imageInfo.getPath());
+      ImageFile imageFile = ImageFileFactory.createImageFile(file);
+      if (imageFile != null) {
+        BufferedImage originalImage = imageFile.read();
+        if (originalImage != null) {
+          BufferedImage rotatedImage = (new ImageRotator(originalImage,
+              imageInfo).rotate());
+          // note the image size
+          imageInfo.setWidth(rotatedImage.getWidth());
+          imageInfo.setHeight(rotatedImage.getHeight());
+          // now we create a thumbnail image
+          BufferedImage thumbImage = ThumbnailGenerator.createThumbnailImage(
+              rotatedImage, Settings.get(SETTING.THUMBNAIL_SIZE,
+                  DEFAULT_THUMBNAIL_SIZE));
+          ImageIcon imageIcon = new ImageIcon(thumbImage);
+          imageInfo.setThumbnail(imageIcon);
+          imageInfo.setThumbNailStatus(THUMBNAIL_STATUS.AVAILABLE);
+          return true;
+        }
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    imageInfo.setThumbNailStatus(THUMBNAIL_STATUS.UNKNOWN);
+    return false;
   }
 }

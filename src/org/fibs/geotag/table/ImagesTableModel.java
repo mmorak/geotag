@@ -20,12 +20,15 @@ package org.fibs.geotag.table;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
 
 import org.fibs.geotag.Messages;
 import org.fibs.geotag.data.ImageInfo;
+import org.fibs.geotag.data.ImageInfo.DATA_SOURCE;
 import org.fibs.geotag.table.ImagesTableColumns.COLUMN;
+import org.fibs.geotag.tasks.ChangeDirectionTask;
 import org.fibs.geotag.util.Util;
 
 /**
@@ -159,6 +162,19 @@ public class ImagesTableModel extends AbstractTableModel {
    */
   @Override
   public boolean isCellEditable(int rowIndex, int columnIndex) {
+    switch (COLUMN.values()[columnIndex]) {
+      case IMAGE_NAME:
+      case CAMERA_DATE:
+      case GPS_DATE:
+      case TIME_OFFSET:
+      case LATITUDE:
+      case LONGITUDE:
+      case ALTITUDE:
+        return false;
+      case DIRECTION:
+        ImageInfo imageInfo = getImageInfo(rowIndex);
+        return imageInfo.hasLocation();
+    }
     return false;
   }
 
@@ -210,6 +226,41 @@ public class ImagesTableModel extends AbstractTableModel {
   }
 
   /**
+   * @see javax.swing.table.AbstractTableModel#setValueAt(java.lang.Object, int,
+   *      int)
+   */
+  @Override
+  public void setValueAt(Object value, int rowIndex, int columnIndex) {
+    super.setValueAt(value, rowIndex, columnIndex);
+    switch (COLUMN.values()[columnIndex]) {
+      case IMAGE_NAME:
+      case CAMERA_DATE:
+      case GPS_DATE:
+      case TIME_OFFSET:
+      case LATITUDE:
+      case LONGITUDE:
+      case ALTITUDE:
+        // all those are not editable
+        return;
+      case DIRECTION:
+        ImageInfo imageInfo = getImageInfo(rowIndex);
+        new ChangeDirectionTask(
+            Messages.getString("ImagesTableModel.EditDirection"), imageInfo, (String) value, DATA_SOURCE.MANUAL) { //$NON-NLS-1$
+          @Override
+          protected void process(List<ImageInfo> imageInfos) {
+            for (ImageInfo image : imageInfos) {
+              int row = getRow(image);
+              if (row >= 0) {
+                fireTableRowsUpdated(row, row);
+                fireTableDataChanged();
+              }
+            }
+          }
+        }.execute();
+    }
+  }
+
+  /**
    * We don't need to display latitude, longitude and altitude to all available
    * decimals. this method cuts off the String after the specified number of
    * decimals after the decimal point
@@ -227,7 +278,7 @@ public class ImagesTableModel extends AbstractTableModel {
         double rounded = Math.round(factor * theValue) / factor;
         result = Double.toString(rounded);
       } catch (NumberFormatException e) {
-        e.printStackTrace();
+        // e.printStackTrace();
       }
     }
     return result;

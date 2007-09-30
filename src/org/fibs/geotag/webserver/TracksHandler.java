@@ -24,13 +24,9 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
 
-import org.fibs.geotag.Messages;
 import org.fibs.geotag.Settings;
 import org.fibs.geotag.Settings.SETTING;
-import org.fibs.geotag.data.ImageInfo;
-import org.fibs.geotag.track.TrackMatcher;
 import org.fibs.geotag.track.TrackStore;
-import org.fibs.geotag.track.TrackMatcher.Match;
 import org.fibs.geotag.util.BoundsTypeUtil;
 
 import com.topografix.gpx._1._0.BoundsType;
@@ -47,13 +43,6 @@ import fi.iki.elonen.NanoHTTPD.Response;
  */
 public class TracksHandler implements ContextHandler {
 
-  /** The choices we have for displaying tracks */
-  public static final String[] GOOGLE_MAP_TRACK_CHOICES = {
-      Messages.getString("TracksHandler.None"), //$NON-NLS-1$
-      Messages.getString("TracksHandler.MatchingSegment"), //$NON-NLS-1$
-      Messages.getString("TracksHandler.MatchingSegmentAndNeighbours"), //$NON-NLS-1$
-      Messages.getString("TracksHandler.AllTracks") }; //$NON-NLS-1$
-
   /**
    * @see org.fibs.geotag.webserver.ContextHandler#serve(org.fibs.geotag.webserver.WebServer,
    *      java.lang.String, java.lang.String, java.util.Properties,
@@ -69,7 +58,6 @@ public class TracksHandler implements ContextHandler {
     Double east = null;
     Integer width = null;
     Integer height = null;
-    Integer image = null;
     Enumeration<Object> parameters = parms.keys();
     while (parameters.hasMoreElements()) {
       String parameter = (String) parameters.nextElement();
@@ -86,8 +74,6 @@ public class TracksHandler implements ContextHandler {
         width = new Integer(Integer.parseInt(value));
       } else if (parameter.equals("height")) { //$NON-NLS-1$
         height = new Integer(Integer.parseInt(value));
-      } else if (parameter.equals("image")) { //$NON-NLS-1$
-        image = new Integer(Integer.parseInt(value));
       }
     }
     ObjectFactory gpxObjectFactory = new ObjectFactory();
@@ -98,41 +84,13 @@ public class TracksHandler implements ContextHandler {
       mapBounds.setMaxlat(new BigDecimal(north));
       mapBounds.setMinlon(new BigDecimal(west));
       mapBounds.setMaxlon(new BigDecimal(east));
-      int tracksChoice = Settings.get(SETTING.GOOGLE_MAP_TRACKS_CHOICE, 1);
+      boolean showtracks = Settings.get(SETTING.GOOGLE_MAP_SHOW_TRACKS, false);
       List<Trkseg> segments = new ArrayList<Trkseg>();
-      ImageInfo imageInfo = ImageInfo.getImageInfo(image);
-      Match match = null;
-      switch (tracksChoice) {
-        case 0: // none
-          break;
-        case 1: // matching track only
-          match = new TrackMatcher().findMatch(imageInfo.getTimeGMT());
-          if (match != null) {
-            if (match.getMatchingSegment() != null) {
-              segments.add(match.getMatchingSegment());
-            }
-          }
-          break;
-        case 2: // Matching track and two closest
-          match = new TrackMatcher().findMatch(imageInfo.getTimeGMT());
-          if (match != null) {
-            if (match.getMatchingSegment() != null) {
-              segments.add(match.getMatchingSegment());
-            }
-            if (match.getPreviousSegment() != null) {
-              segments.add(match.getPreviousSegment());
-            }
-            if (match.getNextSegment() != null) {
-              segments.add(match.getNextSegment());
-            }
-          }
-          break;
-        case 3: // All tracks
-          for (Trkseg segment : TrackStore.getTrackStore()
-              .getIntersectingTrackSegments(mapBounds)) {
-            segments.add(segment);
-          }
-          break;
+      if (showtracks) {
+        for (Trkseg segment : TrackStore.getTrackStore()
+            .getIntersectingTrackSegments(mapBounds)) {
+          segments.add(segment);
+        }
       }
       // trim down the tracks to bare minimum
       List<Trkseg> filteredSegments = filterSegments(mapBounds, segments,

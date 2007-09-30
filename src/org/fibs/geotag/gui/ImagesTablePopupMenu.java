@@ -52,6 +52,7 @@ import org.fibs.geotag.tasks.ExifWriterTask;
 import org.fibs.geotag.tasks.FillGapsTask;
 import org.fibs.geotag.tasks.MatchImagesTask;
 import org.fibs.geotag.tasks.SetOffsetTask;
+import org.fibs.geotag.tasks.ThumbnailsTask;
 import org.fibs.geotag.tasks.UndoableBackgroundTask;
 import org.fibs.geotag.track.TrackMatcher;
 import org.fibs.geotag.track.TrackStore;
@@ -80,13 +81,25 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
   /** An ellipsis of three dots */
   private static final String ELLIPSIS = "..."; //$NON-NLS-1$
 
-  /** Text for menu item */
+  /** Text for sub menu */
   private static final String SHOW_ON_MAP = Messages
       .getString("ImagesTablePopupMenu.ShowOnMap"); //$NON-NLS-1$
 
-  /** Text for menu item */
+  /** Text for sub menu item */
   private static final String SHOW_ON_MAP_WITH_DIRECTION = Messages
       .getString("ImagesTablePopupMenu.ShowOnMapWithDirection"); //$NON-NLS-1$
+
+  /** Text for menu item */
+  private static final String SHOW_THIS_IMAGE = Messages
+      .getString("ImagesTablePopupMenu.ThisImage"); //$NON-NLS-1$
+
+  /** Text for menu item */
+  private static final String SHOW_SELECTED_IMAGES = Messages
+      .getString("ImagesTablePopupMenu.SelectedImages"); //$NON-NLS-1$
+
+  /** Text for menu item */
+  private static final String SHOW_ALL_IMAGES = Messages
+      .getString("ImagesTablePopupMenu.AllImages"); //$NON-NLS-1$
 
   /** Text for menu item */
   private static final String SHOW_IN_GOOGLEEARTH = Messages
@@ -195,10 +208,22 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
   int[] selectedRows;
 
   /** The menu item used to show an image location on a map */
-  private JMenuItem showOnMapItem;
+  private JMenuItem showOneOnMapItem;
+
+  /** The menu item used to show selected image locations on a map */
+  private JMenuItem showSelectedOnMapItem;
+
+  /** The menu item used to show all image locations on a map */
+  private JMenuItem showAllOnMapItem;
 
   /** The menu item used to show an image location and direction on a map */
-  private JMenuItem showOnMapWithDirectionItem;
+  private JMenuItem showOneOnMapWithDirectionItem;
+
+  /** The menu item used to show selected image locations and directions on a map */
+  private JMenuItem showSelectedOnMapWithDirectionItem;
+
+  /** The menu item used to show all image locations and directions on a map */
+  private JMenuItem showAllOnMapWithDirectionItem;
 
   /** The menu item used to show an image location in Google Earth */
   private JMenuItem showInGoogleEarthItem;
@@ -294,17 +319,49 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
     add(headerItem);
     add(new JSeparator());
 
-    showOnMapItem = new JMenuItem(SHOW_ON_MAP);
-    boolean enabled = true; // we can always do this safely
-    showOnMapItem.setEnabled(enabled);
-    showOnMapItem.addActionListener(this);
-    add(showOnMapItem);
+    JMenu showOnMapMenu = new JMenu(SHOW_ON_MAP);
 
-    showOnMapWithDirectionItem = new JMenuItem(SHOW_ON_MAP_WITH_DIRECTION);
+    showOneOnMapItem = new JMenuItem(SHOW_THIS_IMAGE);
+    boolean enabled = true; // we can always do this safely
+    showOneOnMapItem.setEnabled(enabled);
+    showOneOnMapItem.addActionListener(this);
+    showOnMapMenu.add(showOneOnMapItem);
+
+    showSelectedOnMapItem = new JMenuItem(SHOW_SELECTED_IMAGES);
+    enabled = !backgroundTask && (selectedRows.length > 0);
+    showSelectedOnMapItem.setEnabled(enabled);
+    showSelectedOnMapItem.addActionListener(this);
+    showOnMapMenu.add(showSelectedOnMapItem);
+
+    showAllOnMapItem = new JMenuItem(SHOW_ALL_IMAGES);
+    enabled = !backgroundTask;
+    showAllOnMapItem.setEnabled(enabled);
+    showAllOnMapItem.addActionListener(this);
+    showOnMapMenu.add(showAllOnMapItem);
+
+    add(showOnMapMenu);
+
+    JMenu showOnMapWithDirectionMenu = new JMenu(SHOW_ON_MAP_WITH_DIRECTION);
+
+    showOneOnMapWithDirectionItem = new JMenuItem(SHOW_THIS_IMAGE);
     enabled = true; // we can always do this safely
-    showOnMapWithDirectionItem.setEnabled(enabled);
-    showOnMapWithDirectionItem.addActionListener(this);
-    add(showOnMapWithDirectionItem);
+    showOneOnMapWithDirectionItem.setEnabled(enabled);
+    showOneOnMapWithDirectionItem.addActionListener(this);
+    showOnMapWithDirectionMenu.add(showOneOnMapWithDirectionItem);
+
+    showSelectedOnMapWithDirectionItem = new JMenuItem(SHOW_SELECTED_IMAGES);
+    enabled = !backgroundTask && (selectedRows.length > 0);
+    showSelectedOnMapWithDirectionItem.setEnabled(enabled);
+    showSelectedOnMapWithDirectionItem.addActionListener(this);
+    showOnMapWithDirectionMenu.add(showSelectedOnMapWithDirectionItem);
+
+    showAllOnMapWithDirectionItem = new JMenuItem(SHOW_ALL_IMAGES);
+    enabled = !backgroundTask;
+    showAllOnMapWithDirectionItem.setEnabled(enabled);
+    showAllOnMapWithDirectionItem.addActionListener(this);
+    showOnMapWithDirectionMenu.add(showAllOnMapWithDirectionItem);
+
+    add(showOnMapWithDirectionMenu);
 
     showInGoogleEarthItem = new JMenuItem(SHOW_IN_GOOGLEEARTH);
     enabled = true; // we can always do this safely
@@ -319,27 +376,34 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
     add(chooseTimeItem);
 
     JMenu copyOffsetMenu = new JMenu(COPY_TIME_OFFSET);
+    boolean addMenu = false;
 
     copyOffsetToSelectedItem = new JMenuItem(COPY_TIME_OFFSET_SELECTED);
     // enable if there is no background task and there is a selection
     enabled = !backgroundTask && selectedRows.length > 0;
+    addMenu |= enabled;
     copyOffsetToSelectedItem.setEnabled(enabled);
     copyOffsetToSelectedItem.addActionListener(this);
     copyOffsetMenu.add(copyOffsetToSelectedItem);
 
     copyOffsetToAllItem = new JMenuItem(COPY_TIME_OFFSET_ALL);
     enabled = !backgroundTask;
+    addMenu |= enabled;
     copyOffsetToAllItem.setEnabled(enabled);
     copyOffsetToAllItem.addActionListener(this);
     copyOffsetMenu.add(copyOffsetToAllItem);
 
-    add(copyOffsetMenu);
+    if (addMenu) {
+      add(copyOffsetMenu);
+    }
 
     JMenu matchTracksMenu = new JMenu(MATCH_TRACKS);
+    addMenu = false;
 
     matchTrackToOneImageItem = new JMenuItem(MATCH_TRACK_THIS);
     // enable if there is no background task and tracks have been loaded
     enabled = !backgroundTask && trackStore.hasTracks();
+    addMenu |= enabled;
     matchTrackToOneImageItem.setEnabled(enabled);
     matchTrackToOneImageItem.addActionListener(this);
     matchTracksMenu.add(matchTrackToOneImageItem);
@@ -348,6 +412,7 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
     // enable if there is no background task, there are tracks and a selection
     enabled = !backgroundTask && trackStore.hasTracks()
         && (selectedRows.length > 0);
+    addMenu |= enabled;
     matchTrackToSelectedImagesItem.setEnabled(enabled);
     matchTrackToSelectedImagesItem.addActionListener(this);
     matchTracksMenu.add(matchTrackToSelectedImagesItem);
@@ -355,18 +420,23 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
     matchTrackToAllImagesItem = new JMenuItem(MATCH_TRACK_ALL);
     // enable if there is no background task and there are tracks available
     enabled = !backgroundTask && trackStore.hasTracks();
+    addMenu |= enabled;
     matchTrackToAllImagesItem.setEnabled(enabled);
     matchTrackToAllImagesItem.addActionListener(this);
     matchTracksMenu.add(matchTrackToAllImagesItem);
 
-    add(matchTracksMenu);
+    if (addMenu) {
+      add(matchTracksMenu);
+    }
 
     JMenu copyLocationMenu = new JMenu(COPY_LOCATION);
+    addMenu = false;
 
     copyLocationToPreviousItem = new JMenuItem(COPY_LOCATION_PREVIOUS);
     // Enable if there is no background task and this image has a location and
     // is not the first image
     enabled = !backgroundTask && imageInfo.hasLocation() && row > 0;
+    addMenu |= enabled;
     copyLocationToPreviousItem.setEnabled(enabled);
     copyLocationToPreviousItem.addActionListener(this);
     copyLocationMenu.add(copyLocationToPreviousItem);
@@ -376,6 +446,7 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
     // is not the last image
     enabled = !backgroundTask && imageInfo.hasLocation()
         && row < tableModel.getRowCount() - 1;
+    addMenu |= enabled;
     copyLocationToNextItem.setEnabled(enabled);
     copyLocationToNextItem.addActionListener(this);
     copyLocationMenu.add(copyLocationToNextItem);
@@ -385,6 +456,7 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
     // there is a selection
     enabled = !backgroundTask && imageInfo.hasLocation()
         && selectedRows.length > 0;
+    addMenu |= enabled;
     copyLocationToSelectedItem.setEnabled(enabled);
     copyLocationToSelectedItem.addActionListener(this);
     copyLocationMenu.add(copyLocationToSelectedItem);
@@ -392,19 +464,24 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
     copyLocationToAllItem = new JMenuItem(COPY_LOCATION_ALL);
     // Enable if there is no background task and this image has a location
     enabled = !backgroundTask && imageInfo.hasLocation();
+    addMenu |= enabled;
     copyLocationToAllItem.setEnabled(enabled);
     copyLocationToAllItem.addActionListener(this);
     copyLocationMenu.add(copyLocationToAllItem);
 
-    add(copyLocationMenu);
+    if (addMenu) {
+      add(copyLocationMenu);
+    }
 
     JMenu fillGapsMenu = new JMenu(FILL_GAPS);
+    addMenu = false;
 
     fillThisGapItem = new JMenuItem(FILL_THIS_GAP);
     // Enable if there is no background task, there is track data available and
     // we don't have coordinates for this image yet.
     enabled = !backgroundTask && trackStore.hasTracks()
         && imageInfo.hasLocation() == false;
+    addMenu |= enabled;
     fillThisGapItem.setEnabled(enabled);
     fillThisGapItem.addActionListener(this);
     fillGapsMenu.add(fillThisGapItem);
@@ -420,6 +497,7 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
         break;
       }
     }
+    addMenu |= enabled;
     fillGapsInSelectionItem.setEnabled(enabled);
     fillGapsInSelectionItem.addActionListener(this);
     fillGapsMenu.add(fillGapsInSelectionItem);
@@ -434,20 +512,25 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
         break;
       }
     }
+    addMenu |= enabled;
     fillAllGapsItem.setEnabled(enabled);
     fillAllGapsItem.addActionListener(this);
     fillGapsMenu.add(fillAllGapsItem);
 
-    add(fillGapsMenu);
+    if (addMenu) {
+      add(fillGapsMenu);
+    }
 
     JMenu saveLocationsMenu = new JMenu(SAVE_LOCATIONS);
     // enable if exiftool is available
     saveLocationsMenu.setEnabled(Exiftool.isAvailable());
+    addMenu = false;
 
     saveOneLocationItem = new JMenuItem(SAVE_THIS_LOCATION);
     // enabled if there is no background task, the image has a location that's
     // not coming from the image itself
     enabled = !backgroundTask && imageInfo.hasNewLocation();
+    addMenu |= enabled;
     saveOneLocationItem.setEnabled(enabled);
     saveOneLocationItem.addActionListener(this);
     saveLocationsMenu.add(saveOneLocationItem);
@@ -462,6 +545,7 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
         break;
       }
     }
+    addMenu |= enabled;
     saveSelectedLocationsItem.setEnabled(enabled);
     saveSelectedLocationsItem.addActionListener(this);
     saveLocationsMenu.add(saveSelectedLocationsItem);
@@ -476,11 +560,14 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
         break;
       }
     }
+    addMenu |= enabled;
     saveAllLocationsItem.setEnabled(enabled);
     saveAllLocationsItem.addActionListener(this);
     saveLocationsMenu.add(saveAllLocationsItem);
 
-    add(saveLocationsMenu);
+    if (addMenu) {
+      add(saveLocationsMenu);
+    }
   }
 
   /**
@@ -488,11 +575,19 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
    */
   public void actionPerformed(ActionEvent event) {
     // determine which menu item was selected
-    if (event.getSource() == showOnMapItem) {
+    if (event.getSource() == showOneOnMapItem) {
       // show the image location on a map
-      showOnMap(false);
-    } else if (event.getSource() == showOnMapWithDirectionItem) {
-      showOnMap(true);
+      showOneImageOnMap(false);
+    } else if (event.getSource() == showSelectedOnMapItem) {
+      showSelectedImagesOnMap(false);
+    } else if (event.getSource() == showAllOnMapItem) {
+      showAllImagesOnMap(false);
+    } else if (event.getSource() == showOneOnMapWithDirectionItem) {
+      showOneImageOnMap(true);
+    } else if (event.getSource() == showSelectedOnMapWithDirectionItem) {
+      showSelectedImagesOnMap(true);
+    } else if (event.getSource() == showAllOnMapWithDirectionItem) {
+      showAllImagesOnMap(true);
     } else if (event.getSource() == showInGoogleEarthItem) {
       showInGoogleEarth();
     } else if (event.getSource() == chooseTimeItem) {
@@ -537,65 +632,116 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
    * @param showDirection
    *          If the image direction should be shown as well
    */
-  private void showOnMap(final boolean showDirection) {
-    // make sure there is a thumbnail - this won't create the
-    // thumbnail again, if it already exists.
-    ThumbnailWorker worker = new ThumbnailWorker(imageInfo) {
-      @Override
-      protected void done() {
-        // as default we use a good example to demonstrate the difference
-        // between the Airy and WGS84 geoids :-)
-        String latitude = Double.toString(Airy.LATITUDE);
-        String longitude = Double.toString(Airy.LONGITUDE);
-        int zoomLevel = 5;
-        // see if we can find a better default in the settings
-        // use the last position set via Google maps
-        latitude = Settings.get(SETTING.LAST_GOOGLE_MAPS_LATITUDE, latitude);
-        longitude = Settings.get(SETTING.LAST_GOOGLE_MAPS_LONGITUDE, longitude);
-        zoomLevel = Settings
-            .get(SETTING.LAST_GOOGLE_MAPS_ZOOM_LEVEL, zoomLevel);
-        // and zoom a bit out
-        if (zoomLevel > 6) {
-          zoomLevel -= 2;
-        }
-        if (imageInfo.getGPSLatitude() != null
-            && imageInfo.getGPSLongitude() != null) {
-          latitude = imageInfo.getGPSLatitude();
-          longitude = imageInfo.getGPSLongitude();
-          zoomLevel = Settings.get(SETTING.LAST_GOOGLE_MAPS_ZOOM_LEVEL, 15);
-        }
-        String direction = "false"; //$NON-NLS-1$
-        if (showDirection) {
-          if (imageInfo.getGPSImgDirection() == null) {
-            // show direction, but can't supply initial value
-            direction = "true"; //$NON-NLS-1$
-          } else {
-            // the initial value
-            direction = imageInfo.getGPSImgDirection();
-          }
-        }
-        String URL = "http://localhost:4321/map.html?" + //$NON-NLS-1$
-            "latitude=" //$NON-NLS-1$
-            + latitude + "&longitude=" //$NON-NLS-1$
-            + longitude + "&direction=" //$NON-NLS-1$
-            + direction + "&zoom=" //$NON-NLS-1$
-            + zoomLevel + "&image=" //$NON-NLS-1$
-            + imageInfo.getSequenceNumber() + "&language=" //$NON-NLS-1$
-            + Locale.getDefault().getLanguage() + "&maptype=" //$NON-NLS-1$
-            + Settings.get(SETTING.LAST_GOOGLE_MAPS_MAP_TYPE, "Hybrid"); //$NON-NLS-1$
-        if (imageInfo.getThumbnail() != null) {
-          URL += "&thumbnail=true" //$NON-NLS-1$
-              + "&width=" + imageInfo.getThumbnail().getIconWidth() + //$NON-NLS-1$
-              "&height=" + imageInfo.getThumbnail().getIconHeight(); //$NON-NLS-1$
-        } else {
-          URL += "&thumbnail=false"; //$NON-NLS-1$
-        }
-        // execute the command
-        BareBonesBrowserLaunch.openURL(URL.toString());
-      }
+  private void showOneImageOnMap(final boolean showDirection) {
+    List<ImageInfo> images = new ArrayList<ImageInfo>();
+    images.add(imageInfo);
+    showImagesOnMap(images, showDirection);
+  }
 
-    };
-    worker.execute();
+  /**
+   * Open a web browser and show selected image locations on a map
+   * 
+   * @param showDirection
+   *          If the image direction should be shown as well
+   */
+  private void showSelectedImagesOnMap(boolean showDirection) {
+    List<ImageInfo> images = new ArrayList<ImageInfo>();
+    for (int index = 0; index < selectedRows.length; index++) {
+      images.add(tableModel.getImageInfo(selectedRows[index]));
+    }
+    showImagesOnMap(images, showDirection);
+  }
+
+  /**
+   * Open a web browser and show all image locations on a map
+   * 
+   * @param showDirection
+   *          If the image direction should be shown as well
+   */
+  private void showAllImagesOnMap(boolean showDirection) {
+    List<ImageInfo> images = new ArrayList<ImageInfo>();
+    for (int i = 0; i < tableModel.getRowCount(); i++) {
+      images.add(tableModel.getImageInfo(i));
+    }
+    showImagesOnMap(images, showDirection);
+  }
+
+  /**
+   * Make sure all images have thumbnails and show their locations on a map.
+   * 
+   * @param images
+   * @param showDirection
+   */
+  private void showImagesOnMap(final List<ImageInfo> images,
+      final boolean showDirection) {
+    if (images.size() == 1) {
+      // if there is only one image we don't need the feedback
+      // coming from a BackgroundTask.. the simple Worker will suffice.
+      new ThumbnailWorker(images.get(0)) {
+        @Override
+        public void done() {
+          showOnMap(images, showDirection);
+        }
+      }.execute();
+    } else {
+      // more than one thumbnail to be generated. This could take a while
+      // and we use a BackgroundTask to give visual feedback via progress bar.
+      new ThumbnailsTask(Messages
+          .getString("ImagesTablePopupMenu.GenerateThumbnails"), images) { //$NON-NLS-1$
+        @Override
+        public void done() {
+          showOnMap(images, showDirection);
+        }
+      }.execute();
+    }
+  }
+
+  /**
+   * Show locations for a list of images on a map
+   * 
+   * @param images
+   * @param showDirection
+   */
+  void showOnMap(final List<ImageInfo> images, final boolean showDirection) {
+    // now we gather data for our request - first the map position
+    // as default we use a good example to demonstrate the difference
+    // between the Airy and WGS84 geoids :-)
+    String latitude = Double.toString(Airy.LATITUDE);
+    String longitude = Double.toString(Airy.LONGITUDE);
+    int zoomLevel = 5;
+    // see if we can find a better default in the settings
+    // use the last position set via Google maps
+    latitude = Settings.get(SETTING.LAST_GOOGLE_MAPS_LATITUDE, latitude);
+    longitude = Settings.get(SETTING.LAST_GOOGLE_MAPS_LONGITUDE, longitude);
+    zoomLevel = Settings.get(SETTING.LAST_GOOGLE_MAPS_ZOOM_LEVEL, zoomLevel);
+    // and zoom a bit out
+    if (zoomLevel > 6) {
+      zoomLevel -= 2;
+    }
+    // a better choice is a location we actually find for one of the images
+    for (ImageInfo image : images) {
+      if (image.getGPSLatitude() != null && image.getGPSLongitude() != null) {
+        latitude = image.getGPSLatitude();
+        longitude = image.getGPSLongitude();
+        zoomLevel = Settings.get(SETTING.LAST_GOOGLE_MAPS_ZOOM_LEVEL, 15);
+        break;
+      }
+    }
+    String URL = "http://localhost:4321/map.html?" + //$NON-NLS-1$
+        "latitude=" //$NON-NLS-1$
+        + latitude + "&longitude=" //$NON-NLS-1$
+        + longitude + "&direction=" //$NON-NLS-1$
+        + showDirection + "&zoom=" //$NON-NLS-1$
+        + zoomLevel + "&images="; //$NON-NLS-1$
+    for (int index = 0; index < images.size(); index++) {
+      URL += (index == 0 ? "" : "_") + images.get(index).getSequenceNumber(); //$NON-NLS-1$ //$NON-NLS-2$
+    }
+    URL += "&language=" //$NON-NLS-1$
+        + Locale.getDefault().getLanguage() + "&maptype=" //$NON-NLS-1$
+        + Settings.get(SETTING.LAST_GOOGLE_MAPS_MAP_TYPE, "Hybrid"); //$NON-NLS-1$
+    // execute the command
+    System.out.println(URL);
+    BareBonesBrowserLaunch.openURL(URL.toString());
   }
 
   /**
@@ -679,8 +825,8 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
   private void copyOffsetToSelected() {
     int offset = imageInfo.getOffset();
     List<ImageInfo> imageList = new ArrayList<ImageInfo>();
-    for (int i = 0; i < selectedRows.length; i++) {
-      ImageInfo image = tableModel.getImageInfo(selectedRows[i]);
+    for (int index = 0; index < selectedRows.length; index++) {
+      ImageInfo image = tableModel.getImageInfo(selectedRows[index]);
       imageList.add(image);
     }
     new SetOffsetTask(COPY_TIME_OFFSET, COPY_TIME_OFFSET_SELECTED, tableModel,
@@ -786,8 +932,8 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
    */
   private void fillGapsInSelection() {
     List<ImageInfo> images = new ArrayList<ImageInfo>();
-    for (int i = 0; i < selectedRows.length; i++) {
-      ImageInfo candidate = tableModel.getImageInfo(selectedRows[i]);
+    for (int index = 0; index < selectedRows.length; index++) {
+      ImageInfo candidate = tableModel.getImageInfo(selectedRows[index]);
       if (candidate.hasLocation() == false) {
         images.add(candidate);
       }
@@ -837,8 +983,8 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
    */
   private void saveSelectedLocations() {
     List<ImageInfo> images = new ArrayList<ImageInfo>();
-    for (int i = 0; i < selectedRows.length; i++) {
-      ImageInfo candidate = tableModel.getImageInfo(selectedRows[i]);
+    for (int index = 0; index < selectedRows.length; index++) {
+      ImageInfo candidate = tableModel.getImageInfo(selectedRows[index]);
       if (candidate.hasNewLocation() == true) {
         images.add(candidate);
       }

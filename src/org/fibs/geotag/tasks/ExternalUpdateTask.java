@@ -99,7 +99,7 @@ public class ExternalUpdateTask extends UndoableBackgroundTask<ImageInfo> {
         }
         if (externalUpdate.getDirection() != Double.NaN) {
           new UpdateGPSImgDirection(imageInfo, (new Double(externalUpdate
-              .getDirection()).toString()));
+              .getDirection()).toString()), DATA_SOURCE.MAP);
         }
       }
       publish(imageInfo);

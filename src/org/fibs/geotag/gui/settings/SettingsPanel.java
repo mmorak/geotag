@@ -44,7 +44,7 @@ public abstract class SettingsPanel extends JPanel {
 
   /** The default value for this setting */
   String defaultValue;
-  
+
   /** The title for this panel */
   String title;
 
@@ -63,7 +63,7 @@ public abstract class SettingsPanel extends JPanel {
     this.setting = setting;
     this.defaultValue = defaultValue;
   }
-  
+
   /**
    * @return the string value of this panel
    */
