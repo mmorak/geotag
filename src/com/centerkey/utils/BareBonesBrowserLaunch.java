@@ -33,10 +33,12 @@ public class BareBonesBrowserLaunch {
   /**
    * Opens the specified web page in a web browser
    * 
+   * @param specificBrowser
+   *          Used to explicitly set the browser
    * @param url
    *          An absolute URL of a web page (ex: "http://www.google.com/")
    */
-  public static void openURL(String url) {
+  public static void openURL(String specificBrowser, String url) {
     String osName = System.getProperty("os.name"); //$NON-NLS-1$
     try {
       if (osName.startsWith("Mac OS")) { //$NON-NLS-1$
@@ -45,10 +47,14 @@ public class BareBonesBrowserLaunch {
             new Class[] { String.class });
         openURL.invoke(null, new Object[] { url });
       } else if (osName.startsWith("Windows")) { //$NON-NLS-1$
-        Runtime.getRuntime()
-            .exec("rundll32 url.dll,FileProtocolHandler " + url); //$NON-NLS-1$
+        if (specificBrowser != null && specificBrowser.length() > 0) {
+          Runtime.getRuntime().exec(specificBrowser + ' ' + url);
+        } else {
+          Runtime.getRuntime().exec(
+              "rundll32 url.dll,FileProtocolHandler " + url); //$NON-NLS-1$
+        }
       } else { // assume Unix or Linux
-        String[] browsers = { "firefox", //$NON-NLS-1$
+        String[] browsers = { specificBrowser, "firefox", //$NON-NLS-1$
             "opera", //$NON-NLS-1$
             "konqueror", //$NON-NLS-1$
             "epiphany", //$NON-NLS-1$
@@ -56,9 +62,12 @@ public class BareBonesBrowserLaunch {
             "netscape" //$NON-NLS-1$
         };
         String browser = null;
+
         for (int count = 0; count < browsers.length && browser == null; count++) {
-          if (Runtime.getRuntime().exec(
-              new String[] { "which", browsers[count] }).waitFor() == 0) { //$NON-NLS-1$
+          if (browsers[count] != null
+              && browsers[count].length() > 0
+              && Runtime.getRuntime().exec(
+                  new String[] { "which", browsers[count] }).waitFor() == 0) { //$NON-NLS-1$
             browser = browsers[count];
           }
         }

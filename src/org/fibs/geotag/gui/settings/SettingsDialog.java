@@ -63,6 +63,8 @@ public class SettingsDialog extends JDialog {
     Dimension minimumSize = parent.getSize();
     minimumSize.setSize(minimumSize.getWidth() / 2, 50);
     setMinimumSize(minimumSize);
+    panelList.add(new FileSettingsPanel(parent, Messages
+        .getString("SettingsDialog.Browser"), SETTING.BROWSER, "")); //$NON-NLS-1$//$NON-NLS-2$
     panelList
         .add(new FileSettingsPanel(
             parent,

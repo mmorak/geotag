@@ -457,7 +457,8 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
         .getString("MainWindow.WebSiteFormat") + ELLIPSIS, Geotag.NAME)); //$NON-NLS-1$
     websiteItem.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        BareBonesBrowserLaunch.openURL(Geotag.WEBSITE);
+        BareBonesBrowserLaunch.openURL(Settings.get(SETTING.BROWSER, null),
+            Geotag.WEBSITE);
       }
     });
 

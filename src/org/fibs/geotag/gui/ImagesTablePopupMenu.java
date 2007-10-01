@@ -741,7 +741,8 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
         + Settings.get(SETTING.LAST_GOOGLE_MAPS_MAP_TYPE, "Hybrid"); //$NON-NLS-1$
     // execute the command
     System.out.println(URL);
-    BareBonesBrowserLaunch.openURL(URL.toString());
+    BareBonesBrowserLaunch.openURL(Settings.get(SETTING.BROWSER, null), URL
+        .toString());
   }
 
   /**

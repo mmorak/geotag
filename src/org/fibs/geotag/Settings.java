@@ -108,7 +108,9 @@ public class Settings {
     /** Preferences key for the tracks to be draw on Google Maps */
     GOOGLE_MAP_SHOW_TRACKS,
     /** Preferences key for checking for new versions */
-    CHECK_FOR_NEW_VERSION;
+    CHECK_FOR_NEW_VERSION,
+    /** Preferences key for the browser name - empty string for default */
+    BROWSER;
 
     /**
      * For the actual key I prefer lower case keys with dots
