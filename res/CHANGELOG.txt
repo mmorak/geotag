@@ -1,3 +1,8 @@
+2007-10-01 Release 0.026
+  Geotag now works with Internet Explorer. Several
+  ugly work-arounds were needed to keep this weird
+  software happy. All other browsers were just fine.
+  
 2007-10-01 Release 0.025
   As there are problems with Internet Explorer, a
   setting for the browser path was added.

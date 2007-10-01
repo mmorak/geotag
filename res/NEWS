@@ -8,9 +8,9 @@ Geotag allows fine tuning of locations in external programs like Google Maps
 in a web browser or Google Earth.
 
 Major new feature:
-More than one image can now be adjusted on a single Google Map. This reduces the
-number of Maps that need to be opened in the web browser, resulting in faster
-work flow and reduced memory usage.
+Geotag now works with Microsoft's Internet Explorer. After a lot of research 
+and trial and error, we finally managed to find all the non-standard 'features'
+that stopped Internet Explorer from working with Geotag.
 
 Visit our web site at http://geotag.sourceforge.net to see what the
 program is all about.

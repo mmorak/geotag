@@ -727,7 +727,7 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
         break;
       }
     }
-    String URL = "http://localhost:4321/map.html?" + //$NON-NLS-1$
+    String URL = "http://localhost:4321/map/map.html?" + //$NON-NLS-1$
         "latitude=" //$NON-NLS-1$
         + latitude + "&longitude=" //$NON-NLS-1$
         + longitude + "&direction=" //$NON-NLS-1$

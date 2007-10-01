@@ -114,7 +114,7 @@ if (GBrowserIsCompatible()) {
     var theta = (Math.atan2(y, x) + Math.PI * 5.0 / 2.0) % (Math.PI * 2.0);
     var newDirection = theta / Math.PI * 180;
     // make a string out of the new marker location and send it to the web server
-    var url = "update/new.html?image="
+    var url = "/update/new.html?image="
        + imageInfo.id
        + "&latitude="
        + getLatitude(imageInfo.locationMarker)
@@ -202,7 +202,7 @@ if (GBrowserIsCompatible()) {
   // ask Geotag about the images to be displayed
   function requestImageInfos(imageInfoList) {
   	// request information about the image
-    var URL = "http://localhost:4321/imageinfo/imageinfo.xml?ids=";
+    var URL = "/imageinfo/imageinfo.xml?ids=";
     for (var index = 0; index < imageInfoList.size(); index++) {
     	URL += index == 0 ? "" : ",";
     	URL += imageInfoList.get(index).id;
@@ -265,7 +265,7 @@ if (GBrowserIsCompatible()) {
   }    
   
   // parse the URL arguments
-  function arguments() {
+  function Arguments() {
     var URL = String(window.location.href + "&x=x?x=x");
     var argumentArray = String(URL.split("?")[1]); /* all of the arguments */
     var pairs = argumentArray.split("&");  /* the name=value pairs */
@@ -315,7 +315,7 @@ if (GBrowserIsCompatible()) {
   }
   
   // parse the arguments from the URL  
-  var args = new arguments();
+  var args = new Arguments();
 
   // a few utility functions
 
@@ -381,7 +381,7 @@ if (GBrowserIsCompatible()) {
     var east = bounds.getNorthEast().lng();
     var size = map.getSize();
     // tell Geotag about it
-    var tracksURL = "http://localhost:4321/tracks/tracks.kml?south="
+    var tracksURL = "/tracks/tracks.kml?south="
       + south + "&west=" + west + "&north=" + north + "&east=" + east
       + "&width=" +size.width + "&height=" + size.height;
     var request = GXmlHttp.create();
@@ -424,7 +424,7 @@ if (GBrowserIsCompatible()) {
   
   GEvent.addListener(map, "zoomend", function(oldLevel, newLevel) {
     var request = GXmlHttp.create();
-    request.open("GET", "http://localhost:4321/zoom/zoom.html?zoom="+newLevel, true);
+    request.open("GET", "/zoom/zoom.html?zoom="+newLevel, true);
     // leave out the request.onreadystatechange = function() bit
     // we're not interested in the response from the server
     request.send(null);
@@ -432,7 +432,7 @@ if (GBrowserIsCompatible()) {
   
   GEvent.addListener(map, "maptypechanged", function() {
     var request = GXmlHttp.create();
-    request.open("GET", "http://localhost:4321/maptype/maptype.html?maptype=" 
+    request.open("GET", "/maptype/maptype.html?maptype=" 
        +map.getCurrentMapType().getName());
     // not interested in server response, just send the request
     request.send(null);
