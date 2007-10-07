@@ -143,7 +143,7 @@ if (GBrowserIsCompatible()) {
     var html = '<center>';
     if (imageInfo.hasThumbnail == true) {
       html += '<img src='
-       + '"images/'
+       + '"/images/'
        + imageInfo.id
        + '.jpg" width="'
        + imageInfo.width
@@ -345,6 +345,8 @@ if (GBrowserIsCompatible()) {
   map.addControl(new GLargeMapControl());
   map.addControl(new GMapTypeControl());
   map.addControl(new GScaleControl());
+  // enabled mouse wheel zooming
+  map.enableScrollWheelZoom();
   
   // now the language dependent bits
   var title = "Geotag"; // not translated, but might be later

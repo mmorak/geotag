@@ -1,3 +1,8 @@
+2007-10-07 Release 0.027
+  Fixed Javascript problem, resulting in thumbnail
+  images not being displayed.
+  Enabled scroll wheel zooming for Google Maps.
+  
 2007-10-01 Release 0.026
   Geotag now works with Internet Explorer. Several
   ugly work-arounds were needed to keep this weird

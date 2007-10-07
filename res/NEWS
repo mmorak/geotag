@@ -1,4 +1,4 @@
-Version 0.024 of the Geotag program has just been released.
+Version 0.026 of the Geotag program has just been released.
 
 Geotag is a platform independent, GUI based application that compares date/time
 information captured by a digital camera with tracks recorded by a GPS unit and
@@ -15,5 +15,4 @@ that stopped Internet Explorer from working with Geotag.
 Visit our web site at http://geotag.sourceforge.net to see what the
 program is all about.
 Download the latest release at https://sourceforge.net/project/showfiles.php?group_id=204186
-or run Geotag from your web browser at: http://geotag.sourceforge.net/?q=node/3 
- 
+or run Geotag from your web browser at: http://geotag.sourceforge.net/?q=node/3
