@@ -63,6 +63,14 @@ if (GBrowserIsCompatible()) {
     this.size = function() {
     	return count;
     }
+    this.indexOf = function(image) {
+    	for (var i=0; i < count;i++) {
+    		if (array[i]==image) {
+    			return i;
+    		}
+    	}
+    	return -1;
+    }
   }
   
   // a list of all the images
@@ -133,9 +141,7 @@ if (GBrowserIsCompatible()) {
       imageInfo.directionLine.hide();
     }
     // then centre the map on the new (or old) camera marker location
-    activeImage = imageInfo;
-    map.panTo(imageInfo.locationMarker.getPoint());
-    setTitle(imageInfo.locationMarker);
+    setActiveImage(imageInfo);
   };
 
   // the HTML displayed in the info window for a marker is:  
@@ -198,7 +204,14 @@ if (GBrowserIsCompatible()) {
     	dragEnd(instance);
     }
   }
-
+  
+  // change active image, pan to it and change title
+  function setActiveImage(image) {
+  	activeImage = image;
+  	map.panTo(activeImage.locationMarker.getPoint());
+    setTitle(activeImage.locationMarker);
+  }
+  
   // ask Geotag about the images to be displayed
   function requestImageInfos(imageInfoList) {
   	// request information about the image
@@ -256,7 +269,9 @@ if (GBrowserIsCompatible()) {
             GEvent.addListener(imageInfo.locationMarker, "dragend", imageInfo.dragEndListener);
             GEvent.addListener(imageInfo.directionMarker, "dragend", imageInfo.dragEndListener);
             //GLog.write(requst.responseText);
-            activeImage = imageInfo;
+            if (activeImage == null) {
+              setActiveImage(imageInfo);
+            }
           }
         }
       }
@@ -331,6 +346,13 @@ if (GBrowserIsCompatible()) {
     return round(marker.getPoint().x);
   }
   
+  function removeElementById(elementID) {
+     var element = document.getElementById(elementID);
+     if (element) {
+     	 element.parentNode.removeChild(element);
+     }
+   } 
+  
   // change the document title, reflecting the current marker position
   function setTitle(marker) {
     document.title = "Geotag "+getLatitude(marker)+" "+getLongitude(marker);
@@ -346,23 +368,134 @@ if (GBrowserIsCompatible()) {
   map.addControl(new GMapTypeControl());
   map.addControl(new GScaleControl());
   // enabled mouse wheel zooming
-  map.enableScrollWheelZoom();
   
   // now the language dependent bits
   var title = "Geotag"; // not translated, but might be later
+  var showMenuText = 'Show menu';
+  var hideMenuText = 'Hide menu';
+  var mouseZoomText = 'Enable scroll wheel zoom';
+  var currentImageText = "Current image";
+  var nextImageText = 'Next image';
+  var previousImageText = 'Previous image';
+  var showAllText = "Show all images";
 
   // Auf Deutsch bitte
   if (language == "de") {
     title = "Geotag";
+    showMenuText = "Men&uuml; &ouml;ffnen";
+    hideMenuText = 'Men&uuml; schliessen';
+    mouseZoomText = "Mit Mausrad zoomen";
+    currentImageText = "Aktuelles Bild";
+    nextImageText = 'N&auml;chstes Bild';
+    previousImageText = 'Voriges Bild';
+    showAllText = "Alle Bilder zeigen";
   }
 
   document.title=title;
   
-  // update the instructions div to show the instructions
-  // Shouldn't use innerHTML, but its a bit much to do all the DOM stuff just for this one update
+  // create the instructions control
   var instructions = getInstructions(showDirection);
-  document.getElementById("instructions").innerHTML = "<center>" + instructions +"</center>";
-
+  removeElementById("instructions");
+  var html = '<div class="htmlControl" style="font-weight: bold"><center>'+instructions+'</center></div>';
+  instructionsControl = new HtmlControl(html);
+  map.addControl(instructionsControl, new GControlPosition(G_ANCHOR_TOP_RIGHT, new GSize(7, 30)));
+  
+  // create a menu
+  menuHtml='<div style="background-color:transparent;">' +
+    		   '<div class="htmlControl htmlMenuItem" id="menuButton"><b>'+showMenuText+'</b></div>'+
+    		   '<div id="menuPanel" style="display:none">'+
+    		       '<div class="htmlControl" id="scrollZoomItem"><input type="checkbox" id="scrollZoomCheckBox">'+mouseZoomText+'</input></div>'+
+    		       '<div class="htmlControl htmlMenuItem" id="currentImage">'+currentImageText+'</div>'+
+    		       '<div class="htmlControl htmlMenuItem" id="nextImage">'+nextImageText+'</div>'+
+    		       '<div class="htmlControl htmlMenuItem" id="previousImage">'+previousImageText+'</div>'+
+    		       '<div class="htmlControl htmlMenuItem" id="showAll">'+showAllText+'</div>'+
+    		  '</div>'+
+    	 '</div>';
+  map.addControl(new HtmlControl(menuHtml), new GControlPosition(G_ANCHOR_TOP_LEFT, new GSize(100, 7)));
+  
+  // add function that opens/closes the menu
+  GEvent.addDomListener(document.getElementById('menuButton'), 'click', function() {
+    var menuPanel=document.getElementById('menuPanel');
+    menuPanel.style.display=(menuPanel.style.display=='block')?'none':'block';
+    var button=document.getElementById('menuButton');
+    var html=(menuPanel.style.display=='block')?hideMenuText:showMenuText;
+    html='<b>'+html+'</b>';
+    button.innerHTML=html;
+  });
+  
+  // handle the scroll zoom menu item
+  function setScrollWheelZoomItem() {
+  	var checkBox = document.getElementById("scrollZoomCheckBox");
+  	  checkBox.checked = map.scrollWheelZoomEnabled();
+  }
+  setScrollWheelZoomItem();
+  document.getElementById("scrollZoomCheckBox").onclick = function() {
+  	if(document.getElementById("scrollZoomCheckBox").checked) {
+  		map.enableScrollWheelZoom();
+  	} else {
+  		map.disableScrollWheelZoom();
+  	}
+  }
+  
+  // handle the 'current image' menu item
+  document.getElementById("currentImage").onclick = function() {
+    map.panTo(activeImage.locationMarker.getPoint());
+  }
+  
+  // handle the 'next image' menu item
+  document.getElementById("nextImage").onclick = function() {
+  	currentIndex = imageInfos.indexOf(activeImage);
+  	nextIndex = (currentIndex + 1) % imageInfos.size();
+  	setActiveImage(imageInfos.get(nextIndex));
+  	//activeImage.locationMarker.openInfoWindow();
+  }
+  
+  // handle the 'previous image' menu item
+  document.getElementById("previousImage").onclick = function() {
+    currentIndex = imageInfos.indexOf(activeImage);
+    previousIndex = (currentIndex -1);
+    if (previousIndex < 0) {
+    	 previousIndex += imageInfos.size();
+    }
+    setActiveImage(imageInfos.get(previousIndex));
+    //activeImage.locationMarker.openInfoWindow();
+  }
+  
+  // handle the 'show all' menu item
+  document.getElementById("showAll").onclick = function() {  
+    // this is a bit of. First we need to find the bounds of the images
+    // this only makes sense if there is more than one image
+    if (imageInfos.size() > 0) {
+    	var minLatitude = 90;;
+    	var maxLatitude = -90;
+    	var minLongitude = 180;
+    	var maxLongitude = -180;
+    	for (var i= 0; i < imageInfos.size(); i++) {
+    		var imageInfo = imageInfos.get(i);
+    		var latLng = imageInfo.locationMarker.getLatLng();
+    		if (latLng.lat() > maxLatitude) {
+    			maxLatitude = latLng.lat();
+    		}
+    		if (latLng.lat() < minLatitude) {
+    			minLatitude = latLng.lat();
+    		}
+    		if (latLng.lng() > maxLongitude) {
+    			maxLongitude = latLng.lng();
+    		}
+    		if (latLng.lng() < minLongitude) {
+    			minLongitude = latLng.lng();
+    		}
+    	}
+    	var southWest = new GLatLng(minLatitude, minLongitude);
+    	var northEast = new GLatLng(maxLatitude, maxLongitude);
+    	var bounds = new GLatLngBounds(southWest, northEast);
+    	var zoomLevel = map.getBoundsZoomLevel(bounds);
+    	var centre = new GLatLng((minLatitude + maxLatitude)/2, (minLongitude + maxLongitude)/2);
+    	map.setZoom(zoomLevel);
+    	map.panTo(centre);
+    }
+  }
+  
   // make sure the map still shows the marker when resized
   window.onresize = function() {
   	if (activeImage != null) {

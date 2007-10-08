@@ -1,3 +1,7 @@
+2007-10-08 Release 0.028
+  Added a menu to the Google Map to ease navigation
+  between several images on the map.
+  
 2007-10-07 Release 0.027
   Fixed Javascript problem, resulting in thumbnail
   images not being displayed.
