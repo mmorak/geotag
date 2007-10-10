@@ -27,34 +27,41 @@ import org.fibs.geotag.Settings.SETTING;
 import fi.iki.elonen.NanoHTTPD.Response;
 
 /**
- * A class receiving zoom level updates from Google Maps and stores them in the
- * Settings
+ * A class receiving user preferences or choices from the Google Map and storing
+ * them in the Settings
  * 
  * @author Andreas Schneider
  * 
  */
-public class ZoomLevelHandler implements ContextHandler {
+public class SettingsHandler implements ContextHandler {
 
   /**
    * @see org.fibs.geotag.webserver.ContextHandler#serve(org.fibs.geotag.webserver.WebServer,
    *      java.lang.String, java.lang.String, java.util.Properties,
    *      java.util.Properties)
    */
-  @SuppressWarnings("boxing")
   @Override
   public Response serve(WebServer server, String uri, String method,
       Properties header, Properties parms) {
-    Integer zoomLevel = null;
     Enumeration<Object> parameters = parms.keys();
     while (parameters.hasMoreElements()) {
       String parameter = (String) parameters.nextElement();
       String value = parms.getProperty(parameter);
       if (parameter.equals("zoom")) { //$NON-NLS-1$
-        zoomLevel = new Integer(Integer.parseInt(value));
+        Settings.put(SETTING.LAST_GOOGLE_MAPS_ZOOM_LEVEL, Integer
+            .parseInt(value));
       }
-    }
-    if (zoomLevel != null) {
-      Settings.put(SETTING.LAST_GOOGLE_MAPS_ZOOM_LEVEL, zoomLevel);
+      if (parameter.equals("maptype")) { //$NON-NLS-1$
+        Settings.put(SETTING.LAST_GOOGLE_MAPS_MAP_TYPE, value);
+      }
+      if (parameter.equals("menuopen")) { //$NON-NLS-1$
+        Settings
+            .put(SETTING.GOOGLE_MAPS_MENU_OPEN, Boolean.parseBoolean(value));
+      }
+      if (parameter.equals("wheelzoom")) { //$NON-NLS-1$
+        Settings.put(SETTING.GOOGLE_MAPS_MOUSE_WHEEL_ZOOM, Boolean
+            .parseBoolean(value));
+      }
     }
     // send back a non-null response
     return server.xmlResponse("<ok/>"); //$NON-NLS-1$

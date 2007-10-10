@@ -46,6 +46,8 @@ import javax.swing.JSplitPane;
 import javax.swing.WindowConstants;
 import javax.swing.undo.UndoManager;
 
+import net.iharder.dnd.FileDrop;
+
 import org.fibs.geotag.Geotag;
 import org.fibs.geotag.GlobalUndoManager;
 import org.fibs.geotag.Messages;
@@ -76,13 +78,12 @@ import org.fibs.geotag.track.TrackMatcher;
 import org.fibs.geotag.track.TrackStore;
 import org.fibs.geotag.webserver.ImageInfoHandler;
 import org.fibs.geotag.webserver.MapHandler;
-import org.fibs.geotag.webserver.MapTypeHandler;
+import org.fibs.geotag.webserver.SettingsHandler;
 import org.fibs.geotag.webserver.ResourceHandler;
 import org.fibs.geotag.webserver.ThumbnailHandler;
 import org.fibs.geotag.webserver.TracksHandler;
 import org.fibs.geotag.webserver.UpdateHandler;
 import org.fibs.geotag.webserver.WebServer;
-import org.fibs.geotag.webserver.ZoomLevelHandler;
 
 import com.centerkey.utils.BareBonesBrowserLaunch;
 import com.topografix.gpx._1._0.Gpx;
@@ -100,12 +101,10 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
     ExternalUpdateConsumer {
 
   /** Text for menu item to add individual files */
-  private static final String ADD_FILE = Messages
-      .getString("MainWindow.AddFile"); //$NON-NLS-1$
+  static final String ADD_FILE = Messages.getString("MainWindow.AddFile"); //$NON-NLS-1$
 
   /** Text for menu item to add all files in a directory */
-  private static final String ADD_FILES = Messages
-      .getString("MainWindow.AddDirectory"); //$NON-NLS-1$
+  static final String ADD_FILES = Messages.getString("MainWindow.AddDirectory"); //$NON-NLS-1$
 
   /** An ellipsis of three dots */
   private static final String ELLIPSIS = "..."; //$NON-NLS-1$
@@ -273,6 +272,14 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
       }
     });
     GlobalUndoManager.getManager().setLimit(-1); // no limit
+    // enable drag and drop of image files
+    new FileDrop(this, new FileDrop.Listener() {
+      public void filesDropped(File[] files) {
+        ExifReaderTask task = new ExifReaderTask(ADD_FILES, tableModel, files);
+        task.execute();
+      }
+    });
+
     // if external programs want to use the clipboard, uncomment those lines:
     // ClipboardWorker clipboardMonitor = new ClipboardWorker(this) {
     // @Override
@@ -293,8 +300,7 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
       webServer.createContext("/update", new UpdateHandler(this)); //$NON-NLS-1$
       webServer.createContext("/kml", new KmlRequestHandler(this)); //$NON-NLS-1$
       webServer.createContext("/tracks", new TracksHandler()); //$NON-NLS-1$
-      webServer.createContext("/zoom", new ZoomLevelHandler()); //$NON-NLS-1$
-      webServer.createContext("/maptype", new MapTypeHandler()); //$NON-NLS-1$
+      webServer.createContext("/settings", new SettingsHandler()); //$NON-NLS-1$
       webServer.createContext("/imageinfo", new ImageInfoHandler()); //$NON-NLS-1$
       webServer.createContext("/map", new MapHandler()); //$NON-NLS-1$
     } catch (IOException e) {

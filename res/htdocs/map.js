@@ -287,6 +287,8 @@ if (GBrowserIsCompatible()) {
     this.latitude=51.5;
     this.longitude=0;
     this.zoom=6;
+    this.wheelzoom = false;
+    this.menuopen = true;
     for (var i = 0; i < pairs.length; i++) {
       pair = pairs[i].split("=");
       name = pair[0];
@@ -325,6 +327,12 @@ if (GBrowserIsCompatible()) {
       }
       if (name == "language") {
         language = value;
+      }
+      if (name == "wheelzoom") {
+      	this.wheelzoom = (value == "true");
+      }
+      if (name == "menuopen") {
+      	this.menuopen = (value == "true");
       }
     }
   }
@@ -413,29 +421,54 @@ if (GBrowserIsCompatible()) {
     	 '</div>';
   map.addControl(new HtmlControl(menuHtml), new GControlPosition(G_ANCHOR_TOP_LEFT, new GSize(100, 7)));
   
-  // add function that opens/closes the menu
-  GEvent.addDomListener(document.getElementById('menuButton'), 'click', function() {
-    var menuPanel=document.getElementById('menuPanel');
-    menuPanel.style.display=(menuPanel.style.display=='block')?'none':'block';
-    var button=document.getElementById('menuButton');
-    var html=(menuPanel.style.display=='block')?hideMenuText:showMenuText;
+  function setMenuState(visible) {
+  	var menuPanel=document.getElementById('menuPanel');
+  	menuPanel.style.display=visible ? 'block':'none';
+  	var button=document.getElementById('menuButton');
+    var html=visible?hideMenuText:showMenuText;
     html='<b>'+html+'</b>';
     button.innerHTML=html;
+    // tell the main program about it
+    var request = GXmlHttp.create();
+    request.open("GET", "/settings/set.html?menuopen="+visible, true);
+    // leave out the request.onreadystatechange = function() bit
+    // we're not interested in the response from the server
+    request.send(null);
+  }
+  // add function that opens/closes the menu
+  GEvent.addDomListener(document.getElementById('menuButton'), 'click', function() {
+  	var menuPanel=document.getElementById('menuPanel');
+    setMenuState(menuPanel.style.display=='none');
   });
+  setMenuState(args.menuopen);
   
   // handle the scroll zoom menu item
+    // the initial wheel zoom status comes from the args
+  if (args.wheelzoom) {
+    map.enableScrollWheelZoom();
+  } else {
+    map.disableScrollWheelZoom();
+  }
+  // reflect this in the menu item
   function setScrollWheelZoomItem() {
   	var checkBox = document.getElementById("scrollZoomCheckBox");
   	  checkBox.checked = map.scrollWheelZoomEnabled();
   }
   setScrollWheelZoomItem();
+  // a call back when menu item is clicked 
   document.getElementById("scrollZoomCheckBox").onclick = function() {
-  	if(document.getElementById("scrollZoomCheckBox").checked) {
+  	var checked = document.getElementById("scrollZoomCheckBox").checked;
+  	if(checked) {
   		map.enableScrollWheelZoom();
   	} else {
   		map.disableScrollWheelZoom();
   	}
+  	// tell the main program about it
+    var request = GXmlHttp.create();
+    request.open("GET", "/settings/set.html?wheelzoom="+checked, true);
+    request.send(null);
   }
+
   
   // handle the 'current image' menu item
   document.getElementById("currentImage").onclick = function() {
@@ -559,7 +592,7 @@ if (GBrowserIsCompatible()) {
   
   GEvent.addListener(map, "zoomend", function(oldLevel, newLevel) {
     var request = GXmlHttp.create();
-    request.open("GET", "/zoom/zoom.html?zoom="+newLevel, true);
+    request.open("GET", "/settings/set.html?zoom="+newLevel, true);
     // leave out the request.onreadystatechange = function() bit
     // we're not interested in the response from the server
     request.send(null);
@@ -567,7 +600,7 @@ if (GBrowserIsCompatible()) {
   
   GEvent.addListener(map, "maptypechanged", function() {
     var request = GXmlHttp.create();
-    request.open("GET", "/maptype/maptype.html?maptype=" 
+    request.open("GET", "/settings/set.html?maptype=" 
        +map.getCurrentMapType().getName());
     // not interested in server response, just send the request
     request.send(null);

@@ -31,7 +31,11 @@ com.lizardworks:
 The Lizardworks TIFF library by Lizardworks.
 Relased under LGPL.
 
-HtmlControl.js
+net.iharder.dnd:
+FileDrop by Robert Harder
+Released as public domain software
+
+HtmlControl.js:
 An HTML GControl by Martin Pearman.
 Released as Freeware.
 

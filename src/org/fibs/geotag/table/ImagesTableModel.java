@@ -244,19 +244,46 @@ public class ImagesTableModel extends AbstractTableModel {
         return;
       case DIRECTION:
         ImageInfo imageInfo = getImageInfo(rowIndex);
-        new ChangeDirectionTask(
-            Messages.getString("ImagesTableModel.EditDirection"), imageInfo, (String) value, DATA_SOURCE.MANUAL) { //$NON-NLS-1$
-          @Override
-          protected void process(List<ImageInfo> imageInfos) {
-            for (ImageInfo image : imageInfos) {
-              int row = getRow(image);
-              if (row >= 0) {
-                fireTableRowsUpdated(row, row);
-                fireTableDataChanged();
+        boolean update = true;
+        // there are two exceptions:
+        String oldValue = imageInfo.getGPSImgDirection();
+        String newValue = (String) value;
+        if (oldValue == null && newValue.length() == 0) {
+          update = false;
+        } else if (oldValue != null) {
+          try {
+            double oldDouble = Double.parseDouble(oldValue);
+            double newDouble = Double.parseDouble(newValue);
+            // determine a value below which we consider the difference equal.
+            // we use Math.pow(10, -(DIRECTION_DECIMALS + 1)
+            // Math.pow() is evil, so I won't use it
+            double insignificant = 1.0;
+            for (int index = 0; index < DIRECTION_DECIMALS + 1; index++) {
+              insignificant /= 10.0;
+            }
+            // now see if old and new value are too close to make a difference
+            if (Math.abs(oldDouble - newDouble) < insignificant) {
+              update = false;
+            }
+          } catch (NumberFormatException e) {
+            e.printStackTrace();
+          }
+        }
+        if (update) {
+          new ChangeDirectionTask(
+              Messages.getString("ImagesTableModel.EditDirection"), imageInfo, (String) value, DATA_SOURCE.MANUAL) { //$NON-NLS-1$
+            @Override
+            protected void process(List<ImageInfo> imageInfos) {
+              for (ImageInfo image : imageInfos) {
+                int row = getRow(image);
+                if (row >= 0) {
+                  fireTableRowsUpdated(row, row);
+                  fireTableDataChanged();
+                }
               }
             }
-          }
-        }.execute();
+          }.execute();
+        }
     }
   }
 

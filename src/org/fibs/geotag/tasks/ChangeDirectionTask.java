@@ -89,7 +89,6 @@ public class ChangeDirectionTask extends UndoableBackgroundTask<ImageInfo> {
       } else {
         // see if the user entered a cardinal direction (e.g NNW)
         double direction = Util.degreesFromCardinalDirection(newDirection);
-        System.out.println(direction);
         if (Double.isNaN(direction)) {
           // no... should be number
           try {

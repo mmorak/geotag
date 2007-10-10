@@ -107,6 +107,10 @@ public class Settings {
     LAST_GOOGLE_MAPS_LONGITUDE,
     /** Preferences key for the tracks to be draw on Google Maps */
     GOOGLE_MAP_SHOW_TRACKS,
+    /** Preferences key for Google Maps mouse wheel zooming */
+    GOOGLE_MAPS_MOUSE_WHEEL_ZOOM,
+    /** Preferences key for status of menu on Google Map */
+    GOOGLE_MAPS_MENU_OPEN,
     /** Preferences key for checking for new versions */
     CHECK_FOR_NEW_VERSION,
     /** Preferences key for the browser name - empty string for default */

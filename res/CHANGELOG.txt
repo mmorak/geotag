@@ -1,3 +1,9 @@
+2007-10-09 Release 0.029
+  Added drag-and-drop support for adding files.
+  Google Map menu open/closed state and scroll
+  wheel zoom status are now remembered.
+  Bug fixed: 1810081  
+  
 2007-10-08 Release 0.028
   Added a menu to the Google Map to ease navigation
   between several images on the map.
