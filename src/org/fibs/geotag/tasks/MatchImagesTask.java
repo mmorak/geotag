@@ -45,24 +45,18 @@ public class MatchImagesTask extends UndoableBackgroundTask<ImageInfo> {
   /** The images to be matched */
   private List<ImageInfo> images;
 
-  /** The TrackMatcher used */
-  private TrackMatcher trackMatcher;
-
   /**
    * Create a new matching task for a list of images
    * 
    * @param group
    * @param name
    * @param imagesTable
-   * @param trackMatcher
-   *          TODO
    * @param images
    */
   public MatchImagesTask(String group, String name, ImagesTable imagesTable,
-      TrackMatcher trackMatcher, List<ImageInfo> images) {
+      List<ImageInfo> images) {
     super(group, name);
     this.imagesTable = imagesTable;
-    this.trackMatcher = trackMatcher;
     this.images = images;
   }
 
@@ -73,6 +67,7 @@ public class MatchImagesTask extends UndoableBackgroundTask<ImageInfo> {
   @Override
   protected String doInBackground() throws Exception {
     int imagesMatched = 0;
+    TrackMatcher trackMatcher = new TrackMatcher();
     for (ImageInfo imageInfo : images) {
       if (terminate) {
         break;

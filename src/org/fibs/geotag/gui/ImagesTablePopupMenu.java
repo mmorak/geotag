@@ -198,9 +198,6 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
   /** the table model is needed here all time, so we keep a reference */
   ImagesTableModel tableModel;
 
-  /** matches tracks and time stamps */
-  TrackMatcher trackMatcher;
-
   /**
    * An array containing the indices of selected row or an empty array if no
    * rows are selected.
@@ -289,18 +286,15 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
    *          The {@link ImagesTable}
    * @param row
    *          The row of the {@link ImagesTable}
-   * @param trackMatcher
-   *          matches tracks to time stamps
    * @param backgroundTask
    *          True if a background task is running (most menu items will be
    *          disabled)
    */
   public ImagesTablePopupMenu(JFrame parent, ImagesTable imagesTable, int row,
-      TrackMatcher trackMatcher, boolean backgroundTask) {
+      boolean backgroundTask) {
     this.parent = parent;
     this.imagesTable = imagesTable;
     this.tableModel = (ImagesTableModel) imagesTable.getModel();
-    this.trackMatcher = trackMatcher;
     // where are the tracks stored?
     TrackStore trackStore = TrackStore.getTrackStore();
     // find out which rows are selected. Some popups only make sense if rows are
@@ -842,8 +836,8 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
   private void matchTracksToOneImage() {
     List<ImageInfo> images = new ArrayList<ImageInfo>();
     images.add(imageInfo);
-    new MatchImagesTask(MATCH_TRACKS, MATCH_TRACK_SELECTED, imagesTable,
-        trackMatcher, images).execute();
+    new MatchImagesTask(MATCH_TRACKS, MATCH_TRACK_SELECTED, imagesTable, images)
+        .execute();
   }
 
   /**
@@ -854,8 +848,8 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
     for (int index = 0; index < selectedRows.length; index++) {
       images.add(tableModel.getImageInfo(selectedRows[index]));
     }
-    new MatchImagesTask(MATCH_TRACKS, MATCH_TRACK_SELECTED, imagesTable,
-        trackMatcher, images).execute();
+    new MatchImagesTask(MATCH_TRACKS, MATCH_TRACK_SELECTED, imagesTable, images)
+        .execute();
   }
 
   /**
@@ -866,8 +860,8 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
     for (int i = 0; i < tableModel.getRowCount(); i++) {
       images.add(tableModel.getImageInfo(i));
     }
-    new MatchImagesTask(MATCH_TRACKS, MATCH_TRACK_ALL, imagesTable,
-        trackMatcher, images).execute();
+    new MatchImagesTask(MATCH_TRACKS, MATCH_TRACK_ALL, imagesTable, images)
+        .execute();
   }
 
   /**
@@ -926,8 +920,7 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
   private void fillThisGap() {
     List<ImageInfo> images = new ArrayList<ImageInfo>();
     images.add(imageInfo);
-    new FillGapsTask(FILL_GAPS, FILL_THIS_GAP, trackMatcher, tableModel, images)
-        .execute();
+    new FillGapsTask(FILL_GAPS, FILL_THIS_GAP, tableModel, images).execute();
   }
 
   /**
@@ -941,8 +934,8 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
         images.add(candidate);
       }
     }
-    new FillGapsTask(FILL_GAPS, FILL_SELECTED_GAPS, trackMatcher, tableModel,
-        images).execute();
+    new FillGapsTask(FILL_GAPS, FILL_SELECTED_GAPS, tableModel, images)
+        .execute();
   }
 
   /**
@@ -958,8 +951,7 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
         images.add(candidate);
       }
     }
-    new FillGapsTask(FILL_GAPS, FILL_ALL_GAPS, trackMatcher, tableModel, images)
-        .execute();
+    new FillGapsTask(FILL_GAPS, FILL_ALL_GAPS, tableModel, images).execute();
   }
 
   /**

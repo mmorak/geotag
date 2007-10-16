@@ -381,24 +381,48 @@ if (GBrowserIsCompatible()) {
   var title = "Geotag"; // not translated, but might be later
   var showMenuText = 'Show menu';
   var hideMenuText = 'Hide menu';
+  var toggleMenuShortcut = 'm';
   var mouseZoomText = 'Enable scroll wheel zoom';
+  var mouseZoomShortcut = 'z';
   var currentImageText = "Current image";
+  var currentImageShortcut = 'C';
   var nextImageText = 'Next image';
+  var nextImageShortcut = 'N';
   var previousImageText = 'Previous image';
+  var previousImageShortcut = 'P'
   var showAllText = "Show all images";
+  var showAllShortcut = 'a';
 
   // Auf Deutsch bitte
   if (language == "de") {
     title = "Geotag";
     showMenuText = "Men&uuml; &ouml;ffnen";
     hideMenuText = 'Men&uuml; schliessen';
+    toggleMenuShortcut = 'M';
     mouseZoomText = "Mit Mausrad zoomen";
+    mouseZoomShortcut = 'z';
     currentImageText = "Aktuelles Bild";
+    currentImageShortcut = 'B';
     nextImageText = 'N&auml;chstes Bild';
+    nextImageShortcut = 'N';
     previousImageText = 'Voriges Bild';
+    previousImageShortcut = 'V';
     showAllText = "Alle Bilder zeigen";
+    showAllShortcut = 'A';
   }
-
+  
+  // setup the menu shortcuts
+  setShortcut = function (text, shortcut) {
+  	return text.replace(shortcut, '<u>'+shortcut+'</u>');
+  }
+  showMenuText = setShortcut(showMenuText, toggleMenuShortcut);
+  hideMenuText = setShortcut(hideMenuText, toggleMenuShortcut);
+  mouseZoomText = setShortcut(mouseZoomText, mouseZoomShortcut);
+  currentImageText = setShortcut(currentImageText, currentImageShortcut);
+  nextImageText = setShortcut(nextImageText, nextImageShortcut);
+  previousImageText = setShortcut(previousImageText, previousImageShortcut);
+  showAllText = setShortcut(showAllText, showAllShortcut);
+  
   document.title=title;
   
   // create the instructions control
@@ -436,97 +460,134 @@ if (GBrowserIsCompatible()) {
     request.send(null);
   }
   // add function that opens/closes the menu
-  GEvent.addDomListener(document.getElementById('menuButton'), 'click', function() {
+  toggleMenu = function() {
   	var menuPanel=document.getElementById('menuPanel');
     setMenuState(menuPanel.style.display=='none');
-  });
+  }
+  GEvent.addDomListener(document.getElementById('menuButton'), 'click', toggleMenu);
   setMenuState(args.menuopen);
   
   // handle the scroll zoom menu item
-    // the initial wheel zoom status comes from the args
+  // the initial wheel zoom status comes from the args
   if (args.wheelzoom) {
     map.enableScrollWheelZoom();
   } else {
     map.disableScrollWheelZoom();
   }
-  // reflect this in the menu item
-  function setScrollWheelZoomItem() {
+  // reflect this in the menu item  
+  updateMouseWheelCheckBox = function() {
   	var checkBox = document.getElementById("scrollZoomCheckBox");
-  	  checkBox.checked = map.scrollWheelZoomEnabled();
+  	checkBox.checked = map.scrollWheelZoomEnabled();
   }
-  setScrollWheelZoomItem();
-  // a call back when menu item is clicked 
-  document.getElementById("scrollZoomCheckBox").onclick = function() {
+  updateMouseWheelCheckBox();
+  
+  // a call back when menu item is clicked
+  scrollZoomClicked = function() {
   	var checked = document.getElementById("scrollZoomCheckBox").checked;
-  	if(checked) {
-  		map.enableScrollWheelZoom();
-  	} else {
-  		map.disableScrollWheelZoom();
-  	}
-  	// tell the main program about it
+    if(checked) {
+      map.enableScrollWheelZoom();
+    } else {
+      map.disableScrollWheelZoom();
+    }
+    // tell the main program about it
     var request = GXmlHttp.create();
     request.open("GET", "/settings/set.html?wheelzoom="+checked, true);
     request.send(null);
-  }
-
+  } 
+  document.getElementById("scrollZoomCheckBox").onclick = scrollZoomClicked;
   
   // handle the 'current image' menu item
-  document.getElementById("currentImage").onclick = function() {
-    map.panTo(activeImage.locationMarker.getPoint());
+  gotoCurrentImage = function() {
+  	map.panTo(activeImage.locationMarker.getPoint());
   }
+  document.getElementById("currentImage").onclick = gotoCurrentImage;
   
   // handle the 'next image' menu item
-  document.getElementById("nextImage").onclick = function() {
+  gotoNextImage = function() {
   	currentIndex = imageInfos.indexOf(activeImage);
-  	nextIndex = (currentIndex + 1) % imageInfos.size();
-  	setActiveImage(imageInfos.get(nextIndex));
-  	//activeImage.locationMarker.openInfoWindow();
+    nextIndex = (currentIndex + 1) % imageInfos.size();
+    setActiveImage(imageInfos.get(nextIndex));
+    //activeImage.locationMarker.openInfoWindow();
   }
+  document.getElementById("nextImage").onclick = gotoNextImage;
   
   // handle the 'previous image' menu item
-  document.getElementById("previousImage").onclick = function() {
+  gotoPreviousImage = function() {
     currentIndex = imageInfos.indexOf(activeImage);
     previousIndex = (currentIndex -1);
     if (previousIndex < 0) {
-    	 previousIndex += imageInfos.size();
+       previousIndex += imageInfos.size();
     }
     setActiveImage(imageInfos.get(previousIndex));
-    //activeImage.locationMarker.openInfoWindow();
+    //activeImage.locationMarker.openInfoWindow();	
   }
+  document.getElementById("previousImage").onclick = gotoPreviousImage;
   
   // handle the 'show all' menu item
-  document.getElementById("showAll").onclick = function() {  
+  showAllImages = function() {
     // this is a bit of. First we need to find the bounds of the images
     // this only makes sense if there is more than one image
     if (imageInfos.size() > 0) {
-    	var minLatitude = 90;;
-    	var maxLatitude = -90;
-    	var minLongitude = 180;
-    	var maxLongitude = -180;
-    	for (var i= 0; i < imageInfos.size(); i++) {
-    		var imageInfo = imageInfos.get(i);
-    		var latLng = imageInfo.locationMarker.getLatLng();
-    		if (latLng.lat() > maxLatitude) {
-    			maxLatitude = latLng.lat();
-    		}
-    		if (latLng.lat() < minLatitude) {
-    			minLatitude = latLng.lat();
-    		}
-    		if (latLng.lng() > maxLongitude) {
-    			maxLongitude = latLng.lng();
-    		}
-    		if (latLng.lng() < minLongitude) {
-    			minLongitude = latLng.lng();
-    		}
-    	}
-    	var southWest = new GLatLng(minLatitude, minLongitude);
-    	var northEast = new GLatLng(maxLatitude, maxLongitude);
-    	var bounds = new GLatLngBounds(southWest, northEast);
-    	var zoomLevel = map.getBoundsZoomLevel(bounds);
-    	var centre = new GLatLng((minLatitude + maxLatitude)/2, (minLongitude + maxLongitude)/2);
-    	map.setZoom(zoomLevel);
-    	map.panTo(centre);
+      var minLatitude = 90;;
+      var maxLatitude = -90;
+      var minLongitude = 180;
+      var maxLongitude = -180;
+      for (var i= 0; i < imageInfos.size(); i++) {
+        var imageInfo = imageInfos.get(i);
+        var latLng = imageInfo.locationMarker.getLatLng();
+        if (latLng.lat() > maxLatitude) {
+          maxLatitude = latLng.lat();
+        }
+        if (latLng.lat() < minLatitude) {
+          minLatitude = latLng.lat();
+        }
+        if (latLng.lng() > maxLongitude) {
+          maxLongitude = latLng.lng();
+        }
+        if (latLng.lng() < minLongitude) {
+          minLongitude = latLng.lng();
+        }
+      }
+      var southWest = new GLatLng(minLatitude, minLongitude);
+      var northEast = new GLatLng(maxLatitude, maxLongitude);
+      var bounds = new GLatLngBounds(southWest, northEast);
+      var zoomLevel = map.getBoundsZoomLevel(bounds);
+      var centre = new GLatLng((minLatitude + maxLatitude)/2, (minLongitude + maxLongitude)/2);
+      map.setZoom(zoomLevel);
+      map.panTo(centre);
+    }  	
+  }
+  document.getElementById("showAll").onclick = showAllImages; 
+  
+  document.onkeydown = function(e) {
+  	var keyCharCode;
+  	var keyChar;
+  	if(window.event) { // IE
+      keyCharCode = e.keyCode
+    } else if(e.which) { // Netscape/Firefox/Opera
+      keyCharCode = e.which
     }
+    keyChar = String.fromCharCode(keyCharCode);
+    if (keyChar == toggleMenuShortcut.toUpperCase()) {
+    	toggleMenu();
+    } else if (keyChar == mouseZoomShortcut.toUpperCase()) {
+    	if (map.scrollWheelZoomEnabled()) {
+    		map.disableScrollWheelZoom();
+    	} else {
+    		map.enableScrollWheelZoom();
+    	}
+    	updateMouseWheelCheckBox();
+    	scrollZoomClicked();
+    } else if (keyChar == currentImageShortcut.toUpperCase()) {
+      gotoCurrentImage();
+    } else if (keyChar == nextImageShortcut.toUpperCase()) {
+    	gotoNextImage();
+    } else if (keyChar == previousImageShortcut.toUpperCase()) {
+    	gotoPreviousImage();
+    } else if (keyChar == showAllShortcut.toUpperCase()) {
+    	showAllImages();
+    }
+    return false;
   }
   
   // make sure the map still shows the marker when resized
@@ -538,6 +599,15 @@ if (GBrowserIsCompatible()) {
   
   // we can display GPS tracks as well
   var tracksDisplayed = [];
+  
+  removeTracks = function() {
+  	// remove all tracks currently displayed
+    for (var trackIndex = 0; trackIndex < tracksDisplayed.length; trackIndex++) {
+      map.removeOverlay(tracksDisplayed[trackIndex]);
+    } 
+    // a new empty array
+    tracksDisplayed = [];
+  }
   
   // a function to be called every time the map changes
   mapChanged = function () {
@@ -558,12 +628,7 @@ if (GBrowserIsCompatible()) {
     request.onreadystatechange = function() {
       // only interested if the request has completed
       if (request.readyState == 4) {
-        // first we remove all tracks currently displayed
-        for (var trackIndex = 0; trackIndex < tracksDisplayed.length; trackIndex++) {
-          map.removeOverlay(tracksDisplayed[trackIndex]);
-        } 
-        // a new empty array
-        tracksDisplayed = [];
+        removeTracks();
         var numPoints = 0;
         // parse the document
         var xmlDocument = GXml.parse(request.responseText);

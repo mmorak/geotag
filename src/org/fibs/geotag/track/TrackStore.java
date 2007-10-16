@@ -50,6 +50,9 @@ public class TrackStore {
   /** A Gpx object containing all the tracks we know */
   private Gpx gpx;
 
+  /** A list containing the track segments */
+  private List<Trkseg> segmentList = null;
+
   /**
    * A private constructor
    */
@@ -74,6 +77,13 @@ public class TrackStore {
       gpx = newGpx;
     } else {
       gpx.getTrk().addAll(newGpx.getTrk());
+    }
+    // store the segments in a list
+    segmentList = new ArrayList<Trkseg>();
+    for (Trk track : gpx.getTrk()) {
+      for (Trkseg segment : track.getTrkseg()) {
+        segmentList.add(segment);
+      }
     }
     createTrackSegmentBounds(newGpx);
   }
@@ -142,9 +152,17 @@ public class TrackStore {
     }
     return null;
   }
-  
+
   /**
-   * @param segment A track segment in the store
+   * @return The list of track segments
+   */
+  public List<Trkseg> getTrackSegments() {
+    return segmentList;
+  }
+
+  /**
+   * @param segment
+   *          A track segment in the store
    * @return The bounds of the segment, if available
    */
   BoundsType getSegmentBounds(Trkseg segment) {
@@ -152,9 +170,11 @@ public class TrackStore {
   }
 
   /**
-   * Given the bounds (of a map) this method returns all stored track
-   * segments whose bounds intersect the map bounds.
-   * @param mapBounds The bounds of a map
+   * Given the bounds (of a map) this method returns all stored track segments
+   * whose bounds intersect the map bounds.
+   * 
+   * @param mapBounds
+   *          The bounds of a map
    * @return All intersecting segments or an empty list
    */
   public List<Trkseg> getIntersectingTrackSegments(BoundsType mapBounds) {

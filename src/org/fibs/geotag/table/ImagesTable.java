@@ -22,13 +22,19 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
 import java.awt.FontMetrics;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.util.List;
 
+import javax.swing.AbstractAction;
+import javax.swing.DefaultCellEditor;
 import javax.swing.ImageIcon;
+import javax.swing.JComponent;
 import javax.swing.JTable;
 import javax.swing.JToolTip;
+import javax.swing.KeyStroke;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
@@ -94,6 +100,24 @@ public class ImagesTable extends JTable {
         }
       }
     });
+    // Edit cell on single click (default is double click)
+    ((DefaultCellEditor) getDefaultEditor(String.class))
+        .setClickCountToStart(1);
+    setupActions();
+  }
+
+  /**
+   * 
+   */
+  private void setupActions() {
+    getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(
+        KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0, false), "downArrow"); //$NON-NLS-1$
+    AbstractAction downArrow = new AbstractAction() {
+      public void actionPerformed(ActionEvent evt) {
+        // System.out.println("ACTION");
+      }
+    };
+    getActionMap().put("downArrow", downArrow); //$NON-NLS-1$
   }
 
   /**

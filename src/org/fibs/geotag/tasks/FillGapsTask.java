@@ -34,9 +34,6 @@ import org.fibs.geotag.track.TrackMatcher;
  */
 public class FillGapsTask extends UndoableBackgroundTask<ImageInfo> {
 
-  /** The {@link TrackMatcher} used to match image to coordinates */
-  private TrackMatcher trackMatcher;
-
   /** The table */
   private ImagesTableModel imagesTableModel;
 
@@ -51,14 +48,12 @@ public class FillGapsTask extends UndoableBackgroundTask<ImageInfo> {
    * 
    * @param group
    * @param name
-   * @param trackMatcher
    * @param imagesTableModel
    * @param images
    */
-  public FillGapsTask(String group, String name, TrackMatcher trackMatcher,
+  public FillGapsTask(String group, String name,
       ImagesTableModel imagesTableModel, List<ImageInfo> images) {
     super(group, name);
-    this.trackMatcher = trackMatcher;
     this.imagesTableModel = imagesTableModel;
     this.images = images;
   }
@@ -70,6 +65,7 @@ public class FillGapsTask extends UndoableBackgroundTask<ImageInfo> {
   @Override
   protected String doInBackground() throws Exception {
     int gapsFilled = 0;
+    TrackMatcher trackMatcher = new TrackMatcher();
     for (ImageInfo imageInfo : images) {
       if (terminate) {
         break;

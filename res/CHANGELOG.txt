@@ -1,3 +1,10 @@
+2007-10-16 Release 0.030
+  Matching tracks to images is now almost 10 times
+  faster than before.
+  Now asks before overwriting GPX files.
+  Added keyboard shortcuts to the Google Maps menu
+  (Feature request 1809768)
+  
 2007-10-09 Release 0.029
   Added drag-and-drop support for adding files.
   Google Map menu open/closed state and scroll

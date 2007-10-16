@@ -74,12 +74,11 @@ import org.fibs.geotag.tasks.UndoableBackgroundTask;
 import org.fibs.geotag.track.GpxFileFilter;
 import org.fibs.geotag.track.GpxReader;
 import org.fibs.geotag.track.GpxWriter;
-import org.fibs.geotag.track.TrackMatcher;
 import org.fibs.geotag.track.TrackStore;
 import org.fibs.geotag.webserver.ImageInfoHandler;
 import org.fibs.geotag.webserver.MapHandler;
-import org.fibs.geotag.webserver.SettingsHandler;
 import org.fibs.geotag.webserver.ResourceHandler;
+import org.fibs.geotag.webserver.SettingsHandler;
 import org.fibs.geotag.webserver.ThumbnailHandler;
 import org.fibs.geotag.webserver.TracksHandler;
 import org.fibs.geotag.webserver.UpdateHandler;
@@ -126,9 +125,6 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
 
   /** A JProgressBar to show progress for lengthy operations */
   JProgressBar progressBar;
-
-  /** An object performing matching of tracks and times */
-  TrackMatcher trackMatcher = new TrackMatcher();
 
   /** Keep track of background tasks - we only allow one at a time */
   BackgroundTask<?> backgroundTask = null;
@@ -184,8 +180,7 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
       private void popupMenu(MouseEvent event) {
         int mouseOnRow = table.rowAtPoint(event.getPoint());
         ImagesTablePopupMenu popupMenu = new ImagesTablePopupMenu(
-            MainWindow.this, table, mouseOnRow, trackMatcher,
-            backgroundTask != null);
+            MainWindow.this, table, mouseOnRow, backgroundTask != null);
         popupMenu.show((Component) event.getSource(), event.getX(), event
             .getY());
       }
@@ -636,6 +631,16 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
         if (!gpxFileFilter.accept(outputFile)) {
           // not a gpx file selected - add .gpx suffix
           outputFile = new File(chooser.getSelectedFile().getPath() + ".gpx"); //$NON-NLS-1$
+        }
+        if (outputFile.exists()) {
+          String title = Messages.getString("MainWindow.FileExists"); //$NON-NLS-1$
+          String message = String
+              .format(
+                  Messages.getString("MainWindow.OverwriteFileFormat"), outputFile.getName()); //$NON-NLS-1$
+          if (JOptionPane.showConfirmDialog(this, message, title,
+              JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.NO_OPTION) {
+            return;
+          }
         }
         new GpxWriter().write(TrackStore.getTrackStore().getGpx(), outputFile);
         String message = String.format(Messages
