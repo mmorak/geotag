@@ -114,10 +114,39 @@ public class ImagesTable extends JTable {
         KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0, false), "downArrow"); //$NON-NLS-1$
     AbstractAction downArrow = new AbstractAction() {
       public void actionPerformed(ActionEvent evt) {
-        // System.out.println("ACTION");
+        // System.out.println("DOWN");
       }
     };
     getActionMap().put("downArrow", downArrow); //$NON-NLS-1$
+    getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(
+        KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0, false), "upArrow"); //$NON-NLS-1$
+    AbstractAction upArrow = new AbstractAction() {
+      public void actionPerformed(ActionEvent evt) {
+        // System.out.println("UP");
+      }
+    };
+    getActionMap().put("upArrow", upArrow); //$NON-NLS-1$
+    getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(
+        KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0, false), "leftArrow"); //$NON-NLS-1$
+    AbstractAction leftArrow = new AbstractAction() {
+      public void actionPerformed(ActionEvent evt) {
+        // System.out.println("LEFT");
+      }
+    };
+    getActionMap().put("leftArrow", leftArrow); //$NON-NLS-1$
+    getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(
+        KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0, false), "rightArrow"); //$NON-NLS-1$
+    AbstractAction rightArrow = new AbstractAction() {
+      public void actionPerformed(ActionEvent evt) {
+        // System.out.println("RIGHT");
+      }
+    };
+    getActionMap().put("rightArrow", rightArrow); //$NON-NLS-1$
+    // ActionMap actionMap = getActionMap();
+    // Object[] allKeys = actionMap.allKeys();
+    // for (Object object : allKeys) {
+    // //System.out.println("Action "+object);
+    // }
   }
 
   /**

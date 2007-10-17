@@ -19,7 +19,14 @@
 package org.fibs.geotag.track;
 
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.GregorianCalendar;
 import java.util.List;
+
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.fibs.geotag.data.ImageInfo;
 import org.fibs.geotag.data.UpdateGPSAltitude;
@@ -28,6 +35,7 @@ import org.fibs.geotag.data.UpdateGPSLongitude;
 import org.fibs.geotag.data.ImageInfo.DATA_SOURCE;
 import org.fibs.geotag.util.Util;
 
+import com.topografix.gpx._1._0.ObjectFactory;
 import com.topografix.gpx._1._0.Gpx.Trk.Trkseg;
 import com.topografix.gpx._1._0.Gpx.Trk.Trkseg.Trkpt;
 
@@ -39,10 +47,10 @@ import com.topografix.gpx._1._0.Gpx.Trk.Trkseg.Trkpt;
  */
 public class TrackMatcher {
   /** Number of matches performed - used for speed measurements */
-  private static int matchesPerformed = 0;
+  public int matchesPerformed = 0;
 
   /** Total time used to match tracks - used for speed measurements */
-  private static double totalTime = 0.0;
+  public double totalTime = 0.0;
 
   /** We keep track of how many track segments don't need looking at */
   private int startIndex = 0;
@@ -77,6 +85,17 @@ public class TrackMatcher {
     if (!TrackStore.getTrackStore().hasTracks()) {
       return null;
     }
+    ObjectFactory objectFactory = new ObjectFactory();
+    Trkpt searchKey = objectFactory.createGpxTrkTrksegTrkpt();
+    XMLGregorianCalendar xmlTimeGMT = null;
+    try {
+      xmlTimeGMT = DatatypeFactory.newInstance().newXMLGregorianCalendar(
+          (GregorianCalendar) timeGMT);
+    } catch (DatatypeConfigurationException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    searchKey.setTime(xmlTimeGMT);
     long start = System.currentTimeMillis();
     Match match = new Match();
     // we keep track of the track segments closest
@@ -84,7 +103,6 @@ public class TrackMatcher {
     Trkpt lastPointBefore = null;
     Calendar lastPointBeforeTime = null;
     Trkpt firstPointAfter = null;
-    Calendar firstPointAfterTime = null;
     // look at all the track segments
     List<Trkseg> trackSegments = TrackStore.getTrackStore().getTrackSegments();
     // for (Trkseg segment : TrackStore.getTrackStore().getTrackSegments()) {
@@ -101,23 +119,45 @@ public class TrackMatcher {
         if (isBetweenTrackPoints(timeGMT, startPoint, endPoint)) {
           // next time round start searching from this segment
           startIndex = segmentIndex;
+
           // the image was taken in this segment - have a closer look
           // now we look at pairs of track points and see if their
           // time stamps make an interval containing the image time
-          for (int i = 0; i < trackPoints.size() - 1; i++) {
-            startPoint = trackPoints.get(i);
-            endPoint = trackPoints.get(i + 1);
-            if (isBetweenTrackPoints(timeGMT, startPoint, endPoint)) {
-              match.setMatchingSegment(segment);
-              match.setPreviousPoint(startPoint);
-              match.setNextPoint(endPoint);
-              // no need to look at other trackpoints
-              break;
+
+          // we use binary search now
+          Comparator<Trkpt> comparator = new Comparator<Trkpt>() {
+            @Override
+            public int compare(Trkpt point1, Trkpt point2) {
+              Calendar time1 = point1.getTime().toGregorianCalendar();
+              Calendar time2 = point2.getTime().toGregorianCalendar();
+              return time1.compareTo(time2);
             }
+          };
+          int search = Collections.binarySearch(trackPoints, searchKey,
+              comparator);
+          if (search < 0) {
+            // search result is (-(insertion point) - 1)
+            int insertionPoint = -(search + 1);
+            search = insertionPoint;
           }
-          // if (match.getMatchingSegment() != null) {
-          // // skip the rest of the for loop and continue with next segment
-          // continue;
+          if (search < trackPoints.size()) {
+            startPoint = trackPoints.get(search - 1);
+            endPoint = trackPoints.get(search);
+            match.setMatchingSegment(segment);
+            match.setPreviousPoint(startPoint);
+            match.setNextPoint(endPoint);
+          }
+
+          // for (int i = 0; i < trackPoints.size() - 1; i++) {
+          // startPoint = trackPoints.get(i);
+          // endPoint = trackPoints.get(i + 1);
+          // if (isBetweenTrackPoints(timeGMT, startPoint, endPoint)) {
+          // match.setMatchingSegment(segment);
+          // match.setPreviousPoint(startPoint);
+          // match.setNextPoint(endPoint);
+          // // no need to look at other trackpoints
+          // break;
+          // }
           // }
         }
       }
@@ -131,11 +171,12 @@ public class TrackMatcher {
         Calendar endTime = endPoint.getTime().toGregorianCalendar();
         if (startTime.compareTo(timeGMT) >= 0) {
           // start time is after or exactly the same as image time
-          if (firstPointAfter == null || firstPointAfterTime == null
-              || firstPointAfterTime.after(startTime)) {
-            firstPointAfter = startPoint;
-            firstPointAfterTime = startTime;
-          }
+          firstPointAfter = startPoint;
+          // at this time we know that searching any further will
+          // not give any more information about this track point
+          // as the following segments should be later than this one
+          // and this segment is already later than the track point
+          break;
         }
         if (endTime.compareTo(timeGMT) <= 0) {
           // end time is before or exactly the same as image time
@@ -152,7 +193,7 @@ public class TrackMatcher {
     matchesPerformed++;
     totalTime += (end - start) / 1000.0;
     // System.out.println("This :"+(end-start)/1000.0+" Average: " + totalTime /
-    // matchesPerformed);
+    // matchesPerformed+" Total: "+totalTime);
     if (match.getMatchingSegment() != null) {
       return match;
     }

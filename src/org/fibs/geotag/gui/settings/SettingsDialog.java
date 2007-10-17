@@ -99,10 +99,6 @@ public class SettingsDialog extends JDialog {
         .add(new BooleanSettingsPanel(
             parent,
             Messages.getString("SettingsDialog.CheckForUpdates"), SETTING.CHECK_FOR_NEW_VERSION, "true")); //$NON-NLS-1$//$NON-NLS-2$
-    panelList
-        .add(new BooleanSettingsPanel(
-            parent,
-            Messages.getString("SettingsDialog.ShowTracksOnGoogleMaps"), SETTING.GOOGLE_MAP_SHOW_TRACKS, "false")); //$NON-NLS-1$ //$NON-NLS-2$
     // Finally a Panel with OK and Cancel buttons
     // The flow layout looks very ugly, have to find something else
     JPanel buttonPanel = new JPanel(new FlowLayout());

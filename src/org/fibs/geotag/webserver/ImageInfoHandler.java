@@ -114,7 +114,7 @@ public class ImageInfoHandler implements ContextHandler {
       }
     }
     stringBuilder.append("</images>"); //$NON-NLS-1$
-    System.out.println(stringBuilder.toString());
+    // System.out.println(stringBuilder.toString());
     return stringBuilder.toString();
   }
 

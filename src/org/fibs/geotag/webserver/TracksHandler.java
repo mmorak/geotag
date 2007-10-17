@@ -24,8 +24,6 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
 
-import org.fibs.geotag.Settings;
-import org.fibs.geotag.Settings.SETTING;
 import org.fibs.geotag.track.TrackStore;
 import org.fibs.geotag.util.BoundsTypeUtil;
 
@@ -84,13 +82,10 @@ public class TracksHandler implements ContextHandler {
       mapBounds.setMaxlat(new BigDecimal(north));
       mapBounds.setMinlon(new BigDecimal(west));
       mapBounds.setMaxlon(new BigDecimal(east));
-      boolean showtracks = Settings.get(SETTING.GOOGLE_MAP_SHOW_TRACKS, false);
       List<Trkseg> segments = new ArrayList<Trkseg>();
-      if (showtracks) {
-        for (Trkseg segment : TrackStore.getTrackStore()
-            .getIntersectingTrackSegments(mapBounds)) {
-          segments.add(segment);
-        }
+      for (Trkseg segment : TrackStore.getTrackStore()
+          .getIntersectingTrackSegments(mapBounds)) {
+        segments.add(segment);
       }
       // trim down the tracks to bare minimum
       List<Trkseg> filteredSegments = filterSegments(mapBounds, segments,

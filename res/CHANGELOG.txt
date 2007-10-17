@@ -1,3 +1,9 @@
+2007-10-17 Release 0.031
+  More big speed increase for matching tracks.
+  The 'Show tracks on Google Maps' setting has been
+  removed from the Settings dialog and added to the
+  menu on the Google Map.
+  
 2007-10-16 Release 0.030
   Matching tracks to images is now almost 10 times
   faster than before.

@@ -61,14 +61,6 @@ import org.fibs.geotag.util.Airy;
 import com.centerkey.utils.BareBonesBrowserLaunch;
 
 /**
- * @author Andreas Schneider
- * 
- */
-/**
- * @author Andreas Schneider
- * 
- */
-/**
  * A context menu for a image table row. All actions that can be undone should
  * be run as a {@link UndoableBackgroundTask}
  * 
@@ -735,6 +727,7 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
         + Settings.get(SETTING.LAST_GOOGLE_MAPS_MAP_TYPE, "Hybrid"); //$NON-NLS-1$
     URL += "&menuopen=" + Settings.get(SETTING.GOOGLE_MAPS_MENU_OPEN, true); //$NON-NLS-1$
     URL += "&wheelzoom=" + Settings.get(SETTING.GOOGLE_MAPS_MOUSE_WHEEL_ZOOM, false); //$NON-NLS-1$
+    URL += "&showtracks=" + Settings.get(SETTING.GOOGLE_MAP_SHOW_TRACKS, false); //$NON-NLS-1$
     // execute the command
     System.out.println(URL);
     BareBonesBrowserLaunch.openURL(Settings.get(SETTING.BROWSER, null), URL

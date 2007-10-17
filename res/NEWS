@@ -1,4 +1,4 @@
-Version 0.026 of the Geotag program has just been released.
+Version 0.030 of the Geotag program has just been released.
 
 Geotag is a platform independent, GUI based application that compares date/time
 information captured by a digital camera with tracks recorded by a GPS unit and
@@ -8,9 +8,8 @@ Geotag allows fine tuning of locations in external programs like Google Maps
 in a web browser or Google Earth.
 
 Major new feature:
-Geotag now works with Microsoft's Internet Explorer. After a lot of research 
-and trial and error, we finally managed to find all the non-standard 'features'
-that stopped Internet Explorer from working with Geotag.
+Matching GPS data to images is now almost 10 times faster than before. This will
+help users matching many images in one go.
 
 Visit our web site at http://geotag.sourceforge.net to see what the
 program is all about.

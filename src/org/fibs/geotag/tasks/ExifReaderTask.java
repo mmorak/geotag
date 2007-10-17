@@ -144,6 +144,41 @@ public class ExifReaderTask extends UndoableBackgroundTask<ImageInfo> {
   @SuppressWarnings("boxing")
   @Override
   protected String doInBackground() throws Exception {
+    // long start = System.currentTimeMillis();
+    // we split our files into two groups:
+    // Files that need to be handled individually and files
+    // that can be handled by exiftool in one go:
+    List<File> handleOneByOne = new ArrayList<File>();
+    List<File> handleInOneGo = new ArrayList<File>();
+    for (File file : files) {
+      switch (FileTypes.fileType(file)) {
+        case JPEG:
+          // Jpeg as best best handled by the MetadataExtractor
+          // on a per file basis
+          handleOneByOne.add(file);
+          break;
+        case RAW_READ_ONLY:
+        case RAW_READ_WRITE:
+        case TIFF:
+          // how those files are handled depends on the presence of
+          // XMP sidecar files.
+          String xmpFileName = FileUtil.replaceExtension(file.getPath(), "xmp"); //$NON-NLS-1$
+          if (xmpFileName != null) {
+            File xmpFile = new File(xmpFileName);
+            if (xmpFile.exists()) {
+              handleOneByOne.add(file);
+            } else {
+              handleInOneGo.add(file);
+            }
+          }
+          break;
+        case UNKOWN:
+        case XMP:
+          break;
+      }
+    }
+    // System.out.println("One by one: "+handleOneByOne.size());
+    // System.out.println("In one go: "+handleInOneGo.size());
     ImageInfo imageInfo;
     int imagesPublished = 0;
     for (File file : files) {
@@ -176,6 +211,8 @@ public class ExifReaderTask extends UndoableBackgroundTask<ImageInfo> {
         e.printStackTrace();
       }
     }
+    // long end = System.currentTimeMillis();
+    // System.out.println("Read files: "+(end-start)/1000.0);
     return result;
   }
 
