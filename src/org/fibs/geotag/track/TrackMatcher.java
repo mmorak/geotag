@@ -56,22 +56,6 @@ public class TrackMatcher {
   private int startIndex = 0;
 
   /**
-   * Checks if the GMT time lies between the times of two track points
-   * 
-   * @param gmt
-   * @param startPoint
-   * @param endPoint
-   * @return True if the track point interval contains the imageInfo time
-   */
-  private boolean isBetweenTrackPoints(Calendar gmt, Trkpt startPoint,
-      Trkpt endPoint) {
-    Calendar startTime = startPoint.getTime().toGregorianCalendar();
-    Calendar endTime = endPoint.getTime().toGregorianCalendar();
-    boolean matches = (startTime.compareTo(gmt) <= 0 && endTime.compareTo(gmt) >= 0);
-    return matches;
-  }
-
-  /**
    * Try and find the location given an imageInfo The imageInfo's time must fall
    * within a track segment
    * 
@@ -85,8 +69,11 @@ public class TrackMatcher {
     if (!TrackStore.getTrackStore().hasTracks()) {
       return null;
     }
+    // for the binary search performed later we need a track point
+    // to be used as a search key
     ObjectFactory objectFactory = new ObjectFactory();
     Trkpt searchKey = objectFactory.createGpxTrkTrksegTrkpt();
+    // this track point needs to hold the time we are looking for
     XMLGregorianCalendar xmlTimeGMT = null;
     try {
       xmlTimeGMT = DatatypeFactory.newInstance().newXMLGregorianCalendar(
@@ -114,51 +101,29 @@ public class TrackMatcher {
       // first we see if our candidate lies between the first and last
       // track point of this track segment
       if (trackPoints.size() > 1 && match.getMatchingSegment() == null) {
-        Trkpt startPoint = trackPoints.get(0);
-        Trkpt endPoint = trackPoints.get(trackPoints.size() - 1);
-        if (isBetweenTrackPoints(timeGMT, startPoint, endPoint)) {
+        // we use binary search now
+        // note that we already know that the point lies within the segment
+        // so the search will not return -1 or trackPoints.size()
+        int greaterOrEqual = Collections.binarySearch(trackPoints, searchKey,
+            new TrackPointComparator());
+        // first test if track point is within the segment
+        if (greaterOrEqual != -1 && greaterOrEqual != -trackPoints.size() - 1) {
           // next time round start searching from this segment
           startIndex = segmentIndex;
-
-          // the image was taken in this segment - have a closer look
-          // now we look at pairs of track points and see if their
-          // time stamps make an interval containing the image time
-
-          // we use binary search now
-          Comparator<Trkpt> comparator = new Comparator<Trkpt>() {
-            @Override
-            public int compare(Trkpt point1, Trkpt point2) {
-              Calendar time1 = point1.getTime().toGregorianCalendar();
-              Calendar time2 = point2.getTime().toGregorianCalendar();
-              return time1.compareTo(time2);
-            }
-          };
-          int search = Collections.binarySearch(trackPoints, searchKey,
-              comparator);
-          if (search < 0) {
+          if (greaterOrEqual < 0) {
             // search result is (-(insertion point) - 1)
-            int insertionPoint = -(search + 1);
-            search = insertionPoint;
+            // insertion point is defined as:
+            // The index of the first element greater than the key,
+            // or list.size() if all elements in the list are less than the
+            // specified key
+            greaterOrEqual = -(greaterOrEqual + 1);
+          } else if (greaterOrEqual == 0) {
+            // exact match for first track point
+            greaterOrEqual = 1;
           }
-          if (search < trackPoints.size()) {
-            startPoint = trackPoints.get(search - 1);
-            endPoint = trackPoints.get(search);
-            match.setMatchingSegment(segment);
-            match.setPreviousPoint(startPoint);
-            match.setNextPoint(endPoint);
-          }
-
-          // for (int i = 0; i < trackPoints.size() - 1; i++) {
-          // startPoint = trackPoints.get(i);
-          // endPoint = trackPoints.get(i + 1);
-          // if (isBetweenTrackPoints(timeGMT, startPoint, endPoint)) {
-          // match.setMatchingSegment(segment);
-          // match.setPreviousPoint(startPoint);
-          // match.setNextPoint(endPoint);
-          // // no need to look at other trackpoints
-          // break;
-          // }
-          // }
+          match.setMatchingSegment(segment);
+          match.setPreviousPoint(trackPoints.get(greaterOrEqual - 1));
+          match.setNextPoint(trackPoints.get(greaterOrEqual));
         }
       }
 
@@ -319,6 +284,24 @@ public class TrackMatcher {
      */
     public void setNextPoint(Trkpt nextPoint) {
       this.nextPoint = nextPoint;
+    }
+  }
+
+  /**
+   * Comparator for track points
+   * 
+   * @author Andreas Schneider
+   * 
+   */
+  class TrackPointComparator implements Comparator<Trkpt> {
+    /**
+     * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
+     */
+    @Override
+    public int compare(Trkpt point1, Trkpt point2) {
+      Calendar time1 = point1.getTime().toGregorianCalendar();
+      Calendar time2 = point2.getTime().toGregorianCalendar();
+      return time1.compareTo(time2);
     }
   }
 

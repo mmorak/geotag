@@ -22,7 +22,6 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.FontMetrics;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -32,7 +31,13 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTree;
 import javax.swing.UIManager;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreeSelectionModel;
 
 import org.fibs.geotag.Messages;
 import org.fibs.geotag.Settings;
@@ -41,16 +46,28 @@ import org.fibs.geotag.gpsbabel.GPSBabel;
 import org.fibs.geotag.util.FontUtil;
 
 /**
- * A dialog for changing the settings of the program
+ * Second version of the SettingsDialog. This time using a JTree
  * 
  * @author Andreas Schneider
  * 
  */
 @SuppressWarnings("serial")
-public class SettingsDialog extends JDialog {
+public class SettingsDialog extends JDialog implements TreeSelectionListener {
 
   /** The parent component, use to position this dialog */
   private JFrame parent;
+
+  /** A list of SettingsPanels for changing settings */
+  List<SettingsPanel> panelList = new ArrayList<SettingsPanel>();
+
+  /** The panel containing the JTree and one or no SettingsPanel */
+  private JPanel treeAndSettingsPanel;
+
+  /** The SettingsPanel currently displayed (if any) */
+  private SettingsPanel visibleSettingsPanel = null;
+
+  /** The JTree displaying the available settings */
+  private JTree tree;
 
   /**
    * @param parent
@@ -59,46 +76,56 @@ public class SettingsDialog extends JDialog {
     // true == modal
     super(parent, Messages.getString("SettingsDialog.Settings"), true); //$NON-NLS-1$
     this.parent = parent;
-    final List<SettingsPanel> panelList = new ArrayList<SettingsPanel>();
-    Dimension minimumSize = parent.getSize();
-    minimumSize.setSize(minimumSize.getWidth() / 2, 50);
-    setMinimumSize(minimumSize);
-    panelList.add(new FileSettingsPanel(parent, Messages
-        .getString("SettingsDialog.Browser"), SETTING.BROWSER, "")); //$NON-NLS-1$//$NON-NLS-2$
-    panelList
-        .add(new FileSettingsPanel(
-            parent,
-            Messages.getString("SettingsDialog.ExiftoolPath"), SETTING.EXIFTOOL_PATH, "exiftool")); //$NON-NLS-1$ //$NON-NLS-2$
-    panelList
-        .add(new StringSettingsPanel(
-            parent,
-            Messages.getString("SettingsDialog.AdditionalExiftoolArguments"), SETTING.EXIFTOOL_ARGUMENTS, "")); //$NON-NLS-1$//$NON-NLS-2$
-    panelList
-        .add(new FileSettingsPanel(
-            parent,
-            Messages.getString("SettingsDialog.GPSBabelPath"), SETTING.GPSBABEL_PATH, "gpsbabel")); //$NON-NLS-1$//$NON-NLS-2$
-    panelList
-        .add(new StringSettingsPanel(
-            parent,
-            Messages.getString("SettingsDialog.GPSBabelProtocol"), SETTING.GPSBABEL_PROTOCOL, "garmin")); //$NON-NLS-1$//$NON-NLS-2$
-    panelList
-        .add(new StringSettingsPanel(
-            parent,
-            Messages.getString("SettingsDialog.GPSBabelDevice"), SETTING.GPSBABEL_DEVICE, GPSBabel.getDefaultDevice())); //$NON-NLS-1$
-    panelList.add(new FileSettingsPanel(parent, Messages
-        .getString("SettingsDialog.DcrawPath"), SETTING.DCRAW_PATH, "dcraw")); //$NON-NLS-1$ //$NON-NLS-2$
-    panelList
-        .add(new FontSettingsPanel(
-            parent,
-            Messages.getString("SettingsDialog.Font"), SETTING.FONT, FontUtil.fontToID(UIManager.getLookAndFeel().getDefaults().getFont("Table.font")))); //$NON-NLS-1$ //$NON-NLS-2$
-    panelList
-        .add(new BooleanSettingsPanel(
-            parent,
-            Messages.getString("SettingsDialog.XmpFilesOnly"), SETTING.XMP_FILES_ONLY, "false")); //$NON-NLS-1$//$NON-NLS-2$
-    panelList
-        .add(new BooleanSettingsPanel(
-            parent,
-            Messages.getString("SettingsDialog.CheckForUpdates"), SETTING.CHECK_FOR_NEW_VERSION, "true")); //$NON-NLS-1$//$NON-NLS-2$
+    setLayout(new BorderLayout());
+    treeAndSettingsPanel = new JPanel();
+    treeAndSettingsPanel.setLayout(new BorderLayout());
+    DefaultMutableTreeNode top = new DefaultMutableTreeNode(Messages
+        .getString("SettingsDialog.Settings")); //$NON-NLS-1$
+    createTreeNodes(top);
+    tree = new JTree(top);
+    tree.getSelectionModel().setSelectionMode(
+        TreeSelectionModel.SINGLE_TREE_SELECTION);
+    tree.addTreeSelectionListener(this);
+    JScrollPane treeView = new JScrollPane(tree);
+    treeAndSettingsPanel.add(treeView, BorderLayout.CENTER);
+    JPanel buttonPanel = createButtonPanel();
+    add(treeAndSettingsPanel, BorderLayout.CENTER);
+    add(buttonPanel, BorderLayout.SOUTH);
+  }
+
+  /**
+   * @see javax.swing.event.TreeSelectionListener#valueChanged(javax.swing.event.TreeSelectionEvent)
+   */
+  @Override
+  public void valueChanged(TreeSelectionEvent event) {
+    // Get the last path element of the selection.
+    // This method is only useful because our selection model
+    // allows single selection only.
+    DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree
+        .getLastSelectedPathComponent();
+
+    if (node == null) {
+      // Nothing is selected.
+      return;
+    }
+
+    Object nodeInfo = node.getUserObject();
+    if (node.isLeaf()) {
+      SettingsPanel panel = (SettingsPanel) nodeInfo;
+      if (visibleSettingsPanel != null) {
+        treeAndSettingsPanel.remove(visibleSettingsPanel);
+        treeAndSettingsPanel.validate();
+      }
+      treeAndSettingsPanel.add(panel, BorderLayout.SOUTH);
+      visibleSettingsPanel = panel;
+      pack();
+    }
+  }
+
+  /**
+   * @return The panel containing the OK and Cancel buttons
+   */
+  private JPanel createButtonPanel() {
     // Finally a Panel with OK and Cancel buttons
     // The flow layout looks very ugly, have to find something else
     JPanel buttonPanel = new JPanel(new FlowLayout());
@@ -112,6 +139,7 @@ public class SettingsDialog extends JDialog {
           String value = settingsPanel.getValue();
           if (!value.equals(Settings.get(setting, settingsPanel
               .getDefaultValue()))) {
+            System.out.println(setting.toString() + '=' + value);
             Settings.put(setting, value);
           }
         }
@@ -135,13 +163,115 @@ public class SettingsDialog extends JDialog {
     preferredSize.width = preferredWidth;
     okButton.setPreferredSize(preferredSize);
     cancelButton.setPreferredSize(preferredSize);
-    JPanel settingsPanel = new JPanel(new GridLayout(panelList.size(), 1));
-    for (JPanel panel : panelList) {
-      settingsPanel.add(panel);
-    }
-    setLayout(new BorderLayout());
-    add(settingsPanel, BorderLayout.CENTER);
-    add(buttonPanel, BorderLayout.SOUTH);
+    Dimension minimumSize = parent.getSize();
+    minimumSize.height /= 2;
+    minimumSize.width /= 2;
+    setMinimumSize(minimumSize);
+    return buttonPanel;
+  }
+
+  /**
+   * Add a panel as a child of a parent node in the tree. Keeps track of panels
+   * added.
+   * 
+   * @param parentNode
+   * @param panel
+   */
+  private void addPanel(DefaultMutableTreeNode parentNode, SettingsPanel panel) {
+    panelList.add(panel);
+    DefaultMutableTreeNode leaf = new DefaultMutableTreeNode(panel);
+    parentNode.add(leaf);
+  }
+
+  /**
+   * Add all the nodes to the tree
+   * 
+   * @param top
+   *          The top node of the tree
+   */
+  private void createTreeNodes(DefaultMutableTreeNode top) {
+    DefaultMutableTreeNode general = new DefaultMutableTreeNode(Messages
+        .getString("SettingsDialog.GeneralSettings")); //$NON-NLS-1$
+
+    FontSettingsPanel font = new FontSettingsPanel(
+        parent,
+        Messages.getString("SettingsDialog.Font"), SETTING.FONT, FontUtil.fontToID(UIManager.getLookAndFeel().getDefaults().getFont("Table.font"))); //$NON-NLS-1$ //$NON-NLS-2$
+    addPanel(general, font);
+
+    BooleanSettingsPanel xmpOnly = new BooleanSettingsPanel(
+        parent,
+        Messages.getString("SettingsDialog.XmpFilesOnly"), SETTING.XMP_FILES_ONLY, false); //$NON-NLS-1$
+    addPanel(general, xmpOnly);
+
+    BooleanSettingsPanel updates = new BooleanSettingsPanel(
+        parent,
+        Messages.getString("SettingsDialog.CheckForUpdates"), SETTING.CHECK_FOR_NEW_VERSION, true); //$NON-NLS-1$
+    addPanel(general, updates);
+
+    top.add(general);
+
+    DefaultMutableTreeNode external = new DefaultMutableTreeNode(Messages
+        .getString("SettingsDialog.ExternalPrograms")); //$NON-NLS-1$
+
+    FileSettingsPanel browser = new FileSettingsPanel(parent, Messages
+        .getString("SettingsDialog.Browser"), SETTING.BROWSER, ""); //$NON-NLS-1$//$NON-NLS-2$
+    addPanel(external, browser);
+
+    DefaultMutableTreeNode exiftool = new DefaultMutableTreeNode(Messages
+        .getString("SettingsDialog.Exiftool")); //$NON-NLS-1$
+    external.add(exiftool);
+
+    FileSettingsPanel exiftoolPath = new FileSettingsPanel(
+        parent,
+        Messages.getString("SettingsDialog.ExiftoolPath"), SETTING.EXIFTOOL_PATH, "exiftool"); //$NON-NLS-1$ //$NON-NLS-2$
+    addPanel(exiftool, exiftoolPath);
+
+    StringSettingsPanel exiftoolArguments = new StringSettingsPanel(
+        parent,
+        Messages.getString("SettingsDialog.AdditionalExiftoolArguments"), SETTING.EXIFTOOL_ARGUMENTS, ""); //$NON-NLS-1$//$NON-NLS-2$
+    addPanel(exiftool, exiftoolArguments);
+
+    DefaultMutableTreeNode gpsbabel = new DefaultMutableTreeNode(Messages
+        .getString("SettingsDialog.GPSBabel")); //$NON-NLS-1$
+    external.add(gpsbabel);
+
+    FileSettingsPanel gpsbabelPath = new FileSettingsPanel(
+        parent,
+        Messages.getString("SettingsDialog.GPSBabelPath"), SETTING.GPSBABEL_PATH, "gpsbabel"); //$NON-NLS-1$//$NON-NLS-2$
+    addPanel(gpsbabel, gpsbabelPath);
+
+    StringSettingsPanel gpsbabelProtocol = new StringSettingsPanel(
+        parent,
+        Messages.getString("SettingsDialog.GPSBabelProtocol"), SETTING.GPSBABEL_PROTOCOL, "garmin"); //$NON-NLS-1$//$NON-NLS-2$
+    addPanel(gpsbabel, gpsbabelProtocol);
+
+    StringSettingsPanel gpsbabelDevice = new StringSettingsPanel(
+        parent,
+        Messages.getString("SettingsDialog.GPSBabelDevice"), SETTING.GPSBABEL_DEVICE, GPSBabel.getDefaultDevice()); //$NON-NLS-1$
+    addPanel(gpsbabel, gpsbabelDevice);
+
+    FileSettingsPanel dcrawPath = new FileSettingsPanel(parent, Messages
+        .getString("SettingsDialog.DcrawPath"), SETTING.DCRAW_PATH, "dcraw"); //$NON-NLS-1$ //$NON-NLS-2$
+    addPanel(external, dcrawPath);
+
+    top.add(external);
+
+    DefaultMutableTreeNode export = new DefaultMutableTreeNode(Messages
+        .getString("SettingsDialog.Export")); //$NON-NLS-1$
+    DefaultMutableTreeNode googleearth = new DefaultMutableTreeNode(Messages
+        .getString("SettingsDialog.GoogleEarth")); //$NON-NLS-1$
+    BooleanSettingsPanel imagesInKmz = new BooleanSettingsPanel(
+        parent,
+        Messages.getString("SettingsDialog.ThumbsInKMZ"), SETTING.KMZ_STORE_THUMBNAILS, false); //$NON-NLS-1$
+    addPanel(googleearth, imagesInKmz);
+
+    StringSettingsPanel kmlImagePath = new StringSettingsPanel(parent, Messages
+        .getString("SettingsDialog.KmlImagePath"), SETTING.KML_IMAGE_PATH, ""); //$NON-NLS-1$ //$NON-NLS-2$
+    addPanel(googleearth, kmlImagePath);
+
+    export.add(googleearth);
+
+    top.add(export);
   }
 
   /**
@@ -152,4 +282,5 @@ public class SettingsDialog extends JDialog {
     setLocationRelativeTo(parent);
     setVisible(true);
   }
+
 }

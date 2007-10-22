@@ -43,11 +43,10 @@ public class BooleanSettingsPanel extends SettingsPanel {
    * @param defaultValue
    */
   public BooleanSettingsPanel(JFrame parent, String title, SETTING setting,
-      String defaultValue) {
-    super(parent, title, setting, defaultValue);
+      boolean defaultValue) {
+    super(parent, title, setting, Boolean.toString(defaultValue));
     checkBox = new JCheckBox(title);
-    boolean selelected = Boolean.parseBoolean(Settings.get(setting,
-        defaultValue));
+    boolean selelected = Settings.get(setting, defaultValue);
     checkBox.setSelected(selelected);
     add(checkBox, BorderLayout.NORTH);
   }

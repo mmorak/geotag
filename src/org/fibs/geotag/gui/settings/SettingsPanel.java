@@ -60,6 +60,7 @@ public abstract class SettingsPanel extends JPanel {
     TitledBorder border = BorderFactory.createTitledBorder(title);
     setBorder(border);
     this.parent = parent;
+    this.title = title;
     this.setting = setting;
     this.defaultValue = defaultValue;
   }
@@ -81,5 +82,15 @@ public abstract class SettingsPanel extends JPanel {
    */
   public String getDefaultValue() {
     return defaultValue;
+  }
+
+  /**
+   * Override toString as this is used by JTree
+   * 
+   * @see java.awt.Component#toString()
+   */
+  @Override
+  public String toString() {
+    return title;
   }
 }

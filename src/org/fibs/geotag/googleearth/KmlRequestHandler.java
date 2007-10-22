@@ -71,7 +71,7 @@ public class KmlRequestHandler implements ContextHandler {
 
   /**
    * @param parent
-   *          Who to informa about updates
+   *          Who to inform about updates
    */
   public KmlRequestHandler(ExternalUpdateConsumer parent) {
     this.parent = parent;

@@ -212,6 +212,9 @@ public class MetadataExtractorReader implements ExifReader {
           String date = null;
           try {
             date = directory.getString(GpsDirectory.TAG_GPS_DATE_STAMP);
+            // I've come across images that store the date separated by dashes
+            // rather than colons as specified by EXIF
+            date = date.replace('-', ':');
           } catch (Exception e) {
             e.printStackTrace();
           }

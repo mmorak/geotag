@@ -69,6 +69,7 @@ public class FontSettingsPanel extends SettingsPanel {
         }
       }
     });
+    fontPanel.add(browseButton, BorderLayout.EAST);
     add(fontPanel, BorderLayout.NORTH);
   }
 

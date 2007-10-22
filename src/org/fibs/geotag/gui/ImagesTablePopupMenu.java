@@ -21,6 +21,7 @@ package org.fibs.geotag.gui;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -31,6 +32,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
@@ -44,12 +46,14 @@ import org.fibs.geotag.Settings.SETTING;
 import org.fibs.geotag.data.ImageInfo;
 import org.fibs.geotag.exif.Exiftool;
 import org.fibs.geotag.googleearth.GoogleEarthLauncher;
+import org.fibs.geotag.googleearth.GoogleearthFileFilter;
 import org.fibs.geotag.image.ThumbnailWorker;
 import org.fibs.geotag.table.ImagesTable;
 import org.fibs.geotag.table.ImagesTableModel;
 import org.fibs.geotag.tasks.CopyLocationTask;
 import org.fibs.geotag.tasks.ExifWriterTask;
 import org.fibs.geotag.tasks.FillGapsTask;
+import org.fibs.geotag.tasks.GoogleEarthExportTask;
 import org.fibs.geotag.tasks.MatchImagesTask;
 import org.fibs.geotag.tasks.SetOffsetTask;
 import org.fibs.geotag.tasks.ThumbnailsTask;
@@ -93,9 +97,25 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
   private static final String SHOW_ALL_IMAGES = Messages
       .getString("ImagesTablePopupMenu.AllImages"); //$NON-NLS-1$
 
+  /** Text for sub menu */
+  private static final String GOOGLEEARTH = Messages
+      .getString("ImagesTablePopupMenu.GoogleEarth"); //$NON-NLS-1$
+
   /** Text for menu item */
   private static final String SHOW_IN_GOOGLEEARTH = Messages
       .getString("ImagesTablePopupMenu.ShowInGoogleEarth"); //$NON-NLS-1$
+
+  /** Text for menu item */
+  private static final String EXPORT_THIS = Messages
+      .getString("ImagesTablePopupMenu.ExportThis"); //$NON-NLS-1$
+
+  /** Text for menu item */
+  private static final String EXPORT_SELECTED = Messages
+      .getString("ImagesTablePopupMenu.ExportSelected"); //$NON-NLS-1$
+
+  /** Text for menu item */
+  private static final String EXPORT_ALL = Messages
+      .getString("ImagesTablePopupMenu.ExportAll"); //$NON-NLS-1$
 
   /** Text for menu item */
   private static final String SELECT_CORRECT_TIME = Messages
@@ -216,6 +236,15 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
 
   /** The menu item used to show an image location in Google Earth */
   private JMenuItem showInGoogleEarthItem;
+
+  /** The menu item used to export a single image to a KML/KMZ file */
+  private JMenuItem exportOneImageToKmlItem;
+
+  /** The menu item used to export selected images to a KML/KMZ file */
+  private JMenuItem exportSelectedToKmlItem;
+
+  /** The menu item used to export all images with locations to a KML/KMZ file */
+  private JMenuItem exportAllToKmlItem;
 
   /** The menu item used to select the correct GMT time for a picture */
   private JMenuItem chooseTimeItem;
@@ -349,11 +378,50 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
 
     add(showOnMapWithDirectionMenu);
 
+    JMenu googleEarthMenu = new JMenu(GOOGLEEARTH);
+
     showInGoogleEarthItem = new JMenuItem(SHOW_IN_GOOGLEEARTH);
     enabled = true; // we can always do this safely
     showInGoogleEarthItem.setEnabled(enabled);
     showInGoogleEarthItem.addActionListener(this);
-    add(showInGoogleEarthItem);
+    googleEarthMenu.add(showInGoogleEarthItem);
+
+    exportOneImageToKmlItem = new JMenuItem(EXPORT_THIS);
+    // enable if there is no background task this image has a location
+    enabled = !backgroundTask && imageInfo.hasLocation();
+    exportOneImageToKmlItem.setEnabled(enabled);
+    exportOneImageToKmlItem.addActionListener(this);
+    googleEarthMenu.add(exportOneImageToKmlItem);
+
+    exportSelectedToKmlItem = new JMenuItem(EXPORT_SELECTED);
+    // enable if there is no background task and there is a
+    // selection containing at least on image with location.
+    enabled = false;
+    for (int i = 0; i < selectedRows.length; i++) {
+      if (tableModel.getImageInfo(selectedRows[i]).hasLocation() == true) {
+        enabled = !backgroundTask;
+        break;
+      }
+    }
+    exportSelectedToKmlItem.setEnabled(enabled);
+    exportSelectedToKmlItem.addActionListener(this);
+    googleEarthMenu.add(exportSelectedToKmlItem);
+
+    exportAllToKmlItem = new JMenuItem(EXPORT_ALL);
+    // enable if there is no background task and there is at least one image
+    // that has a location
+    enabled = false;
+    for (int i = 0; i < tableModel.getRowCount(); i++) {
+      if (tableModel.getImageInfo(i).hasLocation() == true) {
+        enabled = !backgroundTask;
+        break;
+      }
+    }
+    exportAllToKmlItem.setEnabled(enabled);
+    exportAllToKmlItem.addActionListener(this);
+    googleEarthMenu.add(exportAllToKmlItem);
+
+    add(googleEarthMenu);
 
     chooseTimeItem = new JMenuItem(SELECT_CORRECT_TIME + ELLIPSIS);
     enabled = !backgroundTask; // only if no background task
@@ -576,6 +644,12 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
       showAllImagesOnMap(true);
     } else if (event.getSource() == showInGoogleEarthItem) {
       showInGoogleEarth();
+    } else if (event.getSource() == exportOneImageToKmlItem) {
+      exportOneToKml();
+    } else if (event.getSource() == exportSelectedToKmlItem) {
+      exportSelectedToKml();
+    } else if (event.getSource() == exportAllToKmlItem) {
+      exportAllToKml();
     } else if (event.getSource() == chooseTimeItem) {
       // Open a DateTimeChooser to select the exact time for the image.
       chooseTime();
@@ -735,7 +809,7 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
   }
 
   /**
-   * Lauch Google Earth to show the location
+   * Launch Google Earth to show the location
    */
   private void showInGoogleEarth() {
     // make sure there is a thumbnail - this won't create the
@@ -747,6 +821,114 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
       }
     };
     worker.execute();
+  }
+
+  /**
+   * Export a single image to a KML/KMZ file
+   */
+  private void exportOneToKml() {
+    List<ImageInfo> images = new ArrayList<ImageInfo>();
+    images.add(imageInfo);
+    exportToKml(images);
+  }
+
+  /**
+   * Export images with locations from a selection to a KML/KMZ file
+   */
+  private void exportSelectedToKml() {
+    List<ImageInfo> images = new ArrayList<ImageInfo>();
+    for (int index = 0; index < selectedRows.length; index++) {
+      ImageInfo candidate = tableModel.getImageInfo(selectedRows[index]);
+      if (candidate.hasLocation() == true) {
+        images.add(candidate);
+      }
+    }
+    exportToKml(images);
+  }
+
+  /**
+   * Export all images with a location to a KML/KMZ file
+   */
+  private void exportAllToKml() {
+    List<ImageInfo> images = new ArrayList<ImageInfo>();
+    for (int i = 0; i < tableModel.getRowCount(); i++) {
+      ImageInfo candidate = tableModel.getImageInfo(i);
+      if (candidate.hasLocation() == true) {
+        images.add(candidate);
+      }
+    }
+    exportToKml(images);
+  }
+
+  /**
+   * Export a list of images to a KML/KMZ file
+   * 
+   * @param images
+   */
+  private void exportToKml(final List<ImageInfo> images) {
+    JFileChooser chooser = new JFileChooser();
+    String lastFile = Settings.get(SETTING.GOOGLEEARTH_LAST_FILE_SAVED, null);
+    if (lastFile != null) {
+      File file = new File(lastFile);
+      if (file.exists() && file.getParentFile() != null) {
+        chooser.setCurrentDirectory(file.getParentFile());
+      }
+    }
+    GoogleearthFileFilter fileFilter = new GoogleearthFileFilter();
+    chooser.setFileFilter(fileFilter);
+    chooser.setMultiSelectionEnabled(false);
+
+    if (chooser.showSaveDialog(parent) == JFileChooser.APPROVE_OPTION) {
+      try {
+        File outputFile = chooser.getSelectedFile();
+        if (!fileFilter.accept(outputFile)) {
+          // not a kml/kmz file selected - add .kml suffix
+          outputFile = new File(chooser.getSelectedFile().getPath() + ".kml"); //$NON-NLS-1$
+        }
+        if (outputFile.exists()) {
+          // TODO decide if these messages should get their own class
+          String title = Messages.getString("MainWindow.FileExists"); //$NON-NLS-1$
+          String message = String
+              .format(
+                  Messages.getString("MainWindow.OverwriteFileFormat"), outputFile.getName()); //$NON-NLS-1$
+          if (JOptionPane.showConfirmDialog(parent, message, title,
+              JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.NO_OPTION) {
+            return;
+          }
+        }
+        // do we need to create thumbnail images?
+        if (GoogleearthFileFilter.isKmzFile(outputFile)
+            && Settings.get(SETTING.KMZ_STORE_THUMBNAILS, false) == true) {
+          // the output file is kmz and we need to store thumbnails
+          // use a ThumbnailsTask and generate KML/KMZ when done
+          final File file = outputFile;
+          new ThumbnailsTask(Messages
+              .getString("ImagesTablePopupMenu.GenerateThumbnails"), images) { //$NON-NLS-1$
+            @Override
+            public void done() {
+              exportToKml(images, file);
+            }
+          }.execute();
+
+        } else {
+          exportToKml(images, outputFile);
+        }
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    }
+  }
+
+  /**
+   * Finally - export images to a file
+   * 
+   * @param images
+   * @param file
+   */
+  void exportToKml(List<ImageInfo> images, File file) {
+    new GoogleEarthExportTask(Messages
+        .getString("ImagesTablePopupMenu.ExportForGoogleEarth"), images, file).execute(); //$NON-NLS-1$
+    Settings.put(SETTING.GOOGLEEARTH_LAST_FILE_SAVED, file.getPath());
   }
 
   /**

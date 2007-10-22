@@ -1,3 +1,7 @@
+2007-10-22 Release 0.032
+  Added export to Google Earth KML/KMZ files.
+  Redesign of the Settings dialog.
+  
 2007-10-17 Release 0.031
   More big speed increase for matching tracks.
   The 'Show tracks on Google Maps' setting has been

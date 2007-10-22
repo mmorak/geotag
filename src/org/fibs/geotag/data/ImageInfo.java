@@ -243,6 +243,23 @@ public class ImageInfo implements Comparable<ImageInfo> {
   }
 
   /**
+   * Retrieve all image infos accepted by the filter
+   * 
+   * @param filter
+   *          A filter that decides if an ImageInfo is accepted
+   * @return A new List of ImageInfos accepted by the filter
+   */
+  public static List<ImageInfo> getImagesInfos(Filter filter) {
+    List<ImageInfo> result = new ArrayList<ImageInfo>();
+    for (ImageInfo imageInfo : instances) {
+      if (filter.accept(imageInfo)) {
+        result.add(imageInfo);
+      }
+    }
+    return result;
+  }
+
+  /**
    * Return the ImageInfo for a file
    * 
    * @param filePath
@@ -595,5 +612,19 @@ public class ImageInfo implements Comparable<ImageInfo> {
    */
   public static SimpleDateFormat getDateFormat() {
     return dateFormat;
+  }
+
+  /**
+   * A class used for filtering image infos. Used for example to retrieve all
+   * images with coordinates.
+   * 
+   * @author Andreas Schneider
+   */
+  public static abstract class Filter {
+    /**
+     * @param imageInfo
+     * @return True if ImageInfo is accepted by the filter
+     */
+    public abstract boolean accept(ImageInfo imageInfo);
   }
 }

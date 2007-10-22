@@ -114,7 +114,16 @@ public class Settings {
     /** Preferences key for checking for new versions */
     CHECK_FOR_NEW_VERSION,
     /** Preferences key for the browser name - empty string for default */
-    BROWSER;
+    BROWSER,
+    /** Preferences key for the last KML/KMZ file saved */
+    GOOGLEEARTH_LAST_FILE_SAVED,
+    /** Preferences key for storing thumbnail images in KMZ files or not */
+    KMZ_STORE_THUMBNAILS,
+    /**
+     * Preferences key for KML image directory - leave blank for files ystem
+     * path
+     */
+    KML_IMAGE_PATH;
 
     /**
      * For the actual key I prefer lower case keys with dots
