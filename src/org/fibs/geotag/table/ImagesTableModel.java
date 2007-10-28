@@ -59,7 +59,10 @@ public class ImagesTableModel extends AbstractTableModel {
       Messages.getString("ImagesTableModel.Latitude"), //$NON-NLS-1$
       Messages.getString("ImagesTableModel.Longitude"), //$NON-NLS-1$
       Messages.getString("ImagesTableModel.Altitude"), //$NON-NLS-1$
-      Messages.getString("ImagesTableModel.Direction") }; //$NON-NLS-1$
+      Messages.getString("ImagesTableModel.Direction"), //$NON-NLS-1$
+      Messages.getString("ImagesTableModel.Location"), //$NON-NLS-1$
+      Messages.getString("ImagesTableModel.Province"), //$NON-NLS-1$
+      Messages.getString("ImagesTableModel.Country") }; //$NON-NLS-1$
 
   /** How many decimals of the latitude to display */
   public static final int LATITUDE_DECIMALS = 7;
@@ -170,6 +173,9 @@ public class ImagesTableModel extends AbstractTableModel {
       case LATITUDE:
       case LONGITUDE:
       case ALTITUDE:
+      case LOCATION_NAME:
+      case PROVINCE_NAME:
+      case COUNTRY_NAME:
         return false;
       case DIRECTION:
         ImageInfo imageInfo = getImageInfo(rowIndex);
@@ -208,19 +214,25 @@ public class ImagesTableModel extends AbstractTableModel {
       case IMAGE_NAME:
         return imageInfo.getName();
       case CAMERA_DATE:
-        return values.get(row).getCameraDate();
+        return imageInfo.getCameraDate();
       case GPS_DATE:
-        return values.get(row).getGPSDateTime();
+        return imageInfo.getGPSDateTime();
       case TIME_OFFSET:
-        return values.get(row).getOffsetString();
+        return imageInfo.getOffsetString();
       case LATITUDE:
-        return round(values.get(row).getGPSLatitude(), LATITUDE_DECIMALS);
+        return round(imageInfo.getGPSLatitude(), LATITUDE_DECIMALS);
       case LONGITUDE:
-        return round(values.get(row).getGPSLongitude(), LONGITUDE_DECIMALS);
+        return round(imageInfo.getGPSLongitude(), LONGITUDE_DECIMALS);
       case ALTITUDE:
-        return round(values.get(row).getGPSAltitude(), ALTITUDE_DECIMALS);
+        return round(imageInfo.getGPSAltitude(), ALTITUDE_DECIMALS);
       case DIRECTION:
-        return round(values.get(row).getGPSImgDirection(), DIRECTION_DECIMALS);
+        return round(imageInfo.getGPSImgDirection(), DIRECTION_DECIMALS);
+      case LOCATION_NAME:
+        return imageInfo.getLocationName();
+      case PROVINCE_NAME:
+        return imageInfo.getProvinceName();
+      case COUNTRY_NAME:
+        return imageInfo.getCountryName();
     }
     return null;
   }
@@ -240,6 +252,9 @@ public class ImagesTableModel extends AbstractTableModel {
       case LATITUDE:
       case LONGITUDE:
       case ALTITUDE:
+      case LOCATION_NAME:
+      case PROVINCE_NAME:
+      case COUNTRY_NAME:
         // all those are not editable
         return;
       case DIRECTION:

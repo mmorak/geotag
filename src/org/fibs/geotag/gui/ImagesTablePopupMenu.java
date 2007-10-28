@@ -54,6 +54,7 @@ import org.fibs.geotag.tasks.CopyLocationTask;
 import org.fibs.geotag.tasks.ExifWriterTask;
 import org.fibs.geotag.tasks.FillGapsTask;
 import org.fibs.geotag.tasks.GoogleEarthExportTask;
+import org.fibs.geotag.tasks.LocationNamesTask;
 import org.fibs.geotag.tasks.MatchImagesTask;
 import org.fibs.geotag.tasks.SetOffsetTask;
 import org.fibs.geotag.tasks.ThumbnailsTask;
@@ -185,6 +186,22 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
   private static final String FILL_ALL_GAPS = Messages
       .getString("ImagesTablePopupMenu.FillAllGaps"); //$NON-NLS-1$
 
+  /** Text fir sub menu */
+  private static final String LOCATION_NAMES = Messages
+      .getString("ImagesTablePopupMenu.LocationNames"); //$NON-NLS-1$
+
+  /** Text for menu item */
+  private static final String LOCATION_NAME_THIS = Messages
+      .getString("ImagesTablePopupMenu.LocationForThisImage"); //$NON-NLS-1$
+
+  /** Text for menu item */
+  private static final String LOCATION_NAMES_SELECTED = Messages
+      .getString("ImagesTablePopupMenu.LocationForSelectedImages"); //$NON-NLS-1$
+
+  /** Text for menu item */
+  private static final String LOCATION_NAMES_ALL = Messages
+      .getString("ImagesTablePopupMenu.LocationForAllImages"); //$NON-NLS-1$
+
   /** Text for sub menu */
   private static final String SAVE_LOCATIONS = Messages
       .getString("ImagesTablePopupMenu.SaveNewLocations"); //$NON-NLS-1$
@@ -284,6 +301,15 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
 
   /** The menu item used to fill all gaps */
   private JMenuItem fillAllGapsItem;
+
+  /** The menu item used to find the location name for one image */
+  private JMenuItem locationNameThisItem;
+
+  /** The menu item used to find the location names for a selection of images */
+  private JMenuItem locationNamesSelectedItem;
+
+  /** the menu item used to find the location names for all images */
+  private JMenuItem locationNamesAllItem;
 
   /** The menu item used to save the location of an image */
   private JMenuItem saveOneLocationItem;
@@ -575,6 +601,50 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
       add(fillGapsMenu);
     }
 
+    JMenu locationNamesMenu = new JMenu(LOCATION_NAMES);
+    addMenu = false;
+
+    locationNameThisItem = new JMenuItem(LOCATION_NAME_THIS);
+    enabled = !backgroundTask && imageInfo.hasLocation();
+    addMenu |= enabled;
+    locationNameThisItem.setEnabled(enabled);
+    locationNameThisItem.addActionListener(this);
+    locationNamesMenu.add(locationNameThisItem);
+
+    locationNamesSelectedItem = new JMenuItem(LOCATION_NAMES_SELECTED);
+    // enable if there is no background task, there is a selection of images
+    // and at least one image in the selection has a location
+    enabled = false;
+    for (int i = 0; i < selectedRows.length; i++) {
+      if (tableModel.getImageInfo(selectedRows[i]).hasLocation() == true) {
+        enabled = !backgroundTask;
+        break;
+      }
+    }
+    addMenu |= enabled;
+    locationNamesSelectedItem.setEnabled(enabled);
+    locationNamesSelectedItem.addActionListener(this);
+    locationNamesMenu.add(locationNamesSelectedItem);
+
+    locationNamesAllItem = new JMenuItem(LOCATION_NAMES_ALL);
+    // enable if there is no background task and there is at least one image
+    // that has a location
+    enabled = false;
+    for (int i = 0; i < tableModel.getRowCount(); i++) {
+      if (tableModel.getImageInfo(i).hasLocation() == true) {
+        enabled = !backgroundTask;
+        break;
+      }
+    }
+    addMenu |= enabled;
+    locationNamesAllItem.setEnabled(enabled);
+    locationNamesAllItem.addActionListener(this);
+    locationNamesMenu.add(locationNamesAllItem);
+
+    if (addMenu) {
+      add(locationNamesMenu);
+    }
+
     JMenu saveLocationsMenu = new JMenu(SAVE_LOCATIONS);
     // enable if exiftool is available
     saveLocationsMenu.setEnabled(Exiftool.isAvailable());
@@ -677,6 +747,12 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
       fillGapsInSelection();
     } else if (event.getSource() == fillAllGapsItem) {
       fillAllGaps();
+    } else if (event.getSource() == locationNameThisItem) {
+      findOneLocationName();
+    } else if (event.getSource() == locationNamesSelectedItem) {
+      findSelectedLocationNames();
+    } else if (event.getSource() == locationNamesAllItem) {
+      findAllLocationNames();
     } else if (event.getSource() == saveOneLocationItem) {
       saveOneLocation();
     } else if (event.getSource() == saveSelectedLocationsItem) {
@@ -802,6 +878,7 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
     URL += "&menuopen=" + Settings.get(SETTING.GOOGLE_MAPS_MENU_OPEN, true); //$NON-NLS-1$
     URL += "&wheelzoom=" + Settings.get(SETTING.GOOGLE_MAPS_MOUSE_WHEEL_ZOOM, false); //$NON-NLS-1$
     URL += "&showtracks=" + Settings.get(SETTING.GOOGLE_MAP_SHOW_TRACKS, false); //$NON-NLS-1$
+    URL += "&wikipedia=" + Settings.get(SETTING.GOOGLE_MAP_SHOW_WIKIPEDIA, false); //$NON-NLS-1$
     // execute the command
     System.out.println(URL);
     BareBonesBrowserLaunch.openURL(Settings.get(SETTING.BROWSER, null), URL
@@ -1127,6 +1204,46 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
       }
     }
     new FillGapsTask(FILL_GAPS, FILL_ALL_GAPS, tableModel, images).execute();
+  }
+
+  /**
+   * Find the location name for a single image
+   */
+  private void findOneLocationName() {
+    List<ImageInfo> images = new ArrayList<ImageInfo>();
+    images.add(imageInfo);
+    new LocationNamesTask(LOCATION_NAMES, LOCATION_NAME_THIS, tableModel,
+        images).execute();
+  }
+
+  /**
+   * Find the location name for a selection of images (with coordinates)
+   */
+  private void findSelectedLocationNames() {
+    List<ImageInfo> images = new ArrayList<ImageInfo>();
+    for (int index = 0; index < selectedRows.length; index++) {
+      ImageInfo candidate = tableModel.getImageInfo(selectedRows[index]);
+      if (candidate.hasLocation() == true) {
+        images.add(candidate);
+      }
+    }
+    new LocationNamesTask(LOCATION_NAMES, LOCATION_NAMES_SELECTED, tableModel,
+        images).execute();
+  }
+
+  /**
+   * Find the location name for all images (with coordinates)
+   */
+  private void findAllLocationNames() {
+    List<ImageInfo> images = new ArrayList<ImageInfo>();
+    for (int i = 0; i < tableModel.getRowCount(); i++) {
+      ImageInfo candidate = tableModel.getImageInfo(i);
+      if (candidate.hasLocation() == true) {
+        images.add(candidate);
+      }
+    }
+    new LocationNamesTask(LOCATION_NAMES, LOCATION_NAMES_ALL, tableModel,
+        images).execute();
   }
 
   /**

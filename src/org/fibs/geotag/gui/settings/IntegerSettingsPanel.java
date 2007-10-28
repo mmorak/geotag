@@ -43,9 +43,10 @@ public class IntegerSettingsPanel extends SettingsPanel {
    * @param defaultValue
    */
   public IntegerSettingsPanel(JFrame parent, String title, SETTING setting,
-      String defaultValue) {
-    super(parent, title, setting, defaultValue);
-    textField = new JTextField(Settings.get(setting, defaultValue));
+      int defaultValue) {
+    super(parent, title, setting, Integer.toString(defaultValue));
+    textField = new JTextField(Integer.toString(Settings.get(setting,
+        defaultValue)));
     add(textField, BorderLayout.NORTH);
   }
 

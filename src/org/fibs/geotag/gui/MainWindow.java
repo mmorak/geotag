@@ -75,6 +75,7 @@ import org.fibs.geotag.track.GpxFileFilter;
 import org.fibs.geotag.track.GpxReader;
 import org.fibs.geotag.track.GpxWriter;
 import org.fibs.geotag.track.TrackStore;
+import org.fibs.geotag.webserver.GeonamesHandler;
 import org.fibs.geotag.webserver.ImageInfoHandler;
 import org.fibs.geotag.webserver.MapHandler;
 import org.fibs.geotag.webserver.ResourceHandler;
@@ -298,6 +299,7 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
       webServer.createContext("/settings", new SettingsHandler()); //$NON-NLS-1$
       webServer.createContext("/imageinfo", new ImageInfoHandler()); //$NON-NLS-1$
       webServer.createContext("/map", new MapHandler()); //$NON-NLS-1$
+      webServer.createContext("/geonames", new GeonamesHandler()); //$NON-NLS-1$
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -432,6 +434,41 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
 
     updateUndoMenuItems();
 
+    JMenu selectMenu = new JMenu(Messages.getString("MainWindow.Select")); //$NON-NLS-1$
+
+    JMenuItem selectAllItem = new JMenuItem(Messages
+        .getString("MainWindow.SelectAll")); //$NON-NLS-1$
+    selectAllItem.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        table.selectAll();
+      }
+    });
+    selectMenu.add(selectAllItem);
+
+    JMenuItem selectWithLocationItem = new JMenuItem(Messages
+        .getString("MainWindow.SelectWithLocations")); //$NON-NLS-1$
+    selectWithLocationItem.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        table.selectAllWithLocation();
+      }
+
+    });
+    selectMenu.add(selectWithLocationItem);
+
+    JMenuItem selectWithNewLocationItem = new JMenuItem(Messages
+        .getString("MainWindow.SelectWithNewLocations")); //$NON-NLS-1$
+    selectWithNewLocationItem.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        table.selectAllWithNewLocation();
+      }
+
+    });
+    selectMenu.add(selectWithNewLocationItem);
+
+    editMenu.add(selectMenu);
     menuBar.add(editMenu);
 
     JMenu helpMenu = new JMenu(Messages.getString("MainWindow.Help")); //$NON-NLS-1$

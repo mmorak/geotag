@@ -43,6 +43,8 @@ public class Settings {
     PREVIEW_HEIGHT,
     /** Preference key for thumbnail size */
     THUMBNAIL_SIZE,
+    /** Preferences key for showing thumbnails in tooltips */
+    TUMBNAILS_IN_TOOLTIPS,
     /** Preference key for storing the last single file the user chose */
     LAST_FILE_OPENED,
     /** Preference key for storing the last directory of images the user added */
@@ -79,6 +81,12 @@ public class Settings {
     ALTITUDE_WIDTH,
     /** Preferences key for the direction column width */
     DIRECTION_WIDTH,
+    /** Preferences key for the location name column width */
+    LOCATION_NAME_WIDTH,
+    /** Preferences key for the province name column width */
+    PROVINCE_NAME_WIDTH,
+    /** Preferences key for the country name column width */
+    COUNTRY_NAME_WIDTH,
     /** Preferences key for the image name column position */
     IMAGE_NAME_POSITION,
     /** Preferences key for the GPS time column position */
@@ -95,6 +103,12 @@ public class Settings {
     ALTITUDE_POSITION,
     /** Preferences key for the direction column position */
     DIRECTION_POSITION,
+    /** Preferences key for the location name column position */
+    LOCATION_NAME_POSITION,
+    /** Preferences key for the province name column position */
+    PROVINCE_NAME_POSITION,
+    /** Preferences key for the country name column position */
+    COUNTRY_NAME_POSITION,
     /** Preferences key for the font used */
     FONT,
     /** Preferences key for the last zoom level used in Google Maps */
@@ -107,6 +121,8 @@ public class Settings {
     LAST_GOOGLE_MAPS_LONGITUDE,
     /** Preferences key for the tracks to be draw on Google Maps */
     GOOGLE_MAP_SHOW_TRACKS,
+    /** Preferences key for showing wikipedia marks on the map */
+    GOOGLE_MAP_SHOW_WIKIPEDIA,
     /** Preferences key for Google Maps mouse wheel zooming */
     GOOGLE_MAPS_MOUSE_WHEEL_ZOOM,
     /** Preferences key for status of menu on Google Map */
@@ -120,10 +136,15 @@ public class Settings {
     /** Preferences key for storing thumbnail images in KMZ files or not */
     KMZ_STORE_THUMBNAILS,
     /**
-     * Preferences key for KML image directory - leave blank for files ystem
+     * Preferences key for KML image directory. Leave blank for files system
      * path
      */
-    KML_IMAGE_PATH;
+    KML_IMAGE_PATH,
+    /**
+     * Preferences key for geonames search radius in km Set to zero for nearest
+     * location only
+     */
+    GEONAMES_RADIUS_KM;
 
     /**
      * For the actual key I prefer lower case keys with dots

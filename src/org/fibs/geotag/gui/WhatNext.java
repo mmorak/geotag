@@ -65,6 +65,13 @@ public class WhatNext {
         break;
       }
     }
+    boolean imagesWithLocationAvailable = false;
+    for (int row = 0; row < tableModel.getRowCount(); row++) {
+      if (tableModel.getImageInfo(row).hasLocation()) {
+        imagesWithLocationAvailable = true;
+        break;
+      }
+    }
     boolean rawImagesAvailable = false;
     for (int row = 0; row < tableModel.getRowCount(); row++) {
       File file = new File(tableModel.getImageInfo(row).getPath());
@@ -82,6 +89,13 @@ public class WhatNext {
           gapsAvailable = true;
           break;
         }
+      }
+    }
+    boolean locationNamesFound = false;
+    for (int row = 0; row < tableModel.getRowCount(); row++) {
+      if (tableModel.getImageInfo(row).hasLocationName()) {
+        locationNamesFound = true;
+        break;
       }
     }
     List<String> suggestions = new ArrayList<String>();
@@ -144,6 +158,13 @@ public class WhatNext {
       String text = String.format(Messages
           .getString("WhatNext.SuggestSavingFormat"), //$NON-NLS-1$
           Messages.getString("ImagesTablePopupMenu.SaveNewLocations")); //$NON-NLS-1$
+      suggestions.add(text);
+    }
+
+    if (imagesWithLocationAvailable && !locationNamesFound) {
+      String text = String.format(Messages
+          .getString("WhatNext.SuggestLocationNamesFormat"), //$NON-NLS-1$
+          Messages.getString("ImagesTablePopupMenu.LocationNames")); //$NON-NLS-1$
       suggestions.add(text);
     }
 

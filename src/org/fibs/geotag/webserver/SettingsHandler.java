@@ -66,6 +66,10 @@ public class SettingsHandler implements ContextHandler {
         Settings.put(SETTING.GOOGLE_MAP_SHOW_TRACKS, Boolean
             .parseBoolean(value));
       }
+      if (parameter.equals("wikipedia")) { //$NON-NLS-1$
+        Settings.put(SETTING.GOOGLE_MAP_SHOW_WIKIPEDIA, Boolean
+            .parseBoolean(value));
+      }
     }
     // send back a non-null response
     return server.xmlResponse("<ok/>"); //$NON-NLS-1$

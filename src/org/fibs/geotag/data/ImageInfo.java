@@ -31,6 +31,8 @@ import java.util.TimeZone;
 
 import javax.swing.ImageIcon;
 
+import org.fibs.geotag.geonames.Location;
+
 /**
  * A class holding the information we have for an image
  * 
@@ -59,7 +61,9 @@ public class ImageInfo implements Comparable<ImageInfo> {
     /** Location data was computed from a track file */
     TRACK,
     /** Location was copied from another image */
-    COPIED
+    COPIED,
+    /** Location name was retrieved from geonames.org */
+    GEONAMES
   }
 
   /**
@@ -135,6 +139,18 @@ public class ImageInfo implements Comparable<ImageInfo> {
 
   /** The GPSDateTime EXIF entry */
   private String GPSDateTime;
+
+  /** Nearby locations we have found */
+  private List<Location> nearbyLocations;
+
+  /** The location name we use for this image */
+  private String locationName;
+
+  /** The country name for this image */
+  private String countryName;
+
+  /** The province/state etc name for this image */
+  private String provinceName;
 
   /** The Orientation EXIF entry */
   private String orientation;
@@ -287,6 +303,24 @@ public class ImageInfo implements Comparable<ImageInfo> {
    */
   public boolean hasNewLocation() {
     return (source != DATA_SOURCE.NONE) && (source != DATA_SOURCE.IMAGE);
+  }
+
+  /**
+   * Check if any of location name, province or country is set
+   * 
+   * @return True if one or more of them are not null and contain text
+   */
+  public boolean hasLocationName() {
+    if (locationName != null && locationName.length() > 0) {
+      return true;
+    }
+    if (provinceName != null && provinceName.length() > 0) {
+      return true;
+    }
+    if (countryName != null && countryName.length() > 0) {
+      return true;
+    }
+    return false;
   }
 
   /**
@@ -579,6 +613,78 @@ public class ImageInfo implements Comparable<ImageInfo> {
    */
   public void setOrientation(String orientation) {
     this.orientation = orientation;
+  }
+
+  /**
+   * @return the locationName
+   */
+  public String getLocationName() {
+    return locationName;
+  }
+
+  /**
+   * This has package visibility to force use of undo-able edits
+   * 
+   * @param locationName
+   *          the locationName to set
+   * @param source
+   */
+  void setLocationName(String locationName, DATA_SOURCE source) {
+    this.locationName = locationName;
+    this.source = source;
+  }
+
+  /**
+   * @return the countryName
+   */
+  public String getCountryName() {
+    return countryName;
+  }
+
+  /**
+   * This has package visibility to force use of undo-able edits
+   * 
+   * @param countryName
+   *          the countryName to set
+   * @param source
+   */
+  void setCountryName(String countryName, DATA_SOURCE source) {
+    this.countryName = countryName;
+    this.source = source;
+  }
+
+  /**
+   * @return the provinceName
+   */
+  public String getProvinceName() {
+    return provinceName;
+  }
+
+  /**
+   * This has package visibility to force use of undo-able edits
+   * 
+   * @param provinceName
+   *          the provinceName to set
+   * @param source
+   */
+  void setProvinceName(String provinceName, DATA_SOURCE source) {
+    this.provinceName = provinceName;
+    this.source = source;
+  }
+
+  /**
+   * @return the nearbyLocations
+   */
+  public List<Location> getNearbyLocations() {
+    return nearbyLocations;
+  }
+
+  /**
+   * @param nearbyLocations
+   *          the nearbyLocations to set
+   */
+  public void setNearbyLocations(List<Location> nearbyLocations) {
+    this.nearbyLocations = nearbyLocations;
   }
 
   /**

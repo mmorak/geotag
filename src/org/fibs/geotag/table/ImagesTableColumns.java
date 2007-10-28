@@ -50,7 +50,13 @@ public class ImagesTableColumns {
     /** THe column for the altitude */
     ALTITUDE,
     /** The column for the direction */
-    DIRECTION
+    DIRECTION,
+    /** The column for the location name */
+    LOCATION_NAME,
+    /** The column for the province/state etc name */
+    PROVINCE_NAME,
+    /** The column for the country name */
+    COUNTRY_NAME
   }
 
   /**
@@ -75,6 +81,12 @@ public class ImagesTableColumns {
         return Messages.getString("ImagesTableColumns.TooltipAltitude"); //$NON-NLS-1$
       case DIRECTION:
         return Messages.getString("ImagesTableColumns.TooltipDirection"); //$NON-NLS-1$
+      case LOCATION_NAME:
+        return Messages.getString("ImagesTableColumns.LocationName"); //$NON-NLS-1$
+      case PROVINCE_NAME:
+        return Messages.getString("ImagesTableColumns.ProvinceStateName"); //$NON-NLS-1$
+      case COUNTRY_NAME:
+        return Messages.getString("ImagesTableColumns.CountryName"); //$NON-NLS-1$
     }
     return null;
   }

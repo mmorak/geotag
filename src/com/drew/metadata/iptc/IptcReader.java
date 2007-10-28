@@ -17,16 +17,17 @@
 
 package com.drew.metadata.iptc;
 
+import java.io.File;
+import java.io.InputStream;
+import java.nio.charset.Charset;
+import java.util.Date;
+
 import com.drew.imaging.jpeg.JpegProcessingException;
 import com.drew.imaging.jpeg.JpegSegmentReader;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.MetadataException;
 import com.drew.metadata.MetadataReader;
-
-import java.io.File;
-import java.io.InputStream;
-import java.util.Date;
 
 /**
  * 
@@ -200,7 +201,13 @@ public class IptcReader implements MetadataReader {
     if (tagByteCount < 1) {
       str = "";
     } else {
-      str = new String(_data, offset, tagByteCount);
+      try {
+        str = new String(_data, offset, tagByteCount, Charset
+            .forName("windows-1252"));
+      } catch (Exception e1) {
+        e1.printStackTrace();
+        str = new String(_data, offset, tagByteCount);
+      }
     }
     if (directory.containsTag(tagIdentifier)) {
       String[] oldStrings;

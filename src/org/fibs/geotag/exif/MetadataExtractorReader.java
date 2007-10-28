@@ -24,13 +24,16 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
 
+import org.fibs.geotag.data.ImageInfo;
 import org.fibs.geotag.data.UpdateCameraDate;
+import org.fibs.geotag.data.UpdateCountryName;
 import org.fibs.geotag.data.UpdateGPSAltitude;
 import org.fibs.geotag.data.UpdateGPSDateTime;
 import org.fibs.geotag.data.UpdateGPSImgDirection;
 import org.fibs.geotag.data.UpdateGPSLatitude;
 import org.fibs.geotag.data.UpdateGPSLongitude;
-import org.fibs.geotag.data.ImageInfo;
+import org.fibs.geotag.data.UpdateLocationName;
+import org.fibs.geotag.data.UpdateProvinceName;
 import org.fibs.geotag.data.ImageInfo.DATA_SOURCE;
 
 import com.drew.imaging.jpeg.JpegMetadataReader;
@@ -40,6 +43,7 @@ import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.exif.ExifDirectory;
 import com.drew.metadata.exif.GpsDirectory;
+import com.drew.metadata.iptc.IptcDirectory;
 
 /**
  * @author Andreas Schneider
@@ -222,6 +226,27 @@ public class MetadataExtractorReader implements ExifReader {
           if (date != null && time != null) {
             // we update the ImageInfo
             new UpdateGPSDateTime(imageInfo, date + ' ' + time);
+          }
+        } else if (directory.getName().equals("Iptc")) { //$NON-NLS-1$
+          try {
+            String location = directory.getString(IptcDirectory.TAG_CITY);
+            new UpdateLocationName(imageInfo, location, DATA_SOURCE.IMAGE);
+          } catch (Exception e) {
+            e.printStackTrace();
+          }
+          try {
+            String country = directory
+                .getString(IptcDirectory.TAG_COUNTRY_OR_PRIMARY_LOCATION);
+            new UpdateCountryName(imageInfo, country, DATA_SOURCE.IMAGE);
+          } catch (Exception e) {
+            e.printStackTrace();
+          }
+          try {
+            String province = directory
+                .getString(IptcDirectory.TAG_PROVINCE_OR_STATE);
+            new UpdateProvinceName(imageInfo, province, DATA_SOURCE.IMAGE);
+          } catch (Exception e) {
+            e.printStackTrace();
           }
         }
       }

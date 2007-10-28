@@ -1,0 +1,203 @@
+/**
+ * Geotag
+ * Copyright (C) 2007 Andreas Schneider
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+package org.fibs.geotag.geonames;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.fibs.geotag.Settings;
+import org.fibs.geotag.Settings.SETTING;
+import org.xml.sax.Attributes;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.DefaultHandler;
+import org.xml.sax.helpers.XMLReaderFactory;
+
+/**
+ * A class sending a request to genames.org and parsing the response
+ * 
+ * @author Andreas Schneider
+ * 
+ */
+public class LocationHandler extends DefaultHandler {
+
+  /** A list of all locations retrieved */
+  private List<Location> locations = new ArrayList<Location>();
+
+  /** The location we are currently parsing */
+  private Location currentLocation = null;
+
+  /** Used to build the value of the element we are parsing */
+  private StringBuilder currentValue = null;
+
+  /**
+   * @param latitude
+   * @param longitude
+   */
+  public LocationHandler(String latitude, String longitude) {
+    try {
+      // Create a SAX 2 parser
+      XMLReader xmlReader = XMLReaderFactory.createXMLReader();
+      // This object is the context handler
+      xmlReader.setContentHandler(this);
+      // Build the request
+      String url = Geonames.GEONAMES_URL + "/findNearbyPlaceName?lat=" //$NON-NLS-1$
+          + latitude + "&lng=" + longitude + "&style=FULL"; //$NON-NLS-1$ //$NON-NLS-2$
+      int radius = Settings.get(SETTING.GEONAMES_RADIUS_KM, 0);
+      if (radius != 0) {
+        url += "&radius=" + radius; //$NON-NLS-1$
+      }
+      URL request = new URL(url);
+      InputStream inputStream = request.openStream();
+      xmlReader.parse(new InputSource(inputStream));
+    } catch (MalformedURLException e) {
+      e.printStackTrace();
+    } catch (SAXException e) {
+      e.printStackTrace();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+
+  /**
+   * @see org.xml.sax.helpers.DefaultHandler#startDocument()
+   */
+  @Override
+  public void startDocument() throws SAXException {
+    //
+  }
+
+  /**
+   * @see org.xml.sax.helpers.DefaultHandler#endDocument()
+   */
+  @Override
+  public void endDocument() throws SAXException {
+    // do something
+  }
+
+  /**
+   * @see org.xml.sax.helpers.DefaultHandler#startElement(java.lang.String,
+   *      java.lang.String, java.lang.String, org.xml.sax.Attributes)
+   */
+  @Override
+  public void startElement(String namespaceURI, String localName, String qName,
+      Attributes attr) throws SAXException {
+    // we only look at the localName.. geonames.org doesn't use attributes
+    currentValue = null;
+    for (ELEMENTS tag : ELEMENTS.values()) {
+      if (tag.toString().equals(localName)) {
+        currentValue = new StringBuilder();
+        // System.out.println(tag);
+        if (tag == ELEMENTS.geoname) {
+          // a new location
+          currentLocation = new Location();
+        }
+        break;
+      }
+    }
+  }
+
+  /**
+   * @see org.xml.sax.helpers.DefaultHandler#endElement(java.lang.String,
+   *      java.lang.String, java.lang.String)
+   */
+  @Override
+  public void endElement(String namespaceURI, String localName, String qName)
+      throws SAXException {
+    for (ELEMENTS tag : ELEMENTS.values()) {
+      if (tag.toString().equals(localName)) {
+        switch (tag) {
+          case geonames:
+            // nothing to be done
+            break;
+          case geoname:
+            // finished with one location
+            locations.add(currentLocation);
+            currentLocation = null;
+            break;
+          case name:
+            currentLocation.setName(currentValue.toString());
+            break;
+          case lat:
+            currentLocation.setLatitude(currentValue.toString());
+            break;
+          case lng:
+            currentLocation.setLongitude(currentValue.toString());
+            break;
+          case countryName:
+            currentLocation.setCountryName(currentValue.toString());
+            break;
+          case adminName1:
+            currentLocation.setProvince(currentValue.toString());
+            break;
+          case distance:
+            currentLocation.setDistance(Double.parseDouble(currentValue
+                .toString()));
+            break;
+        }
+      }
+    }
+    currentValue = null;
+  }
+
+  /**
+   * @see org.xml.sax.helpers.DefaultHandler#characters(char[], int, int)
+   */
+  @Override
+  public void characters(char[] ch, int start, int length) throws SAXException {
+    if (currentValue != null) {
+      currentValue.append(ch, start, length);
+    }
+  }
+
+  /**
+   * @return the locations
+   */
+  public List<Location> getLocations() {
+    return locations;
+  }
+
+  /**
+   * The XML elements we are interested in. Specified exactly as the appear in
+   * the XML
+   */
+  enum ELEMENTS {
+    /** Entries are enclosed in a 'geonames' element */
+    geonames,
+    /** Name of element containing a geoname */
+    geoname,
+    /** Element for location name */
+    name,
+    /** Element specifying latitude */
+    lat,
+    /** Element specifying longitude */
+    lng,
+    /** Element for country name */
+    countryName,
+    /** Element for province/state */
+    adminName1,
+    /** Element specifying the distance from the requested latitude/longitude */
+    distance
+  }
+}

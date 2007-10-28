@@ -198,6 +198,11 @@ public class SettingsDialog extends JDialog implements TreeSelectionListener {
         Messages.getString("SettingsDialog.Font"), SETTING.FONT, FontUtil.fontToID(UIManager.getLookAndFeel().getDefaults().getFont("Table.font"))); //$NON-NLS-1$ //$NON-NLS-2$
     addPanel(general, font);
 
+    BooleanSettingsPanel tooltipThumbnails = new BooleanSettingsPanel(
+        parent,
+        Messages.getString("SettingsDialog.ThumbnailsInTooltips"), SETTING.TUMBNAILS_IN_TOOLTIPS, true); //$NON-NLS-1$
+    addPanel(general, tooltipThumbnails);
+
     BooleanSettingsPanel xmpOnly = new BooleanSettingsPanel(
         parent,
         Messages.getString("SettingsDialog.XmpFilesOnly"), SETTING.XMP_FILES_ONLY, false); //$NON-NLS-1$
@@ -272,6 +277,17 @@ public class SettingsDialog extends JDialog implements TreeSelectionListener {
     export.add(googleearth);
 
     top.add(export);
+
+    DefaultMutableTreeNode location = new DefaultMutableTreeNode(Messages
+        .getString("SettingsDialog.LookUp")); //$NON-NLS-1$
+    DefaultMutableTreeNode geonames = new DefaultMutableTreeNode(Messages
+        .getString("SettingsDialog.Geonames")); //$NON-NLS-1$
+    IntegerSettingsPanel radius = new IntegerSettingsPanel(parent, Messages
+        .getString("SettingsDialog.Radius"), SETTING.GEONAMES_RADIUS_KM, 0); //$NON-NLS-1$
+    addPanel(geonames, radius);
+    location.add(geonames);
+
+    top.add(location);
   }
 
   /**

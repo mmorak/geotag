@@ -160,14 +160,25 @@ public class WebServer extends NanoHTTPD {
     ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
     try {
       byteArrayOutputStream.write(xml.getBytes());
-      ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(
-          byteArrayOutputStream.toByteArray());
-      return new Response(NanoHTTPD.HTTP_OK, WebServer.XML_MIME_TYPE,
-          byteArrayInputStream);
+      return xmlResponse(byteArrayOutputStream);
     } catch (IOException e) {
       e.printStackTrace();
     }
     return null;
+  }
+
+  /**
+   * Convenience method
+   * 
+   * @param byteArrayOutputStream
+   *          A {@link ByteArrayOutputStream} containing XML data
+   * @return A response with that content and MIME type application/xml
+   */
+  public Response xmlResponse(ByteArrayOutputStream byteArrayOutputStream) {
+    ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(
+        byteArrayOutputStream.toByteArray());
+    return new Response(NanoHTTPD.HTTP_OK, WebServer.XML_MIME_TYPE,
+        byteArrayInputStream);
   }
 
 }

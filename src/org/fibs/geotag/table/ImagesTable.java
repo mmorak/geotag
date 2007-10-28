@@ -223,7 +223,7 @@ public class ImagesTable extends JTable {
           preferredWidth = defaultAltitudeWidth(fontMetrics);
           break;
         case DIRECTION:
-          preferredWidth = defaultDirectionWith(fontMetrics);
+          preferredWidth = defaultDirectionWidth(fontMetrics);
           break;
         case GPS_DATE:
           preferredWidth = defaultDateWidth(fontMetrics);
@@ -242,6 +242,15 @@ public class ImagesTable extends JTable {
           break;
         case IMAGE_NAME:
           preferredWidth = defaultImageNameWidth(fontMetrics);
+          break;
+        case LOCATION_NAME:
+          preferredWidth = defaultLocationNameWidth(fontMetrics);
+          break;
+        case PROVINCE_NAME:
+          preferredWidth = defaultProvinceNameWidth(fontMetrics);
+          break;
+        case COUNTRY_NAME:
+          preferredWidth = defaultCountryNameWidth(fontMetrics);
           break;
       }
       // add a few pixels gap
@@ -337,9 +346,33 @@ public class ImagesTable extends JTable {
    * @param fontMetrics
    * @return the default direction string width
    */
-  private int defaultDirectionWith(FontMetrics fontMetrics) {
+  private int defaultDirectionWidth(FontMetrics fontMetrics) {
     return fontMetrics.stringWidth("359." //$NON-NLS-1$
         + zeros.substring(0, ImagesTableModel.DIRECTION_DECIMALS));
+  }
+
+  /**
+   * @param fontMetrics
+   * @return the default location name string width
+   */
+  private int defaultLocationNameWidth(FontMetrics fontMetrics) {
+    return fontMetrics.stringWidth("Greenwich"); //$NON-NLS-1$
+  }
+
+  /**
+   * @param fontMetrics
+   * @return the default province/state string width
+   */
+  private int defaultProvinceNameWidth(FontMetrics fontMetrics) {
+    return fontMetrics.stringWidth("England"); //$NON-NLS-1$
+  }
+
+  /**
+   * @param fontMetrics
+   * @return the default country name string width
+   */
+  private int defaultCountryNameWidth(FontMetrics fontMetrics) {
+    return fontMetrics.stringWidth("United Kingdom"); //$NON-NLS-1$
   }
 
   /**
@@ -404,8 +437,9 @@ public class ImagesTable extends JTable {
     ImageIcon imageIcon = imageInfo.getThumbnail();
     final ImageToolTip tooltip = new ImageToolTip(imageIcon, imageInfo
         .getPath());
-    // only try loading thumnail once
-    if (imageIcon == null
+    // only try loading thumbnail once
+    boolean showThumbnails = Settings.get(SETTING.TUMBNAILS_IN_TOOLTIPS, true);
+    if (imageIcon == null && showThumbnails
         && imageInfo.getThumbNailStatus() == THUMBNAIL_STATUS.UNKNOWN) {
       ThumbnailWorker worker = new ThumbnailWorker(imageInfo) {
         @Override
@@ -422,6 +456,32 @@ public class ImagesTable extends JTable {
       worker.execute();
     }
     return tooltip;
+  }
+
+  /**
+   * Select all images with a location
+   */
+  public void selectAllWithLocation() {
+    clearSelection();
+    for (int row = 0; row < getRowCount(); row++) {
+      ImageInfo imageInfo = ((ImagesTableModel) getModel()).getImageInfo(row);
+      if (imageInfo.hasLocation()) {
+        addRowSelectionInterval(row, row);
+      }
+    }
+  }
+
+  /**
+   * Select all images with a new (updated) location
+   */
+  public void selectAllWithNewLocation() {
+    clearSelection();
+    for (int row = 0; row < getRowCount(); row++) {
+      ImageInfo imageInfo = ((ImagesTableModel) getModel()).getImageInfo(row);
+      if (imageInfo.hasNewLocation()) {
+        addRowSelectionInterval(row, row);
+      }
+    }
   }
 
   /**

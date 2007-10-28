@@ -38,6 +38,7 @@ import org.fibs.geotag.Settings.SETTING;
 import org.fibs.geotag.util.ImageInputStreamGobbler;
 import org.fibs.geotag.util.ImageUtil;
 import org.fibs.geotag.util.InputStreamGobbler;
+import org.fibs.geotag.util.Util;
 
 import com.acme.JPM.Decoders.PpmDecoder;
 
@@ -105,6 +106,7 @@ public class Dcraw {
     if (!available) {
       return null;
     }
+    long start = System.currentTimeMillis();
     // build the command to be executed
     List<String> command = new ArrayList<String>();
     // Start with the command name
@@ -141,17 +143,21 @@ public class Dcraw {
       // there should now be some image data ready in the output stream
       byte[] imageData = outputStream.toByteArray();
       // there might be an error message in there though, which we check first
-      String imageDataString = new String(imageData);
-      if (imageDataString.startsWith(rawFile.getPath())) {
+      // String imageDataString = new String(imageData);
+      byte[] filenameBytes = rawFile.getPath().getBytes();
+      if (Util.startsWith(imageData, filenameBytes)) {
         // The image path is certainly not part of the image
         // dcraw error messages however start with it.
-        System.err.println(imageDataString);
+        System.err.println(new String(imageData));
         return null;
       }
+
       // create an InputStream to read an image from the data
       ByteArrayInputStream imageStream = new ByteArrayInputStream(imageData);
       // read the image from the stream - this only works for jpegs
+      long readStart = System.currentTimeMillis();
       BufferedImage bufferedImage = ImageIO.read(imageStream);
+      long readEnd = System.currentTimeMillis();
       imageStream.close();
       if (bufferedImage == null) {
         // could not read jpeg - try ppm
@@ -172,6 +178,10 @@ public class Dcraw {
         System.err
             .println("No thumbnail for " + rawFile.getName() + ' ' + imageData.length + " bytes"); //$NON-NLS-1$ //$NON-NLS-2$
       }
+      long finished = System.currentTimeMillis();
+      System.out.println("Loading RAW " + rawFile.getName() + " " //$NON-NLS-1$ //$NON-NLS-2$
+          + ((finished - start) / 1000.0) + " (" //$NON-NLS-1$
+          + ((readEnd - readStart) / 1000.0) + ")"); //$NON-NLS-1$
       return bufferedImage;
     } catch (IOException e) {
       e.printStackTrace();

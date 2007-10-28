@@ -22,6 +22,7 @@ if (GBrowserIsCompatible()) {
 	var language = "en" // default language
 	var showDirection = false
 	var showTracks = false
+	var showWikipedia = false
 	
 	// create the map
   var map = new GMap2(document.getElementById("map"))
@@ -132,9 +133,9 @@ if (GBrowserIsCompatible()) {
     if (showDirection) {
       url += "&direction=" + newDirection
     }
-    var request = GXmlHttp.create()
-    request.open("GET", url, true)
-    request.send(null)
+    updateRequest = GXmlHttp.create()
+    updateRequest.open("GET", url, true)
+    updateRequest.send(null)
     // adjust the line from camera to marker
     imageInfo.directionLine = createDirectionLine(imageInfo)
     map.addOverlay(imageInfo.directionLine)
@@ -221,14 +222,16 @@ if (GBrowserIsCompatible()) {
     	URL += index == 0 ? "" : ","
     	URL += imageInfoList.get(index).id
     }
-    var request = GXmlHttp.create()
-    request.open("GET", URL, true)
-    request.onreadystatechange = function() {
+    GLog.write("Requesting image infos")
+    var imageInfoRequest = GXmlHttp.create()
+    imageInfoRequest.open("GET", URL, true)
+    imageInfoRequest.onreadystatechange = function() {
       // only interested if the request has completed
-      if (request.readyState == 4) {
+      if (imageInfoRequest.readyState == 4) {
         // parse the information
-        xmlDocument = GXml.parse(request.responseText)
+        xmlDocument = GXml.parse(imageInfoRequest.responseText)
         infos = xmlDocument.documentElement.getElementsByTagName("image")
+        GLog.write("ImageInfos: "+infos.length)
         for (var index = 0; index < infos.length; index++) {
           info = infos[index]
           id = parseFloat(info.getAttribute("id"))
@@ -277,7 +280,7 @@ if (GBrowserIsCompatible()) {
         }
       }
     }
-    request.send(null)
+    imageInfoRequest.send(null)
   }    
   
   // parse the URL arguments
@@ -338,6 +341,9 @@ if (GBrowserIsCompatible()) {
       if (name == 'showtracks') {
       	showTracks = (value == "true")
       }
+      if (name == 'wikipedia') {
+      	showWikipedia = (value == 'true')
+      }
     }
   }
   
@@ -390,6 +396,8 @@ if (GBrowserIsCompatible()) {
   var mouseZoomShortcut = 'z'
   var showTracksText = 'Display tracks'
   var showTracksShortcut = 't'
+  var showWikipediaText = 'Show Wikipedia entries'
+  var showWikipediaShortcut = 'W';
   var currentImageText = "Current image"
   var currentImageShortcut = 'C'
   var nextImageText = 'Next image'
@@ -409,6 +417,8 @@ if (GBrowserIsCompatible()) {
     mouseZoomShortcut = 'z'
     showTracksText = "Strecken anzeigen"
     showTracksShortcut = 'S'
+    showWikipediaText = 'Wikipedia Eintr&auml;ge zeigen'
+    showWikipediaShortcut = 'W'
     currentImageText = "Aktuelles Bild"
     currentImageShortcut = 'B'
     nextImageText = 'N&auml;chstes Bild'
@@ -427,6 +437,7 @@ if (GBrowserIsCompatible()) {
   hideMenuText = setShortcut(hideMenuText, toggleMenuShortcut)
   mouseZoomText = setShortcut(mouseZoomText, mouseZoomShortcut)
   showTracksText = setShortcut(showTracksText, showTracksShortcut)
+  showWikipediaText = setShortcut(showWikipediaText, showWikipediaShortcut)
   currentImageText = setShortcut(currentImageText, currentImageShortcut)
   nextImageText = setShortcut(nextImageText, nextImageShortcut)
   previousImageText = setShortcut(previousImageText, previousImageShortcut)
@@ -447,6 +458,7 @@ if (GBrowserIsCompatible()) {
     		   '<div id="menuPanel" style="display:none">'+
     		       '<div class="htmlControl" id="scrollZoomItem"><input type="checkbox" id="scrollZoomCheckBox">'+mouseZoomText+'</input></div>'+
     		       '<div class="htmlControl" id="showTracksItem"><input type="checkbox" id="showTracksCheckBox">'+showTracksText+'</input></div>'+
+    		       '<div class="htmlControl" id="showWikipediaItem"><input type="checkbox" id="showWikipediaCheckBox">'+showWikipediaText+'</input></div>'+
     		       '<div class="htmlControl htmlMenuItem" id="currentImage">'+currentImageText+'</div>'+
     		       '<div class="htmlControl htmlMenuItem" id="nextImage">'+nextImageText+'</div>'+
     		       '<div class="htmlControl htmlMenuItem" id="previousImage">'+previousImageText+'</div>'+
@@ -463,11 +475,11 @@ if (GBrowserIsCompatible()) {
     html='<b>'+html+'</b>'
     button.innerHTML=html
     // tell the main program about it
-    var request = GXmlHttp.create()
-    request.open("GET", "/settings/set.html?menuopen="+visible, true)
-    // leave out the request.onreadystatechange = function() bit
+    menuRequest = GXmlHttp.create()
+    menuRequest.open("GET", "/settings/set.html?menuopen="+visible, true)
+    // leave out the menuRequest.onreadystatechange = function() bit
     // we're not interested in the response from the server
-    request.send(null)
+    menuRequest.send(null)
   }
   // add function that opens/closes the menu
   toggleMenu = function() {
@@ -500,9 +512,9 @@ if (GBrowserIsCompatible()) {
       map.disableScrollWheelZoom()
     }
     // tell the main program about it
-    var request = GXmlHttp.create()
-    request.open("GET", "/settings/set.html?wheelzoom="+checked, true)
-    request.send(null)
+    wheelZommRequest = GXmlHttp.create()
+    wheelZoomRequest.open("GET", "/settings/set.html?wheelzoom="+checked, true)
+    wheelZoomRequest.send(null)
   } 
   document.getElementById("scrollZoomCheckBox").onclick = scrollZoomClicked
   
@@ -522,11 +534,33 @@ if (GBrowserIsCompatible()) {
   		requestTracks()
   	}
   	// tell the main program about it
-    var request = GXmlHttp.create()
-    request.open("GET", "/settings/set.html?showtracks="+checked, true)
-    request.send(null)
+    showTracksRequest = GXmlHttp.create()
+    showTracksRequest.open("GET", "/settings/set.html?showtracks="+checked, true)
+    showTracksRequest.send(null)
   }
   document.getElementById("showTracksCheckBox").onclick = showTracksClicked
+  
+  // show Wikipedia or not menu item
+  updateShowWikipediaCheckbox = function() {
+    var checkBox = document.getElementById("showWikipediaCheckBox")
+    checkBox.checked = showWikipedia
+  }
+  updateShowWikipediaCheckbox()
+  
+  // a callback when show Wikipedia is clicked
+  showWikipediaClicked = function() {
+    var checked = document.getElementById("showWikipediaCheckBox").checked
+    showWikipedia = checked
+    removeWikipediaEntries()
+    if (showWikipedia) {
+      requestWikipediaEntries()
+    }
+    // tell the main program about it
+    showWikiRequest = GXmlHttp.create()
+    showWikiRequest.open("GET", "/settings/set.html?wikipedia="+checked, true)
+    showWikiRequest.send(null)
+  }
+  document.getElementById("showWikipediaCheckBox").onclick = showWikipediaClicked
   
   // handle the 'current image' menu item
   gotoCurrentImage = function() {
@@ -557,7 +591,7 @@ if (GBrowserIsCompatible()) {
   
   // handle the 'show all' menu item
   showAllImages = function() {
-    // this is a bit of. First we need to find the bounds of the images
+    // First we need to find the bounds of the images
     // this only makes sense if there is more than one image
     if (imageInfos.size() > 0) {
       var minLatitude = 90
@@ -614,6 +648,10 @@ if (GBrowserIsCompatible()) {
     	showTracks = ! showTracks
     	updateShowTracksCheckbox()
     	showTracksClicked()
+    } else if (keyChar == showWikipediaShortcut.toUpperCase()) {
+    	showWikipedia = ! showWikipedia
+    	updateShowWikipediaCheckbox()
+    	showWikipediaClicked()
     } else if (keyChar == currentImageShortcut.toUpperCase()) {
       gotoCurrentImage()
     } else if (keyChar == nextImageShortcut.toUpperCase()) {
@@ -657,16 +695,16 @@ if (GBrowserIsCompatible()) {
     var tracksURL = "/tracks/tracks.kml?south="
       + south + "&west=" + west + "&north=" + north + "&east=" + east
       + "&width=" +size.width + "&height=" + size.height
-    var request = GXmlHttp.create()
-    request.open("GET", tracksURL, true)
+    var tracksRequest = GXmlHttp.create()
+    tracksRequest.open("GET", tracksURL, true)
     // Geotag will send tracks for this map
-    request.onreadystatechange = function() {
+    tracksRequest.onreadystatechange = function() {
       // only interested if the request has completed
-      if (request.readyState == 4) {
+      if (tracksRequest.readyState == 4) {
         removeTracks()
         var numPoints = 0
         // parse the document
-        var xmlDocument = GXml.parse(request.responseText)
+        var xmlDocument = GXml.parse(tracksRequest.responseText)
         // get the tracks
         var tracks = xmlDocument.documentElement.getElementsByTagName("track")
         // loop through the tracks
@@ -683,13 +721,82 @@ if (GBrowserIsCompatible()) {
         }
       }
     }
-    request.send(null)  	
+    tracksRequest.send(null)  	
+  }
+  
+  // we can also show nearby Wikipedia entries
+  wikipediaEntries = []
+  
+  removeWikipediaEntries = function() {
+    // remove all wikipedia entries currently displayed
+    for (var index = 0; index < wikipediaEntries.length; index++) {
+      map.removeOverlay(wikipediaEntries[index])
+    }
+    // a new empty array
+    wikipediaEntries = []
+  }
+  
+  wikipediaIcon = new GIcon(G_DEFAULT_ICON,
+    "http://maps.google.com/mapfiles/kml/pal3/icon35.png",
+    null,
+    "http://maps.google.com/mapfiles/kml/pal3/icon35s.png")
+    
+  requestWikipediaEntries = function() {
+    // collect information about the map
+    var bounds = map.getBounds()
+    var south = bounds.getSouthWest().lat()
+    var west = bounds.getSouthWest().lng()
+    var north = bounds.getNorthEast().lat()
+    var east = bounds.getNorthEast().lng()
+    // tell geonames.org about it
+    var URL = "/geonames/wikipediaBoundingBox?south="
+      + south + "&west=" + west + "&north=" + north + "&east=" + east
+    var wikipediaRequest = GXmlHttp.create()
+    wikipediaRequest.open("GET", URL, true)
+    // geonames will send wikipedia entries for this map
+    wikipediaRequest.onreadystatechange = function() {
+      // only interested if the wikipediaRequest has completed
+      if (wikipediaRequest.readyState == 4) {
+        removeWikipediaEntries()
+        var numEntries = 0
+        // parse the document
+        var xmlDocument = GXml.parse(wikipediaRequest.responseText)
+        //GLog.write(wikipediaRequest.responseText)
+        // get the geonames entry
+        var entries = xmlDocument.documentElement.getElementsByTagName("entry")
+        GLog.write(entries.length+" entries")
+        // loop through the entries
+        for (var entryIndex = 0; entryIndex < entries.length; entryIndex++) {
+        	var entry = entries[entryIndex]
+          var title = GXml.value(entry.getElementsByTagName("title")[0])
+          var latitude = parseFloat(GXml.value(entry.getElementsByTagName("lat")[0]))
+          var longitude = parseFloat(GXml.value(entry.getElementsByTagName("lng")[0]))
+          var wikipediaUrl = GXml.value(entry.getElementsByTagName("wikipediaUrl")[0])
+          var thumbnail = GXml.value(entry.getElementsByTagName("thumbnailImg")[0])
+          var location = new GLatLng(latitude, longitude)   
+          var marker = new GMarker(location, {icon: wikipediaIcon, draggable: false})   
+          var html = "<span class='infoWindowStyle'><center>Wikipedia"
+          //html += '<br><img src="' + thumbnail
+          //+ '" width="100">'
+          html += '<br><a href="' +wikipediaUrl + '">'
+          html += title + '</a></center></span>'
+          GLog.write(html);
+          marker.bindInfoWindowHtml(html, {})
+          wikipediaEntries[entryIndex] = marker;
+          map.addOverlay(marker)
+        }
+      }
+    }
+    wikipediaRequest.send(null)    
   }
   
   // a function to be called every time the map changes
   mapChanged = function () {
   	if (showTracks) {
       requestTracks()
+  	}
+  	if (showWikipedia) {
+  		requestWikipediaEntries()
   	}
   }
   
@@ -698,19 +805,19 @@ if (GBrowserIsCompatible()) {
   mapChanged()
   
   GEvent.addListener(map, "zoomend", function(oldLevel, newLevel) {
-    var request = GXmlHttp.create()
-    request.open("GET", "/settings/set.html?zoom="+newLevel, true)
+    zoomRequest = GXmlHttp.create()
+    zoomRequest.open("GET", "/settings/set.html?zoom="+newLevel, true)
     // leave out the request.onreadystatechange = function() bit
     // we're not interested in the response from the server
-    request.send(null)
+    zoomRequest.send(null)
   })
   
   GEvent.addListener(map, "maptypechanged", function() {
-    var request = GXmlHttp.create()
-    request.open("GET", "/settings/set.html?maptype=" 
+    mapTypeRequest = GXmlHttp.create()
+    mapTypeRequest.open("GET", "/settings/set.html?maptype=" 
        +map.getCurrentMapType().getName())
     // not interested in server response, just send the request
-    request.send(null)
+    mapTypeRequest.send(null)
   })
   
 } else {

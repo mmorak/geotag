@@ -1,3 +1,13 @@
+2007-10-28 Release 0.33
+  Added reverse geocoding with geonames.org
+  The Edit menu now contains menu items to select
+  all images, images with locations or images with
+  new locations.
+  It is now possible to display nearby Wikipedia
+  entries on the Google Map.
+  Display of thumbnail images in tooltips can
+  now be turned off for better performance.
+  
 2007-10-22 Release 0.032
   Added export to Google Earth KML/KMZ files.
   Redesign of the Settings dialog.
