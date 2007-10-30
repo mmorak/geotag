@@ -48,7 +48,7 @@ public class ExifReaderTest extends TestCase {
     Directory directory = metadata.getDirectory(ExifDirectory.class);
     assertEquals("80", directory
         .getDescription(ExifDirectory.TAG_ISO_EQUIVALENT));
-    // TODO decide if this should still be returned -- it was being calculated
+    // SEP decide if this should still be returned -- it was being calculated
     // upon setting of a related tag
     // assertEquals("F9", directory.getDescription(ExifDirectory.TAG_APERTURE));
   }

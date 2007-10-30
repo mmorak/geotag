@@ -18,10 +18,9 @@
 
 package org.fibs.geotag.gui.settings;
 
-import java.awt.BorderLayout;
-
 import javax.swing.JFrame;
-import javax.swing.JTextField;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerNumberModel;
 
 import org.fibs.geotag.Settings;
 import org.fibs.geotag.Settings.SETTING;
@@ -33,21 +32,44 @@ import org.fibs.geotag.Settings.SETTING;
 @SuppressWarnings("serial")
 public class IntegerSettingsPanel extends SettingsPanel {
 
-  /** The TextField to hold the value */
-  JTextField textField;
+  /** The spinner model holding the selected value */
+  private SpinnerNumberModel spinnerModel;
 
   /**
    * @param parent
    * @param title
    * @param setting
    * @param defaultValue
+   * @param minimum
+   * @param maximum
+   * @param stepSize
    */
   public IntegerSettingsPanel(JFrame parent, String title, SETTING setting,
-      int defaultValue) {
-    super(parent, title, setting, Integer.toString(defaultValue));
-    textField = new JTextField(Integer.toString(Settings.get(setting,
-        defaultValue)));
-    add(textField, BorderLayout.NORTH);
+      int defaultValue, int minimum, int maximum, int stepSize) {
+    this(parent, title, null, true, setting, defaultValue, minimum, maximum,
+        stepSize);
+  }
+
+  /**
+   * @param parent
+   * @param title
+   * @param enablingSetting
+   * @param defaultEnabled
+   * @param setting
+   * @param defaultValue
+   * @param minimum
+   * @param maximum
+   * @param stepSize
+   */
+  public IntegerSettingsPanel(JFrame parent, String title,
+      SETTING enablingSetting, boolean defaultEnabled, SETTING setting,
+      int defaultValue, int minimum, int maximum, int stepSize) {
+    super(parent, title, enablingSetting, defaultEnabled, setting, Integer
+        .toString(defaultValue));
+    int value = Settings.get(setting, defaultValue);
+    spinnerModel = new SpinnerNumberModel(value, minimum, maximum, stepSize);
+    JSpinner spinner = new JSpinner(spinnerModel);
+    addEditor(spinner);
   }
 
   /**
@@ -55,7 +77,7 @@ public class IntegerSettingsPanel extends SettingsPanel {
    */
   @Override
   public String getValue() {
-    return textField.getText();
+    return spinnerModel.getNumber().toString();
   }
 
 }

@@ -64,9 +64,12 @@ public class LocationHandler extends DefaultHandler {
       // Build the request
       String url = Geonames.GEONAMES_URL + "/findNearbyPlaceName?lat=" //$NON-NLS-1$
           + latitude + "&lng=" + longitude + "&style=FULL"; //$NON-NLS-1$ //$NON-NLS-2$
-      int radius = Settings.get(SETTING.GEONAMES_RADIUS_KM, 0);
-      if (radius != 0) {
-        url += "&radius=" + radius; //$NON-NLS-1$
+      boolean useRadius = Settings.get(SETTING.GEONAMES_USE_RADIUS, false);
+      if (useRadius) {
+        int radius = Settings.get(SETTING.GEONAMES_RADIUS_KM, 5);
+        if (radius != 0) {
+          url += "&radius=" + radius; //$NON-NLS-1$
+        }
       }
       URL request = new URL(url);
       InputStream inputStream = request.openStream();

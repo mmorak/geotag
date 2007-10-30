@@ -369,7 +369,7 @@ public abstract class Directory implements Serializable {
         + "' cannot be cast to int.  It is of type '" + o.getClass() + "'.");
   }
 
-  // TODO get Array methods need to return cloned data, to maintain this
+  // SEP get Array methods need to return cloned data, to maintain this
   // directory's integrity
 
   /**

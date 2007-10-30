@@ -61,7 +61,7 @@ import com.jgoodies.looks.Options;
  * 
  * @author Andrej Golovnin
  * @author Karsten Lentzsch
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  * 
  * @see java.awt.AWTPermission
  * @see java.awt.Robot
@@ -110,7 +110,7 @@ public final class ShadowPopupFactory extends PopupFactory {
    * NullPointerException when we call <code>#getPopup</code>.
    * <p>
    * 
-   * TODO: The Mac case shows that we may have problems replacing non
+   * SEP: The Mac case shows that we may have problems replacing non
    * PopupFactory instances. Therefore we should consider replacing only
    * instances of PopupFactory.
    * 

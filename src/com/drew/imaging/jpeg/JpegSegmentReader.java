@@ -30,8 +30,8 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * Performs read functions of Jpeg files, returning specific file segments. TODO
- * add a findAvailableSegments() method TODO add more segment identifiers TODO
+ * Performs read functions of Jpeg files, returning specific file segments. SEP
+ * add a findAvailableSegments() method SEP add more segment identifiers SEP
  * add a getSegmentDescription() method, returning for example 'App1 application
  * data segment, commonly containing Exif data'
  * 

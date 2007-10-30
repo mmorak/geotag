@@ -290,7 +290,7 @@ public class CasioType2MakernoteDescriptor extends TagDescriptor {
   }
 
   public String getPrintImageMatchingInfoDescription() {
-    // TODO research PIM specification
+    // SEP research PIM specification
     // http://www.ozhiker.com/electronics/pjmt/jpeg_info/pim.html
     if (!_directory
         .containsTag(CasioType2MakernoteDirectory.TAG_CASIO_TYPE2_PRINT_IMAGE_MATCHING_INFO))

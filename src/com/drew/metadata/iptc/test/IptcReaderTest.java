@@ -63,5 +63,5 @@ public class IptcReaderTest extends TestCase {
         .getDescription(IptcDirectory.TAG_CATEGORY));
   }
 
-  // TODO Wrap more tests around the Iptc reader
+  // SEP Wrap more tests around the Iptc reader
 }

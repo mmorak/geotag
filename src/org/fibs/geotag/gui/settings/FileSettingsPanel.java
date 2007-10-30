@@ -49,7 +49,21 @@ public class FileSettingsPanel extends SettingsPanel {
    */
   public FileSettingsPanel(JFrame parent, String title, SETTING setting,
       String defaultValue) {
-    super(parent, title, setting, defaultValue);
+    this(parent, title, null, true, setting, defaultValue);
+  }
+
+  /**
+   * @param parent
+   * @param title
+   * @param enablingSetting
+   * @param defaultEnabled
+   * @param setting
+   * @param defaultValue
+   */
+  public FileSettingsPanel(JFrame parent, String title,
+      SETTING enablingSetting, boolean defaultEnabled, SETTING setting,
+      String defaultValue) {
+    super(parent, title, enablingSetting, defaultEnabled, setting, defaultValue);
     JPanel filePanel = new JPanel(new BorderLayout());
     textField = new JTextField(Settings.get(setting, defaultValue));
     filePanel.add(textField, BorderLayout.CENTER);
@@ -64,7 +78,7 @@ public class FileSettingsPanel extends SettingsPanel {
       }
     });
     filePanel.add(browseButton, BorderLayout.EAST);
-    add(filePanel, BorderLayout.NORTH);
+    addEditor(filePanel);
   }
 
   /**

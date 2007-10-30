@@ -135,13 +135,7 @@ public class SettingsDialog extends JDialog implements TreeSelectionListener {
     okButton.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         for (SettingsPanel settingsPanel : panelList) {
-          SETTING setting = settingsPanel.getSetting();
-          String value = settingsPanel.getValue();
-          if (!value.equals(Settings.get(setting, settingsPanel
-              .getDefaultValue()))) {
-            System.out.println(setting.toString() + '=' + value);
-            Settings.put(setting, value);
-          }
+          settingsPanel.save();
         }
         Settings.flush();
         dispose();
@@ -282,9 +276,15 @@ public class SettingsDialog extends JDialog implements TreeSelectionListener {
         .getString("SettingsDialog.LookUp")); //$NON-NLS-1$
     DefaultMutableTreeNode geonames = new DefaultMutableTreeNode(Messages
         .getString("SettingsDialog.Geonames")); //$NON-NLS-1$
-    IntegerSettingsPanel radius = new IntegerSettingsPanel(parent, Messages
-        .getString("SettingsDialog.Radius"), SETTING.GEONAMES_RADIUS_KM, 0); //$NON-NLS-1$
+    IntegerSettingsPanel radius = new IntegerSettingsPanel(
+        parent,
+        Messages.getString("SettingsDialog.Radius"), SETTING.GEONAMES_USE_RADIUS, false, SETTING.GEONAMES_RADIUS_KM, 5, 0, Integer.MAX_VALUE, 1); //$NON-NLS-1$
     addPanel(geonames, radius);
+    IntegerSettingsPanel wikipedia = new IntegerSettingsPanel(
+        parent,
+        Messages.getString("SettingsDialog.RetrieveWikipedia"), SETTING.GEONAMES_USE_WIKIPEDIA, //$NON-NLS-1$
+        false, SETTING.GEONAMES_WIKIPEDIA_ENTRIES, 1, 0, 50, 1);
+    addPanel(geonames, wikipedia);
     location.add(geonames);
 
     top.add(location);

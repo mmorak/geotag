@@ -18,8 +18,6 @@
 
 package org.fibs.geotag.gui.settings;
 
-import java.awt.BorderLayout;
-
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 
@@ -44,11 +42,12 @@ public class BooleanSettingsPanel extends SettingsPanel {
    */
   public BooleanSettingsPanel(JFrame parent, String title, SETTING setting,
       boolean defaultValue) {
-    super(parent, title, setting, Boolean.toString(defaultValue));
+    // Boolean settings never have an enabling setting
+    super(parent, title, null, true, setting, Boolean.toString(defaultValue));
     checkBox = new JCheckBox(title);
     boolean selelected = Settings.get(setting, defaultValue);
     checkBox.setSelected(selelected);
-    add(checkBox, BorderLayout.NORTH);
+    addEditor(checkBox);
   }
 
   /**

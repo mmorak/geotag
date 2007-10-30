@@ -1041,7 +1041,7 @@ public class ExifDescriptor extends TagDescriptor {
     // float apexValue = _directory.getFloat(ExifDirectory.TAG_SHUTTER_SPEED);
     // int apexPower = (int)Math.pow(2.0, apexValue);
     // return "1/" + apexPower + " sec";
-    // TODO test this method
+    // SEP test this method
     // thanks to Mark Edwards for spotting and patching a bug in the calculation
     // of this
     // description (spotted bug using a Canon EOS 300D)
@@ -1058,7 +1058,7 @@ public class ExifDescriptor extends TagDescriptor {
     }
 
     /*
-     * // This alternative implementation offered by Bill Richards // TODO
+     * // This alternative implementation offered by Bill Richards // SEP
      * determine which is the correct / more-correct implementation double
      * apexValue = _directory.getDouble(ExifDirectory.TAG_SHUTTER_SPEED); double
      * apexPower = Math.pow(2.0, apexValue);

@@ -191,6 +191,11 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
         super.mousePressed(event);
         if (event.isPopupTrigger()) {
           popupMenu(event);
+        } else if (event.getButton() == MouseEvent.BUTTON1) {
+          // this needs to be in mousePressed() not mouseClicked()
+          int mouseOnRow = table.rowAtPoint(event.getPoint());
+          ImageInfo imageInfo = tableModel.getImageInfo(mouseOnRow);
+          previewComponent.setImage(imageInfo);
         }
       }
 
@@ -199,16 +204,6 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
         super.mouseReleased(event);
         if (event.isPopupTrigger()) {
           popupMenu(event);
-        }
-      }
-
-      @Override
-      public void mouseClicked(MouseEvent event) {
-        super.mouseClicked(event);
-        if (event.getButton() == MouseEvent.BUTTON1) {
-          int mouseOnRow = table.rowAtPoint(event.getPoint());
-          ImageInfo imageInfo = tableModel.getImageInfo(mouseOnRow);
-          previewComponent.setImage(imageInfo);
         }
       }
 

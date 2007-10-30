@@ -465,7 +465,7 @@ public class ExifReader implements MetadataReader {
             processedDirectoryOffsets, subdirOffset, tiffHeaderOffset);
     } else if ("FUJIFILM".equals(firstEightChars)
         || "Fujifilm".equalsIgnoreCase(cameraModel)) {
-      // TODO make this field a passed parameter, to avoid threading issues
+      // SEP make this field a passed parameter, to avoid threading issues
       boolean byteOrderBefore = _isMotorollaByteOrder;
       // bug in fujifilm makernote ifd means we temporarily use Intel byte
       // ordering
@@ -492,7 +492,7 @@ public class ExifReader implements MetadataReader {
       // This Konica data is not understood. Header identified in accordance
       // with information at this site:
       // http://www.ozhiker.com/electronics/pjmt/jpeg_info/minolta_mn.html
-      // TODO determine how to process the information described at the above
+      // SEP determine how to process the information described at the above
       // website
       exifDirectory.addError("Unsupported Konica/Minolta data ignored.");
     } else if ("KYOCERA".equals(firstSevenChars)) {
@@ -533,7 +533,7 @@ public class ExifReader implements MetadataReader {
       processDirectory(_metadata.getDirectory(PentaxMakernoteDirectory.class),
           processedDirectoryOffsets, subdirOffset, subdirOffset);
     } else {
-      // TODO how to store makernote data when it's not from a supported camera
+      // SEP how to store makernote data when it's not from a supported camera
       // model?
       // this is difficult as the starting offset is not known. we could look
       // for it...

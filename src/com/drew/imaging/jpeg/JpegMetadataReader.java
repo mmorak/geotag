@@ -67,7 +67,7 @@ public class JpegMetadataReader {
       new ExifReader(exifSegment).extract(metadata);
     } catch (JpegProcessingException e) {
       // in the interests of catching as much data as possible, continue
-      // TODO lodge error message within exif directory?
+      // SEP lodge error message within exif directory?
     }
 
     try {
@@ -75,7 +75,7 @@ public class JpegMetadataReader {
           .readSegment(JpegSegmentReader.SEGMENT_APPD);
       new IptcReader(iptcSegment).extract(metadata);
     } catch (JpegProcessingException e) {
-      // TODO lodge error message within iptc directory?
+      // SEP lodge error message within iptc directory?
     }
 
     try {
@@ -83,7 +83,7 @@ public class JpegMetadataReader {
           .readSegment(JpegSegmentReader.SEGMENT_SOF0);
       new JpegReader(jpegSegment).extract(metadata);
     } catch (JpegProcessingException e) {
-      // TODO lodge error message within jpeg directory?
+      // SEP lodge error message within jpeg directory?
     }
 
     try {
@@ -91,7 +91,7 @@ public class JpegMetadataReader {
           .readSegment(JpegSegmentReader.SEGMENT_COM);
       new JpegCommentReader(jpegCommentSegment).extract(metadata);
     } catch (JpegProcessingException e) {
-      // TODO lodge error message within jpegcomment directory?
+      // SEP lodge error message within jpegcomment directory?
     }
 
     return metadata;
@@ -104,7 +104,7 @@ public class JpegMetadataReader {
      * We should only really be seeing Exif in _data[0]... the 2D array exists
      * because markers can theoretically appear multiple times in the file.
      */
-    // TODO test this method
+    // SEP test this method
     byte[][] exifSegment = decodeParam
         .getMarkerData(JPEGDecodeParam.APP1_MARKER);
     if (exifSegment != null && exifSegment[0].length > 0) {

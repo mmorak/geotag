@@ -18,8 +18,6 @@
 
 package org.fibs.geotag.gui.settings;
 
-import java.awt.BorderLayout;
-
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 
@@ -47,7 +45,22 @@ public class ChoiceSettingsPanel extends SettingsPanel {
    */
   public ChoiceSettingsPanel(JFrame parent, String title, SETTING setting,
       String[] choices, String defaultValue) {
-    super(parent, title, setting, defaultValue);
+    this(parent, title, null, true, setting, choices, defaultValue);
+  }
+
+  /**
+   * @param parent
+   * @param title
+   * @param enablingSetting
+   * @param defaultEnabled
+   * @param setting
+   * @param choices
+   * @param defaultValue
+   */
+  public ChoiceSettingsPanel(JFrame parent, String title,
+      SETTING enablingSetting, boolean defaultEnabled, SETTING setting,
+      String[] choices, String defaultValue) {
+    super(parent, title, enablingSetting, defaultEnabled, setting, defaultValue);
     this.choices = choices;
     comboBox = new JComboBox(choices);
     // comboBox.set
@@ -60,7 +73,7 @@ public class ChoiceSettingsPanel extends SettingsPanel {
     }
     int selectIndex = Settings.get(setting, defaultIndex);
     comboBox.setSelectedIndex(selectIndex);
-    add(comboBox, BorderLayout.NORTH);
+    addEditor(comboBox);
   }
 
   /**

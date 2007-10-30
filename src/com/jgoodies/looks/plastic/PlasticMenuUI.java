@@ -49,7 +49,7 @@ import com.jgoodies.looks.common.ExtBasicMenuUI;
  * <tt>Options.NO_ICONS_KEY</tt> to indicate that this menu has no icons.
  * 
  * @author Karsten Lentzsch
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  * 
  * @see com.jgoodies.looks.Options
  */
@@ -69,7 +69,7 @@ public final class PlasticMenuUI extends ExtBasicMenuUI {
 
   protected void uninstallDefaults() {
     super.uninstallDefaults();
-    // TODO 1.5: Replace by
+    // SEP 1.5: Replace by
     // LookAndFeel.installProperty(menuItem, "opaque",
     // Boolean.valueOf(oldOpaque));
     if (!LookUtils.IS_OS_WINDOWS_VISTA && !LookUtils.IS_JAVA_6_OR_LATER) {

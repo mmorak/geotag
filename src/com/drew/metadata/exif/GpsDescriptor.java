@@ -80,7 +80,7 @@ public class GpsDescriptor extends TagDescriptor {
   public String getHoursMinutesSecondsDescription(int tagType)
       throws MetadataException {
     Rational[] components = _directory.getRationalArray(tagType);
-    // TODO create an HoursMinutesSecods class ??
+    // SEP create an HoursMinutesSecods class ??
     int deg = components[0].intValue();
     float min = components[1].floatValue();
     float sec = components[2].floatValue();

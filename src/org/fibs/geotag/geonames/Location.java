@@ -18,13 +18,15 @@
 
 package org.fibs.geotag.geonames;
 
+import javax.swing.ImageIcon;
+
 /**
  * A class holding location information retrieved from geonames.org
  * 
  * @author Andreas Schneider
  * 
  */
-public class Location {
+public class Location implements Comparable<Location> {
   /** The location name */
   private String name;
 
@@ -142,6 +144,29 @@ public class Location {
    */
   public void setDistance(double distance) {
     this.distance = distance;
+  }
+
+  /**
+   * Subclasses can override this
+   * 
+   * @return An ImageIcon for this location
+   */
+  public ImageIcon getIcon() {
+    return null;
+  }
+
+  /**
+   * @see java.lang.Comparable#compareTo(java.lang.Object)
+   */
+  @Override
+  public int compareTo(Location other) {
+    if (distance < other.distance) {
+      return -1;
+    }
+    if (distance > other.distance) {
+      return 1;
+    }
+    return name.compareTo(other.name);
   }
 
 }

@@ -31,7 +31,7 @@ import java.util.HashMap;
  */
 @SuppressWarnings("all")
 public class ExifDirectory extends Directory {
-  // TODO do these tags belong in the exif directory?
+  // SEP do these tags belong in the exif directory?
   public static final int TAG_SUB_IFDS = 0x014A;
 
   public static final int TAG_GPS_INFO = 0x8825;
@@ -458,7 +458,7 @@ public class ExifDirectory extends Directory {
    */
   public static final int TAG_SHARPNESS = 0xA40A;
 
-  // TODO support this tag (I haven't seen a camera's actual implementation of
+  // SEP support this tag (I haven't seen a camera's actual implementation of
   // this yet)
 
   /**
@@ -760,7 +760,7 @@ public class ExifDirectory extends Directory {
    * _data[tiffHeaderOffset + offset + i]; // } //
    * this.setByteArray(ExifDirectory.TAG_THUMBNAIL_DATA, result); // } catch
    * (Throwable e) { // this.addError("Unable to extract thumbnail: " +
-   * e.getMessage()); // } // TODO decode the JPEG bytes as an image return
+   * e.getMessage()); // } // SEP decode the JPEG bytes as an image return
    * null; //new Image(); } else if (compression ==
    * ExifDirectory.COMPRESSION_NONE) { // uncompressed thumbnail (raw RGB data)
    * if (!this.containsTag(ExifDirectory.TAG_PHOTOMETRIC_INTERPRETATION)) return
@@ -776,7 +776,7 @@ public class ExifDirectory extends Directory {
    * createImageFromRawYCbCr(thumbnailBytes); return image; } else if
    * (photometricInterpretation ==
    * ExifDirectory.PHOTOMETRIC_INTERPRETATION_MONOCHROME) { // Monochrome //
-   * TODO return null; } } catch (Throwable e) { this.addError("Unable to
+   * SEP return null; } } catch (Throwable e) { this.addError("Unable to
    * extract thumbnail: " + e.getMessage()); } } return null; }
    * 
    * /** Handle the YCbCr thumbnail encoding used by Ricoh RDC4200/4300, Fuji
@@ -838,7 +838,7 @@ public class ExifDirectory extends Directory {
    * (int)(1.164*(y-16) - 0.391*(cb-128) - 0.813*(cr-128)); // int r =
    * (int)(1.164*(y-16) + 1.596*(cr-128)); // int b = (int)(1.164*(y-16) +
    * 2.018*(cb-128)); // //// result[i] = (byte)b; //// result[i + 1] = (byte)g;
-   * //// result[i + 2] = (byte)r; // // // TODO compose the image here //
+   * //// result[i + 2] = (byte)r; // // // SEP compose the image here //
    * image.setRGB(1, 2, 3); // }
    * 
    * return image; }
@@ -865,7 +865,7 @@ public class ExifDirectory extends Directory {
    * bitmaps are BGR // for (int i = headerlength, dataOffset = length; i<result.length;
    * i += 3, dataOffset -= 3) // { // byte b = thumbnailBytes[dataOffset - 2]; //
    * byte g = thumbnailBytes[dataOffset - 1]; // byte r =
-   * thumbnailBytes[dataOffset]; // // // TODO compose the image here //
+   * thumbnailBytes[dataOffset]; // // // SEP compose the image here //
    * image.setRGB(1, 2, 3); // }
    * 
    * return image; }

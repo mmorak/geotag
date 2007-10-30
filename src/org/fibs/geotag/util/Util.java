@@ -219,4 +219,16 @@ public class Util {
     return true;
   }
 
+  /**
+   * this treats null and the empty string as equal (i.e. same 'no content')
+   * @param string1
+   * @param string2
+   * @return True if the two strings are equal
+   */
+  public static boolean sameContent(String string1, String string2) {
+    String notNull1 = string1 == null? "" : string1; //$NON-NLS-1$
+    String notNull2 = string2 == null? "" : string2; //$NON-NLS-1$
+    return notNull1.equals(notNull2);
+  }
+
 }

@@ -22,7 +22,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.fibs.geotag.Settings;
+import org.fibs.geotag.Settings.SETTING;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -38,11 +42,13 @@ import org.xml.sax.helpers.XMLReaderFactory;
  */
 public class WikipediaHandler extends DefaultHandler {
 
-  
-  /***/
-  @SuppressWarnings("unused")
-  private ELEMENTS lastElementStarted = null;
-  /***/
+  /** A list of all locations retrieved */
+  private List<Location> locations = new ArrayList<Location>();
+
+  /** The location we are currently parsing */
+  private Location currentLocation = null;
+
+  /** Used to build the value of the element we are parsing */
   private StringBuilder currentValue = null;
 
   /**
@@ -52,14 +58,17 @@ public class WikipediaHandler extends DefaultHandler {
   public WikipediaHandler(String latitude, String longitude) {
     try {
       // Create a SAX 2 parser
-      XMLReader xr = XMLReaderFactory.createXMLReader();
+      XMLReader xmlReader = XMLReaderFactory.createXMLReader();
       // This object is the context handler
-      xr.setContentHandler(this);
+      xmlReader.setContentHandler(this);
       // Build the request
-      URL versionFile = new URL(
-          "http://ws.geonames.org/findNearbyWikipedia?lat="+latitude+"&lng="+longitude); //$NON-NLS-1$ //$NON-NLS-2$
-      InputStream inputStream = versionFile.openStream();
-      xr.parse(new InputSource(inputStream));
+      String url = "http://ws.geonames.org/findNearbyWikipedia?lat=" + latitude + "&lng=" + longitude; //$NON-NLS-1$ //$NON-NLS-2$
+      // how many entries should we retrieve
+      int maxRows = Settings.get(SETTING.GEONAMES_WIKIPEDIA_ENTRIES, 5);
+      url += "&maxRows=" + maxRows; //$NON-NLS-1$
+      URL request = new URL(url);
+      InputStream inputStream = request.openStream();
+      xmlReader.parse(new InputSource(inputStream));
     } catch (MalformedURLException e) {
       e.printStackTrace();
     } catch (SAXException e) {
@@ -86,7 +95,8 @@ public class WikipediaHandler extends DefaultHandler {
   }
 
   /**
-   * @see org.xml.sax.helpers.DefaultHandler#startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes)
+   * @see org.xml.sax.helpers.DefaultHandler#startElement(java.lang.String,
+   *      java.lang.String, java.lang.String, org.xml.sax.Attributes)
    */
   @Override
   public void startElement(String namespaceURI, String localName, String qName,
@@ -95,24 +105,52 @@ public class WikipediaHandler extends DefaultHandler {
     currentValue = null;
     for (ELEMENTS tag : ELEMENTS.values()) {
       if (tag.toString().equals(localName)) {
-        lastElementStarted = tag;
         currentValue = new StringBuilder();
-        System.out.println(tag);
+        if (tag == ELEMENTS.entry) {
+          // a new location
+          currentLocation = new WikipediaLocation();
+        }
         break;
       }
     }
   }
 
   /**
-   * @see org.xml.sax.helpers.DefaultHandler#endElement(java.lang.String, java.lang.String, java.lang.String)
+   * @see org.xml.sax.helpers.DefaultHandler#endElement(java.lang.String,
+   *      java.lang.String, java.lang.String)
    */
   @Override
   public void endElement(String namespaceURI, String localName, String qName)
       throws SAXException {
-    if (currentValue != null) {
-      System.out.println(currentValue.toString());
-      currentValue = null;
+    for (ELEMENTS tag : ELEMENTS.values()) {
+      if (tag.toString().equals(localName)) {
+        switch (tag) {
+          case geonames:
+            // nothing to be done
+            break;
+          case entry:
+            // finished with one location
+            locations.add(currentLocation);
+            // System.out.println(currentLocation);
+            currentLocation = null;
+            break;
+          case title:
+            currentLocation.setName(currentValue.toString());
+            break;
+          case lat:
+            currentLocation.setLatitude(currentValue.toString());
+            break;
+          case lng:
+            currentLocation.setLongitude(currentValue.toString());
+            break;
+          case distance:
+            currentLocation.setDistance(Double.parseDouble(currentValue
+                .toString()));
+            break;
+        }
+      }
     }
+    currentValue = null;
   }
 
   /**
@@ -124,26 +162,29 @@ public class WikipediaHandler extends DefaultHandler {
       currentValue.append(ch, start, length);
     }
   }
-  
+
   /**
-   * The XML elements we are interested in.
-   * Specified exactly as the appear in the XML
+   * @return the locations
    */
-  enum ELEMENTS  {
+  public List<Location> getLocations() {
+    return locations;
+  }
+
+  /**
+   * The XML elements we are interested in. Specified exactly as the appear in
+   * the XML
+   */
+  enum ELEMENTS {
     /** Entries are enclosed in a 'geonames' element */
     geonames,
     /** Name of element containing an entry */
     entry,
-    /** Name of element specifying the language */
-    lang,
     /** Name of element giving the title */
     title,
     /** Element specifying latitude */
     lat,
     /** Element specifying longitude */
     lng,
-    /** Element giving the Wikipedia URL */
-    wikipediaUrl,
     /** Element specifying the distance from the requested latitude/longitude */
     distance
   }

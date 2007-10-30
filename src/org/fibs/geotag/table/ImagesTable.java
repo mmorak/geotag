@@ -504,13 +504,4 @@ public class ImagesTable extends JTable {
     return defaultTableHeader;
   }
 
-  /**
-   * @see javax.swing.JComponent#processMouseMotionEvent(java.awt.event.MouseEvent)
-   */
-  @Override
-  protected void processMouseMotionEvent(MouseEvent event) {
-    super.processMouseMotionEvent(event);
-
-  }
-
 }

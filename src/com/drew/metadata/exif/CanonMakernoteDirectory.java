@@ -47,7 +47,7 @@ public class CanonMakernoteDirectory extends Directory {
 
   /**
    * To display serial number as on camera use: printf( "%04X%05d", highbyte,
-   * lowbyte ) TODO handle this in CanonMakernoteDescriptor
+   * lowbyte ) SEP handle this in CanonMakernoteDescriptor
    */
   public static final int TAG_CANON_SERIAL_NUMBER = 0x000C;
 

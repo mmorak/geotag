@@ -173,7 +173,7 @@ public class CasioType2MakernoteDirectory extends Directory {
   protected static final HashMap tagNameMap = new HashMap();
 
   static {
-    // TODO add names
+    // SEP add names
     tagNameMap.put(new Integer(TAG_CASIO_TYPE2_THUMBNAIL_DIMENSIONS),
         "Thumbnail Dimensions");
     tagNameMap.put(new Integer(TAG_CASIO_TYPE2_THUMBNAIL_SIZE),

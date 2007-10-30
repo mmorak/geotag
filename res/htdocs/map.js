@@ -222,7 +222,7 @@ if (GBrowserIsCompatible()) {
     	URL += index == 0 ? "" : ","
     	URL += imageInfoList.get(index).id
     }
-    GLog.write("Requesting image infos")
+    //GLog.write("Requesting image infos")
     var imageInfoRequest = GXmlHttp.create()
     imageInfoRequest.open("GET", URL, true)
     imageInfoRequest.onreadystatechange = function() {
@@ -231,7 +231,7 @@ if (GBrowserIsCompatible()) {
         // parse the information
         xmlDocument = GXml.parse(imageInfoRequest.responseText)
         infos = xmlDocument.documentElement.getElementsByTagName("image")
-        GLog.write("ImageInfos: "+infos.length)
+        //GLog.write("ImageInfos: "+infos.length)
         for (var index = 0; index < infos.length; index++) {
           info = infos[index]
           id = parseFloat(info.getAttribute("id"))
@@ -764,7 +764,7 @@ if (GBrowserIsCompatible()) {
         //GLog.write(wikipediaRequest.responseText)
         // get the geonames entry
         var entries = xmlDocument.documentElement.getElementsByTagName("entry")
-        GLog.write(entries.length+" entries")
+        //GLog.write(entries.length+" entries")
         // loop through the entries
         for (var entryIndex = 0; entryIndex < entries.length; entryIndex++) {
         	var entry = entries[entryIndex]
@@ -780,7 +780,7 @@ if (GBrowserIsCompatible()) {
           //+ '" width="100">'
           html += '<br><a href="' +wikipediaUrl + '">'
           html += title + '</a></center></span>'
-          GLog.write(html);
+          //GLog.write(html);
           marker.bindInfoWindowHtml(html, {})
           wikipediaEntries[entryIndex] = marker;
           map.addOverlay(marker)

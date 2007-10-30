@@ -53,7 +53,7 @@ import com.sun.java.swing.plaf.windows.WindowsComboBoxUI;
  * doesn't require having this class in the class path.
  * 
  * @author Karsten Lentzsch
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 @SuppressWarnings("all")
 public final class Options {
@@ -580,10 +580,10 @@ public final class Options {
    * default. True for modern Windows platforms: Windows 98/ME/2000/XP.
    * <p>
    * 
-   * TODO: Consider enabling popup drop shadows on Linux by default.
+   * SEP: Consider enabling popup drop shadows on Linux by default.
    * <p>
    * 
-   * TODO: Consider moving the default to the individual L&amp;F's component
+   * SEP: Consider moving the default to the individual L&amp;F's component
    * defaults initialization. For example Plastic and Plastic3D may disable this
    * feature by default, while PlasticXP enables it by default.
    * 

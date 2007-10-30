@@ -41,7 +41,7 @@ import com.jgoodies.looks.plastic.PlasticTheme;
  * A theme with medium blue primary colors and a light gray window background.
  * 
  * @author Karsten Lentzsch
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 @SuppressWarnings("all")
 public class SkyBluer extends PlasticTheme {
@@ -92,7 +92,7 @@ public class SkyBluer extends PlasticTheme {
   }
 
   /*
-   * TODO: The following two lines are likely an improvement. However, they
+   * SEP: The following two lines are likely an improvement. However, they
    * require a rewrite of the PlasticInternalFrameTitlePanel. public
    * ColorUIResource getWindowTitleBackground() { return getPrimary1(); } public
    * ColorUIResource getWindowTitleForeground() { return WHITE; }

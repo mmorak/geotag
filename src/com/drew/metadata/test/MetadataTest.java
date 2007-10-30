@@ -172,7 +172,7 @@ public class MetadataTest extends TestCase {
       metadataRead = (Metadata) new ObjectInputStream(new FileInputStream(ser))
           .readObject();
       // make sure they're equivalent
-      // TODO should compare the two objects via iteration of directories and
+      // SEP should compare the two objects via iteration of directories and
       // tags
       assertTrue(metadataRead.containsDirectory(ExifDirectory.class));
       assertTrue(metadataRead.containsDirectory(IptcDirectory.class));

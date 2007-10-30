@@ -44,7 +44,7 @@ import javax.swing.UIManager;
  * Consists exclusively of static methods that provide convenience behavior.
  * 
  * @author Karsten Lentzsch
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 
 @SuppressWarnings("all")
@@ -293,7 +293,7 @@ public final class PlasticUtils {
   }
 
   /*
-   * TODO: Required by the Chartster and JPathReport Filler; move to a FillerUI.
+   * SEP: Required by the Chartster and JPathReport Filler; move to a FillerUI.
    */
   public static void addLight3DEffekt(Graphics g, Rectangle r) {
     Color ltBrightenStop = UIManager.getColor("Plastic.ltBrightenStop");

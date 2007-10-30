@@ -18,8 +18,6 @@
 
 package org.fibs.geotag.gui.settings;
 
-import java.awt.BorderLayout;
-
 import javax.swing.JFrame;
 import javax.swing.JTextField;
 
@@ -44,9 +42,23 @@ public class StringSettingsPanel extends SettingsPanel {
    */
   public StringSettingsPanel(JFrame parent, String title, SETTING setting,
       String defaultValue) {
-    super(parent, title, setting, defaultValue);
+    this(parent, title, null, true, setting, defaultValue);
+  }
+
+  /**
+   * @param parent
+   * @param title
+   * @param enablingSetting
+   * @param defaultEnabled
+   * @param setting
+   * @param defaultValue
+   */
+  public StringSettingsPanel(JFrame parent, String title,
+      SETTING enablingSetting, boolean defaultEnabled, SETTING setting,
+      String defaultValue) {
+    super(parent, title, enablingSetting, defaultEnabled, setting, defaultValue);
     textField = new JTextField(Settings.get(setting, defaultValue));
-    add(textField, BorderLayout.NORTH);
+    addEditor(textField);
   }
 
   /**

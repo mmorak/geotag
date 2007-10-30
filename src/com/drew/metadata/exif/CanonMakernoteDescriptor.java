@@ -692,7 +692,7 @@ public class CanonMakernoteDescriptor extends TagDescriptor {
       case 3:
         return "Manual Focus";
       case 4:
-        // TODO should check field 32 here (FOCUS_MODE_2)
+        // SEP should check field 32 here (FOCUS_MODE_2)
         return "Single";
       case 5:
         return "Continuous";
@@ -762,7 +762,7 @@ public class CanonMakernoteDescriptor extends TagDescriptor {
     if (value == 0) {
       return "Self timer not used";
     } else {
-      // TODO find an image that tests this calculation
+      // SEP find an image that tests this calculation
       return Double.toString((double) value * 0.1d) + " sec";
     }
   }

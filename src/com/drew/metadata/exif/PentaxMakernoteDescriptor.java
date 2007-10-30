@@ -83,7 +83,7 @@ public class PentaxMakernoteDescriptor extends TagDescriptor {
     int value = _directory
         .getInt(PentaxMakernoteDirectory.TAG_PENTAX_ISO_SPEED);
     switch (value) {
-      // TODO there must be other values which aren't catered for here
+      // SEP there must be other values which aren't catered for here
       case 10:
         return "ISO 100";
       case 16:

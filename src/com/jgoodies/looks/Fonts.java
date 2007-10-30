@@ -40,14 +40,14 @@ import java.util.Locale;
  * of an inch.
  * <p>
  * 
- * TODO: Consider changing the visibility of the package private methods to
+ * SEP: Consider changing the visibility of the package private methods to
  * public. As an alternative we may provide a FontPolicy that can emulate the
  * font choice on Windows XP/2000 and Windows Vista for different software
  * resolutions (96dpi/120dpi) and desktop font size settings (Normal/Large/Extra
  * Large).
  * 
  * @author Karsten Lentzsch
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  * 
  * @see FontSet
  * @see FontSets
@@ -155,7 +155,7 @@ public final class Fonts {
    * font desktop setting "Normal".
    * <P>
    * 
-   * TODO: Check if this shall be removed or not.
+   * SEP: Check if this shall be removed or not.
    */
   static final Font WINDOWS_VISTA_101DPI_NORMAL = SEGOE_UI_13PT;
 

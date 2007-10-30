@@ -29,6 +29,7 @@ import org.fibs.geotag.data.ImageInfo;
 import org.fibs.geotag.data.ImageInfo.DATA_SOURCE;
 import org.fibs.geotag.table.ImagesTableColumns.COLUMN;
 import org.fibs.geotag.tasks.ChangeDirectionTask;
+import org.fibs.geotag.tasks.ManualEditTask;
 import org.fibs.geotag.util.Util;
 
 /**
@@ -173,13 +174,14 @@ public class ImagesTableModel extends AbstractTableModel {
       case LATITUDE:
       case LONGITUDE:
       case ALTITUDE:
-      case LOCATION_NAME:
-      case PROVINCE_NAME:
-      case COUNTRY_NAME:
         return false;
       case DIRECTION:
         ImageInfo imageInfo = getImageInfo(rowIndex);
         return imageInfo.hasLocation();
+      case LOCATION_NAME:
+      case PROVINCE_NAME:
+      case COUNTRY_NAME:
+        return true;
     }
     return false;
   }
@@ -244,7 +246,12 @@ public class ImagesTableModel extends AbstractTableModel {
   @Override
   public void setValueAt(Object value, int rowIndex, int columnIndex) {
     super.setValueAt(value, rowIndex, columnIndex);
-    switch (COLUMN.values()[columnIndex]) {
+    ImageInfo imageInfo = getImageInfo(rowIndex);
+    COLUMN column = COLUMN.values()[columnIndex];
+    String columnName = getColumnName(columnIndex);
+    String oldString;
+    String newString;
+    switch (column) {
       case IMAGE_NAME:
       case CAMERA_DATE:
       case GPS_DATE:
@@ -252,23 +259,19 @@ public class ImagesTableModel extends AbstractTableModel {
       case LATITUDE:
       case LONGITUDE:
       case ALTITUDE:
-      case LOCATION_NAME:
-      case PROVINCE_NAME:
-      case COUNTRY_NAME:
         // all those are not editable
         return;
       case DIRECTION:
-        ImageInfo imageInfo = getImageInfo(rowIndex);
         boolean update = true;
         // there are two exceptions:
-        String oldValue = imageInfo.getGPSImgDirection();
-        String newValue = (String) value;
-        if (oldValue == null && newValue.length() == 0) {
+        oldString = imageInfo.getGPSImgDirection();
+        newString = (String) value;
+        if (oldString == null && newString.length() == 0) {
           update = false;
-        } else if (oldValue != null) {
+        } else if (oldString != null) {
           try {
-            double oldDouble = Double.parseDouble(oldValue);
-            double newDouble = Double.parseDouble(newValue);
+            double oldDouble = Double.parseDouble(oldString);
+            double newDouble = Double.parseDouble(newString);
             // determine a value below which we consider the difference equal.
             // we use Math.pow(10, -(DIRECTION_DECIMALS + 1)
             // Math.pow() is evil, so I won't use it
@@ -299,7 +302,51 @@ public class ImagesTableModel extends AbstractTableModel {
             }
           }.execute();
         }
+        break;
+      case LOCATION_NAME:
+        newString = (String) value;
+        oldString = imageInfo.getLocationName();
+        if (!Util.sameContent(oldString, newString)) {
+          commitManualEdit(imageInfo, column, columnName, newString);
+        }
+        break;
+      case PROVINCE_NAME:
+        newString = (String) value;
+        oldString = imageInfo.getProvinceName();
+        if (!Util.sameContent(oldString, newString)) {
+          commitManualEdit(imageInfo, column, columnName, newString);
+        }
+        break;
+      case COUNTRY_NAME:
+        newString = (String) value;
+        oldString = imageInfo.getCountryName();
+        if (!Util.sameContent(oldString, newString)) {
+          commitManualEdit(imageInfo, column, columnName, newString);
+        }
+        break;
     }
+  }
+
+  /**
+   * @param imageInfo
+   * @param column
+   * @param columnName
+   * @param newString
+   */
+  private void commitManualEdit(ImageInfo imageInfo, COLUMN column,
+      String columnName, String newString) {
+    new ManualEditTask(columnName, imageInfo, column, newString) {
+      @Override
+      protected void process(List<ImageInfo> imageInfos) {
+        for (ImageInfo image : imageInfos) {
+          int row = getRow(image);
+          if (row >= 0) {
+            fireTableRowsUpdated(row, row);
+            fireTableDataChanged();
+          }
+        }
+      }
+    }.execute();
   }
 
   /**

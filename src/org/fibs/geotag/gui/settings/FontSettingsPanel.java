@@ -51,7 +51,21 @@ public class FontSettingsPanel extends SettingsPanel {
    */
   public FontSettingsPanel(JFrame parent, String title, SETTING setting,
       String defaultValue) {
-    super(parent, title, setting, defaultValue);
+    this(parent, title, null, true, setting, defaultValue);
+  }
+
+  /**
+   * @param parent
+   * @param title
+   * @param enablingSetting
+   * @param defaultEnabled
+   * @param setting
+   * @param defaultValue
+   */
+  public FontSettingsPanel(JFrame parent, String title,
+      SETTING enablingSetting, boolean defaultEnabled, SETTING setting,
+      String defaultValue) {
+    super(parent, title, enablingSetting, defaultEnabled, setting, defaultValue);
     JPanel fontPanel = new JPanel(new BorderLayout());
     textField = new JTextField(Settings.get(setting, defaultValue));
     fontPanel.add(textField, BorderLayout.CENTER);
@@ -70,7 +84,7 @@ public class FontSettingsPanel extends SettingsPanel {
       }
     });
     fontPanel.add(browseButton, BorderLayout.EAST);
-    add(fontPanel, BorderLayout.NORTH);
+    addEditor(fontPanel);
   }
 
   /**

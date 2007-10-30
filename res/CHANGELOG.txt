@@ -1,3 +1,10 @@
+2007-10-30 Release 0.34
+  Added ability to change location name to another
+  location found nearby. This also includes names from
+  Wikipedia entries.
+  Added ability to manually edit place names and to copy
+  them to other images.
+  
 2007-10-28 Release 0.33
   Added reverse geocoding with geonames.org
   The Edit menu now contains menu items to select

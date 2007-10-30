@@ -140,11 +140,16 @@ public class Settings {
      * path
      */
     KML_IMAGE_PATH,
+    /** Preferences key for using geonames search radius */
+    GEONAMES_USE_RADIUS,
     /**
-     * Preferences key for geonames search radius in km Set to zero for nearest
-     * location only
+     * Preferences key for geonames search radius in km
      */
-    GEONAMES_RADIUS_KM;
+    GEONAMES_RADIUS_KM,
+    /** Preferences key to enable/disable Wikipedia location name search */
+    GEONAMES_USE_WIKIPEDIA,
+    /** Preferences key for number of Wikipedia entries to retrieve if enabled */
+    GEONAMES_WIKIPEDIA_ENTRIES;
 
     /**
      * For the actual key I prefer lower case keys with dots

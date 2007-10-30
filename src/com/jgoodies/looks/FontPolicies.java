@@ -44,15 +44,15 @@ import javax.swing.UIDefaults;
  * Linux system checks for a Tahoma or Segoe UI.
  * <p>
  * 
- * TODO: Add a check for a custom font policy set in the System properties.
+ * SEP: Add a check for a custom font policy set in the System properties.
  * <p>
  * 
- * TODO: Add policies that emulate different Windows setups: default XP on 96dpi
+ * SEP: Add policies that emulate different Windows setups: default XP on 96dpi
  * with normal fonts ("XP-normal-96"), Vista on 120dpi with large fonts
  * ("Vista-large-120"), etc.
  * 
  * @author Karsten Lentzsch
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  * 
  * @see FontPolicy
  * @see FontSet
@@ -248,7 +248,7 @@ public final class FontPolicies {
    * @return a custom FontPolicy - if any - or otherwise <code>null</code>
    */
   private static FontPolicy getCustomPolicy(String lafName) {
-    // TODO: Look up predefined font choice policies
+    // SEP: Look up predefined font choice policies
     return null;
   }
 
@@ -277,7 +277,7 @@ public final class FontPolicies {
   // {
   //        
   // public FontSet getFontSet(String lafName, UIDefaults table) {
-  // // TODO: If Tahoma or Segoe UI is available, return them
+  // // SEP: If Tahoma or Segoe UI is available, return them
   // // in a size appropriate for the screen resolution.
   // // Otherwise return the logical font set.
   // return FontSets.getLogicalFontSet();

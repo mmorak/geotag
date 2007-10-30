@@ -22,6 +22,8 @@ import java.util.IllegalFormatException;
 import java.util.List;
 
 import org.fibs.geotag.Messages;
+import org.fibs.geotag.Settings;
+import org.fibs.geotag.Settings.SETTING;
 import org.fibs.geotag.data.ImageInfo;
 import org.fibs.geotag.data.UpdateCountryName;
 import org.fibs.geotag.data.UpdateLocationName;
@@ -29,7 +31,9 @@ import org.fibs.geotag.data.UpdateProvinceName;
 import org.fibs.geotag.data.ImageInfo.DATA_SOURCE;
 import org.fibs.geotag.geonames.Location;
 import org.fibs.geotag.geonames.LocationHandler;
+import org.fibs.geotag.geonames.WikipediaHandler;
 import org.fibs.geotag.table.ImagesTableModel;
+import org.fibs.geotag.util.Util;
 
 /**
  * A class finding location names for images
@@ -102,16 +106,33 @@ public class LocationNamesTask extends UndoableBackgroundTask<ImageInfo> {
         LocationHandler locationHandler = new LocationHandler(imageInfo
             .getGPSLatitude(), imageInfo.getGPSLongitude());
         List<Location> locations = locationHandler.getLocations();
+        if (Settings.get(SETTING.GEONAMES_USE_WIKIPEDIA, false)) {
+          WikipediaHandler wikipediaHandler = new WikipediaHandler(imageInfo
+              .getGPSLatitude(), imageInfo.getGPSLongitude());
+          // TODO for all wikipedia locations we need to determine country and
+          // province
+          locations.addAll(wikipediaHandler.getLocations());
+        }
         if (locations.size() > 0) {
+          // we don't sort until Wikipedia entries contain Province/Country
+          // Collections.sort(locations);
           imageInfo.setNearbyLocations(locations);
-          new UpdateLocationName(imageInfo, locations.get(0).getName(),
-              DATA_SOURCE.GEONAMES);
-          new UpdateProvinceName(imageInfo, locations.get(0).getProvince(),
-              DATA_SOURCE.GEONAMES);
-          new UpdateCountryName(imageInfo, locations.get(0).getCountryName(),
-              DATA_SOURCE.GEONAMES);
-          namesFound++;
-          System.out.println(locations.get(0));
+          Location nearest = locations.get(0);
+          // don't perform unnecessary updates
+          if (!Util.sameContent(nearest.getName(), imageInfo.getLocationName())
+              || !Util.sameContent(nearest.getProvince(), imageInfo
+                  .getProvinceName())
+              || !Util.sameContent(nearest.getCountryName(), imageInfo
+                  .getCountryName())) {
+            new UpdateLocationName(imageInfo, nearest.getName(),
+                DATA_SOURCE.GEONAMES);
+            new UpdateProvinceName(imageInfo, nearest.getProvince(),
+                DATA_SOURCE.GEONAMES);
+            new UpdateCountryName(imageInfo, nearest.getCountryName(),
+                DATA_SOURCE.GEONAMES);
+            namesFound++;
+            // System.out.println(locations.get(0));
+          }
         }
         // tell the GUI about the change
         publish(imageInfo);
@@ -122,10 +143,12 @@ public class LocationNamesTask extends UndoableBackgroundTask<ImageInfo> {
     }
     String result = null;
     if (namesFound == 1) {
-      result = Messages.getString("One location name found"); //$NON-NLS-1$
+      result = Messages.getString("LocationNamesTask.OneLocationNameFound"); //$NON-NLS-1$
     } else {
       try {
-        result = String.format("%d location names found", namesFound); //$NON-NLS-1$
+        result = String.format(Messages
+            .getString("LocationNamesTask.LocationNamesFoundFormat"), //$NON-NLS-1$
+            namesFound);
       } catch (IllegalFormatException e) {
         e.printStackTrace();
       }
