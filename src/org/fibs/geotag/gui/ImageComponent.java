@@ -41,6 +41,9 @@ public class ImageComponent extends Component {
   /** The image to be displayed by this component */
   private BufferedImage image;
 
+  /** The ImageInfo of the image displayed */
+  private ImageInfo imageInfo;
+
   /**
    * Create an ImageComponent with no associated picture
    */
@@ -123,10 +126,10 @@ public class ImageComponent extends Component {
   }
 
   /**
-   * @return the image
+   * @return the image info
    */
-  public BufferedImage getImage() {
-    return image;
+  public ImageInfo getImageInfo() {
+    return imageInfo;
   }
 
   /**
@@ -135,7 +138,8 @@ public class ImageComponent extends Component {
    * @param imageInfo
    *          Information about the image
    */
-  public void setImage(final ImageInfo imageInfo) {
+  public void setImageInfo(final ImageInfo imageInfo) {
+    this.imageInfo = imageInfo;
     File file = new File(imageInfo.getPath());
     new ImageLoaderTask(file) {
       @Override
@@ -157,7 +161,7 @@ public class ImageComponent extends Component {
    * @param image
    *          the image to set
    */
-  public void setImage(BufferedImage image) {
+  void setImage(BufferedImage image) {
     // we want the image to have TYPE_INT_RGB
     if (image != null && image.getType() != BufferedImage.TYPE_INT_RGB) {
       // the image doesn't have the right type - convert it

@@ -142,14 +142,19 @@ public class Settings {
     KML_IMAGE_PATH,
     /** Preferences key for using geonames search radius */
     GEONAMES_USE_RADIUS,
+    /** Preferences key for geonames search radius in km */
+    GEONAMES_RADIUS,
     /**
-     * Preferences key for geonames search radius in km
+     * Preferences key for number of locations to find (maxRows parameter in
+     * query)
      */
-    GEONAMES_RADIUS_KM,
+    GEONAMES_MAX_ROWS,
     /** Preferences key to enable/disable Wikipedia location name search */
     GEONAMES_USE_WIKIPEDIA,
     /** Preferences key for number of Wikipedia entries to retrieve if enabled */
-    GEONAMES_WIKIPEDIA_ENTRIES;
+    GEONAMES_WIKIPEDIA_ENTRIES,
+    /** Preferences key for distance unit (km, mi, nmi) */
+    DISTANCE_UNIT;
 
     /**
      * For the actual key I prefer lower case keys with dots

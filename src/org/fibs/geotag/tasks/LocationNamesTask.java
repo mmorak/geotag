@@ -110,7 +110,8 @@ public class LocationNamesTask extends UndoableBackgroundTask<ImageInfo> {
           WikipediaHandler wikipediaHandler = new WikipediaHandler(imageInfo
               .getGPSLatitude(), imageInfo.getGPSLongitude());
           // TODO for all wikipedia locations we need to determine country and
-          // province
+          // province - geonames.org say they will add this soon (at least
+          // the country)
           locations.addAll(wikipediaHandler.getLocations());
         }
         if (locations.size() > 0) {

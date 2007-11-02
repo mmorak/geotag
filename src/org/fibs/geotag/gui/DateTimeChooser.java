@@ -253,7 +253,6 @@ public class DateTimeChooser extends JDialog {
     final JSpinner.DateEditor timeEditor = new JSpinner.DateEditor(timeSpinner,
         "HH:mm:ss"); //$NON-NLS-1$
     timeSpinner.setEditor(timeEditor);
-    // TODO: The following line is what I want, but doesn't do what it should do
     JFormattedTextField textField = timeEditor.getTextField();
     textField.setHorizontalAlignment(SwingConstants.CENTER);
     // now we want to listen to changes in the time

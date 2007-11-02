@@ -140,7 +140,6 @@ public class KmlRequestHandler implements ContextHandler {
       style.setId(BALLOON_STYLE);
 
       BalloonStyleType balloonStyle = factory.createBalloonStyleType();
-      // TODO - the next bit needs tweaking to do something useful
       String balloonText = "<center><b>$[name]</b>"; //$NON-NLS-1$
       if (lastImageLaunched.getThumbnail() != null) {
         balloonText += "<br/>"; //$NON-NLS-1$

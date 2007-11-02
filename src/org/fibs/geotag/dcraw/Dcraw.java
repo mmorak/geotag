@@ -137,7 +137,6 @@ public class Dcraw {
           Thread.sleep(10);
         }
       } catch (InterruptedException e) {
-        // TODO Auto-generated catch block
         e.printStackTrace();
       }
       // there should now be some image data ready in the output stream

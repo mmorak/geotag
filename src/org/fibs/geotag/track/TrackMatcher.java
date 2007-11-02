@@ -79,7 +79,6 @@ public class TrackMatcher {
       xmlTimeGMT = DatatypeFactory.newInstance().newXMLGregorianCalendar(
           (GregorianCalendar) timeGMT);
     } catch (DatatypeConfigurationException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
     searchKey.setTime(xmlTimeGMT);

@@ -29,6 +29,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.TitledBorder;
 
+import org.fibs.geotag.Messages;
 import org.fibs.geotag.Settings;
 import org.fibs.geotag.Settings.SETTING;
 
@@ -40,6 +41,12 @@ import org.fibs.geotag.Settings.SETTING;
  */
 @SuppressWarnings("serial")
 public abstract class SettingsPanel extends JPanel {
+
+  /** Text for checkbox if selected */
+  static final String YES = Messages.getString("SettingsPanel.Yes"); //$NON-NLS-1$
+
+  /** text for checkbox if not selected */
+  static final String NO = Messages.getString("SettingsPanel.No"); //$NON-NLS-1$
 
   /** the parent frame */
   JFrame parent;
@@ -72,7 +79,6 @@ public abstract class SettingsPanel extends JPanel {
    * @param parent
    * @param title
    * @param enablingSetting
-   *          TODO
    * @param defaultEnabled
    * @param setting
    * @param defaultValue
@@ -96,10 +102,12 @@ public abstract class SettingsPanel extends JPanel {
         public void actionPerformed(ActionEvent e) {
           if (editorComponent != null) {
             editorComponent.setEnabled(checkbox.isSelected());
+            checkbox.setText(checkbox.isSelected() ? YES : NO);
           }
         }
       });
       checkbox.setSelected(Settings.get(enablingSetting, defaultEnabled));
+      checkbox.setText(checkbox.isSelected() ? YES : NO);
       panel.add(checkbox, BorderLayout.WEST);
     }
     add(panel, BorderLayout.NORTH);

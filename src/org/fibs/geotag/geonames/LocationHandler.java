@@ -27,6 +27,8 @@ import java.util.List;
 
 import org.fibs.geotag.Settings;
 import org.fibs.geotag.Settings.SETTING;
+import org.fibs.geotag.util.Distance;
+import org.fibs.geotag.util.Distance.UNIT;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -66,11 +68,18 @@ public class LocationHandler extends DefaultHandler {
           + latitude + "&lng=" + longitude + "&style=FULL"; //$NON-NLS-1$ //$NON-NLS-2$
       boolean useRadius = Settings.get(SETTING.GEONAMES_USE_RADIUS, false);
       if (useRadius) {
-        int radius = Settings.get(SETTING.GEONAMES_RADIUS_KM, 5);
-        if (radius != 0) {
-          url += "&radius=" + radius; //$NON-NLS-1$
+        UNIT unit = Distance.UNIT.values()[Settings.get(SETTING.DISTANCE_UNIT,
+            0)];
+        int radius = Settings.get(SETTING.GEONAMES_RADIUS, 5);
+        double radiusKm = Distance.convert(radius, unit,
+            Distance.UNIT.KILOMETRES);
+        if (radiusKm != 0) {
+          url += "&radius=" + radiusKm; //$NON-NLS-1$
         }
       }
+      int maxRows = Settings.get(SETTING.GEONAMES_MAX_ROWS, 5);
+      url += "&maxRows=" + maxRows; //$NON-NLS-1$
+      System.out.println(url);
       URL request = new URL(url);
       InputStream inputStream = request.openStream();
       xmlReader.parse(new InputSource(inputStream));

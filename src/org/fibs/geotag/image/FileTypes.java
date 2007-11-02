@@ -28,7 +28,6 @@ import org.fibs.geotag.util.FileUtil;
  * @author Andreas Schneider
  * 
  */
-// TODO rename to FileTypes
 public enum FileTypes {
   /** Image file type for unknown files */
   UNKOWN,

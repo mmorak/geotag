@@ -417,11 +417,14 @@ public class ImagesTable extends JTable {
    * Make the table use the Font specified in the settings
    */
   public void usePreferredFont() {
-    Font font = FontUtil.fontFromID(Settings.get(SETTING.FONT, null));
-    if (font != null) {
-      setFont(font);
-      setRowHeight(font.getSize() + 4);
-      invalidate();
+    String fontId = Settings.get(SETTING.FONT, null);
+    if (fontId != null) {
+      Font font = FontUtil.fontFromID(Settings.get(SETTING.FONT, null));
+      if (font != null) {
+        setFont(font);
+        setRowHeight(font.getSize() + 4);
+        invalidate();
+      }
     }
   }
 
@@ -482,6 +485,13 @@ public class ImagesTable extends JTable {
         addRowSelectionInterval(row, row);
       }
     }
+  }
+
+  /**
+   * Unselect all images
+   */
+  public void selectNone() {
+    clearSelection();
   }
 
   /**

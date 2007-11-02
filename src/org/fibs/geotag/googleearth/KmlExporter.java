@@ -182,7 +182,6 @@ public class KmlExporter {
       // finally we write the whole kml to the output stream
       marshaller.marshal(factory.createKml(kml), outputStream);
     } catch (JAXBException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
   }

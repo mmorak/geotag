@@ -43,6 +43,7 @@ import org.fibs.geotag.Messages;
 import org.fibs.geotag.Settings;
 import org.fibs.geotag.Settings.SETTING;
 import org.fibs.geotag.gpsbabel.GPSBabel;
+import org.fibs.geotag.util.Distance;
 import org.fibs.geotag.util.FontUtil;
 
 /**
@@ -207,14 +208,23 @@ public class SettingsDialog extends JDialog implements TreeSelectionListener {
         Messages.getString("SettingsDialog.CheckForUpdates"), SETTING.CHECK_FOR_NEW_VERSION, true); //$NON-NLS-1$
     addPanel(general, updates);
 
+    ChoiceSettingsPanel distances = new ChoiceSettingsPanel(
+        parent,
+        Messages.getString("SettingsDialog.DistanceUnit"), SETTING.DISTANCE_UNIT, Distance.getDisplayNames(), 0); //$NON-NLS-1$
+    addPanel(general, distances);
+
     top.add(general);
 
     DefaultMutableTreeNode external = new DefaultMutableTreeNode(Messages
         .getString("SettingsDialog.ExternalPrograms")); //$NON-NLS-1$
 
-    FileSettingsPanel browser = new FileSettingsPanel(parent, Messages
-        .getString("SettingsDialog.Browser"), SETTING.BROWSER, ""); //$NON-NLS-1$//$NON-NLS-2$
-    addPanel(external, browser);
+    DefaultMutableTreeNode browser = new DefaultMutableTreeNode(Messages
+        .getString("SettingsDialog.Browser")); //$NON-NLS-1$
+    external.add(browser);
+
+    FileSettingsPanel browserPath = new FileSettingsPanel(parent, Messages
+        .getString("SettingsDialog.BrowserPath"), SETTING.BROWSER, ""); //$NON-NLS-1$//$NON-NLS-2$
+    addPanel(browser, browserPath);
 
     DefaultMutableTreeNode exiftool = new DefaultMutableTreeNode(Messages
         .getString("SettingsDialog.Exiftool")); //$NON-NLS-1$
@@ -249,9 +259,13 @@ public class SettingsDialog extends JDialog implements TreeSelectionListener {
         Messages.getString("SettingsDialog.GPSBabelDevice"), SETTING.GPSBABEL_DEVICE, GPSBabel.getDefaultDevice()); //$NON-NLS-1$
     addPanel(gpsbabel, gpsbabelDevice);
 
+    DefaultMutableTreeNode dcraw = new DefaultMutableTreeNode(Messages
+        .getString("SettingsDialog.Dcraw")); //$NON-NLS-1$
+    external.add(dcraw);
+
     FileSettingsPanel dcrawPath = new FileSettingsPanel(parent, Messages
         .getString("SettingsDialog.DcrawPath"), SETTING.DCRAW_PATH, "dcraw"); //$NON-NLS-1$ //$NON-NLS-2$
-    addPanel(external, dcrawPath);
+    addPanel(dcraw, dcrawPath);
 
     top.add(external);
 
@@ -276,10 +290,17 @@ public class SettingsDialog extends JDialog implements TreeSelectionListener {
         .getString("SettingsDialog.LookUp")); //$NON-NLS-1$
     DefaultMutableTreeNode geonames = new DefaultMutableTreeNode(Messages
         .getString("SettingsDialog.Geonames")); //$NON-NLS-1$
+
     IntegerSettingsPanel radius = new IntegerSettingsPanel(
         parent,
-        Messages.getString("SettingsDialog.Radius"), SETTING.GEONAMES_USE_RADIUS, false, SETTING.GEONAMES_RADIUS_KM, 5, 0, Integer.MAX_VALUE, 1); //$NON-NLS-1$
+        Messages.getString("SettingsDialog.Radius"), SETTING.GEONAMES_USE_RADIUS, false, SETTING.GEONAMES_RADIUS, 5, 0, Integer.MAX_VALUE, 1); //$NON-NLS-1$
     addPanel(geonames, radius);
+
+    IntegerSettingsPanel maxRows = new IntegerSettingsPanel(parent, Messages
+        .getString("SettingsDialog.NumberResults"), //$NON-NLS-1$
+        SETTING.GEONAMES_MAX_ROWS, 5, 1, 50, 1);
+    addPanel(geonames, maxRows);
+
     IntegerSettingsPanel wikipedia = new IntegerSettingsPanel(
         parent,
         Messages.getString("SettingsDialog.RetrieveWikipedia"), SETTING.GEONAMES_USE_WIKIPEDIA, //$NON-NLS-1$

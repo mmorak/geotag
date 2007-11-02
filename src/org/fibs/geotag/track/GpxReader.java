@@ -45,7 +45,6 @@ public class GpxReader {
     try {
       return read(new FileInputStream(file));
     } catch (FileNotFoundException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
     return null;

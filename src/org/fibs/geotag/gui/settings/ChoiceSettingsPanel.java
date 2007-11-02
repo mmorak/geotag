@@ -41,11 +41,11 @@ public class ChoiceSettingsPanel extends SettingsPanel {
    * @param title
    * @param setting
    * @param choices
-   * @param defaultValue
+   * @param defaultIndex
    */
   public ChoiceSettingsPanel(JFrame parent, String title, SETTING setting,
-      String[] choices, String defaultValue) {
-    this(parent, title, null, true, setting, choices, defaultValue);
+      String[] choices, int defaultIndex) {
+    this(parent, title, null, true, setting, choices, defaultIndex);
   }
 
   /**
@@ -55,22 +55,15 @@ public class ChoiceSettingsPanel extends SettingsPanel {
    * @param defaultEnabled
    * @param setting
    * @param choices
-   * @param defaultValue
+   * @param defaultIndex
    */
   public ChoiceSettingsPanel(JFrame parent, String title,
       SETTING enablingSetting, boolean defaultEnabled, SETTING setting,
-      String[] choices, String defaultValue) {
-    super(parent, title, enablingSetting, defaultEnabled, setting, defaultValue);
+      String[] choices, int defaultIndex) {
+    super(parent, title, enablingSetting, defaultEnabled, setting, Integer
+        .toString(defaultIndex));
     this.choices = choices;
     comboBox = new JComboBox(choices);
-    // comboBox.set
-    int defaultIndex = 0;
-    for (int index = 0; index < choices.length; index++) {
-      if (choices[index].equals(defaultValue)) {
-        defaultIndex = index;
-        break;
-      }
-    }
     int selectIndex = Settings.get(setting, defaultIndex);
     comboBox.setSelectedIndex(selectIndex);
     addEditor(comboBox);

@@ -75,7 +75,6 @@ public class WebServer extends NanoHTTPD {
    * @param path
    * @param contextHandler
    */
-  // TODO Throw exceptions?
   public void createContext(String path, ContextHandler contextHandler) {
     // The path must start with a slash
     if (path.charAt(0) == '/') {

@@ -70,9 +70,9 @@ import org.fibs.geotag.tasks.BackgroundTaskListener;
 import org.fibs.geotag.tasks.ExifReaderTask;
 import org.fibs.geotag.tasks.ExternalUpdateTask;
 import org.fibs.geotag.tasks.GPSBabelTask;
+import org.fibs.geotag.tasks.GpxReadFileTask;
 import org.fibs.geotag.tasks.UndoableBackgroundTask;
 import org.fibs.geotag.track.GpxFileFilter;
-import org.fibs.geotag.track.GpxReader;
 import org.fibs.geotag.track.GpxWriter;
 import org.fibs.geotag.track.TrackStore;
 import org.fibs.geotag.webserver.GeonamesHandler;
@@ -195,7 +195,7 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
           // this needs to be in mousePressed() not mouseClicked()
           int mouseOnRow = table.rowAtPoint(event.getPoint());
           ImageInfo imageInfo = tableModel.getImageInfo(mouseOnRow);
-          previewComponent.setImage(imageInfo);
+          previewComponent.setImageInfo(imageInfo);
         }
       }
 
@@ -220,6 +220,34 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
     tableScrollPane = new JScrollPane(table);
     previewComponent = new ImageComponent(Messages
         .getString("MainWindow.Preview")); //$NON-NLS-1$
+    previewComponent.addMouseListener(new MouseAdapter() {
+      private void popupMenu(MouseEvent event) {
+        ImageInfo imageInfo = previewComponent.getImageInfo();
+        int tableRow = tableModel.getRow(imageInfo);
+        if (imageInfo != null) {
+          ImagesTablePopupMenu popupMenu = new ImagesTablePopupMenu(
+              MainWindow.this, table, tableRow, backgroundTask != null);
+          popupMenu.show((Component) event.getSource(), event.getX(), event
+              .getY());
+        }
+      }
+
+      @Override
+      public void mousePressed(MouseEvent event) {
+        super.mousePressed(event);
+        if (event.isPopupTrigger()) {
+          popupMenu(event);
+        }
+      }
+
+      @Override
+      public void mouseReleased(MouseEvent event) {
+        super.mouseReleased(event);
+        if (event.isPopupTrigger()) {
+          popupMenu(event);
+        }
+      }
+    });
     final JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
         false, tableScrollPane, previewComponent);
     add(splitPane, BorderLayout.CENTER);
@@ -463,6 +491,16 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
     });
     selectMenu.add(selectWithNewLocationItem);
 
+    JMenuItem selectNoneItem = new JMenuItem(Messages
+        .getString("MainWindow.SelectNoImages")); //$NON-NLS-1$
+    selectNoneItem.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        table.selectNone();
+      }
+    });
+    selectMenu.add(selectNoneItem);
+
     editMenu.add(selectMenu);
     menuBar.add(editMenu);
 
@@ -615,30 +653,36 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
     chooser.setFileFilter(new GpxFileFilter());
     chooser.setMultiSelectionEnabled(true);
     if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-      File file = chooser.getSelectedFile();
+      final File file = chooser.getSelectedFile();
       Settings.put(SETTING.LAST_GPX_FILE_OPENED, file.getPath());
       Settings.flush();
-      Gpx gpx = GpxReader.read(file);
-      int numTrackpoints = 0;
-      if (gpx != null) {
-        List<Trk> tracks = gpx.getTrk();
-        for (Trk trk : tracks) {
-          List<Trkseg> segments = trk.getTrkseg();
-          for (Trkseg segment : segments) {
-            numTrackpoints += segment.getTrkpt().size();
+      new GpxReadFileTask(
+          Messages.getString("MainWindow.LoadTracksFromFile"), file) { //$NON-NLS-1$
+
+        @Override
+        protected void process(List<Gpx> chunks) {
+          super.process(chunks);
+          for (Gpx gpx : chunks) {
+            if (gpx != null) {
+              TrackStore.getTrackStore().addGPX(gpx);
+            } else {
+              JOptionPane
+                  .showMessageDialog(
+                      MainWindow.this,
+                      Messages.getString("MainWindow.CouldNotReadGpxFile") + ":\n" //$NON-NLS-1$ //$NON-NLS-2$
+                          + file.getPath(),
+                      Messages.getString("MainWindow.Error"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+            }
           }
         }
-      } else {
-        JOptionPane.showMessageDialog(this, Messages
-            .getString("MainWindow.CouldNotReadGpxFile") + ":\n" //$NON-NLS-1$ //$NON-NLS-2$
-            + file.getPath(),
-            Messages.getString("MainWindow.Error"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-      }
-      String message = "" + numTrackpoints + ' ' + Messages.getString("MainWindow.LocationsLoaded"); //$NON-NLS-1$ //$NON-NLS-2$
-      progressBar.setString(message);
-      TrackStore.getTrackStore().addGPX(gpx);
-      // now that we have a track, we are allowed to save it
-      saveTrackItem.setEnabled(true);
+
+        @Override
+        protected void done() {
+          super.done();
+          // now that we have a track, we are allowed to save it
+          saveTrackItem.setEnabled(true);
+        }
+      }.execute();
     }
   }
 

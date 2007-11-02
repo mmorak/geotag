@@ -1,3 +1,11 @@
+2007-11-02 Release 0.35
+  Right clicking on the image preview now opens the
+  popup menu for that image.
+  Search radius for reverse geocoding can now be
+  specified in kilometers/kilometres or miles.
+  Added 3rd supported language: British English ;-)
+  General cleanup and minor fixes.
+
 2007-10-30 Release 0.34
   Added ability to change location name to another
   location found nearby. This also includes names from
