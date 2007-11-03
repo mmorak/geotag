@@ -43,7 +43,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.ListSelectionModel;
 import javax.swing.WindowConstants;
+import javax.swing.event.ListSelectionEvent;
 import javax.swing.undo.UndoManager;
 
 import net.iharder.dnd.FileDrop;
@@ -121,8 +123,8 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
   /** The {@link JScrollPane} holding the table */
   private JScrollPane tableScrollPane;
 
-  /** The {@link ImageComponent} displaying the previews */
-  ImageComponent previewComponent;
+  /** The {@link PreviewComponent} displaying the previews */
+  PreviewComponent previewComponent;
 
   /** A JProgressBar to show progress for lengthy operations */
   JProgressBar progressBar;
@@ -176,7 +178,25 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
     setJMenuBar(menuBar);
     setLayout(new BorderLayout());
     tableModel = new ImagesTableModel();
-    table = new ImagesTable(tableModel);
+    table = new ImagesTable(tableModel) {
+      @Override
+      public void valueChanged(ListSelectionEvent event) {
+        // the table row selection has changed
+        // we might need to change the preview component
+        ListSelectionModel newSelectionModel = (ListSelectionModel) event
+            .getSource();
+        if (newSelectionModel.getValueIsAdjusting()) {
+          return;
+        }
+        int lead = newSelectionModel.getLeadSelectionIndex();
+        if (newSelectionModel.isSelectedIndex(lead)) {
+          // time to change the preview
+          ImageInfo imageInfo = tableModel.getImageInfo(lead);
+          previewComponent.setImageInfo(imageInfo);
+        }
+        super.valueChanged(event);
+      }
+    };
     table.addMouseListener(new MouseAdapter() {
       private void popupMenu(MouseEvent event) {
         int mouseOnRow = table.rowAtPoint(event.getPoint());
@@ -191,11 +211,6 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
         super.mousePressed(event);
         if (event.isPopupTrigger()) {
           popupMenu(event);
-        } else if (event.getButton() == MouseEvent.BUTTON1) {
-          // this needs to be in mousePressed() not mouseClicked()
-          int mouseOnRow = table.rowAtPoint(event.getPoint());
-          ImageInfo imageInfo = tableModel.getImageInfo(mouseOnRow);
-          previewComponent.setImageInfo(imageInfo);
         }
       }
 
@@ -218,7 +233,7 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
     int y = Settings.get(SETTING.MAIN_WINDOW_Y, 0);
     setLocation(x, y);
     tableScrollPane = new JScrollPane(table);
-    previewComponent = new ImageComponent(Messages
+    previewComponent = new PreviewComponent(Messages
         .getString("MainWindow.Preview")); //$NON-NLS-1$
     previewComponent.addMouseListener(new MouseAdapter() {
       private void popupMenu(MouseEvent event) {

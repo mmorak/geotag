@@ -22,19 +22,23 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
 import java.awt.FontMetrics;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.util.List;
 
 import javax.swing.AbstractAction;
+import javax.swing.BorderFactory;
 import javax.swing.DefaultCellEditor;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JTable;
 import javax.swing.JToolTip;
 import javax.swing.KeyStroke;
+import javax.swing.border.Border;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
@@ -56,7 +60,7 @@ import org.fibs.geotag.util.Util;
  * 
  */
 @SuppressWarnings("serial")
-public class ImagesTable extends JTable {
+public class ImagesTable extends NavigableTable {
 
   /** A string of zeros - used to calculate preferred widths */
   private static final String zeros = "0000000000"; //$NON-NLS-1$
@@ -77,6 +81,9 @@ public class ImagesTable extends JTable {
   /** The background colour used for every second row */
   Color alternativeBackground;
 
+  /** The editor text field */
+  private TextCellEditor textCellEditor;
+
   /**
    * Create a new ImagesTable
    * 
@@ -88,7 +95,6 @@ public class ImagesTable extends JTable {
     alternativeBackground = calculateAlternativeBackgroundColour();
     setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
     determineColumnLayout();
-    usePreferredFont();
     // we need to track mouse motions
     addMouseMotionListener(new MouseMotionAdapter() {
       @Override
@@ -100,9 +106,35 @@ public class ImagesTable extends JTable {
         }
       }
     });
+
+    addKeyListener(new KeyAdapter() {
+      @Override
+      public void keyPressed(KeyEvent event) {
+        switch (event.getKeyCode()) {
+          case KeyEvent.VK_DOWN:
+          case KeyEvent.VK_KP_DOWN:
+            navigateDown(event);
+            break;
+          case KeyEvent.VK_UP:
+          case KeyEvent.VK_KP_UP:
+            navigateUp(event);
+            break;
+        }
+        super.keyPressed(event);
+      }
+
+    });
+
+    textCellEditor = new TextCellEditor(this);
+    textCellEditor.setFont(getFont());
+    textCellEditor.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+    setDefaultEditor(String.class, new DefaultCellEditor(textCellEditor));
+    // setDefaultEditor(Object.class, new KeyableCellEditor());
     // Edit cell on single click (default is double click)
     ((DefaultCellEditor) getDefaultEditor(String.class))
         .setClickCountToStart(1);
+    // use preferred font after editor component is set up
+    usePreferredFont();
     setupActions();
   }
 
@@ -215,6 +247,9 @@ public class ImagesTable extends JTable {
    */
   private void determineColumnLayout() {
     FontMetrics fontMetrics = getFontMetrics(getFont());
+    // we put the column names in the correct order first, while setting the
+    // correct column width for them
+    String[] correctOrder = new String[ImagesTableColumns.COLUMN.values().length];
     for (int index = 0; index < ImagesTableColumns.COLUMN.values().length; index++) {
       COLUMN column = ImagesTableColumns.COLUMN.values()[index];
       int preferredWidth = 42;
@@ -263,10 +298,20 @@ public class ImagesTable extends JTable {
       String columnName = getModel().getColumnName(index);
       int columnIndex = getColumnModel().getColumnIndex(columnName);
       getColumnModel().getColumn(columnIndex).setPreferredWidth(preferredWidth);
-      // now move it to the requested position
+      // now find out where the column should go
       setting = getColumnPositionSetting(column);
       int newColumnIndex = Settings.get(setting, columnIndex);
-      getColumnModel().moveColumn(columnIndex, newColumnIndex);
+      // now store the column name in the at the correct index
+      correctOrder[newColumnIndex] = columnName;
+    }
+    // now we move columns around. By moving the column that goes at
+    // position 0 first and the one that goes last last, we avoid
+    // problems with columns being moved away from their correct position
+    for (int index = 0; index < correctOrder.length; index++) {
+      String columnName = correctOrder[index];
+      int currentIndex = getColumnModel().getColumnIndex(columnName);
+      // now move it to the requested position
+      getColumnModel().moveColumn(currentIndex, index);
     }
   }
 
@@ -422,7 +467,16 @@ public class ImagesTable extends JTable {
       Font font = FontUtil.fontFromID(Settings.get(SETTING.FONT, null));
       if (font != null) {
         setFont(font);
-        setRowHeight(font.getSize() + 4);
+        textCellEditor.setFont(font);
+        int borderInsets = 0;
+        Border border = textCellEditor.getBorder();
+        if (border != null) {
+          Insets insets = border.getBorderInsets(textCellEditor);
+          borderInsets += insets.bottom + insets.top;
+        }
+        textCellEditor.getBorder();
+        FontMetrics fontMetrics = getFontMetrics(font);
+        setRowHeight(fontMetrics.getHeight() + borderInsets);
         invalidate();
       }
     }
@@ -512,6 +566,15 @@ public class ImagesTable extends JTable {
       }
     };
     return defaultTableHeader;
+  }
+
+  /**
+   * @see javax.swing.JComponent#processKeyEvent(java.awt.event.KeyEvent)
+   */
+  @Override
+  protected void processKeyEvent(KeyEvent e) {
+    // System.out.println("Table Key " + e.getKeyCode());
+    super.processKeyEvent(e);
   }
 
 }

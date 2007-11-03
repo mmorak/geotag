@@ -36,7 +36,7 @@ import org.fibs.geotag.Messages;
  *          process() methods
  * 
  */
-public abstract class BackgroundTask<V> extends SwingWorker<String, V>
+public abstract class BackgroundTask<V> extends InterruptibleTask<String, V>
     implements PropertyChangeListener {
 
   /** The name of the task */
@@ -47,9 +47,6 @@ public abstract class BackgroundTask<V> extends SwingWorker<String, V>
 
   /** A copy of the last progress message */
   private String oldProgressMessage = null;
-
-  /** Subclasses can read this and should terminate if true */
-  protected boolean terminate = false;
 
   /**
    * Construct a new {@link BackgroundTask}
@@ -89,13 +86,6 @@ public abstract class BackgroundTask<V> extends SwingWorker<String, V>
    * @return The current progress value
    */
   public abstract int getCurrentProgress();
-
-  /**
-   * Called as a request to interrupt a running task
-   */
-  public synchronized void interruptRequest() {
-    terminate = true;
-  }
 
   /**
    * Set a new progress message for this task and notify property listeners. The

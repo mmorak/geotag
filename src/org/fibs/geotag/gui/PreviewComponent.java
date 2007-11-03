@@ -28,7 +28,7 @@ import java.io.File;
 
 import org.fibs.geotag.data.ImageInfo;
 import org.fibs.geotag.image.ImageRotator;
-import org.fibs.geotag.tasks.ImageLoaderTask;
+import org.fibs.geotag.tasks.PreviewLoaderTask;
 
 /**
  * Swing doesn't have an ImageComponent - here is one
@@ -37,7 +37,7 @@ import org.fibs.geotag.tasks.ImageLoaderTask;
  * 
  */
 @SuppressWarnings("serial")
-public class ImageComponent extends Component {
+public class PreviewComponent extends Component {
   /** The image to be displayed by this component */
   private BufferedImage image;
 
@@ -47,7 +47,7 @@ public class ImageComponent extends Component {
   /**
    * Create an ImageComponent with no associated picture
    */
-  public ImageComponent() {
+  public PreviewComponent() {
     // nothing to be done
   }
 
@@ -56,7 +56,7 @@ public class ImageComponent extends Component {
    * 
    * @param name
    */
-  public ImageComponent(String name) {
+  public PreviewComponent(String name) {
     setName(name);
   }
 
@@ -141,7 +141,7 @@ public class ImageComponent extends Component {
   public void setImageInfo(final ImageInfo imageInfo) {
     this.imageInfo = imageInfo;
     File file = new File(imageInfo.getPath());
-    new ImageLoaderTask(file) {
+    new PreviewLoaderTask(file, 500) {
       @Override
       protected void done() {
         BufferedImage bufferedImage = getImage();

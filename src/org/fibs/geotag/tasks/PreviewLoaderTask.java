@@ -21,8 +21,8 @@ package org.fibs.geotag.tasks;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-
-import javax.swing.SwingWorker;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.fibs.geotag.image.ImageFile;
 import org.fibs.geotag.image.ImageFileFactory;
@@ -34,7 +34,7 @@ import org.fibs.geotag.image.ImageFileFactory;
  * @author Andreas Schneider
  * 
  */
-public class ImageLoaderTask extends SwingWorker<Void, BufferedImage> {
+public class PreviewLoaderTask extends InterruptibleTask<Void, BufferedImage> {
 
   /** The image file to be loaded */
   private File file;
@@ -42,13 +42,29 @@ public class ImageLoaderTask extends SwingWorker<Void, BufferedImage> {
   /** the result of loading the image */
   private BufferedImage bufferedImage;
 
+  /** delay in milliseconds before */
+  private long delay;
+
+  /** A list of running (actually not-terminated) tasks */
+  private static List<PreviewLoaderTask> runningTasks = new ArrayList<PreviewLoaderTask>();
+
   /**
    * Create a new image loader task
    * 
    * @param file
+   * @param delay in milliseconds
    */
-  public ImageLoaderTask(File file) {
+  public PreviewLoaderTask(File file, long delay) {
     this.file = file;
+    this.delay = delay;
+    synchronized (runningTasks) {
+      // try terminating all running tasks
+      for (PreviewLoaderTask task : runningTasks) {
+        task.interruptRequest();
+      }
+      // and add this task to the list
+      runningTasks.add(this);
+    }
   }
 
   /**
@@ -57,12 +73,21 @@ public class ImageLoaderTask extends SwingWorker<Void, BufferedImage> {
   @Override
   protected Void doInBackground() throws Exception {
     try {
-      ImageFile imageFile = ImageFileFactory.createImageFile(file);
-      if (imageFile != null) {
-        bufferedImage = imageFile.read();
+      Thread.sleep(delay);
+      if (!terminate) {
+        ImageFile imageFile = ImageFileFactory.createImageFile(file);
+        if (imageFile != null) {
+          bufferedImage = imageFile.read();
+        }
+      } else {
+        // System.out.println("Preview cancelled: "+file.getName());
       }
     } catch (IOException e) {
       e.printStackTrace();
+    }
+    // the task is about to finish - remove it from list of running tasks
+    synchronized (runningTasks) {
+      runningTasks.remove(this);
     }
     return null;
   }
