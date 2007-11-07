@@ -133,18 +133,20 @@ public class MetadataExtractorReader implements ExifReader {
           // Here we try to retrieve several tags, each attempt
           // surrounded by try/catch blocks catching all exceptions
           try {
-            // first we retrieve the altitude, stored as one Rational
-            Rational rational = directory
-                .getRational(GpsDirectory.TAG_GPS_ALTITUDE);
-            // convert to a double
-            double altitude = rational.doubleValue();
-            int ref = directory.getInt(GpsDirectory.TAG_GPS_ALTITUDE_REF);
-            if (ref == 1) { // this is not the character '1'
-              altitude = -altitude;
+            if (directory.containsTag(GpsDirectory.TAG_GPS_ALTITUDE)) {
+              // first we retrieve the altitude, stored as one Rational
+              Rational rational = directory
+                  .getRational(GpsDirectory.TAG_GPS_ALTITUDE);
+              // convert to a double
+              double altitude = rational.doubleValue();
+              int ref = directory.getInt(GpsDirectory.TAG_GPS_ALTITUDE_REF);
+              if (ref == 1) { // this is not the character '1'
+                altitude = -altitude;
+              }
+              // and finally to string used to update the ImageInfo
+              new UpdateGPSAltitude(imageInfo, Double.toString(altitude),
+                  ImageInfo.DATA_SOURCE.IMAGE);
             }
-            // and finally to string used to update the ImageInfo
-            new UpdateGPSAltitude(imageInfo, Double.toString(altitude),
-                ImageInfo.DATA_SOURCE.IMAGE);
           } catch (Exception e) {
             // catch all Exceptions
             e.printStackTrace();
@@ -164,34 +166,38 @@ public class MetadataExtractorReader implements ExifReader {
             e.printStackTrace();
           }
           try {
-            // The latitude is retrieved as an array of three rationals
-            Rational[] rationals = directory
-                .getRationalArray(GpsDirectory.TAG_GPS_LATITUDE);
-            // converted into degrees
-            double latitude = rationalsToDegrees(rationals);
-            // and stored
-            char ref = (char) directory
-                .getByteArray(GpsDirectory.TAG_GPS_LATITUDE_REF)[0];
-            if (ref == 'S') {
-              latitude = -latitude;
+            if (directory.containsTag(GpsDirectory.TAG_GPS_LATITUDE)) {
+              // The latitude is retrieved as an array of three rationals
+              Rational[] rationals = directory
+                  .getRationalArray(GpsDirectory.TAG_GPS_LATITUDE);
+              // converted into degrees
+              double latitude = rationalsToDegrees(rationals);
+              // and stored
+              char ref = (char) directory
+                  .getByteArray(GpsDirectory.TAG_GPS_LATITUDE_REF)[0];
+              if (ref == 'S') {
+                latitude = -latitude;
+              }
+              new UpdateGPSLatitude(imageInfo, Double.toString(latitude),
+                  ImageInfo.DATA_SOURCE.IMAGE);
             }
-            new UpdateGPSLatitude(imageInfo, Double.toString(latitude),
-                ImageInfo.DATA_SOURCE.IMAGE);
           } catch (Exception e) {
             e.printStackTrace();
           }
           try {
-            // the same procedure for the longitude
-            Rational[] rationals = directory
-                .getRationalArray(GpsDirectory.TAG_GPS_LONGITUDE);
-            double longitude = rationalsToDegrees(rationals);
-            char ref = (char) directory
-                .getByteArray(GpsDirectory.TAG_GPS_LONGITUDE_REF)[0];
-            if (ref == 'W') {
-              longitude = -longitude;
+            if (directory.containsTag(GpsDirectory.TAG_GPS_LONGITUDE)) {
+              // the same procedure for the longitude
+              Rational[] rationals = directory
+                  .getRationalArray(GpsDirectory.TAG_GPS_LONGITUDE);
+              double longitude = rationalsToDegrees(rationals);
+              char ref = (char) directory
+                  .getByteArray(GpsDirectory.TAG_GPS_LONGITUDE_REF)[0];
+              if (ref == 'W') {
+                longitude = -longitude;
+              }
+              new UpdateGPSLongitude(imageInfo, Double.toString(longitude),
+                  ImageInfo.DATA_SOURCE.IMAGE);
             }
-            new UpdateGPSLongitude(imageInfo, Double.toString(longitude),
-                ImageInfo.DATA_SOURCE.IMAGE);
           } catch (Exception e) {
             e.printStackTrace();
           }

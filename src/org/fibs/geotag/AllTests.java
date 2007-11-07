@@ -24,6 +24,7 @@ import junit.framework.TestSuite;
 import org.fibs.geotag.track.KmlTest;
 import org.fibs.geotag.track.TrackStoreTest;
 import org.fibs.geotag.util.BoundsTypeUtilTest;
+import org.fibs.geotag.util.CoordinatesTest;
 import org.fibs.geotag.util.FileUtilTest;
 import org.fibs.geotag.util.FontUtilTest;
 
@@ -42,6 +43,7 @@ public class AllTests extends TestSuite {
     suite.addTestSuite(TrackStoreTest.class);
     suite.addTestSuite(BoundsTypeUtilTest.class);
     suite.addTestSuite(KmlTest.class);
+    suite.addTestSuite(CoordinatesTest.class);
     return suite;
   }
 }

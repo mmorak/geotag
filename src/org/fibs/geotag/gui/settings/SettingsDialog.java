@@ -43,7 +43,8 @@ import org.fibs.geotag.Messages;
 import org.fibs.geotag.Settings;
 import org.fibs.geotag.Settings.SETTING;
 import org.fibs.geotag.gpsbabel.GPSBabel;
-import org.fibs.geotag.util.Distance;
+import org.fibs.geotag.util.Coordinates;
+import org.fibs.geotag.util.Units;
 import org.fibs.geotag.util.FontUtil;
 
 /**
@@ -210,8 +211,18 @@ public class SettingsDialog extends JDialog implements TreeSelectionListener {
 
     ChoiceSettingsPanel distances = new ChoiceSettingsPanel(
         parent,
-        Messages.getString("SettingsDialog.DistanceUnit"), SETTING.DISTANCE_UNIT, Distance.getDisplayNames(), 0); //$NON-NLS-1$
+        Messages.getString("SettingsDialog.DistanceUnit"), SETTING.DISTANCE_UNIT, Units.getDistanceUnitNames(), 0); //$NON-NLS-1$
     addPanel(general, distances);
+
+    ChoiceSettingsPanel altitudes = new ChoiceSettingsPanel(
+        parent,
+        Messages.getString("SettingsDialog.AltitudeUnit"), SETTING.ALTITUDE_UNIT, Units.getAltitudeUnitNames(), 0); //$NON-NLS-1$
+    addPanel(general, altitudes);
+
+    ChoiceSettingsPanel coordinates = new ChoiceSettingsPanel(
+        parent,
+        Messages.getString("SettingsDialog.Coordinates"), SETTING.COORDINATES_FORMAT, Coordinates.formatNames, 0); //$NON-NLS-1$
+    addPanel(general, coordinates);
 
     top.add(general);
 

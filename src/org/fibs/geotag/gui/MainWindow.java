@@ -421,6 +421,7 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
         loadTrackFromGpsItem.setEnabled(GPSBabel.isAvailable());
         // we might need to change the font
         table.usePreferredFont();
+        tableModel.fireTableDataChanged();
       }
     });
     fileMenu.add(settingsItem);

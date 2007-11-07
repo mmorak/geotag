@@ -20,8 +20,8 @@ package org.fibs.geotag.geonames;
 
 import javax.swing.ImageIcon;
 
-import org.fibs.geotag.util.Distance;
-import org.fibs.geotag.util.Distance.UNIT;
+import org.fibs.geotag.util.Units;
+import org.fibs.geotag.util.Units.DISTANCE;
 
 /**
  * A class holding location information retrieved from geonames.org
@@ -145,8 +145,8 @@ public class Location implements Comparable<Location> {
    * @param unit
    * @return the distance converted to a distance unit
    */
-  public double getDistance(UNIT unit) {
-    return Distance.convert(distance, UNIT.KILOMETRES, unit);
+  public double getDistance(DISTANCE unit) {
+    return Units.convert(distance, DISTANCE.KILOMETRES, unit);
   }
 
   /**

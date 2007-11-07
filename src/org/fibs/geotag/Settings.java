@@ -154,7 +154,11 @@ public class Settings {
     /** Preferences key for number of Wikipedia entries to retrieve if enabled */
     GEONAMES_WIKIPEDIA_ENTRIES,
     /** Preferences key for distance unit (km, mi, nmi) */
-    DISTANCE_UNIT;
+    DISTANCE_UNIT,
+    /** Preferences key for altitude unit (m, ft) */
+    ALTITUDE_UNIT,
+    /** Preferences key formatting latitudes/longitudes */
+    COORDINATES_FORMAT;
 
     /**
      * For the actual key I prefer lower case keys with dots

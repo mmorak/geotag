@@ -27,8 +27,8 @@ import java.util.List;
 
 import org.fibs.geotag.Settings;
 import org.fibs.geotag.Settings.SETTING;
-import org.fibs.geotag.util.Distance;
-import org.fibs.geotag.util.Distance.UNIT;
+import org.fibs.geotag.util.Units;
+import org.fibs.geotag.util.Units.DISTANCE;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -68,11 +68,11 @@ public class LocationHandler extends DefaultHandler {
           + latitude + "&lng=" + longitude + "&style=FULL"; //$NON-NLS-1$ //$NON-NLS-2$
       boolean useRadius = Settings.get(SETTING.GEONAMES_USE_RADIUS, false);
       if (useRadius) {
-        UNIT unit = Distance.UNIT.values()[Settings.get(SETTING.DISTANCE_UNIT,
-            0)];
+        DISTANCE unit = Units.DISTANCE.values()[Settings.get(
+            SETTING.DISTANCE_UNIT, 0)];
         int radius = Settings.get(SETTING.GEONAMES_RADIUS, 5);
-        double radiusKm = Distance.convert(radius, unit,
-            Distance.UNIT.KILOMETRES);
+        double radiusKm = Units
+            .convert(radius, unit, Units.DISTANCE.KILOMETRES);
         if (radiusKm != 0) {
           url += "&radius=" + radiusKm; //$NON-NLS-1$
         }

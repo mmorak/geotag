@@ -117,8 +117,7 @@ public abstract class NavigableTable extends JTable {
     // The location of the viewport top/left relative to the table
     Point viewPosition = viewport.getViewPosition();
     // adjust the cell rectangle, so its relative to the viewport, not the table
-    cellRectangle.setLocation(cellRectangle.x - viewPosition.x, cellRectangle.y
-        - viewPosition.y);
+    cellRectangle.translate(-viewPosition.x, -viewPosition.y);
     // scroll the viewport if necessary
     viewport.scrollRectToVisible(cellRectangle);
   }

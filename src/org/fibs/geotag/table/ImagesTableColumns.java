@@ -19,6 +19,9 @@
 package org.fibs.geotag.table;
 
 import org.fibs.geotag.Messages;
+import org.fibs.geotag.Settings;
+import org.fibs.geotag.Settings.SETTING;
+import org.fibs.geotag.util.Units;
 
 /**
  * An enumeration of the columns in the table
@@ -78,7 +81,13 @@ public class ImagesTableColumns {
       case LONGITUDE:
         return Messages.getString("ImagesTableColumns.TooltipLongitude"); //$NON-NLS-1$
       case ALTITUDE:
-        return Messages.getString("ImagesTableColumns.TooltipAltitude"); //$NON-NLS-1$
+        Units.ALTITUDE unit = Units.ALTITUDE.values()[Settings.get(
+            SETTING.ALTITUDE_UNIT, 0)];
+        String unitAbbreviation = Units.getAbbreviation(unit);
+        String description = String.format(Messages
+            .getString("ImagesTableColumns.TooltipAltitudeFormat"), //$NON-NLS-1$
+            unitAbbreviation);
+        return description;
       case DIRECTION:
         return Messages.getString("ImagesTableColumns.TooltipDirection"); //$NON-NLS-1$
       case LOCATION_NAME:

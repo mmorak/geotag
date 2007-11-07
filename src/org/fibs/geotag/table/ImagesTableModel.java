@@ -18,6 +18,8 @@
 
 package org.fibs.geotag.table;
 
+import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -25,11 +27,19 @@ import java.util.List;
 import javax.swing.table.AbstractTableModel;
 
 import org.fibs.geotag.Messages;
+import org.fibs.geotag.Settings;
+import org.fibs.geotag.Settings.SETTING;
 import org.fibs.geotag.data.ImageInfo;
 import org.fibs.geotag.data.ImageInfo.DATA_SOURCE;
 import org.fibs.geotag.table.ImagesTableColumns.COLUMN;
-import org.fibs.geotag.tasks.ChangeDirectionTask;
+import org.fibs.geotag.tasks.EditAltitudeTask;
+import org.fibs.geotag.tasks.EditDirectionTask;
+import org.fibs.geotag.tasks.EditLatitudeTask;
+import org.fibs.geotag.tasks.EditLongitudeTask;
 import org.fibs.geotag.tasks.ManualEditTask;
+import org.fibs.geotag.util.Coordinates;
+import org.fibs.geotag.util.Unicode;
+import org.fibs.geotag.util.Units;
 import org.fibs.geotag.util.Util;
 
 /**
@@ -75,7 +85,7 @@ public class ImagesTableModel extends AbstractTableModel {
   public static final int ALTITUDE_DECIMALS = 1;
 
   /** How many decimals of the direction to display */
-  public static final int DIRECTION_DECIMALS = 2;
+  public static final int DIRECTION_DECIMALS = 1;
 
   /**
    * Can be called to re-sort the table (mainly when time-offsets change)
@@ -171,10 +181,12 @@ public class ImagesTableModel extends AbstractTableModel {
       case CAMERA_DATE:
       case GPS_DATE:
       case TIME_OFFSET:
+        return false;
       case LATITUDE:
       case LONGITUDE:
+        return true;
       case ALTITUDE:
-        return false;
+        return true;
       case DIRECTION:
         ImageInfo imageInfo = getImageInfo(rowIndex);
         return imageInfo.hasLocation();
@@ -222,13 +234,42 @@ public class ImagesTableModel extends AbstractTableModel {
       case TIME_OFFSET:
         return imageInfo.getOffsetString();
       case LATITUDE:
-        return round(imageInfo.getGPSLatitude(), LATITUDE_DECIMALS);
+        String latitude = imageInfo.getGPSLatitude();
+        if (latitude != null) {
+          latitude = Coordinates.format(Double.parseDouble(latitude), false);
+        }
+        return latitude;
       case LONGITUDE:
-        return round(imageInfo.getGPSLongitude(), LONGITUDE_DECIMALS);
+        String longitude = imageInfo.getGPSLongitude();
+        if (longitude != null) {
+          longitude = Coordinates.format(Double.parseDouble(longitude), true);
+        }
+        return longitude;
       case ALTITUDE:
-        return round(imageInfo.getGPSAltitude(), ALTITUDE_DECIMALS);
+        Units.ALTITUDE unit = Units.ALTITUDE.values()[Settings.get(
+            SETTING.ALTITUDE_UNIT, 0)];
+        String altitude = imageInfo.getGPSAltitude();
+        if (unit != Units.ALTITUDE.METRES) {
+          try {
+            if (altitude != null && altitude.length() > 0) {
+              double altitudeMeters = Double.parseDouble(altitude);
+              double displayAltitude = Units.convert(altitudeMeters,
+                  Units.ALTITUDE.METRES, unit);
+              altitude = Double.toString(displayAltitude);
+            }
+          } catch (Exception e) {
+            e.printStackTrace();
+          }
+        }
+        return round(altitude, ALTITUDE_DECIMALS);
       case DIRECTION:
-        return round(imageInfo.getGPSImgDirection(), DIRECTION_DECIMALS);
+        String direction = imageInfo.getGPSImgDirection();
+        if (direction != null) {
+          // round value and add degree symbol
+          direction = round(imageInfo.getGPSImgDirection(), DIRECTION_DECIMALS)
+              + Unicode.DEGREE_SYMBOL;
+        }
+        return direction;
       case LOCATION_NAME:
         return imageInfo.getLocationName();
       case PROVINCE_NAME:
@@ -251,27 +292,144 @@ public class ImagesTableModel extends AbstractTableModel {
     String columnName = getColumnName(columnIndex);
     String oldString;
     String newString;
+    boolean update;
     switch (column) {
       case IMAGE_NAME:
       case CAMERA_DATE:
       case GPS_DATE:
       case TIME_OFFSET:
-      case LATITUDE:
-      case LONGITUDE:
-      case ALTITUDE:
         // all those are not editable
+        break;
+      case LATITUDE:
+        update = true;
+        oldString = imageInfo.getGPSLatitude();
+        newString = (String) value;
+        if (oldString == null && newString.length() == 0) {
+          update = false;
+        } else {
+          try {
+            double oldLatitude = 999.9; // any impossible value
+            if (oldString != null) {
+              oldLatitude = Double.parseDouble(oldString);
+            }
+            double newLatitude = Coordinates.parse(newString, false);
+            newString = Double.toString(newLatitude);
+            if (Double.isNaN(newLatitude)
+                || Math.abs(oldLatitude - newLatitude) < 1e-8) {
+              update = false;
+            }
+          } catch (RuntimeException e) {
+            e.printStackTrace();
+          }
+          if (update) {
+            new EditLatitudeTask(
+                Messages.getString("ImagesTableModel.EditLatitude"), imageInfo, newString, DATA_SOURCE.MANUAL) { //$NON-NLS-1$
+              @Override
+              protected void process(List<ImageInfo> imageInfos) {
+                for (ImageInfo image : imageInfos) {
+                  int row = getRow(image);
+                  if (row >= 0) {
+                    fireTableRowsUpdated(row, row);
+                    fireTableDataChanged();
+                  }
+                }
+              }
+            }.execute();
+          }
+        }
+        break;
+      case LONGITUDE:
+        update = true;
+        oldString = imageInfo.getGPSLatitude();
+        newString = (String) value;
+        if (oldString == null && newString.length() == 0) {
+          update = false;
+        } else {
+          try {
+            double oldLongitude = 999.9; // any impossible value
+            if (oldString != null) {
+              oldLongitude = Double.parseDouble(oldString);
+            }
+            double newLongitude = Coordinates.parse(newString, true);
+            newString = Double.toString(newLongitude);
+            if (Double.isNaN(newLongitude)
+                || Math.abs(oldLongitude - newLongitude) < 1e-8) {
+              update = false;
+            }
+          } catch (RuntimeException e) {
+            e.printStackTrace();
+          }
+          if (update) {
+            new EditLongitudeTask(
+                Messages.getString("ImagesTableModel.EditLongitude"), imageInfo, newString, DATA_SOURCE.MANUAL) { //$NON-NLS-1$
+              @Override
+              protected void process(List<ImageInfo> imageInfos) {
+                for (ImageInfo image : imageInfos) {
+                  int row = getRow(image);
+                  if (row >= 0) {
+                    fireTableRowsUpdated(row, row);
+                    fireTableDataChanged();
+                  }
+                }
+              }
+            }.execute();
+          }
+        }
+        break;
+      case ALTITUDE:
+        update = true;
+        oldString = imageInfo.getGPSAltitude();
+        newString = (String) value;
+        if (oldString == null && newString.length() == 0) {
+          update = false;
+        } else {
+          try {
+            DecimalFormat decimalFormat = new DecimalFormat();
+            Number newAltitude = decimalFormat.parse(newString);
+            newString = Double.toString(newAltitude.doubleValue());
+          } catch (RuntimeException e) {
+            e.printStackTrace();
+            update = false;
+          } catch (ParseException e) {
+            e.printStackTrace();
+            update = false;
+          }
+        }
+        if (update) {
+          new EditAltitudeTask(
+              "Edit altitude", imageInfo, newString, DATA_SOURCE.MANUAL) { //$NON-NLS-1$
+            @Override
+            protected void process(List<ImageInfo> imageInfos) {
+              for (ImageInfo image : imageInfos) {
+                int row = getRow(image);
+                if (row >= 0) {
+                  fireTableRowsUpdated(row, row);
+                  fireTableDataChanged();
+                }
+              }
+            }
+          }.execute();
+        }
         return;
       case DIRECTION:
-        boolean update = true;
+        update = true;
         // there are two exceptions:
         oldString = imageInfo.getGPSImgDirection();
         newString = (String) value;
         if (oldString == null && newString.length() == 0) {
           update = false;
-        } else if (oldString != null) {
+        } else {
           try {
-            double oldDouble = Double.parseDouble(oldString);
-            double newDouble = Double.parseDouble(newString);
+            double oldDouble = 0.0;
+            if (oldString != null) {
+              oldDouble = Double.parseDouble(oldString);
+            }
+            // the newString might contain a degree symbol
+            // but the DecimalFormat doesn't care about trailing nonsense
+            DecimalFormat decimalFormat = new DecimalFormat();
+            Number newNumber = decimalFormat.parse(newString);
+            double newDouble = newNumber.doubleValue();
+            newString = Double.toString(newDouble);
             // determine a value below which we consider the difference equal.
             // we use Math.pow(10, -(DIRECTION_DECIMALS + 1)
             // Math.pow() is evil, so I won't use it
@@ -285,11 +443,13 @@ public class ImagesTableModel extends AbstractTableModel {
             }
           } catch (NumberFormatException e) {
             e.printStackTrace();
+          } catch (ParseException e) {
+            e.printStackTrace();
           }
         }
         if (update) {
-          new ChangeDirectionTask(
-              Messages.getString("ImagesTableModel.EditDirection"), imageInfo, (String) value, DATA_SOURCE.MANUAL) { //$NON-NLS-1$
+          new EditDirectionTask(
+              Messages.getString("ImagesTableModel.EditDirection"), imageInfo, newString, DATA_SOURCE.MANUAL) { //$NON-NLS-1$
             @Override
             protected void process(List<ImageInfo> imageInfos) {
               for (ImageInfo image : imageInfos) {
@@ -360,12 +520,11 @@ public class ImagesTableModel extends AbstractTableModel {
    */
   private String round(String value, int decimals) {
     String result = value;
+    String format = String.format("%%.%df", new Integer(decimals)); //$NON-NLS-1$
     if (value != null && value.length() > 0) {
       try {
-        double theValue = Double.parseDouble(value);
-        double factor = Util.powerOf10(decimals);
-        double rounded = Math.round(factor * theValue) / factor;
-        result = Double.toString(rounded);
+        Double theValue = new Double(value);
+        result = String.format(format, theValue);
       } catch (NumberFormatException e) {
         // e.printStackTrace();
       }

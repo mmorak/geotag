@@ -66,8 +66,8 @@ import org.fibs.geotag.tasks.UndoableBackgroundTask;
 import org.fibs.geotag.track.TrackMatcher;
 import org.fibs.geotag.track.TrackStore;
 import org.fibs.geotag.util.Airy;
-import org.fibs.geotag.util.Distance;
-import org.fibs.geotag.util.Distance.UNIT;
+import org.fibs.geotag.util.Units;
+import org.fibs.geotag.util.Units.DISTANCE;
 
 import com.centerkey.utils.BareBonesBrowserLaunch;
 
@@ -701,12 +701,12 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
           locationText.append(", ").append(location.getCountryName()); //$NON-NLS-1$
         }
         // TODO: This should probably show in meters/yards if small enough
-        UNIT distanceUnit = UNIT.values()[Settings
-            .get(SETTING.DISTANCE_UNIT, 0)];
+        DISTANCE distanceUnit = DISTANCE.values()[Settings.get(
+            SETTING.DISTANCE_UNIT, 0)];
         locationText
             .append(String
                 .format(
-                    " (%.2f %s)", new Double(location.getDistance(distanceUnit)), Distance.getDisplayAbbreviation(distanceUnit))); //$NON-NLS-1$
+                    " (%.2f %s)", new Double(location.getDistance(distanceUnit)), Units.getAbbreviation(distanceUnit))); //$NON-NLS-1$
         JMenuItem selectLocationItem = new JMenuItem(locationText.toString(),
             location.getIcon());
         selectLocationItem.addActionListener(new ActionListener() {

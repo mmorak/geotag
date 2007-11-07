@@ -187,17 +187,23 @@ public class ExifWriter {
     // the GPSVersion needs to be set to 2.2.0.0
     arguments.add("-GPSVersionID=2 2 0 0"); //$NON-NLS-1$
     // the latitude
-    double latitude = Double.parseDouble(imageInfo.getGPSLatitude());
-    arguments.add("-GPSLatitudeRef=" + (latitude >= 0.0 ? 'N' : 'S')); //$NON-NLS-1$
-    arguments.add("-GPSLatitude=" + Math.abs(latitude)); //$NON-NLS-1$
+    if (imageInfo.getGPSLatitude() != null) {
+      double latitude = Double.parseDouble(imageInfo.getGPSLatitude());
+      arguments.add("-GPSLatitudeRef=" + (latitude >= 0.0 ? 'N' : 'S')); //$NON-NLS-1$
+      arguments.add("-GPSLatitude=" + Math.abs(latitude)); //$NON-NLS-1$
+    }
     // the longitude
-    double longitude = Double.parseDouble(imageInfo.getGPSLongitude());
-    arguments.add("-GPSLongitudeRef=" + (longitude >= 0.0 ? 'E' : 'W')); //$NON-NLS-1$
-    arguments.add("-GPSLongitude=" + Math.abs(longitude)); //$NON-NLS-1$
+    if (imageInfo.getGPSLongitude() != null) {
+      double longitude = Double.parseDouble(imageInfo.getGPSLongitude());
+      arguments.add("-GPSLongitudeRef=" + (longitude >= 0.0 ? 'E' : 'W')); //$NON-NLS-1$
+      arguments.add("-GPSLongitude=" + Math.abs(longitude)); //$NON-NLS-1$
+    }
     // the altitude
-    double altitude = Double.parseDouble(imageInfo.getGPSAltitude());
-    arguments.add("-GPSAltitudeRef=" + (altitude >= 0.0 ? '0' : '1')); //$NON-NLS-1$
-    arguments.add("-GPSAltitude=" + Math.abs(altitude)); //$NON-NLS-1$
+    if (imageInfo.getGPSAltitude() != null) {
+      double altitude = Double.parseDouble(imageInfo.getGPSAltitude());
+      arguments.add("-GPSAltitudeRef=" + (altitude >= 0.0 ? '0' : '1')); //$NON-NLS-1$
+      arguments.add("-GPSAltitude=" + Math.abs(altitude)); //$NON-NLS-1$
+    }
     // the direction if we have one
     if (imageInfo.getGPSImgDirection() != null) {
       double direction = Double.parseDouble(imageInfo.getGPSImgDirection());
@@ -269,17 +275,23 @@ public class ExifWriter {
     // the GPSVersion needs to be set to 2.2.0.0
     arguments.add("-XMP:GPSVersionID=2.2.0.0"); //$NON-NLS-1$
     // the latitude
-    double latitude = Double.parseDouble(imageInfo.getGPSLatitude());
-    // No LatitudeRef or LongitudeRef in XMP - used signed values
-    arguments.add("-XMP:GPSLatitude=" + latitude); //$NON-NLS-1$
+    if (imageInfo.getGPSLatitude() != null) {
+      double latitude = Double.parseDouble(imageInfo.getGPSLatitude());
+      // No LatitudeRef or LongitudeRef in XMP - used signed values
+      arguments.add("-XMP:GPSLatitude=" + latitude); //$NON-NLS-1$
+    }
     // the longitude
-    double longitude = Double.parseDouble(imageInfo.getGPSLongitude());
-    arguments.add("-XMP:GPSLongitude=" + longitude); //$NON-NLS-1$
+    if (imageInfo.getGPSLongitude() != null) {
+      double longitude = Double.parseDouble(imageInfo.getGPSLongitude());
+      arguments.add("-XMP:GPSLongitude=" + longitude); //$NON-NLS-1$
+    }
     // the altitude
-    double altitude = Double.parseDouble(imageInfo.getGPSAltitude());
-    // Strangely the AltitudeRef is still used in XMP
-    arguments.add("-XMP:GPSAltitudeRef=" + (altitude >= 0.0 ? '0' : '1')); //$NON-NLS-1$
-    arguments.add("-XMP:GPSAltitude=" + Math.abs(altitude)); //$NON-NLS-1$
+    if (imageInfo.getGPSAltitude() != null) {
+      double altitude = Double.parseDouble(imageInfo.getGPSAltitude());
+      // Strangely the AltitudeRef is still used in XMP
+      arguments.add("-XMP:GPSAltitudeRef=" + (altitude >= 0.0 ? '0' : '1')); //$NON-NLS-1$
+      arguments.add("-XMP:GPSAltitude=" + Math.abs(altitude)); //$NON-NLS-1$
+    }
     // the map datum is always set to WGS-84
     arguments.add("-XMP:GPSMapDatum=WGS-84"); //$NON-NLS-1$
     // and finally we set the GPS date and time

@@ -20,21 +20,20 @@ package org.fibs.geotag.tasks;
 
 import org.fibs.geotag.Messages;
 import org.fibs.geotag.data.ImageInfo;
-import org.fibs.geotag.data.UpdateGPSImgDirection;
+import org.fibs.geotag.data.UpdateGPSLongitude;
 import org.fibs.geotag.data.ImageInfo.DATA_SOURCE;
-import org.fibs.geotag.util.Util;
 
 /**
  * @author Andreas Schneider
  * 
  */
-public class ChangeDirectionTask extends UndoableBackgroundTask<ImageInfo> {
+public class EditLongitudeTask extends UndoableBackgroundTask<ImageInfo> {
 
-  /** The image whose direction will be set */
+  /** The image whose longitude will be set */
   private ImageInfo imageInfo;
 
-  /** The new direction */
-  private String newDirection;
+  /** The new longitude */
+  private String newLongitude;
 
   /** The source of the update */
   private DATA_SOURCE dataSource;
@@ -42,14 +41,14 @@ public class ChangeDirectionTask extends UndoableBackgroundTask<ImageInfo> {
   /**
    * @param name
    * @param imageInfo
-   * @param newDirection
+   * @param newLongitude
    * @param dataSource
    */
-  public ChangeDirectionTask(String name, ImageInfo imageInfo,
-      String newDirection, DATA_SOURCE dataSource) {
+  public EditLongitudeTask(String name, ImageInfo imageInfo,
+      String newLongitude, DATA_SOURCE dataSource) {
     super(null, name); // has no group name
     this.imageInfo = imageInfo;
-    this.newDirection = newDirection;
+    this.newLongitude = newLongitude;
     this.dataSource = dataSource;
   }
 
@@ -83,32 +82,15 @@ public class ChangeDirectionTask extends UndoableBackgroundTask<ImageInfo> {
   @Override
   protected String doInBackground() throws Exception {
     if (imageInfo != null) {
-      if (newDirection.length() == 0) {
+      if (newLongitude.length() == 0) {
         // empty string - no direction
-        new UpdateGPSImgDirection(imageInfo, null, dataSource);
+        new UpdateGPSLongitude(imageInfo, null, dataSource);
       } else {
-        // see if the user entered a cardinal direction (e.g NNW)
-        double direction = Util.degreesFromCardinalDirection(newDirection);
-        if (Double.isNaN(direction)) {
-          // no... should be number
-          try {
-            direction = Double.parseDouble(newDirection);
-            // must be between 0 (inclusive) and 360 (exclusive)
-            if (direction < 0.0 || direction >= 360.0) {
-              direction = Double.NaN;
-            }
-          } catch (RuntimeException e) {
-            direction = Double.NaN;
-          }
-        }
-        if (!Double.isNaN(direction)) {
-          new UpdateGPSImgDirection(imageInfo, Double.toString(direction),
-              dataSource);
-        }
+        new UpdateGPSLongitude(imageInfo, newLongitude, dataSource);
       }
       publish(imageInfo);
     }
-    return Messages.getString("ChangeDirectionTask.DirectionEdited"); //$NON-NLS-1$
+    return Messages.getString("EditLongitudeTask.LongitudeEdited"); //$NON-NLS-1$
   }
 
 }
