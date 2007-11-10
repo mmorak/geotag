@@ -43,6 +43,9 @@ public class SelectLocationNameTask extends UndoableBackgroundTask<ImageInfo> {
   /** The new location */
   private Location location;
 
+  /** The actual string to be used as the location name */
+  private String actualName;
+
   /** The source of the update */
   private DATA_SOURCE dataSource;
 
@@ -54,14 +57,17 @@ public class SelectLocationNameTask extends UndoableBackgroundTask<ImageInfo> {
    * @param imagesTableModel
    * @param imageInfo
    * @param location
+   * @param actualName
    * @param dataSource
    */
   public SelectLocationNameTask(String name, ImagesTableModel imagesTableModel,
-      ImageInfo imageInfo, Location location, DATA_SOURCE dataSource) {
+      ImageInfo imageInfo, Location location, String actualName,
+      DATA_SOURCE dataSource) {
     super(null, name); // has no group name
     this.imagesTableModel = imagesTableModel;
     this.imageInfo = imageInfo;
     this.location = location;
+    this.actualName = actualName;
     this.dataSource = dataSource;
   }
 
@@ -96,18 +102,17 @@ public class SelectLocationNameTask extends UndoableBackgroundTask<ImageInfo> {
   protected String doInBackground() throws Exception {
     if (location != null) {
       if (location instanceof WikipediaLocation
-          && !Util.sameContent(imageInfo.getLocationName(), location.getName())) {
+          && !Util.sameContent(imageInfo.getLocationName(), actualName)) {
         // Wikipedia locations only set the location name, not province or
         // country
-        new UpdateLocationName(imageInfo, location.getName(), dataSource);
+        new UpdateLocationName(imageInfo, actualName, dataSource);
         publish(imageInfo);
-      } else if (!Util.sameContent(imageInfo.getLocationName(), location
-          .getName())
+      } else if (!Util.sameContent(imageInfo.getLocationName(), actualName)
           || !Util.sameContent(imageInfo.getProvinceName(), location
               .getProvince())
           || !Util.sameContent(imageInfo.getCountryName(), location
               .getCountryName())) {
-        new UpdateLocationName(imageInfo, location.getName(), dataSource);
+        new UpdateLocationName(imageInfo, actualName, dataSource);
         new UpdateProvinceName(imageInfo, location.getProvince(), dataSource);
         new UpdateCountryName(imageInfo, location.getCountryName(), dataSource);
         publish(imageInfo);

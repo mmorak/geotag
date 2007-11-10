@@ -18,6 +18,10 @@
 
 package org.fibs.geotag.geonames;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.StringTokenizer;
+
 import javax.swing.ImageIcon;
 
 import org.fibs.geotag.util.Units;
@@ -47,6 +51,12 @@ public class Location implements Comparable<Location> {
 
   /** The distance in km from the query location */
   private double distance;
+
+  /** Alternative names for a place */
+  private List<String> alternateNames = null;
+
+  /** feature code name */
+  private String featureName;
 
   /**
    * @see java.lang.Object#toString()
@@ -155,6 +165,54 @@ public class Location implements Comparable<Location> {
    */
   public void setDistance(double distance) {
     this.distance = distance;
+  }
+
+  /**
+   * Add a single alternate name
+   * 
+   * @param alternateName
+   */
+  public void addAlternateName(String alternateName) {
+    if (alternateNames == null) {
+      alternateNames = new ArrayList<String>();
+    }
+    alternateNames.add(alternateName);
+  }
+
+  /**
+   * Add a comma separated list of alternate names
+   * 
+   * @param names
+   *          alternate names separated by commas
+   */
+  public void setAlternateNames(String names) {
+    StringTokenizer tokenizer = new StringTokenizer(names, ","); //$NON-NLS-1$
+    while (tokenizer.hasMoreTokens()) {
+      String alternateName = tokenizer.nextToken().trim();
+      addAlternateName(alternateName);
+    }
+  }
+
+  /**
+   * @return A List of alternate names or null if none exist
+   */
+  public List<String> getAlternateNames() {
+    return alternateNames;
+  }
+
+  /**
+   * @return the featureName
+   */
+  public String getFeatureName() {
+    return featureName;
+  }
+
+  /**
+   * @param featureName
+   *          the featureName to set
+   */
+  public void setFeatureName(String featureName) {
+    this.featureName = featureName;
   }
 
   /**

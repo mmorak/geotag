@@ -64,7 +64,8 @@ public class LocationHandler extends DefaultHandler {
       // This object is the context handler
       xmlReader.setContentHandler(this);
       // Build the request
-      String url = Geonames.GEONAMES_URL + "/findNearbyPlaceName?lat=" //$NON-NLS-1$
+      // String url = Geonames.GEONAMES_URL + "/findNearbyPlaceName?lat="
+      String url = Geonames.GEONAMES_URL + "/findNearby?lat=" //$NON-NLS-1$
           + latitude + "&lng=" + longitude + "&style=FULL"; //$NON-NLS-1$ //$NON-NLS-2$
       boolean useRadius = Settings.get(SETTING.GEONAMES_USE_RADIUS, false);
       if (useRadius) {
@@ -167,6 +168,14 @@ public class LocationHandler extends DefaultHandler {
             currentLocation.setDistance(Double.parseDouble(currentValue
                 .toString()));
             break;
+          case alternateNames:
+            if (currentValue.toString().length() > 0) {
+              currentLocation.setAlternateNames(currentValue.toString());
+            }
+            break;
+          case fcodeName:
+            currentLocation.setFeatureName(currentValue.toString());
+            break;
         }
       }
     }
@@ -210,6 +219,10 @@ public class LocationHandler extends DefaultHandler {
     /** Element for province/state */
     adminName1,
     /** Element specifying the distance from the requested latitude/longitude */
-    distance
+    distance,
+    /** element specifying alternative names for a place */
+    alternateNames,
+    /** element for the feature code name */
+    fcodeName
   }
 }

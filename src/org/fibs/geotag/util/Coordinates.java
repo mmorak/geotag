@@ -211,6 +211,12 @@ public class Coordinates {
     delimiters.append(Unicode.DEGREE_SYMBOL);
     delimiters.append(Unicode.SINGLE_PRIME_MARK);
     delimiters.append(Unicode.DOUBLE_PRIME_MARK);
+    for (char delimiter = 'A'; delimiter <= 'Z'; delimiter++) {
+      delimiters.append(delimiter);
+    }
+    for (char delimiter = 'a'; delimiter <= 'z'; delimiter++) {
+      delimiters.append(delimiter);
+    }
     StringTokenizer tokenizer = new StringTokenizer(text, delimiters.toString());
     // how to interpret the text depends on the number of tokens
     double degrees = 0.0;

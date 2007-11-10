@@ -1,3 +1,9 @@
+2007-11-10 Release 0.038
+  Now displaying alternative location names.
+  Now using the geonames findNearby query instead of
+  findNearbyPlaceNames, resulting in more location names
+  being returned, not only populated places.
+  
 2007-11-07 Release 0.037
   Altitude, latitude and longitude can now be
   manually edited.

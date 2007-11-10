@@ -706,17 +706,53 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
         locationText
             .append(String
                 .format(
-                    " (%.2f %s)", new Double(location.getDistance(distanceUnit)), Units.getAbbreviation(distanceUnit))); //$NON-NLS-1$
-        JMenuItem selectLocationItem = new JMenuItem(locationText.toString(),
-            location.getIcon());
-        selectLocationItem.addActionListener(new ActionListener() {
-          @Override
-          public void actionPerformed(ActionEvent e) {
-            new SelectLocationNameTask(
-                Messages.getString("ImagesTablePopupMenu.SelectLocationName"), tableModel, imageInfo, itemLocation, DATA_SOURCE.MANUAL).execute(); //$NON-NLS-1$
+                    " (%s - %.2f %s)", location.getFeatureName(), new Double(location.getDistance(distanceUnit)), Units.getAbbreviation(distanceUnit))); //$NON-NLS-1$
+        if (itemLocation.getAlternateNames() == null) {
+          // no alternate names - add name as menu item
+          JMenuItem selectLocationItem = new JMenuItem(locationText.toString(),
+              location.getIcon());
+          selectLocationItem.addActionListener(new LocationNameActionListener(
+              itemLocation.getName()) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+              new SelectLocationNameTask(
+                  Messages.getString("ImagesTablePopupMenu.SelectLocationName"), tableModel, imageInfo, itemLocation, itemLocation.getName(), DATA_SOURCE.MANUAL).execute(); //$NON-NLS-1$
+            }
+          });
+          selectLocationMenu.add(selectLocationItem);
+        } else {
+          // alternate names available - add sub-menu
+          JMenu selectLocationNameMenu = new JMenu(locationText.toString());
+          // first add menu item for main name
+          // Don't specify icon, as Wikipedia entries have no alternate names
+          // (yet)
+          JMenuItem selectLocationItem = new JMenuItem(itemLocation.getName());
+          selectLocationItem.addActionListener(new LocationNameActionListener(
+              itemLocation.getName()) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+              new SelectLocationNameTask(
+                  Messages.getString("ImagesTablePopupMenu.SelectLocationName"), tableModel, imageInfo, itemLocation, getName(), DATA_SOURCE.MANUAL).execute(); //$NON-NLS-1$
+            }
+          });
+          selectLocationNameMenu.add(selectLocationItem);
+          // then menu items for all alternate names
+          for (String alternateName : itemLocation.getAlternateNames()) {
+            selectLocationItem = new JMenuItem(alternateName);
+            selectLocationItem
+                .addActionListener(new LocationNameActionListener(alternateName) {
+                  @Override
+                  public void actionPerformed(ActionEvent e) {
+                    new SelectLocationNameTask(
+                        Messages
+                            .getString("ImagesTablePopupMenu.SelectLocationName"), tableModel, imageInfo, itemLocation, getName(), DATA_SOURCE.MANUAL).execute(); //$NON-NLS-1$
+                  }
+                });
+            selectLocationNameMenu.add(selectLocationItem);
           }
-        });
-        selectLocationMenu.add(selectLocationItem);
+          selectLocationMenu.add(selectLocationNameMenu);
+        }
+
       }
       locationNamesMenu.add(selectLocationMenu);
     }
@@ -1480,4 +1516,27 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
     saveLocations(images);
   }
 
+  /**
+   * An action listener remembering a name
+   */
+  abstract class LocationNameActionListener implements ActionListener {
+    /** The name to remember */
+    private String name;
+
+    /**
+     * Constructor
+     * 
+     * @param name
+     */
+    public LocationNameActionListener(String name) {
+      this.name = name;
+    }
+
+    /**
+     * @return The name
+     */
+    public String getName() {
+      return name;
+    }
+  }
 }
