@@ -19,32 +19,30 @@
 package org.fibs.geotag.data;
 
 import javax.swing.undo.AbstractUndoableEdit;
-import javax.swing.undo.CannotRedoException;
-import javax.swing.undo.CannotUndoException;
 
 import org.fibs.geotag.GlobalUndoManager;
 
 /**
- * A class encapsulating altitude updates
+ * A class encapsulating altitude updates.
  * 
  * @author Andreas Schneider
  * 
  */
 @SuppressWarnings("serial")
 public class UpdateGPSAltitude extends AbstractUndoableEdit {
-  /** The {@link ImageInfo} whose altitude will be changed */
+  /** The {@link ImageInfo} whose altitude will be changed. */
   private ImageInfo imageInfo;
 
-  /** A copy of the previous altitude value */
+  /** A copy of the previous altitude value. */
   private String oldAltitude;
 
-  /** A copy of the previous data source value */
+  /** A copy of the previous data source value. */
   private ImageInfo.DATA_SOURCE oldDataSource;
 
-  /** The new value for the altitude */
+  /** The new value for the altitude. */
   private String newAltitude;
 
-  /** The new value for the data source */
+  /** The new value for the data source. */
   private ImageInfo.DATA_SOURCE newDataSource;
 
   /**
@@ -55,10 +53,10 @@ public class UpdateGPSAltitude extends AbstractUndoableEdit {
   public UpdateGPSAltitude(ImageInfo imageInfo, String newAltitude,
       ImageInfo.DATA_SOURCE newDataSource) {
     this.imageInfo = imageInfo;
-    this.oldAltitude = imageInfo.getGPSAltitude();
+    this.oldAltitude = imageInfo.getGpsAltitude();
     this.oldDataSource = imageInfo.getSource();
-    imageInfo.setGPSAltitude(newAltitude, newDataSource);
-    this.newAltitude = imageInfo.getGPSAltitude();
+    imageInfo.setGpsAltitude(newAltitude, newDataSource);
+    this.newAltitude = imageInfo.getGpsAltitude();
     this.newDataSource = imageInfo.getSource();
     GlobalUndoManager.getManager().addEdit(this);
   }
@@ -76,17 +74,17 @@ public class UpdateGPSAltitude extends AbstractUndoableEdit {
    * @see javax.swing.undo.AbstractUndoableEdit#redo()
    */
   @Override
-  public void redo() throws CannotRedoException {
+  public void redo() {
     super.redo();
-    imageInfo.setGPSAltitude(newAltitude, newDataSource);
+    imageInfo.setGpsAltitude(newAltitude, newDataSource);
   }
 
   /**
    * @see javax.swing.undo.AbstractUndoableEdit#undo()
    */
   @Override
-  public void undo() throws CannotUndoException {
+  public void undo() {
     super.undo();
-    imageInfo.setGPSAltitude(oldAltitude, oldDataSource);
+    imageInfo.setGpsAltitude(oldAltitude, oldDataSource);
   }
 }

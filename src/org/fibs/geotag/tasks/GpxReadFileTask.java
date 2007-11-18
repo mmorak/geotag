@@ -34,10 +34,10 @@ import com.topografix.gpx._1._0.Gpx.Trk.Trkseg;
  */
 public class GpxReadFileTask extends BackgroundTask<Gpx> {
 
-  /** The file to be read */
+  /** The file to be read. */
   private File file;
 
-  /** Number of track points found in that file */
+  /** Number of track points found in that file. */
   private int trackPointsFound = 0;
 
   /**

@@ -33,7 +33,7 @@ import com.topografix.gpx._1._0.Gpx;
  */
 public class KmlTest extends TestCase {
 
-  /** The GPX data */
+  /** The GPX data. */
   private Gpx gpx;
 
   /**

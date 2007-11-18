@@ -23,14 +23,14 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * A class encapsulating image files and how their image data is read
+ * A class encapsulating image files and how their image data is read.
  * 
  * @author Andreas Schneider
  * 
  */
 public abstract class ImageFile {
-  /** the actual image file */
-  protected File file;
+  /** the actual image file. */
+  private File file;
 
   /**
    * Constructor with package visibility. Use Factory to construct.
@@ -46,4 +46,11 @@ public abstract class ImageFile {
    * @throws IOException
    */
   public abstract BufferedImage read() throws IOException;
+
+  /**
+   * @return the file
+   */
+  protected File getFile() {
+    return file;
+  }
 }

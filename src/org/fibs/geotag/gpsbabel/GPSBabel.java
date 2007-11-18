@@ -30,19 +30,27 @@ import org.fibs.geotag.Settings.SETTING;
 import org.fibs.geotag.util.InputStreamGobbler;
 
 /**
- * A class dealing with the GPSBabel program
+ * A class dealing with the GPSBabel program.
  * 
  * @author Andreas Schneider
  * 
  */
-public class GPSBabel {
+public final class GPSBabel {
+  
+  /**
+   * hide constructor.
+   */
+  private GPSBabel() {
+    // hide constructor
+  }
+  
   /**
    * Indicating if GPSBabel has been found - set every time
-   * checkGPSBabelAvailable() is called
+   * checkGPSBabelAvailable() is called.
    */
   private static boolean available;
 
-  /** The Process used to run GPSBabel */
+  /** The Process used to run GPSBabel. */
   private static Process process;
 
   /**
@@ -100,7 +108,7 @@ public class GPSBabel {
   }
 
   /**
-   * Create a File that will contain the tracks from the GPS
+   * Create a File that will contain the tracks from the GPS.
    * 
    * @param gobbler
    *          The thread gobbling the output
@@ -168,7 +176,7 @@ public class GPSBabel {
   }
 
   /**
-   * Can be called to forcefully terminate the GPSBabel process
+   * Can be called to forcefully terminate the GPSBabel process.
    */
   public static synchronized void terminate() {
 

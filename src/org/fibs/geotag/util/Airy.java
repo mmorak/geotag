@@ -25,9 +25,19 @@ package org.fibs.geotag.util;
  * 
  */
 public class Airy {
-  /** Latitude of the cross hair in Airy's telescope */
-  public static final double LATITUDE = 51.0 + 28.0 / 60 + 38.0 / 3600;
+  /** Airy latitude degrees. */
+  private static final double DEGREES = 51.0;
 
-  /** Longitude of the cross hair in Airy's telescope */
+  /** Airy latitude minutes. */
+  private static final double MINUTES = 28.0;
+
+  /** Airy latitude seconds. */
+  private static final double SECONDS = 38.0;
+
+  /** Latitude of the cross hair in Airy's telescope. */
+  public static final double LATITUDE = DEGREES + MINUTES
+      / Constants.MINUTES_PER_DEGREE + SECONDS / Constants.SECONDS_PER_DEGREE;
+
+  /** Longitude of the cross hair in Airy's telescope. */
   public static final double LONGITUDE = 0.0;
 }

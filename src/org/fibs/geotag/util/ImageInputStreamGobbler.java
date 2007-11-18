@@ -30,6 +30,9 @@ import java.io.OutputStream;
  */
 public class ImageInputStreamGobbler extends InputStreamGobbler {
 
+  /** the size of the large buffer. */
+  private static final int LARGE_BUFFER_SIZE = 10 * 1024 * 1024;
+  
   /**
    * @param inputStream
    * @param outputStream
@@ -37,7 +40,7 @@ public class ImageInputStreamGobbler extends InputStreamGobbler {
   public ImageInputStreamGobbler(InputStream inputStream,
       OutputStream outputStream) {
     super(inputStream, outputStream);
-    bufferSize = 20 * 1204 * 1024;
+    setBufferSize(LARGE_BUFFER_SIZE);
   }
 
 }

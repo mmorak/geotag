@@ -23,13 +23,13 @@ import java.awt.event.KeyEvent;
 import javax.swing.JTextField;
 
 /**
- * A cell editor that tells a {@link NavigableTable} to move on to another cell
+ * A cell editor that tells a {@link NavigableTable} to move on to another cell.
  * 
  * @author Andreas Schneider
  */
 @SuppressWarnings("serial")
 public class TextCellEditor extends JTextField {
-  /** The {@link NavigableTable} being edited by this editor */
+  /** The {@link NavigableTable} being edited by this editor. */
   private NavigableTable table;
 
   /**
@@ -80,7 +80,12 @@ public class TextCellEditor extends JTextField {
               return;
             }
             break;
+          default:
+            break;
         }
+        break;
+      default:
+        break;
 
     }
     super.processKeyEvent(keyEvent);

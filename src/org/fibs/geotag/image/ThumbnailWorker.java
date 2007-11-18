@@ -24,14 +24,14 @@ import org.fibs.geotag.data.ImageInfo;
 import org.fibs.geotag.data.ImageInfo.THUMBNAIL_STATUS;
 
 /**
- * A class to load a thumbnail image as a {@link SwingWorker}
+ * A class to load a thumbnail image as a {@link SwingWorker}.
  * 
  * @author Andreas Schneider
  * 
  */
 public class ThumbnailWorker extends SwingWorker<Void, ImageInfo> {
 
-  /** the {@link ImageInfo} to load the thumbnail for */
+  /** the {@link ImageInfo} to load the thumbnail for. */
   private ImageInfo imageInfo;
 
   /**
@@ -44,7 +44,7 @@ public class ThumbnailWorker extends SwingWorker<Void, ImageInfo> {
 
   /**
    * Determine how to generate a thumbnail and generate it Does nothing if the
-   * thumbnail already exists
+   * thumbnail already exists.
    */
   @Override
   protected Void doInBackground() throws Exception {

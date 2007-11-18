@@ -32,7 +32,7 @@ import org.fibs.geotag.Settings.SETTING;
 @SuppressWarnings("serial")
 public class IntegerSettingsPanel extends SettingsPanel {
 
-  /** The spinner model holding the selected value */
+  /** The spinner model holding the selected value. */
   private SpinnerNumberModel spinnerModel;
 
   /**

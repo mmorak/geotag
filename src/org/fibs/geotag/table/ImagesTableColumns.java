@@ -24,47 +24,56 @@ import org.fibs.geotag.Settings.SETTING;
 import org.fibs.geotag.util.Units;
 
 /**
- * An enumeration of the columns in the table
+ * An enumeration of the columns in the table.
  * 
  * @author Andreas Schneider
  * 
  */
-public class ImagesTableColumns {
+public final class ImagesTableColumns {
+  
+  /**
+   * hide constructor.
+   */
+  private ImagesTableColumns() {
+    // hide constructor
+  }
 
   /**
-   * An enum for the columns available
+   * An enum for the columns available.
    */
   public enum COLUMN {
-    /** The column for the image name */
+    /** The column for the image name. */
     IMAGE_NAME,
-    /** The column for the GPS Date/time */
+    /** The column for the GPS Date/time. */
     GPS_DATE,
     /**
      * The column for the time difference between camera (local) time and GPS
-     * (GMT) time
+     * (GMT) time.
      */
     TIME_OFFSET,
-    /** The column for the camera date */
+    /** The column for the camera date. */
     CAMERA_DATE,
-    /** The column for the latitude */
+    /** The column for the latitude. */
     LATITUDE,
-    /** The column for the longitude */
+    /** The column for the longitude. */
     LONGITUDE,
-    /** THe column for the altitude */
+    /** THe column for the altitude. */
     ALTITUDE,
-    /** The column for the direction */
+    /** The column for the direction. */
     DIRECTION,
-    /** The column for the location name */
+    /** The column for the location name. */
     LOCATION_NAME,
-    /** The column for the province/state etc name */
+    /** The column for the city name. */
+    CITY_NAME,
+    /** The column for the province/state etc name. */
     PROVINCE_NAME,
-    /** The column for the country name */
+    /** The column for the country name. */
     COUNTRY_NAME
   }
 
   /**
    * @param column
-   * @return A description for the column (used for tooltips)
+   * @return A description for the column (used for tooltips).
    */
   public static String getDescription(COLUMN column) {
     switch (column) {
@@ -92,11 +101,14 @@ public class ImagesTableColumns {
         return Messages.getString("ImagesTableColumns.TooltipDirection"); //$NON-NLS-1$
       case LOCATION_NAME:
         return Messages.getString("ImagesTableColumns.LocationName"); //$NON-NLS-1$
+      case CITY_NAME:
+        return Messages.getString("ImagesTableColumns.CityName"); //$NON-NLS-1$
       case PROVINCE_NAME:
         return Messages.getString("ImagesTableColumns.ProvinceStateName"); //$NON-NLS-1$
       case COUNTRY_NAME:
         return Messages.getString("ImagesTableColumns.CountryName"); //$NON-NLS-1$
+      default:
+        return null;
     }
-    return null;
   }
 }

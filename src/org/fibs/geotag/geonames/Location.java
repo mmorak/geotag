@@ -28,35 +28,39 @@ import org.fibs.geotag.util.Units;
 import org.fibs.geotag.util.Units.DISTANCE;
 
 /**
- * A class holding location information retrieved from geonames.org
+ * A class holding location information retrieved from geonames.org.
  * 
  * @author Andreas Schneider
  * 
  */
 public class Location implements Comparable<Location> {
-  /** The location name */
+
+  /** The location name. */
   private String name;
 
-  /** The latitude of the location */
+  /** The latitude of the location. */
   private String latitude;
 
-  /** The longitude of the location */
+  /** The longitude of the location. */
   private String longitude;
 
-  /** The country name of the location */
+  /** The country name of the location. */
   private String countryName;
 
-  /** the province/state etc name */
+  /** the province/state etc name. */
   private String province;
 
-  /** The distance in km from the query location */
+  /** The distance in km from the query location. */
   private double distance;
 
-  /** Alternative names for a place */
+  /** Alternative names for a place. */
   private List<String> alternateNames = null;
 
-  /** feature code name */
+  /** feature code name. */
   private String featureName;
+
+  /** One letter feature class - e.g. P for 'populated place'. */
+  private String featureClass;
 
   /**
    * @see java.lang.Object#toString()
@@ -168,7 +172,7 @@ public class Location implements Comparable<Location> {
   }
 
   /**
-   * Add a single alternate name
+   * Add a single alternate name.
    * 
    * @param alternateName
    */
@@ -180,7 +184,7 @@ public class Location implements Comparable<Location> {
   }
 
   /**
-   * Add a comma separated list of alternate names
+   * Add a comma separated list of alternate names.
    * 
    * @param names
    *          alternate names separated by commas
@@ -216,7 +220,29 @@ public class Location implements Comparable<Location> {
   }
 
   /**
-   * Subclasses can override this
+   * @return the featureClass
+   */
+  public String getFeatureClass() {
+    return featureClass;
+  }
+
+  /**
+   * @param featureClass
+   *          the featureClass to set
+   */
+  public void setFeatureClass(String featureClass) {
+    this.featureClass = featureClass;
+  }
+
+  /**
+   * @return True if the location is a populated place (feature class 'P')
+   */
+  public boolean isPopulatedPlace() {
+    return "P".equals(featureClass); //$NON-NLS-1$
+  }
+
+  /**
+   * Subclasses can override this.
    * 
    * @return An ImageIcon for this location
    */

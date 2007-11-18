@@ -23,6 +23,6 @@ package org.fibs.geotag.geonames;
  * 
  */
 public class Geonames {
-  /** The geonames web services URL */
+  /** The geonames web services URL. */
   public static final String GEONAMES_URL = "http://ws.geonames.org"; //$NON-NLS-1$
 }

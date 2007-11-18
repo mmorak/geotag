@@ -19,32 +19,30 @@
 package org.fibs.geotag.data;
 
 import javax.swing.undo.AbstractUndoableEdit;
-import javax.swing.undo.CannotRedoException;
-import javax.swing.undo.CannotUndoException;
 
 import org.fibs.geotag.GlobalUndoManager;
 
 /**
- * A class encapsulating longitude updates
+ * A class encapsulating longitude updates.
  * 
  * @author Andreas Schneider
  * 
  */
 @SuppressWarnings("serial")
 public class UpdateGPSLongitude extends AbstractUndoableEdit {
-  /** the {@link ImageInfo} whose longitude will be updated */
+  /** the {@link ImageInfo} whose longitude will be updated. */
   private ImageInfo imageInfo;
 
-  /** A copy of the previous longitude value */
+  /** A copy of the previous longitude value. */
   private String oldLongitude;
 
-  /** The previous data source value */
+  /** The previous data source value. */
   private ImageInfo.DATA_SOURCE oldDataSource;
 
-  /** The new longitude value */
+  /** The new longitude value. */
   private String newLongitude;
 
-  /** The new data source value */
+  /** The new data source value. */
   private ImageInfo.DATA_SOURCE newDataSource;
 
   /**
@@ -55,10 +53,10 @@ public class UpdateGPSLongitude extends AbstractUndoableEdit {
   public UpdateGPSLongitude(ImageInfo imageInfo, String newLongitude,
       ImageInfo.DATA_SOURCE newDataSource) {
     this.imageInfo = imageInfo;
-    this.oldLongitude = imageInfo.getGPSLongitude();
+    this.oldLongitude = imageInfo.getGpsLongitude();
     this.oldDataSource = imageInfo.getSource();
-    imageInfo.setGPSLongitude(newLongitude, newDataSource);
-    this.newLongitude = imageInfo.getGPSLongitude();
+    imageInfo.setGpsLongitude(newLongitude, newDataSource);
+    this.newLongitude = imageInfo.getGpsLongitude();
     this.newDataSource = imageInfo.getSource();
     GlobalUndoManager.getManager().addEdit(this);
   }
@@ -76,17 +74,17 @@ public class UpdateGPSLongitude extends AbstractUndoableEdit {
    * @see javax.swing.undo.AbstractUndoableEdit#redo()
    */
   @Override
-  public void redo() throws CannotRedoException {
+  public void redo() {
     super.redo();
-    imageInfo.setGPSLongitude(newLongitude, newDataSource);
+    imageInfo.setGpsLongitude(newLongitude, newDataSource);
   }
 
   /**
    * @see javax.swing.undo.AbstractUndoableEdit#undo()
    */
   @Override
-  public void undo() throws CannotUndoException {
+  public void undo() {
     super.undo();
-    imageInfo.setGPSLongitude(oldLongitude, oldDataSource);
+    imageInfo.setGpsLongitude(oldLongitude, oldDataSource);
   }
 }

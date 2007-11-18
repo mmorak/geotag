@@ -34,27 +34,27 @@ import com.topografix.gpx._1._0.Gpx.Trk.Trkseg;
 import com.topografix.gpx._1._0.Gpx.Trk.Trkseg.Trkpt;
 
 /**
- * A class that stores the tracks we have loaded or downloaded from GPS
+ * A class that stores the tracks we have loaded or downloaded from GPS.
  * 
  * @author Andreas Schneider
  * 
  */
-public class TrackStore {
+public final class TrackStore {
 
-  /** The only TrackStore ever created */
-  private static final TrackStore trackStore = new TrackStore();
+  /** The only TrackStore ever created. */
+  private static final TrackStore TRACKSTORE = new TrackStore();
 
-  /** Here we store the bounds of each track segment */
+  /** Here we store the bounds of each track segment. */
   private Map<Trkseg, BoundsType> segmentBounds = new HashMap<Trkseg, BoundsType>();
 
-  /** A Gpx object containing all the tracks we know */
+  /** A Gpx object containing all the tracks we know. */
   private Gpx gpx;
 
-  /** A list containing the track segments */
+  /** A list containing the track segments. */
   private List<Trkseg> segmentList = null;
 
   /**
-   * A private constructor
+   * A private constructor.
    */
   private TrackStore() {
     // private
@@ -64,11 +64,11 @@ public class TrackStore {
    * @return The only TrackStore instance
    */
   public static TrackStore getTrackStore() {
-    return trackStore;
+    return TRACKSTORE;
   }
 
   /**
-   * Add the contents of a GPX file to the tracks
+   * Add the contents of a GPX file to the tracks.
    * 
    * @param newGpx
    */
@@ -128,7 +128,7 @@ public class TrackStore {
   }
 
   /**
-   * Check if we know any tracks
+   * Check if we know any tracks.
    * 
    * @return True if we do
    */

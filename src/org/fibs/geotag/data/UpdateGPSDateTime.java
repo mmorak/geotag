@@ -19,26 +19,24 @@
 package org.fibs.geotag.data;
 
 import javax.swing.undo.AbstractUndoableEdit;
-import javax.swing.undo.CannotRedoException;
-import javax.swing.undo.CannotUndoException;
 
 import org.fibs.geotag.GlobalUndoManager;
 
 /**
- * A class encapsulating GPSDateTime updates
+ * A class encapsulating GPSDateTime updates.
  * 
  * @author Andreas Schneider
  * 
  */
 @SuppressWarnings("serial")
 public class UpdateGPSDateTime extends AbstractUndoableEdit {
-  /** The {@link ImageInfo} whose GPSdateTime will be updated */
+  /** The {@link ImageInfo} whose GPSdateTime will be updated. */
   private ImageInfo imageInfo;
 
-  /** A copy of the previous value */
+  /** A copy of the previous value. */
   private String oldDateTime;
 
-  /** The new value */
+  /** The new value. */
   private String newDateTime;
 
   /**
@@ -47,9 +45,9 @@ public class UpdateGPSDateTime extends AbstractUndoableEdit {
    */
   public UpdateGPSDateTime(ImageInfo imageInfo, String newDateTime) {
     this.imageInfo = imageInfo;
-    this.oldDateTime = imageInfo.getGPSDateTime();
-    imageInfo.setGPSDateTime(newDateTime);
-    this.newDateTime = imageInfo.getGPSDateTime();
+    this.oldDateTime = imageInfo.getGpsDateTime();
+    imageInfo.setGpsDateTime(newDateTime);
+    this.newDateTime = imageInfo.getGpsDateTime();
     GlobalUndoManager.getManager().addEdit(this);
   }
 
@@ -66,17 +64,17 @@ public class UpdateGPSDateTime extends AbstractUndoableEdit {
    * @see javax.swing.undo.AbstractUndoableEdit#redo()
    */
   @Override
-  public void redo() throws CannotRedoException {
+  public void redo() {
     super.redo();
-    imageInfo.setGPSDateTime(newDateTime);
+    imageInfo.setGpsDateTime(newDateTime);
   }
 
   /**
    * @see javax.swing.undo.AbstractUndoableEdit#undo()
    */
   @Override
-  public void undo() throws CannotUndoException {
+  public void undo() {
     super.undo();
-    imageInfo.setGPSDateTime(oldDateTime);
+    imageInfo.setGpsDateTime(oldDateTime);
   }
 }

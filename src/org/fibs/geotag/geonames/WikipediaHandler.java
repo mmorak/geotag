@@ -22,11 +22,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import org.fibs.geotag.Settings;
 import org.fibs.geotag.Settings.SETTING;
+import org.fibs.geotag.util.Constants;
+import org.fibs.geotag.util.Proxies;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -35,20 +39,20 @@ import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.helpers.XMLReaderFactory;
 
 /**
- * A class sending a request to genames.org and parsing the response
+ * A class sending a request to genames.org and parsing the response.
  * 
  * @author Andreas Schneider
  * 
  */
 public class WikipediaHandler extends DefaultHandler {
 
-  /** A list of all locations retrieved */
+  /** A list of all locations retrieved. */
   private List<Location> locations = new ArrayList<Location>();
 
-  /** The location we are currently parsing */
+  /** The location we are currently parsing. */
   private Location currentLocation = null;
 
-  /** Used to build the value of the element we are parsing */
+  /** Used to build the value of the element we are parsing. */
   private StringBuilder currentValue = null;
 
   /**
@@ -64,10 +68,16 @@ public class WikipediaHandler extends DefaultHandler {
       // Build the request
       String url = "http://ws.geonames.org/findNearbyWikipedia?lat=" + latitude + "&lng=" + longitude; //$NON-NLS-1$ //$NON-NLS-2$
       // how many entries should we retrieve
-      int maxRows = Settings.get(SETTING.GEONAMES_WIKIPEDIA_ENTRIES, 5);
+      int maxRows = Settings.get(SETTING.GEONAMES_WIKIPEDIA_ENTRIES,
+          Settings.GEONAMES_DEFAULT_WIKIPEDIA_ENTRIES);
       url += "&maxRows=" + maxRows; //$NON-NLS-1$
+      // finally the language
+      url += "&lang=" + Locale.getDefault().getLanguage(); //$NON-NLS-1$
       URL request = new URL(url);
-      InputStream inputStream = request.openStream();
+      URLConnection connection = request.openConnection(Proxies.getProxy());
+      // 30 second time out:
+      connection.setReadTimeout((int) Constants.ONE_MINUTE_IN_MILLIS / 2);
+      InputStream inputStream = connection.getInputStream();
       xmlReader.parse(new InputSource(inputStream));
     } catch (MalformedURLException e) {
       e.printStackTrace();
@@ -147,6 +157,8 @@ public class WikipediaHandler extends DefaultHandler {
             currentLocation.setDistance(Double.parseDouble(currentValue
                 .toString()));
             break;
+          default:
+            break;
         }
       }
     }
@@ -175,17 +187,17 @@ public class WikipediaHandler extends DefaultHandler {
    * the XML
    */
   enum ELEMENTS {
-    /** Entries are enclosed in a 'geonames' element */
+    /** Entries are enclosed in a 'geonames' element. */
     geonames,
-    /** Name of element containing an entry */
+    /** Name of element containing an entry. */
     entry,
-    /** Name of element giving the title */
+    /** Name of element giving the title. */
     title,
-    /** Element specifying latitude */
+    /** Element specifying latitude. */
     lat,
-    /** Element specifying longitude */
+    /** Element specifying longitude. */
     lng,
-    /** Element specifying the distance from the requested latitude/longitude */
+    /** Element specifying the distance from the requested latitude/longitude. */
     distance
   }
 }

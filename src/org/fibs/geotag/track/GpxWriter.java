@@ -34,7 +34,7 @@ import org.fibs.geotag.Geotag;
 import com.topografix.gpx._1._0.Gpx;
 
 /**
- * A class writing GPX files
+ * A class writing GPX files.
  * 
  * @author Andreas Schneider
  * 
@@ -45,7 +45,7 @@ public class GpxWriter implements TrackWriter {
    * @see org.fibs.geotag.track.TrackWriter#write(com.topografix.gpx._1._0.Gpx, java.io.File)
    */
   public void write(Gpx gpx, File file) throws Exception {
-    write (gpx, new FileOutputStream(file));
+    write(gpx, new FileOutputStream(file));
   }
   /**
    * @see org.fibs.geotag.track.TrackWriter#write(com.topografix.gpx._1._0.Gpx, java.io.OutputStream)

@@ -32,10 +32,10 @@ import org.fibs.geotag.googleearth.KmlExporter;
  */
 public class GoogleEarthExportTask extends BackgroundTask<Void> {
 
-  /** The images to be exported */
+  /** The images to be exported. */
   private List<ImageInfo> images;
 
-  /** The file to export to */
+  /** The file to export to. */
   private File file;
 
   /**

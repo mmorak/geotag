@@ -53,13 +53,14 @@ public class TiffImageFile extends ImageFile {
   public BufferedImage read() throws IOException {
     ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
     InputStreamGobbler gobbler = new ImageInputStreamGobbler(
-        new FileInputStream(file), outputStream);
+        new FileInputStream(getFile()), outputStream);
     gobbler.start();
     // we wait for the process to finish
     try {
       // wait until the gobbler is done gobbling
+      final int sleepTime = 10;
       while (gobbler.isAlive()) {
-        Thread.sleep(10);
+        Thread.sleep(sleepTime);
       }
     } catch (InterruptedException e) {
       e.printStackTrace();

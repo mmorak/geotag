@@ -25,7 +25,7 @@ import javax.swing.filechooser.FileFilter;
 import org.fibs.geotag.util.FileUtil;
 
 /**
- * A class to determine if a file is a KML/KMZ file or not
+ * A class to determine if a file is a KML/KMZ file or not.
  * 
  * @author Andreas Schneider
  * 
@@ -34,7 +34,7 @@ public class GoogleearthFileFilter extends FileFilter implements
     java.io.FileFilter {
 
   /**
-   * Accept directories and GPX files
+   * Accept directories and GPX files.
    * 
    * @see javax.swing.filechooser.FileFilter#accept(java.io.File)
    */

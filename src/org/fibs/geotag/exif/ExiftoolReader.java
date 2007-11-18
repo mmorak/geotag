@@ -31,6 +31,7 @@ import org.fibs.geotag.Settings;
 import org.fibs.geotag.Settings.SETTING;
 import org.fibs.geotag.data.ImageInfo;
 import org.fibs.geotag.data.UpdateCameraDate;
+import org.fibs.geotag.data.UpdateCityName;
 import org.fibs.geotag.data.UpdateCountryName;
 import org.fibs.geotag.data.UpdateGPSAltitude;
 import org.fibs.geotag.data.UpdateGPSDateTime;
@@ -48,53 +49,59 @@ import org.fibs.geotag.image.FileTypes;
  */
 public class ExiftoolReader implements ExifReader {
 
-  /** exiftag error lines start with this text */
+  /** exiftag error lines start with this text. */
   private static final String ERROR_TAG = "Error:"; //$NON-NLS-1$
 
-  /** exiftool DateTimeOriginal output lines start with this text */
+  /** exiftool DateTimeOriginal output lines start with this text. */
   private static final String DATE_TIME_ORIGINAL_TAG = "DateTimeOriginal: "; //$NON-NLS-1$
 
-  /** exiftool CreateTag output lines start with this text */
+  /** exiftool CreateTag output lines start with this text. */
   private static final String CREATE_DATE_TAG = "CreateDate: "; //$NON-NLS-1$
 
-  /** exiftool GPSLatitude output lines start with this text */
+  /** exiftool GPSLatitude output lines start with this text. */
   private static final String GPS_LATITUDE_TAG = "GPSLatitude: "; //$NON-NLS-1$
 
-  /** exiftool GPSLongitude output lines start with this text */
+  /** exiftool GPSLongitude output lines start with this text. */
   private static final String GPS_LONGITUDE_TAG = "GPSLongitude: "; //$NON-NLS-1$
 
-  /** exiftool GPSAltitude output lines start with this text */
+  /** exiftool GPSAltitude output lines start with this text. */
   private static final String GPS_ALTITUDE_TAG = "GPSAltitude: "; //$NON-NLS-1$
 
-  /** exiftool GPSImgDirection output lines start with this text */
+  /** exiftool GPSImgDirection output lines start with this text. */
   private static final String GPS_IMG_DIRECTION_TAG = "GPSImgDirection: "; //$NON-NLS-1$
 
-  /** exiftool GPSDatetime output lines start with this text */
+  /** exiftool GPSDatetime output lines start with this text. */
   private static final String GPS_DATE_TIME_TAG = "GPSDateTime: "; //$NON-NLS-1$
 
-  /** exiftool XMP:GPSTimeStamp output lines start with this text */
+  /** exiftool XMP:GPSTimeStamp output lines start with this text. */
   private static final String GPS_TIME_STAMP_TAG = "GPSTimeStamp: "; //$NON-NLS-1$
 
-  /** exiftool Orientation output lines start with this text */
+  /** exiftool Orientation output lines start with this text. */
   private static final String ORIENTATION_TAG = "Orientation: "; //$NON-NLS-1$
 
-  /** exiftool City output lines start with this text */
+  /** exiftool EXIF Location output lines start with this text. */
+  private static final String LOCATION_TAG = "ContentLocationName: "; //$NON-NLS-1$
+
+  /** exiftool XMP Location output lines start with this text. */
+  private static final String LOCATION_TAG_2 = "Location: "; //$NON-NLS-1$
+
+  /** exiftool City output lines start with this text. */
   private static final String CITY_TAG = "City: "; //$NON-NLS-1$
 
-  /** exiftool Country output lines start with this text */
+  /** exiftool Country output lines start with this text. */
   private static final String COUNTRY_TAG = "Country-PrimaryLocationName: "; //$NON-NLS-1$
 
-  /** exiftool XMP Country output lines start with this text */
+  /** exiftool XMP Country output lines start with this text. */
   private static final String COUNTRY_XMP_TAG = "Country: "; //$NON-NLS-1$
 
-  /** exiftool Province output lines start with this text */
+  /** exiftool Province output lines start with this text. */
   private static final String PROVINCE_TAG = "Province-State: "; //$NON-NLS-1$
 
-  /** exiftool XMP state output lines start with this text */
+  /** exiftool XMP state output lines start with this text. */
   private static final String STATE_TAG = "State: "; //$NON-NLS-1$
 
   /**
-   * the exiftool command line arguments
+   * the exiftool command line arguments.
    */
   private String[] exifToolArguments = new String[] { // -S generates short
   // output
@@ -116,6 +123,8 @@ public class ExiftoolReader implements ExifReader {
       // retrieve the image orientation
       "-Orientation", //$NON-NLS-1$
       // retrieve IPTC image location
+      "-ContentLocationName", //$NON-NLS-1$
+      // retrieve IPTC city name
       "-City", //$NON-NLS-1$
       // retrieve IPTC country
       "-Country-PrimaryLocationName", //$NON-NLS-1$
@@ -123,7 +132,7 @@ public class ExiftoolReader implements ExifReader {
       "-Province-State" }; //$NON-NLS-1$
 
   /**
-   * the exiftool XMP command line arguments
+   * the exiftool XMP command line arguments.
    */
   private String[] exifToolXmpArguments = new String[] { // -S generates short
   // output
@@ -140,15 +149,17 @@ public class ExiftoolReader implements ExifReader {
       "-XMP:GPSTimeStamp", //$NON-NLS-1$
       // retrieve the image orientation
       "-XMP:Orientation", //$NON-NLS-1$
+      // retrieve the image location
+      "-XMP:Location", //$NON-NLS-1$
       // retrieve XMP City
-      "-XMP:City",  //$NON-NLS-1$
+      "-XMP:City", //$NON-NLS-1$
       // retrieve XMP Country
-      "-XMP:Country",  //$NON-NLS-1$
+      "-XMP:Country", //$NON-NLS-1$
       // retrieve XMP state
       "-XMP:State" }; //$NON-NLS-1$
 
   /**
-   * Read EXIF data from a file and create an {@link ImageInfo} object
+   * Read EXIF data from a file and create an {@link ImageInfo} object.
    * 
    * @param file
    *          The file to be examined
@@ -237,7 +248,7 @@ public class ExiftoolReader implements ExifReader {
           new UpdateCameraDate(imageInfo, cameraDate);
           // we also set the GPS date to a good guess if it hasn't been
           // set yet.
-          imageInfo.setGPSDateTime();
+          imageInfo.setGpsDateTime();
         } else if (text.startsWith(GPS_LATITUDE_TAG)) {
           new UpdateGPSLatitude(imageInfo, text.substring(GPS_LATITUDE_TAG
               .length()), ImageInfo.DATA_SOURCE.IMAGE);
@@ -269,8 +280,14 @@ public class ExiftoolReader implements ExifReader {
           }
         } else if (text.startsWith(ORIENTATION_TAG)) {
           imageInfo.setOrientation(text.substring(ORIENTATION_TAG.length()));
+        } else if (text.startsWith(LOCATION_TAG)) {
+          new UpdateLocationName(imageInfo, text.substring(LOCATION_TAG
+              .length()), DATA_SOURCE.IMAGE);
+        } else if (text.startsWith(LOCATION_TAG_2)) {
+          new UpdateLocationName(imageInfo, text.substring(LOCATION_TAG_2
+              .length()), DATA_SOURCE.IMAGE);
         } else if (text.startsWith(CITY_TAG)) {
-          new UpdateLocationName(imageInfo, text.substring(CITY_TAG.length()),
+          new UpdateCityName(imageInfo, text.substring(CITY_TAG.length()),
               DATA_SOURCE.IMAGE);
         } else if (text.startsWith(COUNTRY_TAG)) {
           new UpdateCountryName(imageInfo,

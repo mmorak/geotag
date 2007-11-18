@@ -26,7 +26,7 @@ import org.fibs.geotag.Messages;
 import org.fibs.geotag.util.FileUtil;
 
 /**
- * A class to determine if a file is a GPX file or not
+ * A class to determine if a file is a GPX file or not.
  * 
  * @author Andreas Schneider
  * 
@@ -34,7 +34,7 @@ import org.fibs.geotag.util.FileUtil;
 public class GpxFileFilter extends FileFilter implements java.io.FileFilter {
 
   /**
-   * Accept directories and GPX files
+   * Accept directories and GPX files.
    * 
    * @see javax.swing.filechooser.FileFilter#accept(java.io.File)
    */
@@ -74,5 +74,4 @@ public class GpxFileFilter extends FileFilter implements java.io.FileFilter {
   public String getDescription() {
     return Messages.getString("GpxFileFilter.GpxFiles"); //$NON-NLS-1$
   }
-
 }

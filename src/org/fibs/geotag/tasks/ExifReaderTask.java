@@ -23,9 +23,6 @@ import java.util.ArrayList;
 import java.util.IllegalFormatException;
 import java.util.List;
 
-import javax.swing.undo.CannotRedoException;
-import javax.swing.undo.CannotUndoException;
-
 import org.fibs.geotag.Messages;
 import org.fibs.geotag.data.ImageInfo;
 import org.fibs.geotag.exif.ExifReader;
@@ -46,21 +43,21 @@ public class ExifReaderTask extends UndoableBackgroundTask<ImageInfo> {
 
   /**
    * The <code>ImagesTableModel</code> that needs to be told about new EXIF
-   * data
+   * data.
    */
   private ImagesTableModel tableModel;
 
-  /** The files to be examined for their EXIf data */
-  protected File[] files;
+  /** The files to be examined for their EXIf data. */
+  private File[] files;
 
-  /** keep track of the progress */
-  protected int currentProgress = 0;
+  /** keep track of the progress. */
+  private int currentProgress = 0;
 
-  /** Keep a list of image infos so we can undo and redo */
-  List<ImageInfo> images = new ArrayList<ImageInfo>();
+  /** Keep a list of image infos so we can undo and redo. */
+  private List<ImageInfo> images = new ArrayList<ImageInfo>();
 
   /**
-   * Create a new {@link ExifReaderTask}
+   * Create a new {@link ExifReaderTask}.
    * 
    * @param name
    *          The name of the task
@@ -76,7 +73,7 @@ public class ExifReaderTask extends UndoableBackgroundTask<ImageInfo> {
   }
 
   /**
-   * Determine how to read the exif data and read it
+   * Determine how to read the exif data and read it.
    * 
    * @param file
    *          The file to be examined
@@ -96,6 +93,8 @@ public class ExifReaderTask extends UndoableBackgroundTask<ImageInfo> {
         break;
       case UNKOWN:
       case XMP:
+        break;
+      default:
         break;
     }
     if (exifReader != null) {
@@ -175,6 +174,8 @@ public class ExifReaderTask extends UndoableBackgroundTask<ImageInfo> {
         case UNKOWN:
         case XMP:
           break;
+        default:
+          break;
       }
     }
     // System.out.println("One by one: "+handleOneByOne.size());
@@ -182,7 +183,7 @@ public class ExifReaderTask extends UndoableBackgroundTask<ImageInfo> {
     ImageInfo imageInfo;
     int imagesPublished = 0;
     for (File file : files) {
-      if (terminate) {
+      if (interruptRequested()) {
         break;
       }
       // keep track of progress
@@ -236,7 +237,7 @@ public class ExifReaderTask extends UndoableBackgroundTask<ImageInfo> {
    * @see org.fibs.geotag.tasks.UndoableBackgroundTask#redo()
    */
   @Override
-  public void redo() throws CannotRedoException {
+  public void redo() {
     // Needs to call super
     super.redo();
     for (ImageInfo imageInfo : images) {
@@ -249,7 +250,7 @@ public class ExifReaderTask extends UndoableBackgroundTask<ImageInfo> {
    * @see org.fibs.geotag.tasks.UndoableBackgroundTask#undo()
    */
   @Override
-  public void undo() throws CannotUndoException {
+  public void undo() {
     // Needs to call super
     super.undo();
     for (ImageInfo imageInfo : images) {

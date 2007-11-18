@@ -62,30 +62,33 @@ import org.fibs.geotag.util.Util;
 @SuppressWarnings("serial")
 public class ImagesTable extends NavigableTable {
 
-  /** A string of zeros - used to calculate preferred widths */
-  private static final String zeros = "0000000000"; //$NON-NLS-1$
+  /** Gap between columns in pixels. */
+  private static final int GAP_IN_PIXELS = 8;
 
-  /** The row the mouse is pointing at */
-  int mouseOnRow;
+  /** How much to change normal colour to get alternative colour. */
+  private static final double ALTERNATIVE_BACKGROUND_RATIO = 0.10;
 
-  /** The column the mouse is pointing at */
-  int mouseOnColumn;
+  /** A string of zeros - used to calculate preferred widths. */
+  private static final String ZEROS = "0000000000"; //$NON-NLS-1$
+
+  /** The row the mouse is pointing at. */
+  private int mouseOnRow;
 
   /**
    * We keep the last mouse motion event. We need it so we can dispatch it again
    * to redraw the tool tip. This idea was found at:
    * http://forum.java.sun.com/thread.jspa?threadID=320183&messageID=1294878
    */
-  MouseEvent lastMouseMovedEvent;
+  private MouseEvent lastMouseMovedEvent;
 
-  /** The background colour used for every second row */
-  Color alternativeBackground;
+  /** The background colour used for every second row. */
+  private Color alternativeBackground;
 
-  /** The editor text field */
+  /** The editor text field. */
   private TextCellEditor textCellEditor;
 
   /**
-   * Create a new ImagesTable
+   * Create a new ImagesTable.
    * 
    * @param tableModel
    *          the {@link ImagesTableModel} containing the data to be displayed
@@ -100,9 +103,8 @@ public class ImagesTable extends NavigableTable {
       @Override
       public void mouseMoved(MouseEvent event) {
         if (event.getID() == MouseEvent.MOUSE_MOVED) {
-          mouseOnRow = rowAtPoint(event.getPoint());
-          mouseOnColumn = columnAtPoint(event.getPoint());
-          lastMouseMovedEvent = event;
+          setMouseOnRow(rowAtPoint(event.getPoint()));
+          setLastMouseMovedEvent(event);
         }
       }
     });
@@ -118,6 +120,8 @@ public class ImagesTable extends NavigableTable {
           case KeyEvent.VK_UP:
           case KeyEvent.VK_KP_UP:
             navigateUp(event);
+            break;
+          default:
             break;
         }
         super.keyPressed(event);
@@ -189,7 +193,7 @@ public class ImagesTable extends NavigableTable {
    * @return The background colour used for every other row
    */
   private Color calculateAlternativeBackgroundColour() {
-    double ratio = 0.10; // 10 % seems just about right
+    double ratio = ALTERNATIVE_BACKGROUND_RATIO; // 10 % seems just about right
     int red = (int) Util.applyRatio(getBackground().getRed(), getForeground()
         .getRed(), ratio);
     int green = (int) Util.applyRatio(getBackground().getGreen(),
@@ -201,7 +205,7 @@ public class ImagesTable extends NavigableTable {
 
   /**
    * For a given column return the {@link SETTING} that holds its preferred
-   * width
+   * width.
    * 
    * @param column
    *          The column
@@ -223,7 +227,7 @@ public class ImagesTable extends NavigableTable {
 
   /**
    * For a given column return the {@link SETTING} that holds its preferred
-   * position
+   * position.
    * 
    * @param column
    *          The column
@@ -243,7 +247,7 @@ public class ImagesTable extends NavigableTable {
 
   /**
    * This method lays out the columns to either a sensible default layout or one
-   * previously save to the Settings
+   * previously save to the Settings.
    */
   private void determineColumnLayout() {
     FontMetrics fontMetrics = getFontMetrics(getFont());
@@ -252,7 +256,7 @@ public class ImagesTable extends NavigableTable {
     String[] correctOrder = new String[ImagesTableColumns.COLUMN.values().length];
     for (int index = 0; index < ImagesTableColumns.COLUMN.values().length; index++) {
       COLUMN column = ImagesTableColumns.COLUMN.values()[index];
-      int preferredWidth = 42;
+      int preferredWidth = 0;
       switch (column) {
         case ALTITUDE:
           preferredWidth = defaultAltitudeWidth(fontMetrics);
@@ -281,15 +285,20 @@ public class ImagesTable extends NavigableTable {
         case LOCATION_NAME:
           preferredWidth = defaultLocationNameWidth(fontMetrics);
           break;
+        case CITY_NAME:
+          preferredWidth = defaultCityNameWidth(fontMetrics);
+          break;
         case PROVINCE_NAME:
           preferredWidth = defaultProvinceNameWidth(fontMetrics);
           break;
         case COUNTRY_NAME:
           preferredWidth = defaultCountryNameWidth(fontMetrics);
           break;
+        default:
+          break;
       }
       // add a few pixels gap
-      preferredWidth += 8;
+      preferredWidth += GAP_IN_PIXELS;
       // check the settings, they override the above defaults
       SETTING setting = getColumnWidthSetting(column);
       if (setting != null) {
@@ -302,7 +311,18 @@ public class ImagesTable extends NavigableTable {
       setting = getColumnPositionSetting(column);
       int newColumnIndex = Settings.get(setting, columnIndex);
       // now store the column name in the at the correct index
-      correctOrder[newColumnIndex] = columnName;
+      if (correctOrder[newColumnIndex] == null) {
+        // this is the normal case
+        correctOrder[newColumnIndex] = columnName;
+      } else {
+        // something went wrong - two columns have the same index
+        // find a free index.. any free index
+        for (int check = 0; check < ImagesTableColumns.COLUMN.values().length; check++) {
+          if (correctOrder[check] == null) {
+            correctOrder[check] = columnName;
+          }
+        }
+      }
     }
     // now we move columns around. By moving the column that goes at
     // position 0 first and the one that goes last last, we avoid
@@ -316,7 +336,7 @@ public class ImagesTable extends NavigableTable {
   }
 
   /**
-   * Save the current column widths and positions to the settings
+   * Save the current column widths and positions to the settings.
    */
   public void saveColumnSettings() {
     for (int index = 0; index < COLUMN.values().length; index++) {
@@ -358,7 +378,7 @@ public class ImagesTable extends NavigableTable {
    */
   private int defaultLongitudeWidth(FontMetrics fontMetrics) {
     return fontMetrics.stringWidth("-180." //$NON-NLS-1$
-        + zeros.substring(0, ImagesTableModel.LONGITUDE_DECIMALS));
+        + ZEROS.substring(0, ImagesTableModel.LONGITUDE_DECIMALS));
   }
 
   /**
@@ -367,7 +387,7 @@ public class ImagesTable extends NavigableTable {
    */
   private int defaultLatitudeWidth(FontMetrics fontMetrics) {
     return fontMetrics.stringWidth("-90." //$NON-NLS-1$
-        + zeros.substring(0, ImagesTableModel.LATITUDE_DECIMALS));
+        + ZEROS.substring(0, ImagesTableModel.LATITUDE_DECIMALS));
   }
 
   /**
@@ -384,7 +404,7 @@ public class ImagesTable extends NavigableTable {
    */
   private int defaultAltitudeWidth(FontMetrics fontMetrics) {
     return fontMetrics.stringWidth("19999." //$NON-NLS-1$
-        + zeros.substring(0, ImagesTableModel.ALTITUDE_DECIMALS));
+        + ZEROS.substring(0, ImagesTableModel.ALTITUDE_DECIMALS));
   }
 
   /**
@@ -393,7 +413,7 @@ public class ImagesTable extends NavigableTable {
    */
   private int defaultDirectionWidth(FontMetrics fontMetrics) {
     return fontMetrics.stringWidth("359." //$NON-NLS-1$
-        + zeros.substring(0, ImagesTableModel.DIRECTION_DECIMALS));
+        + ZEROS.substring(0, ImagesTableModel.DIRECTION_DECIMALS));
   }
 
   /**
@@ -402,6 +422,14 @@ public class ImagesTable extends NavigableTable {
    */
   private int defaultLocationNameWidth(FontMetrics fontMetrics) {
     return fontMetrics.stringWidth("Greenwich"); //$NON-NLS-1$
+  }
+
+  /**
+   * @param fontMetrics
+   * @return the default city name string width
+   */
+  private int defaultCityNameWidth(FontMetrics fontMetrics) {
+    return fontMetrics.stringWidth("Greater London"); //$NON-NLS-1$
   }
 
   /**
@@ -459,7 +487,7 @@ public class ImagesTable extends NavigableTable {
   }
 
   /**
-   * Make the table use the Font specified in the settings
+   * Make the table use the Font specified in the settings.
    */
   public void usePreferredFont() {
     String fontId = Settings.get(SETTING.FONT, null);
@@ -506,7 +534,7 @@ public class ImagesTable extends NavigableTable {
             // see
             // http://forum.java.sun.com/thread.jspa?threadID=320183&messageID=1294878
             // for details about this nasty hack:
-            dispatchEvent(lastMouseMovedEvent);
+            dispatchEvent(getLastMouseMovedEvent());
           }
         }
       };
@@ -516,7 +544,7 @@ public class ImagesTable extends NavigableTable {
   }
 
   /**
-   * Select all images with a location
+   * Select all images with a location.
    */
   public void selectAllWithLocation() {
     clearSelection();
@@ -529,7 +557,7 @@ public class ImagesTable extends NavigableTable {
   }
 
   /**
-   * Select all images with a new (updated) location
+   * Select all images with a new (updated) location.
    */
   public void selectAllWithNewLocation() {
     clearSelection();
@@ -542,7 +570,7 @@ public class ImagesTable extends NavigableTable {
   }
 
   /**
-   * Unselect all images
+   * Unselect all images.
    */
   public void selectNone() {
     clearSelection();
@@ -550,7 +578,7 @@ public class ImagesTable extends NavigableTable {
 
   /**
    * We override this, because we want a custom TableHeader displaying tooltips
-   * for each column
+   * for each column.
    * 
    * @see javax.swing.JTable#createDefaultTableHeader()
    */
@@ -575,6 +603,34 @@ public class ImagesTable extends NavigableTable {
   protected void processKeyEvent(KeyEvent e) {
     // System.out.println("Table Key " + e.getKeyCode());
     super.processKeyEvent(e);
+  }
+
+  /**
+   * @return the lastMouseMovedEvent
+   */
+  MouseEvent getLastMouseMovedEvent() {
+    return lastMouseMovedEvent;
+  }
+
+  /**
+   * @param lastMouseMovedEvent the lastMouseMovedEvent to set
+   */
+  void setLastMouseMovedEvent(MouseEvent lastMouseMovedEvent) {
+    this.lastMouseMovedEvent = lastMouseMovedEvent;
+  }
+
+  /**
+   * @return the mouseOnRow
+   */
+  int getMouseOnRow() {
+    return mouseOnRow;
+  }
+
+  /**
+   * @param mouseOnRow the mouseOnRow to set
+   */
+  void setMouseOnRow(int mouseOnRow) {
+    this.mouseOnRow = mouseOnRow;
   }
 
 }

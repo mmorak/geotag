@@ -22,6 +22,7 @@ import java.util.List;
 
 import org.fibs.geotag.Messages;
 import org.fibs.geotag.data.ImageInfo;
+import org.fibs.geotag.data.UpdateCityName;
 import org.fibs.geotag.data.UpdateCountryName;
 import org.fibs.geotag.data.UpdateLocationName;
 import org.fibs.geotag.data.UpdateProvinceName;
@@ -37,19 +38,19 @@ import org.fibs.geotag.util.Util;
  */
 public class SelectLocationNameTask extends UndoableBackgroundTask<ImageInfo> {
 
-  /** The image whose location names will be set */
+  /** The image whose location names will be set. */
   private ImageInfo imageInfo;
 
-  /** The new location */
+  /** The new location. */
   private Location location;
 
-  /** The actual string to be used as the location name */
+  /** The actual string to be used as the location name. */
   private String actualName;
 
-  /** The source of the update */
+  /** The source of the update. */
   private DATA_SOURCE dataSource;
 
-  /** the table model to inform about changes */
+  /** the table model to inform about changes. */
   private ImagesTableModel imagesTableModel;
 
   /**
@@ -107,15 +108,38 @@ public class SelectLocationNameTask extends UndoableBackgroundTask<ImageInfo> {
         // country
         new UpdateLocationName(imageInfo, actualName, dataSource);
         publish(imageInfo);
-      } else if (!Util.sameContent(imageInfo.getLocationName(), actualName)
-          || !Util.sameContent(imageInfo.getProvinceName(), location
-              .getProvince())
-          || !Util.sameContent(imageInfo.getCountryName(), location
-              .getCountryName())) {
-        new UpdateLocationName(imageInfo, actualName, dataSource);
-        new UpdateProvinceName(imageInfo, location.getProvince(), dataSource);
-        new UpdateCountryName(imageInfo, location.getCountryName(), dataSource);
-        publish(imageInfo);
+      } else {
+        // this is an actual location name from geonames.org.
+        // two alternatives here:
+        if (location.isPopulatedPlace()) {
+          // for populated places we leave the location name alone
+          if (!Util.sameContent(imageInfo.getCityName(), actualName)
+              || !Util.sameContent(imageInfo.getProvinceName(), location
+                  .getProvince())
+              || !Util.sameContent(imageInfo.getCountryName(), location
+                  .getCountryName())) {
+            new UpdateCityName(imageInfo, actualName, dataSource);
+            new UpdateProvinceName(imageInfo, location.getProvince(),
+                dataSource);
+            new UpdateCountryName(imageInfo, location.getCountryName(),
+                dataSource);
+            publish(imageInfo);
+          }
+        } else {
+          // not a populated place - leave the city name alone
+          if (!Util.sameContent(imageInfo.getLocationName(), actualName)
+              || !Util.sameContent(imageInfo.getProvinceName(), location
+                  .getProvince())
+              || !Util.sameContent(imageInfo.getCountryName(), location
+                  .getCountryName())) {
+            new UpdateLocationName(imageInfo, actualName, dataSource);
+            new UpdateProvinceName(imageInfo, location.getProvince(),
+                dataSource);
+            new UpdateCountryName(imageInfo, location.getCountryName(),
+                dataSource);
+            publish(imageInfo);
+          }
+        }
       }
     }
     return Messages.getString("SelectLocationNameTask.NewLocationNameSelected"); //$NON-NLS-1$

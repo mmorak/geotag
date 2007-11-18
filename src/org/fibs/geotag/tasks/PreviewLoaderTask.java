@@ -36,20 +36,20 @@ import org.fibs.geotag.image.ImageFileFactory;
  */
 public class PreviewLoaderTask extends InterruptibleTask<Void, BufferedImage> {
 
-  /** The image file to be loaded */
+  /** The image file to be loaded. */
   private File file;
 
-  /** the result of loading the image */
+  /** the result of loading the image. */
   private BufferedImage bufferedImage;
 
-  /** delay in milliseconds before */
+  /** delay in milliseconds before. */
   private long delay;
 
-  /** A list of running (actually not-terminated) tasks */
+  /** A list of running (actually not-terminated) tasks. */
   private static List<PreviewLoaderTask> runningTasks = new ArrayList<PreviewLoaderTask>();
 
   /**
-   * Create a new image loader task
+   * Create a new image loader task.
    * 
    * @param file
    * @param delay in milliseconds
@@ -74,7 +74,7 @@ public class PreviewLoaderTask extends InterruptibleTask<Void, BufferedImage> {
   protected Void doInBackground() throws Exception {
     try {
       Thread.sleep(delay);
-      if (!terminate) {
+      if (!interruptRequested()) {
         ImageFile imageFile = ImageFileFactory.createImageFile(file);
         if (imageFile != null) {
           bufferedImage = imageFile.read();

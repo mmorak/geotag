@@ -38,8 +38,8 @@ import org.fibs.geotag.Settings.SETTING;
 @SuppressWarnings("serial")
 public class FileSettingsPanel extends SettingsPanel {
 
-  /** The text field for the file name */
-  JTextField textField;
+  /** The text field for the file name. */
+  private JTextField textField;
 
   /**
    * @param parent
@@ -73,7 +73,7 @@ public class FileSettingsPanel extends SettingsPanel {
         JFileChooser fileChooser = new JFileChooser();
         if (fileChooser.showOpenDialog(FileSettingsPanel.this) == JFileChooser.APPROVE_OPTION) {
           String filename = fileChooser.getSelectedFile().getPath();
-          textField.setText(filename);
+          getTextField().setText(filename);
         }
       }
     });
@@ -87,6 +87,13 @@ public class FileSettingsPanel extends SettingsPanel {
   @Override
   public String getValue() {
     return textField.getText();
+  }
+
+  /**
+   * @return the textField
+   */
+  JTextField getTextField() {
+    return textField;
   }
 
 }

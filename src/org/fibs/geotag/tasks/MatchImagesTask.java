@@ -29,7 +29,7 @@ import org.fibs.geotag.track.TrackMatcher;
 import org.fibs.geotag.track.TrackMatcher.Match;
 
 /**
- * A background task for matching a list of images to positions
+ * A background task for matching a list of images to positions.
  * 
  * @author Andreas Schneider
  * 
@@ -39,14 +39,14 @@ public class MatchImagesTask extends UndoableBackgroundTask<ImageInfo> {
   /***/
   private ImagesTable imagesTable;
 
-  /** A counter for keeping crack of progress */
+  /** A counter for keeping crack of progress. */
   private int currentProgress = 0;
 
-  /** The images to be matched */
+  /** The images to be matched. */
   private List<ImageInfo> images;
 
   /**
-   * Create a new matching task for a list of images
+   * Create a new matching task for a list of images.
    * 
    * @param group
    * @param name
@@ -69,7 +69,7 @@ public class MatchImagesTask extends UndoableBackgroundTask<ImageInfo> {
     int imagesMatched = 0;
     TrackMatcher trackMatcher = new TrackMatcher();
     for (ImageInfo imageInfo : images) {
-      if (terminate) {
+      if (interruptRequested()) {
         break;
       }
       currentProgress++;

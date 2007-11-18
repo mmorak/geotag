@@ -751,6 +751,7 @@ if (GBrowserIsCompatible()) {
     // tell geonames.org about it
     var URL = "/geonames/wikipediaBoundingBox?south="
       + south + "&west=" + west + "&north=" + north + "&east=" + east
+      + "&lang=" + language
     var wikipediaRequest = GXmlHttp.create()
     wikipediaRequest.open("GET", URL, true)
     // geonames will send wikipedia entries for this map

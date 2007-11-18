@@ -26,16 +26,22 @@ import java.io.IOException;
 import javax.swing.JFileChooser;
 
 /**
- * A class to look at our source files and check if the license comment is
+ * A class to look at our source files and check if the license comment is.
  * correct
  * 
  * @author Andreas Schneider
  * 
  */
-public class MissingLicenseFinder {
+public final class MissingLicenseFinder {
+  /**
+   * hide constructor.
+   */
+  private MissingLicenseFinder() {
+    // hide constructor
+  }
 
-  /** The lines we expect at the beginning of each file */
-  public static final String[] correctLines = {
+  /** The lines we expect at the beginning of each file. */
+  public static final String[] CORRECT_LINES = {
       "/**", //$NON-NLS-1$
       " * Geotag", //$NON-NLS-1$
       " * Copyright (C) 2007 Andreas Schneider", //$NON-NLS-1$
@@ -59,7 +65,7 @@ public class MissingLicenseFinder {
    * @param args -
    *          no args
    */
-  public static final void main(String[] args) {
+  public static void main(String[] args) {
     // Choose the source directory to be examined
     JFileChooser chooser = new JFileChooser();
     // guess the default directory. If run from Eclipse "user.dir" points at the
@@ -86,7 +92,7 @@ public class MissingLicenseFinder {
   }
 
   /**
-   * process all files in this directory and sub-directories
+   * Process all files in this directory and sub-directories.
    * 
    * @param directory
    */
@@ -107,7 +113,7 @@ public class MissingLicenseFinder {
   }
 
   /**
-   * Process one file - this currently always overwrites the original
+   * Process one file - this currently always overwrites the original.
    * 
    * @param file
    */
@@ -116,11 +122,11 @@ public class MissingLicenseFinder {
     BufferedReader bufferedReader = null;
     try {
       bufferedReader = new BufferedReader(new FileReader(file));
-      for (int i = 0; i < correctLines.length; i++) {
+      for (int i = 0; i < CORRECT_LINES.length; i++) {
         String lineFromFile = bufferedReader.readLine();
-        if (!lineFromFile.equals(correctLines[i])) {
+        if (!lineFromFile.equals(CORRECT_LINES[i])) {
           System.out.println(file.getName()
-              + " line " + (i + 1) + " != '" + correctLines[i] + '\''); //$NON-NLS-1$ //$NON-NLS-2$
+              + " line " + (i + 1) + " != '" + CORRECT_LINES[i] + '\''); //$NON-NLS-1$ //$NON-NLS-2$
           break;
         }
       }

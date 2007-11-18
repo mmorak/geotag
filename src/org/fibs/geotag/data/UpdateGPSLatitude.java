@@ -19,32 +19,30 @@
 package org.fibs.geotag.data;
 
 import javax.swing.undo.AbstractUndoableEdit;
-import javax.swing.undo.CannotRedoException;
-import javax.swing.undo.CannotUndoException;
 
 import org.fibs.geotag.GlobalUndoManager;
 
 /**
- * A class encapsulating latitude updates
+ * A class encapsulating latitude updates.
  * 
  * @author Andreas Schneider
  * 
  */
 @SuppressWarnings("serial")
 public class UpdateGPSLatitude extends AbstractUndoableEdit {
-  /** The {@link ImageInfo} */
+  /** The {@link ImageInfo}. */
   private ImageInfo imageInfo;
 
-  /** A copy of the previous latitude value */
+  /** A copy of the previous latitude value. */
   private String oldLatitude;
 
-  /** A copy of the previous data source value */
+  /** A copy of the previous data source value. */
   private ImageInfo.DATA_SOURCE oldDataSource;
 
-  /** The new latitude value */
+  /** The new latitude value. */
   private String newLatitude;
 
-  /** The value for the data source */
+  /** The value for the data source. */
   private ImageInfo.DATA_SOURCE newDataSource;
 
   /**
@@ -55,10 +53,10 @@ public class UpdateGPSLatitude extends AbstractUndoableEdit {
   public UpdateGPSLatitude(ImageInfo imageInfo, String newLatitude,
       ImageInfo.DATA_SOURCE newDataSource) {
     this.imageInfo = imageInfo;
-    this.oldLatitude = imageInfo.getGPSLatitude();
+    this.oldLatitude = imageInfo.getGpsLatitude();
     this.oldDataSource = imageInfo.getSource();
-    imageInfo.setGPSLatitude(newLatitude, newDataSource);
-    this.newLatitude = imageInfo.getGPSLatitude();
+    imageInfo.setGpsLatitude(newLatitude, newDataSource);
+    this.newLatitude = imageInfo.getGpsLatitude();
     this.newDataSource = imageInfo.getSource();
     GlobalUndoManager.getManager().addEdit(this);
   }
@@ -76,17 +74,17 @@ public class UpdateGPSLatitude extends AbstractUndoableEdit {
    * @see javax.swing.undo.AbstractUndoableEdit#redo()
    */
   @Override
-  public void redo() throws CannotRedoException {
+  public void redo() {
     super.redo();
-    imageInfo.setGPSLatitude(newLatitude, newDataSource);
+    imageInfo.setGpsLatitude(newLatitude, newDataSource);
   }
 
   /**
    * @see javax.swing.undo.AbstractUndoableEdit#undo()
    */
   @Override
-  public void undo() throws CannotUndoException {
+  public void undo() {
     super.undo();
-    imageInfo.setGPSLatitude(oldLatitude, oldDataSource);
+    imageInfo.setGpsLatitude(oldLatitude, oldDataSource);
   }
 }

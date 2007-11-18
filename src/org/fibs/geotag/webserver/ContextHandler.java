@@ -35,6 +35,6 @@ public interface ContextHandler {
    * @param parms
    * @return The Response to be passed on to NanoHTTPD
    */
-  public Response serve(WebServer server, String uri, String method,
+  Response serve(WebServer server, String uri, String method,
       Properties header, Properties parms);
 }

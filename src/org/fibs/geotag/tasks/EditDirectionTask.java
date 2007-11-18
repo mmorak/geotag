@@ -22,6 +22,7 @@ import org.fibs.geotag.Messages;
 import org.fibs.geotag.data.ImageInfo;
 import org.fibs.geotag.data.UpdateGPSImgDirection;
 import org.fibs.geotag.data.ImageInfo.DATA_SOURCE;
+import org.fibs.geotag.util.Constants;
 import org.fibs.geotag.util.Util;
 
 /**
@@ -30,13 +31,13 @@ import org.fibs.geotag.util.Util;
  */
 public class EditDirectionTask extends UndoableBackgroundTask<ImageInfo> {
 
-  /** The image whose direction will be set */
+  /** The image whose direction will be set. */
   private ImageInfo imageInfo;
 
-  /** The new direction */
+  /** The new direction. */
   private String newDirection;
 
-  /** The source of the update */
+  /** The source of the update. */
   private DATA_SOURCE dataSource;
 
   /**
@@ -94,7 +95,7 @@ public class EditDirectionTask extends UndoableBackgroundTask<ImageInfo> {
           try {
             direction = Double.parseDouble(newDirection);
             // must be between 0 (inclusive) and 360 (exclusive)
-            if (direction < 0.0 || direction >= 360.0) {
+            if (direction < 0.0 || direction >= Constants.FULL_CIRCLE_DEGREES) {
               direction = Double.NaN;
             }
           } catch (RuntimeException e) {

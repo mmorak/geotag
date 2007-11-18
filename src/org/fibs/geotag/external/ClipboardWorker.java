@@ -29,26 +29,28 @@ import java.util.StringTokenizer;
 
 import javax.swing.SwingWorker;
 
+import org.fibs.geotag.util.Constants;
+
 /**
  * A class that monitors the system clipboard for changes and notifies listeners
- * about new positions for images
+ * about new positions for images.
  * 
  * @author Andreas Schneider
  * 
  */
 public class ClipboardWorker extends SwingWorker<Void, ExternalUpdate> {
 
-  /** The monitoring thread terminates if this is set to true */
+  /** The monitoring thread terminates if this is set to true. */
   private boolean terminating = false;
 
-  /** The system clipboard */
+  /** The system clipboard. */
   private Clipboard clipboard;
 
-  /** The text stored in the system clipboard */
+  /** The text stored in the system clipboard. */
   private String clipboardText;
 
   /**
-   * Construct a new clipboard listener
+   * Construct a new clipboard listener.
    * 
    * @param parent
    *          The window of the application (needed to find the system
@@ -66,7 +68,7 @@ public class ClipboardWorker extends SwingWorker<Void, ExternalUpdate> {
   }
 
   /**
-   * Read the text in the clipboard
+   * Read the text in the clipboard.
    * 
    * @return The clipboard text or null
    */
@@ -96,14 +98,14 @@ public class ClipboardWorker extends SwingWorker<Void, ExternalUpdate> {
   @Override
   public Void doInBackground() {
     // only terminate if requested to do so
-    while (terminating == false) {
+    while (!terminating) {
       // 
       String text = getClipboardText();
       // check if there is nothing to be done
       if (text == null || text.equals(clipboardText)) {
         // nothing to be done - sleep for a while
         try {
-          Thread.sleep(1000);
+          Thread.sleep(Constants.ONE_SECOND_IN_MILLIS);
         } catch (InterruptedException e) {
           e.printStackTrace();
         }
@@ -136,7 +138,7 @@ public class ClipboardWorker extends SwingWorker<Void, ExternalUpdate> {
   }
 
   /**
-   * Terminate the monitor
+   * Terminate the monitor.
    */
   public void terminate() {
     terminating = true;

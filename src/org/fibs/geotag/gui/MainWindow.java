@@ -21,6 +21,7 @@ package org.fibs.geotag.gui;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.HeadlessException;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -93,7 +94,7 @@ import com.topografix.gpx._1._0.Gpx.Trk;
 import com.topografix.gpx._1._0.Gpx.Trk.Trkseg;
 
 /**
- * A class representing the main Window of the application
+ * A class representing the main Window of the application.
  * 
  * @author Andreas Schneider
  * 
@@ -102,68 +103,77 @@ import com.topografix.gpx._1._0.Gpx.Trk.Trkseg;
 public class MainWindow extends JFrame implements BackgroundTaskListener,
     ExternalUpdateConsumer {
 
-  /** Text for menu item to add individual files */
+  /** The default aspect ratio of the preview component. The width */
+  private static final int PREVIEW_ASPECT_RATIO_X = 4;
+
+  /** The default aspect ratio of the preview component. The height */
+  private static final int PREVIEW_ASPECT_RATIO_Y = 3;
+
+  /** the port for the built-in web server. */
+  private static final int WEB_SERVER_PORT = 4321;
+
+  /** Text for menu item to add individual files. */
   static final String ADD_FILE = Messages.getString("MainWindow.AddFile"); //$NON-NLS-1$
 
-  /** Text for menu item to add all files in a directory */
+  /** Text for menu item to add all files in a directory. */
   static final String ADD_FILES = Messages.getString("MainWindow.AddDirectory"); //$NON-NLS-1$
 
-  /** An ellipsis of three dots */
+  /** An ellipsis of three dots. */
   private static final String ELLIPSIS = "..."; //$NON-NLS-1$
 
-  /** The tableModel for the data displayed in this window */
-  ImagesTableModel tableModel;
+  /** The tableModel for the data displayed in this window. */
+  private ImagesTableModel tableModel;
 
-  /** The table used to display the data from the TableModel */
-  ImagesTable table;
+  /** The table used to display the data from the TableModel. */
+  private ImagesTable table;
 
-  /** The menu bar of the main window */
+  /** The menu bar of the main window. */
   private JMenuBar menuBar = new JMenuBar();
 
-  /** The {@link JScrollPane} holding the table */
+  /** The {@link JScrollPane} holding the table. */
   private JScrollPane tableScrollPane;
 
-  /** The {@link PreviewComponent} displaying the previews */
-  PreviewComponent previewComponent;
+  /** The {@link PreviewComponent} displaying the previews. */
+  private PreviewComponent previewComponent;
 
-  /** A JProgressBar to show progress for lengthy operations */
-  JProgressBar progressBar;
+  /** A JProgressBar to show progress for lengthy operations. */
+  private JProgressBar progressBar;
 
-  /** Keep track of background tasks - we only allow one at a time */
-  BackgroundTask<?> backgroundTask = null;
+  /** Keep track of background tasks - we only allow one at a time. */
+  private BackgroundTask<?> backgroundTask = null;
 
-  /** Where we store external updates while background tasks are running */
-  Vector<ExternalUpdate> pendingExternalUpdates = new Vector<ExternalUpdate>();
+  /** Where we store external updates while background tasks are running. */
+  private Vector<ExternalUpdate> pendingExternalUpdates = new Vector<ExternalUpdate>();
 
-  /** Menu item to add one file */
+  /** Menu item to add one file. */
   private JMenuItem addFileItem;
 
-  /** Menu item to add all files in a directory */
+  /** Menu item to add all files in a directory. */
   private JMenuItem addDirectoryItem;
 
-  /** Menu item to add a GPX file */
+  /** Menu item to add a GPX file. */
   private JMenuItem addTrackItem;
 
-  /** Menu item to save tracks as a GPX file */
-  JMenuItem saveTrackItem;
+  /** Menu item to save tracks as a GPX file. */
+  private JMenuItem saveTrackItem;
 
-  /** Menu item to load track from GPS */
-  JMenuItem loadTrackFromGpsItem;
+  /** Menu item to load track from GPS. */
+  private JMenuItem loadTrackFromGpsItem;
 
-  /** Menu item to open the settings dialog */
+  /** Menu item to open the settings dialog. */
   private JMenuItem settingsItem;
 
-  /** Menu item to undo the last task */
+  /** Menu item to undo the last task. */
   private JMenuItem undoItem;
 
-  /** Menu item to redo the next task */
+  /** Menu item to redo the next task. */
   private JMenuItem redoItem;
 
-  /** Menu item to cancel a running task */
-  JMenuItem cancelItem;
+  /** Menu item to cancel a running task. */
+  private JMenuItem cancelItem;
 
   /**
-   * Constructor for the main window
+   * Constructor for the main window.
    */
   public MainWindow() {
     super(Geotag.NAME);
@@ -177,71 +187,113 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
     setupMenuBar();
     setJMenuBar(menuBar);
     setLayout(new BorderLayout());
-    tableModel = new ImagesTableModel();
-    table = new ImagesTable(tableModel) {
-      @Override
-      public void valueChanged(ListSelectionEvent event) {
-        // the table row selection has changed
-        // we might need to change the preview component
-        ListSelectionModel newSelectionModel = (ListSelectionModel) event
-            .getSource();
-        if (newSelectionModel.getValueIsAdjusting()) {
-          return;
-        }
-        int lead = newSelectionModel.getLeadSelectionIndex();
-        if (newSelectionModel.isSelectedIndex(lead)) {
-          // time to change the preview
-          ImageInfo imageInfo = tableModel.getImageInfo(lead);
-          previewComponent.setImageInfo(imageInfo);
-        }
-        super.valueChanged(event);
-      }
-    };
-    table.addMouseListener(new MouseAdapter() {
-      private void popupMenu(MouseEvent event) {
-        int mouseOnRow = table.rowAtPoint(event.getPoint());
-        ImagesTablePopupMenu popupMenu = new ImagesTablePopupMenu(
-            MainWindow.this, table, mouseOnRow, backgroundTask != null);
-        popupMenu.show((Component) event.getSource(), event.getX(), event
-            .getY());
-      }
-
-      @Override
-      public void mousePressed(MouseEvent event) {
-        super.mousePressed(event);
-        if (event.isPopupTrigger()) {
-          popupMenu(event);
-        }
-      }
-
-      @Override
-      public void mouseReleased(MouseEvent event) {
-        super.mouseReleased(event);
-        if (event.isPopupTrigger()) {
-          popupMenu(event);
-        }
-      }
-
-    });
-    Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-    int width = (int) (screenSize.getWidth() / 2);
-    width = Settings.get(SETTING.MAIN_WINDOW_WIDHTH, width);
-    int height = (int) (screenSize.getHeight() * 0.95);
-    height = Settings.get(SETTING.MAIN_WINDOW_HEIGHT, height);
-    setSize(width, height);
-    int x = Settings.get(SETTING.MAIN_WINDOW_X, 0);
-    int y = Settings.get(SETTING.MAIN_WINDOW_Y, 0);
-    setLocation(x, y);
+    setupTable();
+    setupSizeAndPosition();
     tableScrollPane = new JScrollPane(table);
+    setupPreviewComponent();
+    final JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
+        false, tableScrollPane, previewComponent);
+    add(splitPane, BorderLayout.CENTER);
+    progressBar = new JProgressBar();
+    progressBar.setStringPainted(true);
+    progressBar.setBorderPainted(false);
+    progressBar.setString(""); //$NON-NLS-1$
+    add(progressBar, BorderLayout.SOUTH);
+
+    this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+
+    addWindowListener(new WindowAdapter() {
+      /**
+       * @see java.awt.event.WindowAdapter#windowOpened(java.awt.event.WindowEvent)
+       */
+      @Override
+      public void windowOpened(WindowEvent e) {
+        super.windowOpened(e);
+        // the preview component should have a 4:3 aspect ratio by default
+
+        int previewHeight = (int) (getWidth() / ((double) PREVIEW_ASPECT_RATIO_X / PREVIEW_ASPECT_RATIO_Y));
+        previewHeight = Settings.get(SETTING.PREVIEW_HEIGHT, previewHeight);
+        splitPane.setDividerLocation((getHeight() - previewHeight));
+      }
+
+      @Override
+      public void windowClosing(WindowEvent we) {
+        if (JOptionPane.showConfirmDialog(MainWindow.this, Messages
+            .getString("MainWindow.DoYouReallyWantToExit"), //$NON-NLS-1$
+            Messages.getString("MainWindow.ExitProgram"), //$NON-NLS-1$
+            JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+          Settings.put(SETTING.MAIN_WINDOW_X, getLocation().x);
+          Settings.put(SETTING.MAIN_WINDOW_Y, getLocation().y);
+          Settings.put(SETTING.MAIN_WINDOW_HEIGHT, getHeight());
+          Settings.put(SETTING.MAIN_WINDOW_WIDHTH, getWidth());
+          Settings.put(SETTING.PREVIEW_HEIGHT, getHeight()
+              - splitPane.getDividerLocation());
+          getTable().saveColumnSettings();
+          Settings.flush();
+          System.exit(0);
+        }
+      }
+    });
+    GlobalUndoManager.getManager().setLimit(-1); // no limit
+    // enable drag and drop of image files
+    new FileDrop(this, new FileDrop.Listener() {
+      public void filesDropped(File[] files) {
+        ExifReaderTask task = new ExifReaderTask(ADD_FILES, getTableModel(),
+            files);
+        task.execute();
+      }
+    });
+
+    // if external programs want to use the clipboard, uncomment those lines:
+    // ClipboardWorker clipboardMonitor = new ClipboardWorker(this) {
+    // @Override
+    // protected void process(List<ExternalUpdate> clipboardUpdates) {
+    // processExternalUpdates(clipboardUpdates);
+    // }
+    // };
+    // clipboardMonitor.execute();
+    // only add myself to background task listeners after the
+    // clipboard monitor has started
+    BackgroundTask.addBackgroundTaskListener(this);
+    // also start the built in web server
+    setupWebServer();
+  }
+
+  /**
+   * 
+   */
+  private void setupWebServer() {
+    try {
+      WebServer webServer = new org.fibs.geotag.webserver.WebServer(
+          WEB_SERVER_PORT, tableModel);
+      webServer.createContext("/", new ResourceHandler()); //$NON-NLS-1$
+      webServer.createContext("/images", new ThumbnailHandler()); //$NON-NLS-1$
+      webServer.createContext("/update", new UpdateHandler(this)); //$NON-NLS-1$
+      webServer.createContext("/kml", new KmlRequestHandler(this)); //$NON-NLS-1$
+      webServer.createContext("/tracks", new TracksHandler()); //$NON-NLS-1$
+      webServer.createContext("/settings", new SettingsHandler()); //$NON-NLS-1$
+      webServer.createContext("/imageinfo", new ImageInfoHandler()); //$NON-NLS-1$
+      webServer.createContext("/map", new MapHandler()); //$NON-NLS-1$
+      webServer.createContext("/geonames", new GeonamesHandler()); //$NON-NLS-1$
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+
+  /**
+   * 
+   */
+  private void setupPreviewComponent() {
     previewComponent = new PreviewComponent(Messages
         .getString("MainWindow.Preview")); //$NON-NLS-1$
     previewComponent.addMouseListener(new MouseAdapter() {
       private void popupMenu(MouseEvent event) {
-        ImageInfo imageInfo = previewComponent.getImageInfo();
-        int tableRow = tableModel.getRow(imageInfo);
+        ImageInfo imageInfo = getPreviewComponent().getImageInfo();
+        int tableRow = getTableModel().getRow(imageInfo);
         if (imageInfo != null) {
           ImagesTablePopupMenu popupMenu = new ImagesTablePopupMenu(
-              MainWindow.this, table, tableRow, backgroundTask != null);
+              MainWindow.this, getTable(), tableRow,
+              getBackgroundTask() != null);
           popupMenu.show((Component) event.getSource(), event.getX(), event
               .getY());
         }
@@ -263,90 +315,235 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
         }
       }
     });
-    final JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
-        false, tableScrollPane, previewComponent);
-    add(splitPane, BorderLayout.CENTER);
-    progressBar = new JProgressBar();
-    progressBar.setStringPainted(true);
-    progressBar.setBorderPainted(false);
-    progressBar.setString(""); //$NON-NLS-1$
-    add(progressBar, BorderLayout.SOUTH);
+  }
 
-    this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-
-    addWindowListener(new WindowAdapter() {
-      /**
-       * @see java.awt.event.WindowAdapter#windowOpened(java.awt.event.WindowEvent)
-       */
-      @Override
-      public void windowOpened(WindowEvent e) {
-        super.windowOpened(e);
-        // the preview component should have a 4:3 aspect ratio by default
-        int previewHeight = (int) (getWidth() / 4.0 * 3.0);
-        previewHeight = Settings.get(SETTING.PREVIEW_HEIGHT, previewHeight);
-        splitPane.setDividerLocation((getHeight() - previewHeight));
-      }
-
-      @Override
-      public void windowClosing(WindowEvent we) {
-        if (JOptionPane.showConfirmDialog(MainWindow.this, Messages
-            .getString("MainWindow.DoYouReallyWantToExit"), //$NON-NLS-1$
-            Messages.getString("MainWindow.ExitProgram"), //$NON-NLS-1$
-            JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-          Settings.put(SETTING.MAIN_WINDOW_X, getLocation().x);
-          Settings.put(SETTING.MAIN_WINDOW_Y, getLocation().y);
-          Settings.put(SETTING.MAIN_WINDOW_HEIGHT, getHeight());
-          Settings.put(SETTING.MAIN_WINDOW_WIDHTH, getWidth());
-          Settings.put(SETTING.PREVIEW_HEIGHT, getHeight()
-              - splitPane.getDividerLocation());
-          table.saveColumnSettings();
-          Settings.flush();
-          System.exit(0);
-        }
-      }
-    });
-    GlobalUndoManager.getManager().setLimit(-1); // no limit
-    // enable drag and drop of image files
-    new FileDrop(this, new FileDrop.Listener() {
-      public void filesDropped(File[] files) {
-        ExifReaderTask task = new ExifReaderTask(ADD_FILES, tableModel, files);
-        task.execute();
-      }
-    });
-
-    // if external programs want to use the clipboard, uncomment those lines:
-    // ClipboardWorker clipboardMonitor = new ClipboardWorker(this) {
-    // @Override
-    // protected void process(List<ExternalUpdate> clipboardUpdates) {
-    // processExternalUpdates(clipboardUpdates);
-    // }
-    // };
-    // clipboardMonitor.execute();
-    // only add myself to background task listeners after the
-    // clipboard monitor has started
-    BackgroundTask.addBackgroundTaskListener(this);
-    // also start the built in web server
+  /**
+   * @throws HeadlessException
+   */
+  private void setupSizeAndPosition() {
     try {
-      WebServer webServer = new org.fibs.geotag.webserver.WebServer(4321,
-          tableModel);
-      webServer.createContext("/", new ResourceHandler()); //$NON-NLS-1$
-      webServer.createContext("/images", new ThumbnailHandler()); //$NON-NLS-1$
-      webServer.createContext("/update", new UpdateHandler(this)); //$NON-NLS-1$
-      webServer.createContext("/kml", new KmlRequestHandler(this)); //$NON-NLS-1$
-      webServer.createContext("/tracks", new TracksHandler()); //$NON-NLS-1$
-      webServer.createContext("/settings", new SettingsHandler()); //$NON-NLS-1$
-      webServer.createContext("/imageinfo", new ImageInfoHandler()); //$NON-NLS-1$
-      webServer.createContext("/map", new MapHandler()); //$NON-NLS-1$
-      webServer.createContext("/geonames", new GeonamesHandler()); //$NON-NLS-1$
-    } catch (IOException e) {
+      Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+      int width = (int) (screenSize.getWidth() / 2);
+      width = Settings.get(SETTING.MAIN_WINDOW_WIDHTH, width);
+      final double factor = 0.95;
+      int height = (int) (screenSize.getHeight() * factor);
+      height = Settings.get(SETTING.MAIN_WINDOW_HEIGHT, height);
+      setSize(width, height);
+      int x = Settings.get(SETTING.MAIN_WINDOW_X, 0);
+      int y = Settings.get(SETTING.MAIN_WINDOW_Y, 0);
+      setLocation(x, y);
+    } catch (HeadlessException e) {
       e.printStackTrace();
     }
+  }
+
+  /**
+   * 
+   */
+  private void setupTable() {
+    tableModel = new ImagesTableModel();
+    table = new ImagesTable(tableModel) {
+      @Override
+      public void valueChanged(ListSelectionEvent event) {
+        // the table row selection has changed
+        // we might need to change the preview component
+        ListSelectionModel newSelectionModel = (ListSelectionModel) event
+            .getSource();
+        if (newSelectionModel.getValueIsAdjusting()) {
+          return;
+        }
+        int lead = newSelectionModel.getLeadSelectionIndex();
+        if (newSelectionModel.isSelectedIndex(lead)) {
+          // time to change the preview
+          ImageInfo imageInfo = getTableModel().getImageInfo(lead);
+          getPreviewComponent().setImageInfo(imageInfo);
+        }
+        super.valueChanged(event);
+      }
+    };
+    table.addMouseListener(new MouseAdapter() {
+      private void popupMenu(MouseEvent event) {
+        int mouseOnRow = getTable().rowAtPoint(event.getPoint());
+        ImagesTablePopupMenu popupMenu = new ImagesTablePopupMenu(
+            MainWindow.this, getTable(), mouseOnRow,
+            getBackgroundTask() != null);
+        popupMenu.show((Component) event.getSource(), event.getX(), event
+            .getY());
+      }
+
+      @Override
+      public void mousePressed(MouseEvent event) {
+        super.mousePressed(event);
+        if (event.isPopupTrigger()) {
+          popupMenu(event);
+        }
+      }
+
+      @Override
+      public void mouseReleased(MouseEvent event) {
+        super.mouseReleased(event);
+        if (event.isPopupTrigger()) {
+          popupMenu(event);
+        }
+      }
+
+    });
   }
 
   /**
    * Create the menubar and make sure all actions are handled properly.
    */
   private void setupMenuBar() {
+    JMenu fileMenu = setupFileMenu();
+    menuBar.add(fileMenu);
+
+    JMenu editMenu = setupEditMenu();
+    menuBar.add(editMenu);
+
+    JMenu helpMenu = setupHelpMenu();
+    menuBar.add(helpMenu);
+  }
+
+  /**
+   * @return the help menu
+   */
+  private JMenu setupHelpMenu() {
+    JMenu helpMenu = new JMenu(Messages.getString("MainWindow.Help")); //$NON-NLS-1$
+
+    JMenuItem whatNextItem = new JMenuItem(Messages
+        .getString("MainWindow.WhatNext")); //$NON-NLS-1$
+    whatNextItem.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        WhatNext.helpWhatNext(MainWindow.this, getTableModel());
+      }
+    });
+
+    helpMenu.add(whatNextItem);
+
+    final String about = Messages.getString("MainWindow.About") + ' ' + Geotag.NAME; //$NON-NLS-1$
+    JMenuItem aboutItem = new JMenuItem(about + ELLIPSIS);
+    aboutItem.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        (new AboutDialog(MainWindow.this, about)).setVisible(true);
+      }
+    });
+
+    helpMenu.add(aboutItem);
+
+    JMenuItem websiteItem = new JMenuItem(String.format(Messages
+        .getString("MainWindow.WebSiteFormat") + ELLIPSIS, Geotag.NAME)); //$NON-NLS-1$
+    websiteItem.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        BareBonesBrowserLaunch.openURL(Settings.get(SETTING.BROWSER, null),
+            Geotag.WEBSITE);
+      }
+    });
+
+    helpMenu.add(websiteItem);
+    return helpMenu;
+  }
+
+  /**
+   * @return the edit menu
+   */
+  private JMenu setupEditMenu() {
+    JMenu editMenu = new JMenu(Messages.getString("MainWindow.Edit")); //$NON-NLS-1$
+
+    undoItem = new JMenuItem();
+    undoItem.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        String action = GlobalUndoManager.getManager()
+            .getUndoPresentationName();
+        GlobalUndoManager.getManager().undo();
+        updateUndoMenuItems();
+        // this will call tableModel.fireTableDataChanged() for us
+        getTableModel().sortRows();
+        getProgressBar().setString(
+            Messages.getString("MainWindow.Done") + ": " + action); //$NON-NLS-1$ //$NON-NLS-2$
+      }
+    });
+    editMenu.add(undoItem);
+
+    redoItem = new JMenuItem();
+    redoItem.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        String action = GlobalUndoManager.getManager()
+            .getRedoPresentationName();
+        GlobalUndoManager.getManager().redo();
+        updateUndoMenuItems();
+        getTableModel().sortRows();
+        getProgressBar().setString(
+            Messages.getString("MainWindow.Done") + ": " + action); //$NON-NLS-1$ //$NON-NLS-2$
+      }
+    });
+    editMenu.add(redoItem);
+
+    cancelItem = new JMenuItem(Messages.getString("MainWindow.Cancel")); //$NON-NLS-1$
+    cancelItem.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        if (getBackgroundTask() != null) {
+          getBackgroundTask().interruptRequest();
+          getCancelItem().setVisible(false);
+        }
+      }
+    });
+    cancelItem.setVisible(false);
+    editMenu.add(cancelItem);
+
+    updateUndoMenuItems();
+
+    JMenu selectMenu = new JMenu(Messages.getString("MainWindow.Select")); //$NON-NLS-1$
+
+    JMenuItem selectAllItem = new JMenuItem(Messages
+        .getString("MainWindow.SelectAll")); //$NON-NLS-1$
+    selectAllItem.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        getTable().selectAll();
+      }
+    });
+    selectMenu.add(selectAllItem);
+
+    JMenuItem selectWithLocationItem = new JMenuItem(Messages
+        .getString("MainWindow.SelectWithLocations")); //$NON-NLS-1$
+    selectWithLocationItem.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        getTable().selectAllWithLocation();
+      }
+
+    });
+    selectMenu.add(selectWithLocationItem);
+
+    JMenuItem selectWithNewLocationItem = new JMenuItem(Messages
+        .getString("MainWindow.SelectWithNewLocations")); //$NON-NLS-1$
+    selectWithNewLocationItem.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        getTable().selectAllWithNewLocation();
+      }
+
+    });
+    selectMenu.add(selectWithNewLocationItem);
+
+    JMenuItem selectNoneItem = new JMenuItem(Messages
+        .getString("MainWindow.SelectNoImages")); //$NON-NLS-1$
+    selectNoneItem.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        getTable().selectNone();
+      }
+    });
+    selectMenu.add(selectNoneItem);
+
+    editMenu.add(selectMenu);
+    return editMenu;
+  }
+
+  /**
+   * @return the file menu
+   */
+  private JMenu setupFileMenu() {
     JMenu fileMenu = new JMenu(Messages.getString("MainWindow.File")); //$NON-NLS-1$
     addFileItem = new JMenuItem(ADD_FILE + ELLIPSIS);
     addFileItem.addActionListener(new ActionListener() {
@@ -406,154 +603,26 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
         Exiftool.checkExiftoolAvailable();
         GPSBabel.checkGPSBabelAvailable();
         Dcraw.checkDcrawAvailable();
-        if (dcrawAvailable == false && Dcraw.isAvailable() == true) {
+        if (!dcrawAvailable && Dcraw.isAvailable()) {
           // dcraw wasn't available, but now it isn't
-          for (int row = 0; row < tableModel.getRowCount(); row++) {
-            if (tableModel.getImageInfo(row).getThumbNailStatus() == THUMBNAIL_STATUS.FAI1LED) {
+          for (int row = 0; row < getTableModel().getRowCount(); row++) {
+            if (getTableModel().getImageInfo(row).getThumbNailStatus() == THUMBNAIL_STATUS.FAI1LED) {
               // now that dcraw is available, loading the thumbnail might work
-              tableModel.getImageInfo(row).setThumbNailStatus(
+              getTableModel().getImageInfo(row).setThumbNailStatus(
                   THUMBNAIL_STATUS.UNKNOWN);
             }
           }
         }
         // the menu item to load tracks from the GPS should
         // only be enabled if GPSBabel is available
-        loadTrackFromGpsItem.setEnabled(GPSBabel.isAvailable());
+        getLoadTrackFromGpsItem().setEnabled(GPSBabel.isAvailable());
         // we might need to change the font
-        table.usePreferredFont();
-        tableModel.fireTableDataChanged();
+        getTable().usePreferredFont();
+        getTableModel().fireTableDataChanged();
       }
     });
     fileMenu.add(settingsItem);
-
-    menuBar.add(fileMenu);
-
-    JMenu editMenu = new JMenu(Messages.getString("MainWindow.Edit")); //$NON-NLS-1$
-
-    undoItem = new JMenuItem();
-    undoItem.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        String action = GlobalUndoManager.getManager()
-            .getUndoPresentationName();
-        GlobalUndoManager.getManager().undo();
-        updateUndoMenuItems();
-        // this will call tableModel.fireTableDataChanged() for us
-        tableModel.sortRows();
-        progressBar
-            .setString(Messages.getString("MainWindow.Done") + ": " + action); //$NON-NLS-1$ //$NON-NLS-2$
-      }
-    });
-    editMenu.add(undoItem);
-
-    redoItem = new JMenuItem();
-    redoItem.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        String action = GlobalUndoManager.getManager()
-            .getRedoPresentationName();
-        GlobalUndoManager.getManager().redo();
-        updateUndoMenuItems();
-        tableModel.sortRows();
-        progressBar
-            .setString(Messages.getString("MainWindow.Done") + ": " + action); //$NON-NLS-1$ //$NON-NLS-2$
-      }
-    });
-    editMenu.add(redoItem);
-
-    cancelItem = new JMenuItem(Messages.getString("MainWindow.Cancel")); //$NON-NLS-1$
-    cancelItem.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        if (backgroundTask != null) {
-          backgroundTask.interruptRequest();
-          cancelItem.setVisible(false);
-        }
-      }
-    });
-    cancelItem.setVisible(false);
-    editMenu.add(cancelItem);
-
-    updateUndoMenuItems();
-
-    JMenu selectMenu = new JMenu(Messages.getString("MainWindow.Select")); //$NON-NLS-1$
-
-    JMenuItem selectAllItem = new JMenuItem(Messages
-        .getString("MainWindow.SelectAll")); //$NON-NLS-1$
-    selectAllItem.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        table.selectAll();
-      }
-    });
-    selectMenu.add(selectAllItem);
-
-    JMenuItem selectWithLocationItem = new JMenuItem(Messages
-        .getString("MainWindow.SelectWithLocations")); //$NON-NLS-1$
-    selectWithLocationItem.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        table.selectAllWithLocation();
-      }
-
-    });
-    selectMenu.add(selectWithLocationItem);
-
-    JMenuItem selectWithNewLocationItem = new JMenuItem(Messages
-        .getString("MainWindow.SelectWithNewLocations")); //$NON-NLS-1$
-    selectWithNewLocationItem.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        table.selectAllWithNewLocation();
-      }
-
-    });
-    selectMenu.add(selectWithNewLocationItem);
-
-    JMenuItem selectNoneItem = new JMenuItem(Messages
-        .getString("MainWindow.SelectNoImages")); //$NON-NLS-1$
-    selectNoneItem.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        table.selectNone();
-      }
-    });
-    selectMenu.add(selectNoneItem);
-
-    editMenu.add(selectMenu);
-    menuBar.add(editMenu);
-
-    JMenu helpMenu = new JMenu(Messages.getString("MainWindow.Help")); //$NON-NLS-1$
-
-    JMenuItem whatNextItem = new JMenuItem(Messages
-        .getString("MainWindow.WhatNext")); //$NON-NLS-1$
-    whatNextItem.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        WhatNext.helpWhatNext(MainWindow.this, tableModel);
-      }
-    });
-
-    helpMenu.add(whatNextItem);
-
-    final String about = Messages.getString("MainWindow.About") + ' ' + Geotag.NAME; //$NON-NLS-1$
-    JMenuItem aboutItem = new JMenuItem(about + ELLIPSIS);
-    aboutItem.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        (new AboutDialog(MainWindow.this, about)).setVisible(true);
-      }
-    });
-
-    helpMenu.add(aboutItem);
-
-    JMenuItem websiteItem = new JMenuItem(String.format(Messages
-        .getString("MainWindow.WebSiteFormat") + ELLIPSIS, Geotag.NAME)); //$NON-NLS-1$
-    websiteItem.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        BareBonesBrowserLaunch.openURL(Settings.get(SETTING.BROWSER, null),
-            Geotag.WEBSITE);
-      }
-    });
-
-    helpMenu.add(websiteItem);
-
-    menuBar.add(helpMenu);
+    return fileMenu;
   }
 
   /**
@@ -573,7 +642,7 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
 
   /**
    * Check if there are pending updates from external programs and perform the
-   * first one, removing it from the list
+   * first one, removing it from the list.
    */
   void processExternalUpdates() {
     if (pendingExternalUpdates.size() > 0) {
@@ -583,9 +652,9 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
         @Override
         protected void process(List<ImageInfo> imageInfo) {
           for (ImageInfo image : imageInfo) {
-            int row = tableModel.getRow(image);
+            int row = getTableModel().getRow(image);
             if (row >= 0) {
-              tableModel.fireTableRowsUpdated(row, row);
+              getTableModel().fireTableRowsUpdated(row, row);
             }
           }
         }
@@ -597,7 +666,7 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
 
   /**
    * Query the UndoManager and set the undo/redo menu items to the correct text
-   * and state
+   * and state.
    */
   void updateUndoMenuItems() {
     UndoManager undoManager = GlobalUndoManager.getManager();
@@ -608,7 +677,7 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
   }
 
   /**
-   * Select an image file and add it to the table
+   * Select an image file and add it to the table.
    */
   void addFile() {
     JFileChooser chooser = new JFileChooser();
@@ -632,7 +701,7 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
   }
 
   /**
-   * Select a directory and add all image files in it
+   * Select a directory and add all image files in it.
    */
   void addDirectory() {
     JFileChooser chooser = new JFileChooser();
@@ -655,7 +724,7 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
   }
 
   /**
-   * Choose a GPX file and read the information from it
+   * Choose a GPX file and read the information from it.
    */
   void addTrackFromFile() {
     JFileChooser chooser = new JFileChooser();
@@ -696,7 +765,7 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
         protected void done() {
           super.done();
           // now that we have a track, we are allowed to save it
-          saveTrackItem.setEnabled(true);
+          getSaveTrackItem().setEnabled(true);
         }
       }.execute();
     }
@@ -745,7 +814,7 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
   }
 
   /**
-   * Try reading track logs from a GPS device
+   * Try reading track logs from a GPS device.
    */
   void loadTracksFromGps() {
     GPSBabelTask task = new GPSBabelTask(Messages
@@ -765,9 +834,9 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
           }
         }
         String message = "" + numTrackpoints + ' ' + Messages.getString("MainWindow.LocationsLoaded"); //$NON-NLS-1$ //$NON-NLS-2$
-        progressBar.setString(message);
+        getProgressBar().setString(message);
         // now that we have a track, we are allowed to save it
-        saveTrackItem.setEnabled(true);
+        getSaveTrackItem().setEnabled(true);
       }
 
       @Override
@@ -791,7 +860,7 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
   }
 
   /**
-   * Some menu items need to disabled while a background task is running
+   * Some menu items need to disabled while a background task is running.
    * 
    * @param enable
    *          Whether to enable (true) or disable (false) those items
@@ -826,6 +895,8 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
     }
     cancelItem.setText(Messages.getString("MainWindow.Cancel") + ' ' + name); //$NON-NLS-1$
     cancelItem.setVisible(true);
+
+    tableModel.setEditingForbidden(true);
   }
 
   /**
@@ -861,7 +932,72 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
     updateMenuAvailability(true);
     updateUndoMenuItems();
     cancelItem.setVisible(false);
+
+    tableModel.setEditingForbidden(false);
     // have any external updates arrived while we were busy?
     processExternalUpdates();
+  }
+
+  /**
+   * @return the previewComponent
+   */
+  PreviewComponent getPreviewComponent() {
+    return previewComponent;
+  }
+
+  /**
+   * @return the tableModel
+   */
+  ImagesTableModel getTableModel() {
+    return tableModel;
+  }
+
+  /**
+   * @return the table
+   */
+  ImagesTable getTable() {
+    return table;
+  }
+
+  /**
+   * @return the progressBar
+   */
+  JProgressBar getProgressBar() {
+    return progressBar;
+  }
+
+  /**
+   * @return the backgroundTask
+   */
+  BackgroundTask<?> getBackgroundTask() {
+    return backgroundTask;
+  }
+
+  /**
+   * @return the pendingExternalUpdates
+   */
+  Vector<ExternalUpdate> getPendingExternalUpdates() {
+    return pendingExternalUpdates;
+  }
+
+  /**
+   * @return the saveTrackItem
+   */
+  JMenuItem getSaveTrackItem() {
+    return saveTrackItem;
+  }
+
+  /**
+   * @return the loadTrackFromGpsItem
+   */
+  JMenuItem getLoadTrackFromGpsItem() {
+    return loadTrackFromGpsItem;
+  }
+
+  /**
+   * @return the cancelItem
+   */
+  JMenuItem getCancelItem() {
+    return cancelItem;
   }
 }

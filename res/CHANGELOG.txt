@@ -1,3 +1,10 @@
+2007-11-18 Release 0.039
+  Geonames.org queries now use the correct language.
+  Major code cleanup.
+  Added support for proxies.
+  For reverse geocoding there is now a difference 
+  between locations and cities.
+  
 2007-11-10 Release 0.038
   Now displaying alternative location names.
   Now using the geonames findNearby query instead of

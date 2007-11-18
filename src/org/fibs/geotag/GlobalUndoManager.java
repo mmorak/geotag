@@ -21,19 +21,19 @@ package org.fibs.geotag;
 import javax.swing.undo.UndoManager;
 
 /**
- * A singleton undo manager
+ * A singleton undo manager.
  * 
  * @author Andreas Schneider
  * 
  */
 @SuppressWarnings("serial")
-public class GlobalUndoManager extends UndoManager {
+public final class GlobalUndoManager extends UndoManager {
 
-  /** The singleton instance */
-  private static final GlobalUndoManager manager = new GlobalUndoManager();
+  /** The singleton instance. */
+  private static final GlobalUndoManager MANAGER = new GlobalUndoManager();
 
   /**
-   * private constructor - use getManager
+   * private constructor - use getManager.
    */
   private GlobalUndoManager() {
     // nothing to be done
@@ -43,7 +43,7 @@ public class GlobalUndoManager extends UndoManager {
    * @return The {@link UndoManager} instance
    */
   public static UndoManager getManager() {
-    return manager;
+    return MANAGER;
   }
 
 }

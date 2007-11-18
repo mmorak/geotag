@@ -28,6 +28,9 @@ import org.fibs.geotag.util.Coordinates.FORMAT;
  */
 public class CoordinatesTest extends TestCase {
 
+  /** A small number. */
+  private static final double DELTA = 1e-7;
+
   /***/
   private static final String D = Unicode.DEGREE_SYMBOL;
 
@@ -38,7 +41,7 @@ public class CoordinatesTest extends TestCase {
   private static final String S = Unicode.DOUBLE_PRIME_MARK;
 
   /**
-   * a simple test case
+   * a simple test case.
    */
   @SuppressWarnings("nls")
   public void testLatitude() {
@@ -46,70 +49,70 @@ public class CoordinatesTest extends TestCase {
         false);
     assertEquals("51.4772222" + D, formatted);
     double parsed = Coordinates.parse(formatted, false);
-    assertEquals(Airy.LATITUDE, parsed, 1e-7);
+    assertEquals(Airy.LATITUDE, parsed, DELTA);
     formatted = Coordinates.format(FORMAT.SIGNED_DEGREES_MINUTES,
         Airy.LATITUDE, false);
     assertEquals("51" + D + "28.63333" + M, formatted);
     parsed = Coordinates.parse(formatted, false);
-    assertEquals(Airy.LATITUDE, parsed, 1e-7);
+    assertEquals(Airy.LATITUDE, parsed, DELTA);
     formatted = Coordinates.format(FORMAT.SIGNED_DEGREES_MINUTES_SECONDS,
         Airy.LATITUDE, false);
     assertEquals("51" + D + "28" + M + "38.00" + S, formatted);
     parsed = Coordinates.parse(formatted, false);
-    assertEquals(Airy.LATITUDE, parsed, 1e-7);
+    assertEquals(Airy.LATITUDE, parsed, DELTA);
 
     // now the same without the sign, but with characters
     formatted = Coordinates.format(FORMAT.DEGREES, Airy.LATITUDE, false);
     assertEquals("N 51.4772222" + D, formatted);
     parsed = Coordinates.parse(formatted, false);
-    assertEquals(Airy.LATITUDE, parsed, 1e-7);
+    assertEquals(Airy.LATITUDE, parsed, DELTA);
     formatted = Coordinates
         .format(FORMAT.DEGREES_MINUTES, Airy.LATITUDE, false);
     assertEquals("N 51" + D + "28.63333" + M, formatted);
     parsed = Coordinates.parse(formatted, false);
-    assertEquals(Airy.LATITUDE, parsed, 1e-7);
+    assertEquals(Airy.LATITUDE, parsed, DELTA);
     formatted = Coordinates.format(FORMAT.DEGREES_MINUTES_SECONDS,
         Airy.LATITUDE, false);
     assertEquals("N 51" + D + "28" + M + "38.00" + S, formatted);
     parsed = Coordinates.parse(formatted, false);
-    assertEquals(Airy.LATITUDE, parsed, 1e-7);
+    assertEquals(Airy.LATITUDE, parsed, DELTA);
 
     // now the whole lot with negative value
     formatted = Coordinates
         .format(FORMAT.SIGNED_DEGREES, -Airy.LATITUDE, false);
     assertEquals("-51.4772222" + D, formatted);
     parsed = Coordinates.parse(formatted, false);
-    assertEquals(-Airy.LATITUDE, parsed, 1e-7);
+    assertEquals(-Airy.LATITUDE, parsed, DELTA);
     formatted = Coordinates.format(FORMAT.SIGNED_DEGREES_MINUTES,
         -Airy.LATITUDE, false);
     assertEquals("-51" + D + "28.63333" + M, formatted);
     parsed = Coordinates.parse(formatted, false);
-    assertEquals(-Airy.LATITUDE, parsed, 1e-7);
+    assertEquals(-Airy.LATITUDE, parsed, DELTA);
     formatted = Coordinates.format(FORMAT.SIGNED_DEGREES_MINUTES_SECONDS,
         -Airy.LATITUDE, false);
     assertEquals("-51" + D + "28" + M + "38.00" + S, formatted);
     parsed = Coordinates.parse(formatted, false);
-    assertEquals(-Airy.LATITUDE, parsed, 1e-7);
+    assertEquals(-Airy.LATITUDE, parsed, DELTA);
 
     // now the same without the sign, but with characters
     formatted = Coordinates.format(FORMAT.DEGREES, -Airy.LATITUDE, false);
     assertEquals("S 51.4772222" + D, formatted);
     parsed = Coordinates.parse(formatted, false);
-    assertEquals(-Airy.LATITUDE, parsed, 1e-7);
+    assertEquals(-Airy.LATITUDE, parsed, DELTA);
     formatted = Coordinates.format(FORMAT.DEGREES_MINUTES, -Airy.LATITUDE,
         false);
     assertEquals("S 51" + D + "28.63333" + M, formatted);
     parsed = Coordinates.parse(formatted, false);
-    assertEquals(-Airy.LATITUDE, parsed, 1e-7);
+    assertEquals(-Airy.LATITUDE, parsed, DELTA);
     formatted = Coordinates.format(FORMAT.DEGREES_MINUTES_SECONDS,
         -Airy.LATITUDE, false);
     assertEquals("S 51" + D + "28" + M + "38.00" + S, formatted);
     parsed = Coordinates.parse(formatted, false);
-    assertEquals(-Airy.LATITUDE, parsed, 1e-7);
+    assertEquals(-Airy.LATITUDE, parsed, DELTA);
   }
 
   /**
-   * a simple test case
+   * a simple test case.
    */
   @SuppressWarnings("nls")
   public void testLongitude() {
@@ -117,77 +120,77 @@ public class CoordinatesTest extends TestCase {
         true);
     assertEquals("51.4772222" + D, formatted);
     double parsed = Coordinates.parse(formatted, true);
-    assertEquals(Airy.LATITUDE, parsed, 1e-7);
+    assertEquals(Airy.LATITUDE, parsed, DELTA);
     formatted = Coordinates.format(FORMAT.SIGNED_DEGREES_MINUTES,
         Airy.LATITUDE, true);
     assertEquals("51" + D + "28.63333" + M, formatted);
     parsed = Coordinates.parse(formatted, true);
-    assertEquals(Airy.LATITUDE, parsed, 1e-7);
+    assertEquals(Airy.LATITUDE, parsed, DELTA);
     formatted = Coordinates.format(FORMAT.SIGNED_DEGREES_MINUTES_SECONDS,
         Airy.LATITUDE, true);
     assertEquals("51" + D + "28" + M + "38.00" + S, formatted);
     parsed = Coordinates.parse(formatted, true);
-    assertEquals(Airy.LATITUDE, parsed, 1e-7);
+    assertEquals(Airy.LATITUDE, parsed, DELTA);
 
     // now the same without the sign, but with characters
     formatted = Coordinates.format(FORMAT.DEGREES, Airy.LATITUDE, true);
     assertEquals("E 51.4772222" + D, formatted);
     parsed = Coordinates.parse(formatted, true);
-    assertEquals(Airy.LATITUDE, parsed, 1e-7);
+    assertEquals(Airy.LATITUDE, parsed, DELTA);
     formatted = Coordinates.format(FORMAT.DEGREES_MINUTES, Airy.LATITUDE, true);
     assertEquals("E 51" + D + "28.63333" + M, formatted);
     parsed = Coordinates.parse(formatted, true);
-    assertEquals(Airy.LATITUDE, parsed, 1e-7);
+    assertEquals(Airy.LATITUDE, parsed, DELTA);
     formatted = Coordinates.format(FORMAT.DEGREES_MINUTES_SECONDS,
         Airy.LATITUDE, true);
     assertEquals("E 51" + D + "28" + M + "38.00" + S, formatted);
     parsed = Coordinates.parse(formatted, true);
-    assertEquals(Airy.LATITUDE, parsed, 1e-7);
+    assertEquals(Airy.LATITUDE, parsed, DELTA);
 
     // now the whole lot with negative value
     formatted = Coordinates.format(FORMAT.SIGNED_DEGREES, -Airy.LATITUDE, true);
     assertEquals("-51.4772222" + D, formatted);
     parsed = Coordinates.parse(formatted, true);
-    assertEquals(-Airy.LATITUDE, parsed, 1e-7);
+    assertEquals(-Airy.LATITUDE, parsed, DELTA);
     formatted = Coordinates.format(FORMAT.SIGNED_DEGREES_MINUTES,
         -Airy.LATITUDE, true);
     assertEquals("-51" + D + "28.63333" + M, formatted);
     parsed = Coordinates.parse(formatted, true);
-    assertEquals(-Airy.LATITUDE, parsed, 1e-7);
+    assertEquals(-Airy.LATITUDE, parsed, DELTA);
     formatted = Coordinates.format(FORMAT.SIGNED_DEGREES_MINUTES_SECONDS,
         -Airy.LATITUDE, true);
     assertEquals("-51" + D + "28" + M + "38.00" + S, formatted);
     parsed = Coordinates.parse(formatted, true);
-    assertEquals(-Airy.LATITUDE, parsed, 1e-7);
+    assertEquals(-Airy.LATITUDE, parsed, DELTA);
 
     // now the same without the sign, but with characters
     formatted = Coordinates.format(FORMAT.DEGREES, -Airy.LATITUDE, true);
     assertEquals("W 51.4772222" + D, formatted);
     parsed = Coordinates.parse(formatted, true);
-    assertEquals(-Airy.LATITUDE, parsed, 1e-7);
+    assertEquals(-Airy.LATITUDE, parsed, DELTA);
     formatted = Coordinates
         .format(FORMAT.DEGREES_MINUTES, -Airy.LATITUDE, true);
     assertEquals("W 51" + D + "28.63333" + M, formatted);
     parsed = Coordinates.parse(formatted, true);
-    assertEquals(-Airy.LATITUDE, parsed, 1e-7);
+    assertEquals(-Airy.LATITUDE, parsed, DELTA);
     formatted = Coordinates.format(FORMAT.DEGREES_MINUTES_SECONDS,
         -Airy.LATITUDE, true);
     assertEquals("W 51" + D + "28" + M + "38.00" + S, formatted);
     parsed = Coordinates.parse(formatted, true);
-    assertEquals(-Airy.LATITUDE, parsed, 1e-7);
+    assertEquals(-Airy.LATITUDE, parsed, DELTA);
   }
 
   /**
-   * testing conversion failures
+   * testing conversion failures.
    */
   @SuppressWarnings("nls")
   public void testNaN() {
     String formatted = Coordinates.format(
         FORMAT.SIGNED_DEGREES_MINUTES_SECONDS, -Airy.LATITUDE, true);
     assertEquals("-51" + D + "28" + M + "38.00" + S, formatted);
-    double parsed = Coordinates.parse("X" + formatted, true);
-    assertEquals(Double.NaN, parsed, 1e-7);
-    parsed = Coordinates.parse(formatted + "X", true);
-    assertEquals(Double.NaN, parsed, 1e-7);
+    double parsed = Coordinates.parse("~" + formatted, true);
+    assertEquals(Double.NaN, parsed, DELTA);
+    parsed = Coordinates.parse(formatted + "~", true);
+    assertEquals(Double.NaN, parsed, DELTA);
   }
 }

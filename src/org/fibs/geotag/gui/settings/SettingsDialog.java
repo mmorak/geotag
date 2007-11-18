@@ -44,6 +44,7 @@ import org.fibs.geotag.Settings;
 import org.fibs.geotag.Settings.SETTING;
 import org.fibs.geotag.gpsbabel.GPSBabel;
 import org.fibs.geotag.util.Coordinates;
+import org.fibs.geotag.util.Proxies;
 import org.fibs.geotag.util.Units;
 import org.fibs.geotag.util.FontUtil;
 
@@ -56,19 +57,19 @@ import org.fibs.geotag.util.FontUtil;
 @SuppressWarnings("serial")
 public class SettingsDialog extends JDialog implements TreeSelectionListener {
 
-  /** The parent component, use to position this dialog */
+  /** The parent component, use to position this dialog. */
   private JFrame parent;
 
-  /** A list of SettingsPanels for changing settings */
-  List<SettingsPanel> panelList = new ArrayList<SettingsPanel>();
+  /** A list of SettingsPanels for changing settings. */
+  private List<SettingsPanel> panelList = new ArrayList<SettingsPanel>();
 
-  /** The panel containing the JTree and one or no SettingsPanel */
+  /** The panel containing the JTree and one or no SettingsPanel. */
   private JPanel treeAndSettingsPanel;
 
-  /** The SettingsPanel currently displayed (if any) */
+  /** The SettingsPanel currently displayed (if any). */
   private SettingsPanel visibleSettingsPanel = null;
 
-  /** The JTree displaying the available settings */
+  /** The JTree displaying the available settings. */
   private JTree tree;
 
   /**
@@ -136,7 +137,7 @@ public class SettingsDialog extends JDialog implements TreeSelectionListener {
     JButton okButton = new JButton(ok);
     okButton.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        for (SettingsPanel settingsPanel : panelList) {
+        for (SettingsPanel settingsPanel : getPanelList()) {
           settingsPanel.save();
         }
         Settings.flush();
@@ -180,7 +181,7 @@ public class SettingsDialog extends JDialog implements TreeSelectionListener {
   }
 
   /**
-   * Add all the nodes to the tree
+   * Add all the nodes to the tree.
    * 
    * @param top
    *          The top node of the tree
@@ -189,9 +190,10 @@ public class SettingsDialog extends JDialog implements TreeSelectionListener {
     DefaultMutableTreeNode general = new DefaultMutableTreeNode(Messages
         .getString("SettingsDialog.GeneralSettings")); //$NON-NLS-1$
 
-    FontSettingsPanel font = new FontSettingsPanel(
-        parent,
-        Messages.getString("SettingsDialog.Font"), SETTING.FONT, FontUtil.fontToID(UIManager.getLookAndFeel().getDefaults().getFont("Table.font"))); //$NON-NLS-1$ //$NON-NLS-2$
+    FontSettingsPanel font = new FontSettingsPanel(parent, Messages
+        .getString("SettingsDialog.Font"), SETTING.FONT, FontUtil //$NON-NLS-1$
+        .fontToID(UIManager.getLookAndFeel().getDefaults()
+            .getFont("Table.font"))); //$NON-NLS-1$
     addPanel(general, font);
 
     BooleanSettingsPanel tooltipThumbnails = new BooleanSettingsPanel(
@@ -221,8 +223,17 @@ public class SettingsDialog extends JDialog implements TreeSelectionListener {
 
     ChoiceSettingsPanel coordinates = new ChoiceSettingsPanel(
         parent,
-        Messages.getString("SettingsDialog.Coordinates"), SETTING.COORDINATES_FORMAT, Coordinates.formatNames, 0); //$NON-NLS-1$
+        Messages.getString("SettingsDialog.Coordinates"), SETTING.COORDINATES_FORMAT, Coordinates.FORMAT_NAMES, 0); //$NON-NLS-1$
     addPanel(general, coordinates);
+
+    ChoiceSettingsPanel proxyType = new ChoiceSettingsPanel(
+        parent,
+        Messages.getString("SettingsDialog.ProxyType"), SETTING.PROXY_TYPE, Proxies.PROXY_TYPES, 0); //$NON-NLS-1$
+    addPanel(general, proxyType);
+
+    StringSettingsPanel proxyAddress = new StringSettingsPanel(parent, Messages
+        .getString("SettingsDialog.ProxyAddress"), SETTING.PROXY_ADDRESS, ""); //$NON-NLS-1$//$NON-NLS-2$
+    addPanel(general, proxyAddress);
 
     top.add(general);
 
@@ -246,9 +257,9 @@ public class SettingsDialog extends JDialog implements TreeSelectionListener {
         Messages.getString("SettingsDialog.ExiftoolPath"), SETTING.EXIFTOOL_PATH, "exiftool"); //$NON-NLS-1$ //$NON-NLS-2$
     addPanel(exiftool, exiftoolPath);
 
-    StringSettingsPanel exiftoolArguments = new StringSettingsPanel(
-        parent,
-        Messages.getString("SettingsDialog.AdditionalExiftoolArguments"), SETTING.EXIFTOOL_ARGUMENTS, ""); //$NON-NLS-1$//$NON-NLS-2$
+    StringSettingsPanel exiftoolArguments = new StringSettingsPanel(parent,
+        Messages.getString("SettingsDialog.AdditionalExiftoolArguments"), //$NON-NLS-1$
+        SETTING.EXIFTOOL_ARGUMENTS, ""); //$NON-NLS-1$
     addPanel(exiftool, exiftoolArguments);
 
     DefaultMutableTreeNode gpsbabel = new DefaultMutableTreeNode(Messages
@@ -302,20 +313,24 @@ public class SettingsDialog extends JDialog implements TreeSelectionListener {
     DefaultMutableTreeNode geonames = new DefaultMutableTreeNode(Messages
         .getString("SettingsDialog.Geonames")); //$NON-NLS-1$
 
-    IntegerSettingsPanel radius = new IntegerSettingsPanel(
-        parent,
-        Messages.getString("SettingsDialog.Radius"), SETTING.GEONAMES_USE_RADIUS, false, SETTING.GEONAMES_RADIUS, 5, 0, Integer.MAX_VALUE, 1); //$NON-NLS-1$
+    IntegerSettingsPanel radius = new IntegerSettingsPanel(parent, Messages
+        .getString("SettingsDialog.Radius"), SETTING.GEONAMES_USE_RADIUS, //$NON-NLS-1$
+        false, SETTING.GEONAMES_RADIUS, Settings.GEONAMES_DEFAULT_RADIUS, 0,
+        Integer.MAX_VALUE, 1);
     addPanel(geonames, radius);
 
-    IntegerSettingsPanel maxRows = new IntegerSettingsPanel(parent, Messages
-        .getString("SettingsDialog.NumberResults"), //$NON-NLS-1$
-        SETTING.GEONAMES_MAX_ROWS, 5, 1, 50, 1);
+    IntegerSettingsPanel maxRows = new IntegerSettingsPanel(parent,
+        Messages.getString("SettingsDialog.NumberResults"), //$NON-NLS-1$
+        SETTING.GEONAMES_MAX_ROWS, Settings.GEONAMES_DEFAULT_MAX_ROWS, 1,
+        Settings.GEONAMES_MAX_MAX_ROWS, 1);
     addPanel(geonames, maxRows);
 
     IntegerSettingsPanel wikipedia = new IntegerSettingsPanel(
         parent,
         Messages.getString("SettingsDialog.RetrieveWikipedia"), SETTING.GEONAMES_USE_WIKIPEDIA, //$NON-NLS-1$
-        false, SETTING.GEONAMES_WIKIPEDIA_ENTRIES, 1, 0, 50, 1);
+        false, SETTING.GEONAMES_WIKIPEDIA_ENTRIES,
+        Settings.GEONAMES_DEFAULT_WIKIPEDIA_ENTRIES, 0,
+        Settings.GEONAMES_MAX_WIKIPEDIA_ENTRIES, 1);
     addPanel(geonames, wikipedia);
     location.add(geonames);
 
@@ -323,12 +338,19 @@ public class SettingsDialog extends JDialog implements TreeSelectionListener {
   }
 
   /**
-   * open the modal settings dialog
+   * open the modal settings dialog.
    */
   public void openDialog() {
     pack();
     setLocationRelativeTo(parent);
     setVisible(true);
+  }
+
+  /**
+   * @return the panelList
+   */
+  public List<SettingsPanel> getPanelList() {
+    return panelList;
   }
 
 }

@@ -48,6 +48,8 @@ public class IptcDirectory extends Directory {
 
   public static final int TAG_DATE_CREATED = 0x0237;
 
+  public static final int TAG_CONTENT_LOCATION_NAME = 0x021b;
+
   public static final int TAG_CITY = 0x025a;
 
   public static final int TAG_PROVINCE_OR_STATE = 0x025f;
@@ -89,6 +91,8 @@ public class IptcDirectory extends Directory {
     tagNameMap.put(new Integer(TAG_SOURCE), "Source");
     tagNameMap.put(new Integer(TAG_OBJECT_NAME), "Object Name");
     tagNameMap.put(new Integer(TAG_DATE_CREATED), "Date Created");
+    tagNameMap.put(new Integer(TAG_CONTENT_LOCATION_NAME),
+        "Content Location Name");
     tagNameMap.put(new Integer(TAG_CITY), "City");
     tagNameMap.put(new Integer(TAG_PROVINCE_OR_STATE), "Province/State");
     tagNameMap.put(new Integer(TAG_COUNTRY_OR_PRIMARY_LOCATION),

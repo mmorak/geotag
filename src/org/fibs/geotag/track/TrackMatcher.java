@@ -33,6 +33,7 @@ import org.fibs.geotag.data.UpdateGPSAltitude;
 import org.fibs.geotag.data.UpdateGPSLatitude;
 import org.fibs.geotag.data.UpdateGPSLongitude;
 import org.fibs.geotag.data.ImageInfo.DATA_SOURCE;
+import org.fibs.geotag.util.Constants;
 import org.fibs.geotag.util.Util;
 
 import com.topografix.gpx._1._0.ObjectFactory;
@@ -40,24 +41,24 @@ import com.topografix.gpx._1._0.Gpx.Trk.Trkseg;
 import com.topografix.gpx._1._0.Gpx.Trk.Trkseg.Trkpt;
 
 /**
- * This class matches the known tracks with time stamps from images
+ * This class matches the known tracks with time stamps from images.
  * 
  * @author Andreas Schneider
  * 
  */
 public class TrackMatcher {
-  /** Number of matches performed - used for speed measurements */
-  public int matchesPerformed = 0;
+  /** Number of matches performed - used for speed measurements. */
+  private int matchesPerformed = 0;
 
-  /** Total time used to match tracks - used for speed measurements */
-  public double totalTime = 0.0;
+  /** Total time used to match tracks - used for speed measurements. */
+  private double totalTime = 0.0;
 
-  /** We keep track of how many track segments don't need looking at */
+  /** We keep track of how many track segments don't need looking at. */
   private int startIndex = 0;
 
   /**
    * Try and find the location given an imageInfo The imageInfo's time must fall
-   * within a track segment
+   * within a track segment.
    * 
    * @param timeGMT
    *          The GMT time we try to find in the tracks
@@ -155,7 +156,7 @@ public class TrackMatcher {
     }
     long end = System.currentTimeMillis();
     matchesPerformed++;
-    totalTime += (end - start) / 1000.0;
+    totalTime += (end - start) / (double) Constants.ONE_SECOND_IN_MILLIS;
     // System.out.println("This :"+(end-start)/1000.0+" Average: " + totalTime /
     // matchesPerformed+" Total: "+totalTime);
     if (match.getMatchingSegment() != null) {
@@ -170,7 +171,7 @@ public class TrackMatcher {
   }
 
   /**
-   * Calculate the coordinates and store them
+   * Calculate the coordinates and store them.
    * 
    * @param imageInfo
    *          The ImageInfo that will get new coordinates
@@ -200,11 +201,11 @@ public class TrackMatcher {
     // only store the result in the imageInfo if they are different
     // from before
     boolean update = imageInfo.getSource() != DATA_SOURCE.IMAGE;
-    if (update == false) {
+    if (!update) {
       // the current coordinates come from the image
       try {
-        double oldLatitude = Double.parseDouble(imageInfo.getGPSLatitude());
-        double oldLongitude = Double.parseDouble(imageInfo.getGPSLongitude());
+        double oldLatitude = Double.parseDouble(imageInfo.getGpsLatitude());
+        double oldLongitude = Double.parseDouble(imageInfo.getGpsLongitude());
         double distance = Util.greatCircleDistance(latitude, longitude,
             oldLatitude, oldLongitude);
         if (distance > 1.0) {
@@ -228,16 +229,16 @@ public class TrackMatcher {
   }
 
   /**
-   * A class holding the information found out by the matcher
+   * A class holding the information found out by the matcher.
    */
   public class Match {
-    /** The matching segment */
+    /** The matching segment. */
     private Trkseg matchingSegment;
 
-    /** The last track point before the requested time */
+    /** The last track point before the requested time. */
     private Trkpt previousPoint;
 
-    /** the next track point after the requested time */
+    /** the next track point after the requested time. */
     private Trkpt nextPoint;
 
     /**
@@ -287,7 +288,7 @@ public class TrackMatcher {
   }
 
   /**
-   * Comparator for track points
+   * Comparator for track points.
    * 
    * @author Andreas Schneider
    * 

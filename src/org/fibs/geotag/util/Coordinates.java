@@ -27,34 +27,41 @@ import org.fibs.geotag.Settings;
 import org.fibs.geotag.Settings.SETTING;
 
 /**
- * a class allowing formatting
+ * A class allowing formatting of coordinates.
  * 
  * @author Andreas Schneider
  * 
  */
-public class Coordinates {
-  /** An enumeration of supported formats */
+public final class Coordinates {
+  /**
+   * hide constructor.
+   */
+  private Coordinates() {
+    // hide constructor
+  }
+
+  /** An enumeration of supported formats. */
   public enum FORMAT {
-    /** degrees with decimal and a leading minus if necessary */
+    /** degrees with decimal and a leading minus if necessary. */
     SIGNED_DEGREES,
-    /** degrees then minutes with decimal and a leading minus if necessary */
+    /** degrees then minutes with decimal and a leading minus if necessary. */
     SIGNED_DEGREES_MINUTES,
     /**
      * degrees, minutes then seconds with decimal and a leading minus if
-     * necessary
+     * necessary.
      */
     SIGNED_DEGREES_MINUTES_SECONDS,
-    /** NSWE then degrees with decimals */
+    /** NSWE then degrees with decimals. */
     DEGREES,
-    /** NSWE degrees then minutes with decimals */
+    /** NSWE degrees then minutes with decimals. */
     DEGREES_MINUTES,
-    /** NSWE degrees, minutes then seconds with decimals */
+    /** NSWE degrees, minutes then seconds with decimals. */
     DEGREES_MINUTES_SECONDS
   }
 
-  /** Display names for supported formats */
+  /** Display names for supported formats. */
   @SuppressWarnings("nls")
-  public static final String[] formatNames = {
+  public static final String[] FORMAT_NAMES = {
       Unicode.PLUS_MINUS_SIGN + "D.dd" + Unicode.DEGREE_SYMBOL,
       Unicode.PLUS_MINUS_SIGN + "D" + Unicode.DEGREE_SYMBOL + "M.mm"
           + Unicode.SINGLE_PRIME_MARK,
@@ -65,16 +72,16 @@ public class Coordinates {
       "H D" + Unicode.DEGREE_SYMBOL + "M" + Unicode.SINGLE_PRIME_MARK + "S.ss"
           + Unicode.DOUBLE_PRIME_MARK };
 
-  /** Prefix for east */
+  /** Prefix for east. */
   private static final String EAST = Messages.getString("Coordinates.East"); //$NON-NLS-1$
 
-  /** Prefix for west */
+  /** Prefix for west. */
   private static final String WEST = Messages.getString("Coordinates.West"); //$NON-NLS-1$
 
-  /** Prefix for north */
+  /** Prefix for north. */
   private static final String NORTH = Messages.getString("Coordinates.North"); //$NON-NLS-1$
 
-  /** Prefix for south */
+  /** Prefix for south. */
   private static final String SOUTH = Messages.getString("Coordinates.South"); //$NON-NLS-1$
 
   /**
@@ -123,6 +130,9 @@ public class Coordinates {
           }
         }
         prefix += ' ';
+        break;
+      default:
+        break;
     }
     return prefix;
   }
@@ -150,7 +160,7 @@ public class Coordinates {
       case DEGREES_MINUTES:
       case SIGNED_DEGREES_MINUTES:
         degrees = Math.floor(absValue);
-        minutes = (absValue - degrees) * 60.0;
+        minutes = (absValue - degrees) * Constants.MINUTES_PER_DEGREE;
         coordinates = String.format("%d%s%08.5f%s", new Integer((int) degrees), //$NON-NLS-1$
             Unicode.DEGREE_SYMBOL, new Double(minutes),
             Unicode.SINGLE_PRIME_MARK);
@@ -158,19 +168,24 @@ public class Coordinates {
       case DEGREES_MINUTES_SECONDS:
       case SIGNED_DEGREES_MINUTES_SECONDS:
         degrees = Math.floor(absValue);
-        minutes = Math.floor((absValue - degrees) * 60.0);
-        seconds = (absValue - degrees - minutes / 60.0) * 3600.0;
+        minutes = Math.floor((absValue - degrees)
+            * Constants.MINUTES_PER_DEGREE);
+        seconds = (absValue - degrees - minutes / Constants.MINUTES_PER_DEGREE)
+            * Constants.SECONDS_PER_DEGREE;
         coordinates = String.format(
             "%d%s%02d%s%05.2f%s", new Integer((int) degrees), //$NON-NLS-1$
             Unicode.DEGREE_SYMBOL, new Integer((int) minutes),
             Unicode.SINGLE_PRIME_MARK, new Double(seconds),
             Unicode.DOUBLE_PRIME_MARK);
+        break;
+      default:
+        break;
     }
     return prefix + coordinates;
   }
 
   /**
-   * Tries its best to parse a string and convert it into degrees
+   * Tries its best to parse a string and convert it into degrees.
    * 
    * @param value
    * @param isLongitude
@@ -239,7 +254,9 @@ public class Coordinates {
       } else {
         return parsed; // NaN
       }
-      parsed = signum * (degrees + minutes / 60.0 + seconds / 3600.0);
+      parsed = signum
+          * (degrees + minutes / Constants.MINUTES_PER_DEGREE + seconds
+              / Constants.SECONDS_PER_DEGREE);
     } catch (NumberFormatException e) {
       // e.printStackTrace();
     } catch (ParseException e) {
@@ -247,5 +264,4 @@ public class Coordinates {
     }
     return parsed;
   }
-
 }

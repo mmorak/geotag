@@ -27,24 +27,24 @@ import org.fibs.geotag.table.ImagesTableModel;
 import org.fibs.geotag.track.TrackMatcher;
 
 /**
- * A background task for filling gaps between image locations
+ * A background task for filling gaps between image locations.
  * 
  * @author Andreas Schneider
  * 
  */
 public class FillGapsTask extends UndoableBackgroundTask<ImageInfo> {
 
-  /** The table */
+  /** The table. */
   private ImagesTableModel imagesTableModel;
 
-  /** A counter for keeping crack of progress */
+  /** A counter for keeping crack of progress. */
   private int currentProgress = 0;
 
-  /** The images to be matched */
+  /** The images to be matched. */
   private List<ImageInfo> images;
 
   /**
-   * Create a new matching task for a list of images
+   * Create a new matching task for a list of images.
    * 
    * @param group
    * @param name
@@ -67,7 +67,7 @@ public class FillGapsTask extends UndoableBackgroundTask<ImageInfo> {
     int gapsFilled = 0;
     TrackMatcher trackMatcher = new TrackMatcher();
     for (ImageInfo imageInfo : images) {
-      if (terminate) {
+      if (interruptRequested()) {
         break;
       }
       // we catch all Exceptions - we don't want this to terminate without
@@ -76,7 +76,7 @@ public class FillGapsTask extends UndoableBackgroundTask<ImageInfo> {
         // get the ImageInfo
         currentProgress++;
         setProgressMessage();
-        if (imageInfo.hasLocation() == false) {
+        if (!imageInfo.hasLocation()) {
           // no coordinates yet... fill the gap
           // tell trackMatcher that exact matches are not required
           TrackMatcher.Match match = trackMatcher.findMatch(imageInfo

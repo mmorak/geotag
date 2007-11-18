@@ -36,16 +36,16 @@ import com.topografix.gpx._1._0.Gpx.Trk.Trkseg;
 import com.topografix.gpx._1._0.Gpx.Trk.Trkseg.Trkpt;
 
 /**
- * A class for GPX->KML transformations
+ * A class for GPX->KML transformations.
  * 
  * @author Andreas Schneider
  * 
  */
 public class KmlTransformer {
   /**
-   * Take a GPX object and generate a KML representation of it
+   * Take a GPX object and generate a KML representation of it.
    * 
-   * @param gpx
+   * @param gpx The Gpx object to transform
    * @return The KmlType object
    */
   public KmlType transform(Gpx gpx) {
@@ -56,8 +56,10 @@ public class KmlTransformer {
     StyleType style = objectFactory.createStyleType();
     style.setId("linestyle"); //$NON-NLS-1$
     LineStyleType lineStyle = objectFactory.createLineStyleType();
-    lineStyle.setColor(new byte[] { 0x64, (byte) 0xee, (byte) 0xee, 0x17 });
-    lineStyle.setWidth(new Float(6));
+    final byte[] colour = new byte[] { 0x64, (byte) 0xee, (byte) 0xee, 0x17 };
+    lineStyle.setColor(colour);
+    final Float linewidth = new Float(6);
+    lineStyle.setWidth(linewidth);
     style.setLineStyle(lineStyle);
     document.getStyleSelector().add(objectFactory.createStyle(style));
     for (Trk track : gpx.getTrk()) {

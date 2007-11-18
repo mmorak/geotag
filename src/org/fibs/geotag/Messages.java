@@ -25,7 +25,7 @@ import java.util.ResourceBundle;
  * @author Andreas Schneider
  * 
  */
-public class Messages {
+public final class Messages {
   /***/
   private static final String BUNDLE_NAME = "org.fibs.geotag.messages"; //$NON-NLS-1$
 

@@ -21,14 +21,21 @@ package org.fibs.geotag.util;
 import java.io.File;
 
 /**
- * A utility class dealing with files
+ * A utility class dealing with files.
  * 
  * @author Andreas Schneider
  * 
  */
-public class FileUtil {
+public final class FileUtil {
   /**
-   * Determine the extension of a file
+   * hide constructor.
+   */
+  private FileUtil() {
+    // hide constructor
+  }
+  
+  /**
+   * Determine the extension of a file.
    * 
    * @param file
    *          The file to be examined
@@ -39,7 +46,7 @@ public class FileUtil {
   }
 
   /**
-   * Determine the extension of a file name
+   * Determine the extension of a file name.
    * 
    * @param fileName
    *          the name of the file
@@ -55,7 +62,7 @@ public class FileUtil {
   }
 
   /**
-   * Create a file name where the file's extension is replaced
+   * Create a file name where the file's extension is replaced.
    * 
    * @param fileName
    *          The original file name

@@ -38,13 +38,18 @@ import javax.swing.JFileChooser;
  */
 @SuppressWarnings("nls")
 // This is for developers only - no need to translate
-public class TodoRemover {
-
+public final class TodoRemover {
+  /**
+   * hide constructor.
+   */
+  private TodoRemover() {
+    // hide constructor
+  }
   /**
    * @param args -
    *          no args
    */
-  public static final void main(String[] args) {
+  public static void main(String[] args) {
     // Choose the source directory to be messed with
     JFileChooser chooser = new JFileChooser();
     // guess the default directory. If run from Eclipse "user.dir" points at the
@@ -71,7 +76,7 @@ public class TodoRemover {
 
   /**
    * process all files in this directory and sub-directories Files containing
-   * org/fibs in their path are ignored for safety
+   * org/fibs in their path are ignored for safety.
    * 
    * @param directory
    */
@@ -94,7 +99,7 @@ public class TodoRemover {
   }
 
   /**
-   * Process one file - this currently always overwrites the original
+   * Process one file - this currently always overwrites the original.
    * 
    * @param file
    */

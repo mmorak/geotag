@@ -19,26 +19,24 @@
 package org.fibs.geotag.data;
 
 import javax.swing.undo.AbstractUndoableEdit;
-import javax.swing.undo.CannotRedoException;
-import javax.swing.undo.CannotUndoException;
 
 import org.fibs.geotag.GlobalUndoManager;
 
 /**
- * A class encapsulating CameraDate updates
+ * A class encapsulating CameraDate updates.
  * 
  * @author Andreas Schneider
  * 
  */
 @SuppressWarnings("serial")
 public class UpdateCameraDate extends AbstractUndoableEdit {
-  /** the {@link ImageInfo} whose CameraDate will be updated */
+  /** the {@link ImageInfo} whose CameraDate will be updated. */
   private ImageInfo imageInfo;
 
-  /** A copy of the previous CameraDate value */
+  /** A copy of the previous CameraDate value. */
   private String oldCameraDate;
 
-  /** The new CameraDate */
+  /** The new CameraDate. */
   private String newCameraDate;
 
   /**
@@ -66,7 +64,7 @@ public class UpdateCameraDate extends AbstractUndoableEdit {
    * @see javax.swing.undo.AbstractUndoableEdit#redo()
    */
   @Override
-  public void redo() throws CannotRedoException {
+  public void redo() {
     super.redo();
     imageInfo.setCameraDate(newCameraDate);
   }
@@ -75,7 +73,7 @@ public class UpdateCameraDate extends AbstractUndoableEdit {
    * @see javax.swing.undo.AbstractUndoableEdit#undo()
    */
   @Override
-  public void undo() throws CannotUndoException {
+  public void undo() {
     super.undo();
     imageInfo.setCameraDate(oldCameraDate);
   }

@@ -21,7 +21,6 @@ package org.fibs.geotag.tasks;
 import java.util.Vector;
 
 import javax.swing.UIManager;
-import javax.swing.undo.AbstractUndoableEdit;
 import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
 import javax.swing.undo.UndoableEdit;
@@ -29,8 +28,8 @@ import javax.swing.undo.UndoableEdit;
 import org.fibs.geotag.GlobalUndoManager;
 
 /**
- * A class for undo-able background tasks See the javadoc for
- * {@link AbstractUndoableEdit} for details of most methods. We can't inherit
+ * A class for undo-able background tasks. See the javadoc for
+ * AbstractUndoableEdit for details of most methods. We can't inherit
  * from it, so me must replicate the behaviour.
  * 
  * @author Andreas Schneider
@@ -42,20 +41,20 @@ import org.fibs.geotag.GlobalUndoManager;
 public abstract class UndoableBackgroundTask<V> extends BackgroundTask<V>
     implements UndoableEdit {
 
-  /** Indicates if this has been done or undone */
+  /** Indicates if this has been done or undone. */
   private boolean hasBeenDone = true;
 
-  /** True if this task is still alive */
+  /** True if this task is still alive. */
   private boolean alive = true;
 
-  /** The optional (may be null) name of the task group */
+  /** The optional (may be null) name of the task group. */
   private String group;
 
-  /** A vector of {@link UndoableEdit}s that are part of this edit */
+  /** A vector of {@link UndoableEdit}s that are part of this edit. */
   private Vector<UndoableEdit> edits = new Vector<UndoableEdit>();
 
   /**
-   * Create an undo-able background task
+   * Create an undo-able background task.
    * 
    * @param group
    *          The optional name of the task group
@@ -82,7 +81,7 @@ public abstract class UndoableBackgroundTask<V> extends BackgroundTask<V>
   }
 
   /**
-   * Returns true if this edit is alive and hasBeenDone is false
+   * Returns true if this edit is alive and hasBeenDone is false.
    * 
    * @see javax.swing.undo.UndoableEdit#canRedo()
    */
@@ -156,8 +155,8 @@ public abstract class UndoableBackgroundTask<V> extends BackgroundTask<V>
    * 
    * @see javax.swing.undo.UndoableEdit#redo()
    */
-  public void redo() throws CannotRedoException {
-    if (canRedo() == false) {
+  public void redo() {
+    if (!canRedo()) {
       throw new CannotRedoException();
     }
     // redo all edits
@@ -183,8 +182,8 @@ public abstract class UndoableBackgroundTask<V> extends BackgroundTask<V>
    * 
    * @see javax.swing.undo.UndoableEdit#undo()
    */
-  public void undo() throws CannotUndoException {
-    if (canUndo() == false) {
+  public void undo() {
+    if (!canUndo()) {
       throw new CannotUndoException();
     }
     // undo all edits in reverse order

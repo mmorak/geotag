@@ -31,21 +31,28 @@ import org.fibs.geotag.data.ImageInfo;
 import org.fibs.geotag.data.ImageInfo.THUMBNAIL_STATUS;
 
 /**
- * this class is used to generate image thumbnails
+ * This class is used to generate image thumbnails.
  * 
  * @author Andreas Schneider
  * 
  */
-public class ThumbnailGenerator {
+public final class ThumbnailGenerator {
+  
+  /**
+   * hide constructor.
+   */
+  private ThumbnailGenerator() {
+    // hide constructor
+  }
 
   /**
    * Default for the longest size of thumbnails - in case we don't have a
-   * preference yet
+   * preference yet.
    */
   public static final int DEFAULT_THUMBNAIL_SIZE = 150;
 
   /**
-   * Create a thumbnail image
+   * Create a thumbnail image.
    * 
    * @param originalImage
    *          The image to be thumbnailed
@@ -77,7 +84,7 @@ public class ThumbnailGenerator {
   }
 
   /**
-   * Load the thumbnail for an image
+   * Load the thumbnail for an image.
    * 
    * @param imageInfo
    * @return true if thumbnail could be created

@@ -29,27 +29,27 @@ import org.fibs.geotag.data.UpdateProvinceName;
 import org.fibs.geotag.table.ImagesTableModel;
 
 /**
- * a background task for copying the location name from one image to others
+ * a background task for copying the location name from one image to others.
  * 
  * @author Andreas Schneider
  * 
  */
 public class CopyLocationNameTask extends UndoableBackgroundTask<ImageInfo> {
 
-  /** keep track of current progress */
+  /** keep track of current progress. */
   private int currentProgress = 0;
 
-  /** The table model */
+  /** The table model. */
   private ImagesTableModel imagesTableModel;
 
-  /** The source of the location data */
+  /** The source of the location data. */
   private ImageInfo source;
 
-  /** The list of images receiving a new location */
+  /** The list of images receiving a new location. */
   private List<ImageInfo> targets;
 
   /**
-   * create a background task to copy a location name to other images
+   * create a background task to copy a location name to other images.
    * 
    * @param group
    * @param name
@@ -97,7 +97,7 @@ public class CopyLocationNameTask extends UndoableBackgroundTask<ImageInfo> {
   @Override
   protected String doInBackground() throws Exception {
     for (ImageInfo target : targets) {
-      if (terminate) {
+      if (interruptRequested()) {
         break;
       }
       currentProgress++;

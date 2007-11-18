@@ -46,24 +46,31 @@ import com.google.earth.kml._2.RefreshModeEnum;
 import com.google.earth.kml._2.ViewRefreshModeEnum;
 
 /**
- * Bare Bones Googleearth Launch for Java<br>
+ * Bare Bones Googleearth Launch for Java.<br>
  * Based on com.centerkey.utils.BareBonesBrowserLaunch
  * 
  * @author Dem Pilafian
  * @author Andreas Schneider
  * @version 1.5, December 10, 2005
  */
-public class GoogleEarthLauncher {
+public final class GoogleEarthLauncher {
 
-  /** Error message to display */
-  private static final String errorMessage = Messages
+  /**
+   * hide constructor.
+   */
+  private GoogleEarthLauncher() {
+    // hide constructor
+  }
+
+  /** Error message to display. */
+  private static final String ERROR_MESSAGE = Messages
       .getString("Launcher.ErrorAttemptingToLaunch"); //$NON-NLS-1$
 
-  /** The last image launched into Google Earth will receive updates */
+  /** The last image launched into Google Earth will receive updates. */
   private static ImageInfo lastImageLauched;
 
   /**
-   * Launch Google Earth for a given image info
+   * Launch Google Earth for a given image info.
    * 
    * @param imageInfo
    */
@@ -71,12 +78,13 @@ public class GoogleEarthLauncher {
     lastImageLauched = imageInfo;
     double latitude = Airy.LATITUDE;
     double longitude = Airy.LONGITUDE;
-    double altitude = 100;
+    final double defaultAltitude = 100;
+    double altitude = defaultAltitude;
     if (imageInfo.hasLocation()) {
       try {
-        latitude = Double.parseDouble(imageInfo.getGPSLatitude());
-        longitude = Double.parseDouble(imageInfo.getGPSLongitude());
-        altitude = Double.parseDouble(imageInfo.getGPSAltitude());
+        latitude = Double.parseDouble(imageInfo.getGpsLatitude());
+        longitude = Double.parseDouble(imageInfo.getGpsLongitude());
+        altitude = Double.parseDouble(imageInfo.getGpsAltitude());
       } catch (NumberFormatException e) {
         e.printStackTrace();
       }
@@ -170,7 +178,7 @@ public class GoogleEarthLauncher {
   }
 
   /**
-   * Opens the specified KML file in Google Earth
+   * Opens the specified KML file in Google Earth.
    * 
    * @param file
    *          The KML file
@@ -183,10 +191,10 @@ public class GoogleEarthLauncher {
         Method openURL = fileMgr.getDeclaredMethod("openURL", //$NON-NLS-1$
             new Class[] { String.class });
         openURL.invoke(null, new Object[] { file.getPath() });
-      } else if (osName.startsWith("Windows")) //$NON-NLS-1$
+      } else if (osName.startsWith("Windows")) { //$NON-NLS-1$
         Runtime.getRuntime().exec(
             "rundll32 url.dll,FileProtocolHandler " + file.getPath()); //$NON-NLS-1$
-      else { // assume Unix or Linux
+      } else { // assume Unix or Linux
         String executable = "googleearth"; //$NON-NLS-1$
         if (Runtime.getRuntime().exec(new String[] { "which", executable }) //$NON-NLS-1$
             .waitFor() != 0) {
@@ -195,7 +203,7 @@ public class GoogleEarthLauncher {
         Runtime.getRuntime().exec(new String[] { executable, file.getPath() });
       }
     } catch (Exception e) {
-      JOptionPane.showMessageDialog(null, errorMessage + ":\n" //$NON-NLS-1$
+      JOptionPane.showMessageDialog(null, ERROR_MESSAGE + ":\n" //$NON-NLS-1$
           + e.getLocalizedMessage());
     }
   }

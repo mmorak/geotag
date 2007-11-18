@@ -29,13 +29,13 @@ import org.fibs.geotag.data.ImageInfo.DATA_SOURCE;
  */
 public class EditLatitudeTask extends UndoableBackgroundTask<ImageInfo> {
 
-  /** The image whose latitude will be set */
+  /** The image whose latitude will be set. */
   private ImageInfo imageInfo;
 
-  /** The new latitude */
+  /** The new latitude. */
   private String newLatitude;
 
-  /** The source of the update */
+  /** The source of the update. */
   private DATA_SOURCE dataSource;
 
   /**

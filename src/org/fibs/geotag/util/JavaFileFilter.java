@@ -23,7 +23,7 @@ import java.io.File;
 import javax.swing.filechooser.FileFilter;
 
 /**
- * A file filter for directories and dot-java files
+ * A file filter for directories and dot-java files.
  * 
  * @author Andreas Schneider
  * 
@@ -33,7 +33,7 @@ import javax.swing.filechooser.FileFilter;
 public class JavaFileFilter extends FileFilter implements java.io.FileFilter {
 
   /**
-   * Accept directories and dot-java files
+   * Accept directories and dot-java files.
    * 
    * @see javax.swing.filechooser.FileFilter#accept(java.io.File)
    */

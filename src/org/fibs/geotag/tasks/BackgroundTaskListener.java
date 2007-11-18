@@ -19,36 +19,36 @@
 package org.fibs.geotag.tasks;
 
 /**
- * Interface for {@link BackgroundTaskListener}s
+ * Interface for {@link BackgroundTaskListener}s.
  * 
  * @author Andreas Schneider
  * 
  */
 public interface BackgroundTaskListener {
   /**
-   * Called when a new task is started
+   * Called when a new task is started.
    * 
    * @param task
    *          The {@link BackgroundTask} that has started
    */
-  public void backgroundTaskStarted(BackgroundTask<?> task);
+  void backgroundTaskStarted(BackgroundTask<?> task);
 
   /**
-   * Called when a running task reports progress
+   * Called when a running task reports progress.
    * 
    * @param task
    *          The task reporting progress
    * @param progressMessage
    *          The progress message sent by the task
    */
-  public void backgroundTaskProgress(BackgroundTask<?> task,
+  void backgroundTaskProgress(BackgroundTask<?> task,
       String progressMessage);
 
   /**
-   * Called when a task has finished
+   * Called when a task has finished.
    * 
    * @param task
    *          The task that has finished
    */
-  public void backgroundTaskFinished(BackgroundTask<?> task);
+  void backgroundTaskFinished(BackgroundTask<?> task);
 }

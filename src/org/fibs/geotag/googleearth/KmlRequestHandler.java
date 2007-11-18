@@ -53,20 +53,20 @@ import fi.iki.elonen.NanoHTTPD;
 import fi.iki.elonen.NanoHTTPD.Response;
 
 /**
- * Class to handle HttpRequests for the Webserver
+ * Class to handle HttpRequests for the Webserver.
  * 
  * @author Andreas Schneider
  * 
  */
 public class KmlRequestHandler implements ContextHandler {
 
-  /** Who to inform about external updates */
+  /** Who to inform about external updates. */
   private ExternalUpdateConsumer parent;
 
-  /** The correct mime type for kml files */
+  /** The correct mime type for kml files. */
   private static final String KML_MIME_TYPE = "application/vnd.google-earth.kml+xml"; //$NON-NLS-1$
 
-  /** ID for the balloon style */
+  /** ID for the balloon style. */
   private static final String BALLOON_STYLE = "balloonStyle"; //$NON-NLS-1$
 
   /**
@@ -112,7 +112,7 @@ public class KmlRequestHandler implements ContextHandler {
   }
 
   /**
-   * Send a response back to Google Earth
+   * Send a response back to Google Earth.
    * 
    * @param latitude
    * @param longitude

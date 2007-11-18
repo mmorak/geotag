@@ -25,7 +25,7 @@ import fi.iki.elonen.NanoHTTPD;
 import fi.iki.elonen.NanoHTTPD.Response;
 
 /**
- * A ContextHandler that serves files that are jar resources
+ * A ContextHandler that serves files that are jar resources.
  * 
  * @author Andreas Schneider
  * 

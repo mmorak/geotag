@@ -21,7 +21,7 @@ package org.fibs.geotag.tasks;
 import javax.swing.SwingWorker;
 
 /**
- * A wrapper for a SwingWorker that can be interrupted
+ * A wrapper for a SwingWorker that can be interrupted.
  * 
  * @author Andreas Schneider
  * @param <T>
@@ -29,14 +29,21 @@ import javax.swing.SwingWorker;
  */
 public abstract class InterruptibleTask<T, V> extends SwingWorker<T, V> {
 
-  /** Subclasses can read this and should terminate if true */
-  protected boolean terminate = false;
+  /** Subclasses can read this and should terminate if true. */
+  private boolean terminate = false;
 
   /**
-   * Called as a request to interrupt a running task
+   * Called as a request to interrupt a running task.
    */
   public synchronized void interruptRequest() {
     terminate = true;
+  }
+  
+  /**
+   * @return true is an interrupt was requested.
+   */
+  protected boolean interruptRequested() {
+    return terminate;
   }
 
 }

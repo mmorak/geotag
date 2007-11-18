@@ -27,19 +27,32 @@ import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
 import org.fibs.geotag.gui.MainWindow;
+import org.fibs.geotag.util.Constants;
+import org.fibs.geotag.util.Util;
 
 import com.jgoodies.looks.plastic.Plastic3DLookAndFeel;
 
 /**
- * A class providing the entry point of the application
+ * A class providing the entry point of the application.
  * 
  * @author Andreas Schneider
  */
-public class Geotag {
-  /** the application name - should we ever feel the need to change it */
+public final class Geotag {
+
+  /**
+   * hide constructor.
+   */
+  private Geotag() {
+    // hide constructor
+  }
+
+  /** Minimum memory in megabytes. */
+  private static final int MIN_MEMORY = 127;
+  
+  /** the application name - should we ever feel the need to change it. */
   public static final String NAME = "Geotag"; //$NON-NLS-1$
 
-  /** the applications web site */
+  /** the applications web site. */
   public static final String WEBSITE = "http://geotag.sourceforge.net"; //$NON-NLS-1$
 
   /**
@@ -49,19 +62,19 @@ public class Geotag {
   private static boolean redirectConsole = true;
 
   /**
-   * Application entry point
+   * Application entry point.
    * 
    * @param args
    *          Command line arguments
    */
-  public static final void main(String[] args) {
+  public static void main(String[] args) {
     // check command line arguments
     // all of this is "developer only"
     // use Settings instead for end users
     for (String arg : args) {
       // each argument must be of form -key=value
       int equalsPos = arg.indexOf('='); // position of first equals sign
-      if (arg.length() >= 4 && // minimum -k=v
+      if (arg.length() >= "-k=v".length() && // minimum -k=v //$NON-NLS-1$
           arg.charAt(0) == '-' && // first char is minus
           equalsPos >= 2 && // first value at least one character long
           equalsPos < arg.length() - 1) { // something follows the =
@@ -100,8 +113,8 @@ public class Geotag {
     }
     // check that the program has enough memory available
     int maxMemory = (int) Math.round(Runtime.getRuntime().maxMemory()
-        / (1024.0 * 1024));
-    if (maxMemory < 127) {
+        / Util.square(Constants.ONE_K));
+    if (maxMemory < MIN_MEMORY) {
       String message = "<html><center>" //$NON-NLS-1$
           + String.format(Messages.getString("Geotag.MemoryWarningFormat") //$NON-NLS-1$
               + "<br><b><code>java -Xmx256M -jar geotag.jar</code></b>", //$NON-NLS-1$

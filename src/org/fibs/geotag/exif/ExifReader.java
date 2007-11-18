@@ -23,7 +23,7 @@ import java.io.File;
 import org.fibs.geotag.data.ImageInfo;
 
 /**
- * An interface implemented by classes reading Exif data from files
+ * An interface implemented by classes reading Exif data from files.
  * 
  * @author Andreas Schneider
  * 

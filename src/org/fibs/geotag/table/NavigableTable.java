@@ -39,14 +39,14 @@ import javax.swing.table.TableModel;
  */
 public abstract class NavigableTable extends JTable {
 
-  /** keep track of the cell being edited */
+  /** keep track of the cell being edited. */
   private int editingCellAtRow = -1;
 
-  /** keep track of the cell being edited */
+  /** keep track of the cell being edited. */
   private int editingCellAtColumn = -1;
 
   /**
-   * Same constructors as JTable
+   * Same constructors as JTable.
    */
   public NavigableTable() {
     super();
@@ -102,7 +102,7 @@ public abstract class NavigableTable extends JTable {
   }
 
   /**
-   * Scroll the table so a given cell is visible
+   * Scroll the table so a given cell is visible.
    * 
    * @param row
    * @param column
@@ -123,7 +123,7 @@ public abstract class NavigableTable extends JTable {
   }
 
   /**
-   * Move the cell editor to a given cell
+   * Move the cell editor to a given cell.
    * 
    * @param row
    * @param column
@@ -138,7 +138,7 @@ public abstract class NavigableTable extends JTable {
   }
 
   /**
-   * Move the editor to the next editable cell to the left
+   * Move the editor to the next editable cell to the left.
    * 
    * @param keyEvent
    */
@@ -158,7 +158,7 @@ public abstract class NavigableTable extends JTable {
   }
 
   /**
-   * Move the editor to the next editable cell to the right
+   * Move the editor to the next editable cell to the right.
    * 
    * @param keyEvent
    */
@@ -176,7 +176,7 @@ public abstract class NavigableTable extends JTable {
   }
 
   /**
-   * Move the cell editor to the next editable cell above
+   * Move the cell editor to the next editable cell above.
    * 
    * @param keyEvent
    */
@@ -215,7 +215,7 @@ public abstract class NavigableTable extends JTable {
   }
 
   /**
-   * Move the cell editor the the next editable cell below
+   * Move the cell editor the the next editable cell below.
    * 
    * @param keyEvent
    */

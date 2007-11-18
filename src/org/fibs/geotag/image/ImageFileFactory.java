@@ -24,9 +24,15 @@ import java.io.File;
  * @author Andreas Schneider
  * 
  */
-public class ImageFileFactory {
+public final class ImageFileFactory {
   /**
-   * Return an instance of an image file
+   * hide constructor.
+   */
+  private ImageFileFactory() {
+    // hide constructor
+  }
+  /**
+   * Return an instance of an image file.
    * 
    * @param file
    *          The actual file
@@ -44,7 +50,8 @@ public class ImageFileFactory {
       case XMP:
       case UNKOWN:
         return null;
+      default:
+        return null;
     }
-    return null;
   }
 }

@@ -44,7 +44,7 @@ public class RawImageFile extends ImageFile {
    */
   @Override
   public BufferedImage read() throws IOException {
-    return Dcraw.getEmbeddedImage(file);
+    return Dcraw.getEmbeddedImage(getFile());
   }
 
 }

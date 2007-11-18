@@ -30,12 +30,20 @@ import javax.xml.bind.Unmarshaller;
 import com.topografix.gpx._1._0.Gpx;
 
 /**
- * A class reading GPX files
+ * A class reading GPX files.
  * 
  * @author Andreas Schneider
  * 
  */
-public class GpxReader {
+public final class GpxReader {
+  
+  /**
+   * hide constructor.
+   */
+  private GpxReader() {
+    // hide constructor
+  }
+  
   /**
    * @param file
    *          The file to be read
@@ -51,7 +59,7 @@ public class GpxReader {
   }
 
   /**
-   * Read in a gpx from an InputStream
+   * Read in a gpx from an InputStream.
    * 
    * @param inputStream
    *          The InputStream to be read

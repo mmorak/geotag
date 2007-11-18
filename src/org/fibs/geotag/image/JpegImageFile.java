@@ -44,7 +44,7 @@ public class JpegImageFile extends ImageFile {
    */
   @Override
   public BufferedImage read() throws IOException {
-    return ImageIO.read(file);
+    return ImageIO.read(getFile());
   }
 
 }

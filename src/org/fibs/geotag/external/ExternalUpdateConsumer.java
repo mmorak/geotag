@@ -26,9 +26,9 @@ import java.util.List;
  */
 public interface ExternalUpdateConsumer {
   /**
-   * Called to inform about new external updates
+   * Called to inform about new external updates.
    * 
    * @param externalUpdates
    */
-  public void processExternalUpdates(List<ExternalUpdate> externalUpdates);
+  void processExternalUpdates(List<ExternalUpdate> externalUpdates);
 }

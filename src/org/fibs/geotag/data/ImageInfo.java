@@ -32,9 +32,10 @@ import java.util.TimeZone;
 import javax.swing.ImageIcon;
 
 import org.fibs.geotag.geonames.Location;
+import org.fibs.geotag.util.Constants;
 
 /**
- * A class holding the information we have for an image
+ * A class holding the information we have for an image.
  * 
  * @author Andreas Schneider
  * 
@@ -42,131 +43,134 @@ import org.fibs.geotag.geonames.Location;
 public class ImageInfo implements Comparable<ImageInfo> {
 
   /**
-   * An enumeration for the source of the location data
+   * An enumeration for the source of the location data.
    * 
    * @author Andreas Schneider
    * 
    */
   public enum DATA_SOURCE {
-    /** No location data available */
+    /** No location data available. */
     NONE,
-    /** Location data was read from the image's EXIF data */
+    /** Location data was read from the image's EXIF data. */
     IMAGE,
-    /** Location data was input manually */
+    /** Location data was input manually. */
     MANUAL,
-    /** Location data was received from a map */
+    /** Location data was received from a map. */
     MAP,
-    /** Location data was interpolated from neighbouring data */
+    /** Location data was interpolated from neighbouring data. */
     INTERPOLATED,
-    /** Location data was computed from a track file */
+    /** Location data was computed from a track file. */
     TRACK,
-    /** Location was copied from another image */
+    /** Location was copied from another image. */
     COPIED,
-    /** Location name was retrieved from geonames.org */
+    /** Location name was retrieved from geonames.org. */
     GEONAMES
   }
 
   /**
-   * An enumeration for the availability of thumbnail images
+   * An enumeration for the availability of thumbnail images.
    * 
    * @author Andreas Schneider
    * 
    */
   public enum THUMBNAIL_STATUS {
-    /** Haven't tried to get a thumbnail yet */
+    /** Haven't tried to get a thumbnail yet. */
     UNKNOWN,
-    /** Thumnail loading is currently under way */
+    /** Thumnail loading is currently under way. */
     LOADING,
-    /** No thumbnail available - No need to try again */
+    /** No thumbnail available - No need to try again. */
     FAI1LED,
-    /** Found a thumbnail and stored it */
+    /** Found a thumbnail and stored it. */
     AVAILABLE,
   }
 
-  /** A HashMap containing the data. We use the file path as the key */
+  /** A HashMap containing the data. We use the file path as the key. */
   private static HashMap<String, ImageInfo> values = new HashMap<String, ImageInfo>();
 
-  /** The date format pattern used */
+  /** The date format pattern used. */
   private static final String DATE_FORMAT_PATTERN = "yyyy:MM:dd HH:mm:ss"; //$NON-NLS-1$
 
-  /** Defines how date/time is formatted in EXIF terms */
-  private static final SimpleDateFormat dateFormat = new SimpleDateFormat(
+  /** Defines how date/time is formatted in EXIF terms. */
+  private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat(
       DATE_FORMAT_PATTERN);
 
   // don't forget to set the time zone for the DateFormat as well
   static {
-    dateFormat.setTimeZone(TimeZone.getTimeZone("GMT")); //$NON-NLS-1$
+    DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("GMT")); //$NON-NLS-1$
   }
 
-  /** we keep track of number of instances created */
+  /** we keep track of number of instances created. */
   private static int instancesCreated = 0;
 
-  /** This acts as short unique ID for this image info */
+  /** This acts as short unique ID for this image info. */
   private int sequenceNumber;
 
-  /** The image filename including path */
+  /** The image filename including path. */
   private String path;
 
-  /** The image filename without the path */
+  /** The image filename without the path. */
   private String name;
 
-  /** A thumbnail of the image */
+  /** A thumbnail of the image. */
   private ImageIcon thumbnail;
 
-  /** Ehat do we know about availability of a thumbnail image */
+  /** Ehat do we know about availability of a thumbnail image. */
   private THUMBNAIL_STATUS thumbNailStatus = THUMBNAIL_STATUS.UNKNOWN;
 
-  /** The image width in pixels */
+  /** The image width in pixels. */
   private int width;
 
-  /** The image height in pixels */
+  /** The image height in pixels. */
   private int height;
 
-  /** The CameraDate entry */
+  /** The CameraDate entry. */
   private String cameraDate;
 
-  /** THE GPSLatitude EXIF entry */
-  private String GPSLatitude;
+  /** THE GPSLatitude EXIF entry. */
+  private String gpsLatitude;
 
-  /** The GPSLongitude EXIF entry */
-  private String GPSLongitude;
+  /** The GPSLongitude EXIF entry. */
+  private String gpsLongitude;
 
-  /** The GPSAltitude EXIF entry */
-  private String GPSAltitude;
+  /** The GPSAltitude EXIF entry. */
+  private String gpsAltitude;
 
-  /** Th eGPSImgDirection EXIF entry */
-  private String GPSImgDirection;
+  /** The GPSImgDirection EXIF entry. */
+  private String gpsImgDirection;
 
-  /** The GPSDateTime EXIF entry */
-  private String GPSDateTime;
+  /** The GPSDateTime EXIF entry. */
+  private String gpsDateTime;
 
-  /** Nearby locations we have found */
+  /** Nearby locations we have found. */
   private List<Location> nearbyLocations;
 
-  /** The location name we use for this image */
+  /** The location name we use for this image. */
   private String locationName;
 
-  /** The country name for this image */
+  /** the city name we use for this image. */
+  private String cityName;
+
+  /** The country name for this image. */
   private String countryName;
 
-  /** The province/state etc name for this image */
+  /** The province/state etc name for this image. */
   private String provinceName;
 
-  /** The Orientation EXIF entry */
+  /** The Orientation EXIF entry. */
   private String orientation;
 
-  /** Where does the location data come from */
+  /** Where does the location data come from. */
   private DATA_SOURCE source = DATA_SOURCE.NONE;
 
-  /** The correct time as a {@link Calendar} for convenience */
+  /** The correct time as a {@link Calendar} for convenience. */
   private Calendar exactTimeGMT = Calendar.getInstance(TimeZone
       .getTimeZone("GMT")); //$NON-NLS-1$
 
-  /** A list of instances, used to retrieve an instance by sequenceNumber */
+  /** A list of instances, used to retrieve an instance by sequenceNumber. */
   private static List<ImageInfo> instances = new ArrayList<ImageInfo>();
 
   /**
-   * Construct an image info object for an image
+   * Construct an image info object for an image.
    * 
    * @param file
    *          The file containing the image
@@ -194,10 +198,10 @@ public class ImageInfo implements Comparable<ImageInfo> {
     int offset = 0;
     if (gmtDateString != null && localDateString != null) {
       try {
-        Date gmtDate = dateFormat.parse(gmtDateString);
-        Date localDate = dateFormat.parse(localDateString);
+        Date gmtDate = DATE_FORMAT.parse(gmtDateString);
+        Date localDate = DATE_FORMAT.parse(localDateString);
 
-        offset = (int) ((localDate.getTime() - gmtDate.getTime()) / 1000.0);
+        offset = (int) ((localDate.getTime() - gmtDate.getTime()) / (double) Constants.ONE_SECOND_IN_MILLIS);
       } catch (ParseException e) {
         e.printStackTrace();
       }
@@ -215,9 +219,9 @@ public class ImageInfo implements Comparable<ImageInfo> {
    */
   public static String subtractOffset(String localDateString, int offset) {
     try {
-      Date date = dateFormat.parse(localDateString);
-      date.setTime(date.getTime() - offset * 1000);
-      return dateFormat.format(date);
+      Date date = DATE_FORMAT.parse(localDateString);
+      date.setTime(date.getTime() - offset * Constants.ONE_SECOND_IN_MILLIS);
+      return DATE_FORMAT.format(date);
     } catch (ParseException e) {
       e.printStackTrace();
     }
@@ -232,8 +236,8 @@ public class ImageInfo implements Comparable<ImageInfo> {
    */
   public int compareTo(ImageInfo imageInfo) {
     // the GPSDateTime shouldn't be null, but we check anyway
-    if (getGPSDateTime() != null && imageInfo.getGPSDateTime() != null) {
-      return getGPSDateTime().compareTo(imageInfo.getGPSDateTime());
+    if (getGpsDateTime() != null && imageInfo.getGpsDateTime() != null) {
+      return getGpsDateTime().compareTo(imageInfo.getGpsDateTime());
     }
     // if that fails, compare the name
     return getName().compareTo(imageInfo.getName());
@@ -247,7 +251,7 @@ public class ImageInfo implements Comparable<ImageInfo> {
   }
 
   /**
-   * Retrieve an {@link ImageInfo} instance from its sequenceNumber
+   * Retrieve an {@link ImageInfo} instance from its sequenceNumber.
    * 
    * @param sequenceNumer
    *          The sequenceNumber of the {@link ImageInfo} wanted
@@ -259,7 +263,7 @@ public class ImageInfo implements Comparable<ImageInfo> {
   }
 
   /**
-   * Retrieve all image infos accepted by the filter
+   * Retrieve all image infos accepted by the filter.
    * 
    * @param filter
    *          A filter that decides if an ImageInfo is accepted
@@ -276,7 +280,7 @@ public class ImageInfo implements Comparable<ImageInfo> {
   }
 
   /**
-   * Return the ImageInfo for a file
+   * Return the ImageInfo for a file.
    * 
    * @param filePath
    *          The file's path
@@ -287,7 +291,7 @@ public class ImageInfo implements Comparable<ImageInfo> {
   }
 
   /**
-   * Checks if there is a location available for this image
+   * Checks if there is a location available for this image.
    * 
    * @return True if we have location information for this image
    */
@@ -297,7 +301,7 @@ public class ImageInfo implements Comparable<ImageInfo> {
 
   /**
    * Checks if there is a location available for this image that's not derived
-   * from the image's EXIF data
+   * from the image's EXIF data.
    * 
    * @return True if there is a new location available
    */
@@ -306,7 +310,7 @@ public class ImageInfo implements Comparable<ImageInfo> {
   }
 
   /**
-   * Check if any of location name, province or country is set
+   * Check if any of location name, province or country is set.
    * 
    * @return True if one or more of them are not null and contain text
    */
@@ -418,7 +422,7 @@ public class ImageInfo implements Comparable<ImageInfo> {
    *         Returns <code>Double.NaN</code> if the difference is undefined.
    */
   public int getOffset() {
-    return calculateOffset(getGPSDateTime(), getCameraDate());
+    return calculateOffset(getGpsDateTime(), getCameraDate());
   }
 
   /**
@@ -429,7 +433,7 @@ public class ImageInfo implements Comparable<ImageInfo> {
   }
 
   /**
-   * Create a string with a leading sign that represents this time difference
+   * Create a string with a leading sign that represents this time difference.
    * 
    * @param offset
    *          the offset to be converted into a string
@@ -438,10 +442,10 @@ public class ImageInfo implements Comparable<ImageInfo> {
   public static String getOffsetString(int offset) {
     boolean negative = offset < 0.;
     int absOffset = Math.abs(offset);
-    int hours = (absOffset / (60 * 60));
-    absOffset -= hours * 60 * 60;
-    int minutes = (absOffset / 60);
-    int seconds = (absOffset - minutes * 60);
+    int hours = (absOffset / (int) (Constants.SECONDS_PER_HOUR));
+    absOffset -= hours * (int) (Constants.SECONDS_PER_HOUR);
+    int minutes = (absOffset / (int) Constants.MINUTES_PER_HOUR);
+    int seconds = (absOffset - minutes * (int) Constants.SECONDS_PER_MINUTE);
     hours *= negative ? -1 : 1;
     return String
         .format(
@@ -456,7 +460,7 @@ public class ImageInfo implements Comparable<ImageInfo> {
   }
 
   /**
-   * This has package visibility to force the use of undo-able edits
+   * This has package visibility to force the use of undo-able edits.
    * 
    * @param cameraDate
    *          the camera date to set
@@ -466,104 +470,104 @@ public class ImageInfo implements Comparable<ImageInfo> {
   }
 
   /**
-   * @return the gPSLatitude
+   * @return the gpsLatitude
    */
-  public String getGPSLatitude() {
-    return GPSLatitude;
+  public String getGpsLatitude() {
+    return gpsLatitude;
   }
 
   /**
-   * This has package visibility to force the use of undo-able edits
+   * This has package visibility to force the use of undo-able edits.
    * 
    * @param latitude
-   *          the gPSLatitude to set
+   *          the gpsLatitude to set
    * @param source
    *          Where the position information comes from
    */
-  void setGPSLatitude(String latitude, DATA_SOURCE source) {
-    this.GPSLatitude = latitude;
+  void setGpsLatitude(String latitude, DATA_SOURCE source) {
+    this.gpsLatitude = latitude;
     this.source = source;
   }
 
   /**
-   * @return the gPSLongitude
+   * @return the gpsLongitude
    */
-  public String getGPSLongitude() {
-    return GPSLongitude;
+  public String getGpsLongitude() {
+    return gpsLongitude;
   }
 
   /**
-   * This has package visibility to force the use of undo-able edits
+   * This has package visibility to force the use of undo-able edits.
    * 
    * @param longitude
-   *          the gPSLongitude to set
+   *          the gpsLongitude to set
    * @param source
    *          Where the position data comes from
    */
-  void setGPSLongitude(String longitude, DATA_SOURCE source) {
-    this.GPSLongitude = longitude;
+  void setGpsLongitude(String longitude, DATA_SOURCE source) {
+    this.gpsLongitude = longitude;
     this.source = source;
   }
 
   /**
-   * @return the gPSAltitude
+   * @return the gpsAltitude
    */
-  public String getGPSAltitude() {
-    return GPSAltitude;
+  public String getGpsAltitude() {
+    return gpsAltitude;
   }
 
   /**
-   * This has package visibility to force the use of undo-able edits
+   * This has package visibility to force the use of undo-able edits.
    * 
    * @param altitude
-   *          the gPSAltitude to set
+   *          the gpsAltitude to set
    * @param source
    *          Where the position data comes from
    */
-  void setGPSAltitude(String altitude, DATA_SOURCE source) {
-    GPSAltitude = altitude;
+  void setGpsAltitude(String altitude, DATA_SOURCE source) {
+    gpsAltitude = altitude;
     this.source = source;
   }
 
   /**
-   * This has package visibility to force the use of undo-able edits
+   * This has package visibility to force the use of undo-able edits.
    * 
    * @return the GPS image direction
    */
-  public String getGPSImgDirection() {
+  public String getGpsImgDirection() {
     // return null if the image direction is NaN
-    if (GPSImgDirection != null && "NaN".equals(GPSImgDirection)) { //$NON-NLS-1$
+    if (gpsImgDirection != null && "NaN".equals(gpsImgDirection)) { //$NON-NLS-1$
       return null;
     }
-    return GPSImgDirection;
+    return gpsImgDirection;
   }
 
   /**
    * @param direction
    *          The direction to set
    */
-  void setGPSImgDirection(String direction) {
-    GPSImgDirection = direction;
+  void setGpsImgDirection(String direction) {
+    gpsImgDirection = direction;
   }
 
   /**
-   * @return the gPSDateTime
+   * @return the gpsDateTime
    */
-  public String getGPSDateTime() {
-    return GPSDateTime;
+  public String getGpsDateTime() {
+    return gpsDateTime;
   }
 
   /**
-   * This has package visibility to force use of undo-able edits
+   * This has package visibility to force use of undo-able edits.
    * 
    * @param dateTime
-   *          the gPSDateTime to set
+   *          the gpsDateTime to set
    */
-  void setGPSDateTime(String dateTime) {
-    this.GPSDateTime = dateTime;
+  void setGpsDateTime(String dateTime) {
+    this.gpsDateTime = dateTime;
     if (dateTime != null) {
       try {
-        exactTimeGMT.setTime(dateFormat.parse(dateTime));
+        exactTimeGMT.setTime(DATE_FORMAT.parse(dateTime));
       } catch (ParseException e) {
         e.printStackTrace();
       }
@@ -575,8 +579,8 @@ public class ImageInfo implements Comparable<ImageInfo> {
    * zone. Only do this if the GPSDateTime is unknown, but the camera time
    * isn't. this can have public visibility as it uses an undo-able edit.
    */
-  public void setGPSDateTime() {
-    if (GPSDateTime == null && cameraDate != null) {
+  public void setGpsDateTime() {
+    if (gpsDateTime == null && cameraDate != null) {
       // create a DateFormat for the local time zone
       DateFormat format = new SimpleDateFormat(ImageInfo.getDateFormatPattern());
       try {
@@ -623,7 +627,7 @@ public class ImageInfo implements Comparable<ImageInfo> {
   }
 
   /**
-   * This has package visibility to force use of undo-able edits
+   * This has package visibility to force use of undo-able edits.
    * 
    * @param locationName
    *          the locationName to set
@@ -635,21 +639,21 @@ public class ImageInfo implements Comparable<ImageInfo> {
   }
 
   /**
-   * @return the countryName
+   * @return the cityName
    */
-  public String getCountryName() {
-    return countryName;
+  public String getCityName() {
+    return cityName;
   }
 
   /**
-   * This has package visibility to force use of undo-able edits
+   * This has package visibility to force use of undo-able edits.
    * 
-   * @param countryName
-   *          the countryName to set
+   * @param cityName
+   *          the cityName to set
    * @param source
    */
-  void setCountryName(String countryName, DATA_SOURCE source) {
-    this.countryName = countryName;
+  void setCityName(String cityName, DATA_SOURCE source) {
+    this.cityName = cityName;
     this.source = source;
   }
 
@@ -661,7 +665,7 @@ public class ImageInfo implements Comparable<ImageInfo> {
   }
 
   /**
-   * This has package visibility to force use of undo-able edits
+   * This has package visibility to force use of undo-able edits.
    * 
    * @param provinceName
    *          the provinceName to set
@@ -669,6 +673,25 @@ public class ImageInfo implements Comparable<ImageInfo> {
    */
   void setProvinceName(String provinceName, DATA_SOURCE source) {
     this.provinceName = provinceName;
+    this.source = source;
+  }
+
+  /**
+   * @return the countryName
+   */
+  public String getCountryName() {
+    return countryName;
+  }
+
+  /**
+   * This has package visibility to force use of undo-able edits.
+   * 
+   * @param countryName
+   *          the countryName to set
+   * @param source
+   */
+  void setCountryName(String countryName, DATA_SOURCE source) {
+    this.countryName = countryName;
     this.source = source;
   }
 
@@ -702,7 +725,7 @@ public class ImageInfo implements Comparable<ImageInfo> {
   }
 
   /**
-   * Make the date format pattern available to the outside world
+   * Make the date format pattern available to the outside world.
    * 
    * @return The standard date format pattern
    */
@@ -717,7 +740,7 @@ public class ImageInfo implements Comparable<ImageInfo> {
    * @return The standard GMT date format used in this class
    */
   public static SimpleDateFormat getDateFormat() {
-    return dateFormat;
+    return DATE_FORMAT;
   }
 
   /**
@@ -726,7 +749,7 @@ public class ImageInfo implements Comparable<ImageInfo> {
    * 
    * @author Andreas Schneider
    */
-  public static abstract class Filter {
+  public abstract static class Filter {
     /**
      * @param imageInfo
      * @return True if ImageInfo is accepted by the filter

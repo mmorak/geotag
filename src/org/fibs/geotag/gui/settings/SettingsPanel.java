@@ -34,7 +34,7 @@ import org.fibs.geotag.Settings;
 import org.fibs.geotag.Settings.SETTING;
 
 /**
- * A panel to display and edit settings
+ * A panel to display and edit settings.
  * 
  * @author Andreas Schneider
  * 
@@ -42,38 +42,38 @@ import org.fibs.geotag.Settings.SETTING;
 @SuppressWarnings("serial")
 public abstract class SettingsPanel extends JPanel {
 
-  /** Text for checkbox if selected */
+  /** Text for checkbox if selected. */
   static final String YES = Messages.getString("SettingsPanel.Yes"); //$NON-NLS-1$
 
-  /** text for checkbox if not selected */
+  /** text for checkbox if not selected. */
   static final String NO = Messages.getString("SettingsPanel.No"); //$NON-NLS-1$
 
-  /** the parent frame */
-  JFrame parent;
+  /** A panel containg the (optional) checkbox and the editor component. */
+  private JPanel panel;
+  
+  /** The parent JFrame. */
+  private JFrame parentFrame;
 
-  /** A panel containg the (optional) checkbox and the editor component */
-  JPanel panel;
+  /** The component used to edit/enter the settings value. */
+  private Component editorComponent;
 
-  /** The component used to edit/enter the settings value */
-  Component editorComponent;
+  /** the setting that indicates that the actual setting will be used. */
+  private SETTING enablingSetting;
 
-  /** the setting that indicates that the actual setting will be used */
-  SETTING enablingSetting;
+  /** Is the editor enabled or disabled by default. */
+  private boolean defaultEnabled;
 
-  /** Is the editor enabled or disabled by default */
-  boolean defaultEnabled;
+  /** The settings key. */
+  private SETTING setting;
 
-  /** The settings key */
-  SETTING setting;
+  /** The default value for this setting. */
+  private String defaultValue;
 
-  /** The default value for this setting */
-  String defaultValue;
+  /** The title for this panel. */
+  private String title;
 
-  /** The title for this panel */
-  String title;
-
-  /** the optional checkbox if there is an enabling setting */
-  JCheckBox checkbox;
+  /** the optional checkbox if there is an enabling setting. */
+  private JCheckBox checkbox;
 
   /**
    * @param parent
@@ -88,7 +88,7 @@ public abstract class SettingsPanel extends JPanel {
     super(new BorderLayout());
     TitledBorder border = BorderFactory.createTitledBorder(title);
     setBorder(border);
-    this.parent = parent;
+    this.parentFrame = parent;
     this.title = title;
     this.enablingSetting = enablingSetting;
     this.defaultEnabled = defaultEnabled;
@@ -100,9 +100,9 @@ public abstract class SettingsPanel extends JPanel {
       checkbox.addActionListener(new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-          if (editorComponent != null) {
-            editorComponent.setEnabled(checkbox.isSelected());
-            checkbox.setText(checkbox.isSelected() ? YES : NO);
+          if (getEditorComponent() != null) {
+            getEditorComponent().setEnabled(getCheckbox().isSelected());
+            getCheckbox().setText(getCheckbox().isSelected() ? YES : NO);
           }
         }
       });
@@ -114,7 +114,7 @@ public abstract class SettingsPanel extends JPanel {
   }
 
   /**
-   * Add the component doing the editing Subclasses need to call this
+   * Add the component doing the editing Subclasses need to call this.
    * 
    * @param component
    */
@@ -133,7 +133,7 @@ public abstract class SettingsPanel extends JPanel {
   public abstract String getValue();
 
   /**
-   * If necessary save the new settings
+   * If necessary save the new settings.
    */
   public void save() {
     if (enablingSetting != null) {
@@ -165,12 +165,33 @@ public abstract class SettingsPanel extends JPanel {
   }
 
   /**
-   * Override toString as this is used by JTree
+   * Override toString as this is used by JTree.
    * 
    * @see java.awt.Component#toString()
    */
   @Override
   public String toString() {
     return title;
+  }
+
+  /**
+   * @return the editorComponent
+   */
+  Component getEditorComponent() {
+    return editorComponent;
+  }
+
+  /**
+   * @return the checkbox
+   */
+  JCheckBox getCheckbox() {
+    return checkbox;
+  }
+
+  /**
+   * @return the parentFrame
+   */
+  protected JFrame getParentFrame() {
+    return parentFrame;
   }
 }

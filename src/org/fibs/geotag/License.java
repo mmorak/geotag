@@ -24,14 +24,21 @@ import java.util.List;
 import org.fibs.geotag.util.Util;
 
 /**
- * A class retrieving the localised text for the about dialog
+ * A class retrieving the localised text for the about dialog.
  * 
  * @author Andreas Schneider
  * 
  */
-public class License {
+public final class License {
 
-  /** the maximum line width in characters */
+  /**
+   * hide constructor.
+   */
+  private License() {
+    // hide constructor
+  }
+
+  /** the maximum line width in characters. */
   private static final int MAX_LINE_LENGTH = 60;
 
   /**

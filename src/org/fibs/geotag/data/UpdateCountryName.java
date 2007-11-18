@@ -19,33 +19,31 @@
 package org.fibs.geotag.data;
 
 import javax.swing.undo.AbstractUndoableEdit;
-import javax.swing.undo.CannotRedoException;
-import javax.swing.undo.CannotUndoException;
 
 import org.fibs.geotag.GlobalUndoManager;
 import org.fibs.geotag.data.ImageInfo.DATA_SOURCE;
 
 /**
- * A class encapsulating country name updates
+ * A class encapsulating country name updates.
  * 
  * @author Andreas Schneider
  * 
  */
 @SuppressWarnings("serial")
 public class UpdateCountryName extends AbstractUndoableEdit {
-  /** The {@link ImageInfo} */
+  /** The {@link ImageInfo}. */
   private ImageInfo imageInfo;
 
-  /** A copy of the previous country name */
+  /** A copy of the previous country name. */
   private String oldCountry;
 
-  /** A copy of the previous data source */
+  /** A copy of the previous data source. */
   private DATA_SOURCE oldSource;
 
-  /** The new country name */
+  /** The new country name. */
   private String newCountry;
 
-  /** The new data source */
+  /** The new data source. */
   private DATA_SOURCE newSource;
 
   /**
@@ -77,7 +75,7 @@ public class UpdateCountryName extends AbstractUndoableEdit {
    * @see javax.swing.undo.AbstractUndoableEdit#redo()
    */
   @Override
-  public void redo() throws CannotRedoException {
+  public void redo() {
     super.redo();
     imageInfo.setCountryName(newCountry, newSource);
   }
@@ -86,7 +84,7 @@ public class UpdateCountryName extends AbstractUndoableEdit {
    * @see javax.swing.undo.AbstractUndoableEdit#undo()
    */
   @Override
-  public void undo() throws CannotUndoException {
+  public void undo() {
     super.undo();
     imageInfo.setCountryName(oldCountry, oldSource);
   }

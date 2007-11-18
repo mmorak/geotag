@@ -34,7 +34,10 @@ import org.fibs.geotag.util.Util;
  */
 public class ExternalUpdateTask extends UndoableBackgroundTask<ImageInfo> {
 
-  /** the {@link ExternalUpdate} to be applied */
+  /** Assume locations if they are closer than this in meters. */
+  private static final double LOCATION_CLOSE = 0.1;
+  
+  /** the {@link ExternalUpdate} to be applied. */
   private ExternalUpdate externalUpdate;
 
   /**
@@ -82,7 +85,7 @@ public class ExternalUpdateTask extends UndoableBackgroundTask<ImageInfo> {
           externalUpdate.getLongitude(), Airy.LATITUDE, Airy.LONGITUDE));
       // first the case that the location is exactly our default (within 10cm)
       if (Util.greatCircleDistance(externalUpdate.getLatitude(), externalUpdate
-          .getLongitude(), Airy.LATITUDE, Airy.LONGITUDE) < 0.1) {
+          .getLongitude(), Airy.LATITUDE, Airy.LONGITUDE) < LOCATION_CLOSE) {
         new UpdateGPSLatitude(imageInfo, null, DATA_SOURCE.NONE);
         new UpdateGPSLongitude(imageInfo, null, DATA_SOURCE.NONE);
         new UpdateGPSAltitude(imageInfo, null, DATA_SOURCE.NONE);
@@ -93,7 +96,7 @@ public class ExternalUpdateTask extends UndoableBackgroundTask<ImageInfo> {
             .getLongitude())).toString(), DATA_SOURCE.MAP);
         // leave the altitude untouched, unless it is not set yet,
         // in which case we set it to zero
-        if (imageInfo.getGPSAltitude() == null) {
+        if (imageInfo.getGpsAltitude() == null) {
           new UpdateGPSAltitude(imageInfo, (new Double(0.0)).toString(),
               DATA_SOURCE.MAP);
         }

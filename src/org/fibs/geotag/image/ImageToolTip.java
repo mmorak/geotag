@@ -28,20 +28,20 @@ import javax.swing.JToolTip;
 import javax.swing.plaf.basic.BasicToolTipUI;
 
 /**
- * This class extends JToolTip so it displays an image instead of text
+ * This class extends JToolTip so it displays an image instead of text.
  * 
  * @author Andreas Schneider
  */
 @SuppressWarnings("serial")
 public class ImageToolTip extends JToolTip {
-  /** The image to be displayed in the tooltip */
-  ImageIcon imageIcon;
+  /** The image to be displayed in the tooltip. */
+  private ImageIcon imageIcon;
 
-  /** The custom UI used by this tooltip */
-  ImageToolTipUI ui;
+  /** The custom UI used by this tooltip. */
+  private ImageToolTipUI ui;
 
   /**
-   * Construct an ImageToolTip
+   * Construct an ImageToolTip.
    * 
    * @param imageIcon
    *          The imageIcon to be displayed in the tooltip
@@ -75,20 +75,20 @@ public class ImageToolTip extends JToolTip {
 }
 
 /**
- * Customise the BasicToolkitUI to draw the tool tip image
+ * Customise the BasicToolkitUI to draw the tool tip image.
  */
 class ImageToolTipUI extends BasicToolTipUI {
-  /** The imageIcon to be drawn */
+  /** The imageIcon to be drawn. */
   private ImageIcon imageIcon;
 
-  /** the text to display if there is no image */
+  /** the text to display if there is no image. */
   private String text = new String(); // default to empty String
 
-  /** the size in pixels of the space left around the text */
+  /** the size in pixels of the space left around the text. */
   private static final int GAP = 2;
 
   /**
-   * Construct the ImageToolTipUI
+   * Construct the ImageToolTipUI.
    * 
    * @param imageIcon
    * @param text

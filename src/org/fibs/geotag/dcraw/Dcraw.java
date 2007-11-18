@@ -35,6 +35,7 @@ import javax.imageio.ImageIO;
 
 import org.fibs.geotag.Settings;
 import org.fibs.geotag.Settings.SETTING;
+import org.fibs.geotag.util.Constants;
 import org.fibs.geotag.util.ImageInputStreamGobbler;
 import org.fibs.geotag.util.ImageUtil;
 import org.fibs.geotag.util.InputStreamGobbler;
@@ -43,15 +44,23 @@ import org.fibs.geotag.util.Util;
 import com.acme.JPM.Decoders.PpmDecoder;
 
 /**
- * A class handling the dcraw external program
+ * A class handling the dcraw external program.
  * 
  * @author Andreas Schneider
  * 
  */
-public class Dcraw {
+public final class Dcraw {
+
+  /**
+   * hide constructor.
+   */
+  private Dcraw() {
+    // hide constructor
+  }
+
   /**
    * A flag indicating if dcraw is available - changed by calls to
-   * checkExiftoolAvailable()
+   * checkExiftoolAvailable().
    */
   private static boolean available = false;
 
@@ -95,7 +104,7 @@ public class Dcraw {
   }
 
   /**
-   * Use dcraw to read the embedded image
+   * Use dcraw to read the embedded image.
    * 
    * @param rawFile
    *          The RAW file to extract the embedded image from
@@ -133,8 +142,9 @@ public class Dcraw {
       try {
         process.waitFor();
         // wait until the gobbler is done gobbling
+        final int sleeptime = 10;
         while (gobbler.isAlive()) {
-          Thread.sleep(10);
+          Thread.sleep(sleeptime);
         }
       } catch (InterruptedException e) {
         e.printStackTrace();
@@ -179,8 +189,10 @@ public class Dcraw {
       }
       long finished = System.currentTimeMillis();
       System.out.println("Loading RAW " + rawFile.getName() + " " //$NON-NLS-1$ //$NON-NLS-2$
-          + ((finished - start) / 1000.0) + " (" //$NON-NLS-1$
-          + ((readEnd - readStart) / 1000.0) + ")"); //$NON-NLS-1$
+          + ((finished - start) / (double) Constants.ONE_SECOND_IN_MILLIS)
+          + " (" //$NON-NLS-1$
+          + ((readEnd - readStart) / (double) Constants.ONE_SECOND_IN_MILLIS)
+          + ")"); //$NON-NLS-1$
       return bufferedImage;
     } catch (IOException e) {
       e.printStackTrace();

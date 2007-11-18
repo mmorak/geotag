@@ -23,14 +23,20 @@ import java.awt.Image;
 import java.awt.image.BufferedImage;
 
 /**
- * A class with image utility methods
+ * A class with image utility methods.
  * 
  * @author Andreas Schneider
  * 
  */
-public class ImageUtil {
+public final class ImageUtil {
   /**
-   * Create a BufferedImage from an Image
+   * hide constructor.
+   */
+  private ImageUtil() {
+    // hide constructor
+  }
+  /**
+   * Create a BufferedImage from an Image.
    * 
    * @param image
    *          The original image

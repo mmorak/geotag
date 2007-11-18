@@ -31,11 +31,18 @@ import org.fibs.geotag.util.InputStreamGobbler;
  * @author Andreas Schneider
  * 
  */
-public class Exiftool {
+public final class Exiftool {
+  
+  /**
+   * hide constructor.
+   */
+  private Exiftool() {
+    // hide constructor
+  }
 
   /**
    * A flag indicating if exiftool is available - changed by calls to
-   * checkExiftoolAvailable()
+   * checkExiftoolAvailable().
    */
   private static boolean available = false;
 

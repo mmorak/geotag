@@ -31,7 +31,7 @@ import org.fibs.geotag.Settings.SETTING;
 @SuppressWarnings("serial")
 public class StringSettingsPanel extends SettingsPanel {
 
-  /** The JTextField to hold the value */
+  /** The JTextField to hold the value. */
   private JTextField textField;
 
   /**

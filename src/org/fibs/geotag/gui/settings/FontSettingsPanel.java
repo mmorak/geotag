@@ -40,9 +40,9 @@ import org.fibs.geotag.util.FontUtil;
 @SuppressWarnings("serial")
 public class FontSettingsPanel extends SettingsPanel {
 
-  /** The TextField for the Font name */
-  JTextField textField;
-
+  /** The TextField for the Font name. */
+  private JTextField textField;
+  
   /**
    * @param parent
    * @param title
@@ -73,13 +73,13 @@ public class FontSettingsPanel extends SettingsPanel {
     browseButton.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         Font font = FontUtil.fontFromID(Settings
-            .get(FontSettingsPanel.this.setting,
-                FontSettingsPanel.this.defaultValue));
+            .get(getSetting(),
+                getDefaultValue()));
         FontChooser fontChooser = new FontChooser(
-            FontSettingsPanel.this.parent, font);
+            getParentFrame(), font);
         if (fontChooser.showDialog() != null) {
           Font selectedFont = fontChooser.getSelectedFont();
-          textField.setText(FontUtil.fontToID(selectedFont));
+          getTextField().setText(FontUtil.fontToID(selectedFont));
         }
       }
     });
@@ -93,6 +93,13 @@ public class FontSettingsPanel extends SettingsPanel {
   @Override
   public String getValue() {
     return textField.getText();
+  }
+
+  /**
+   * @return the textField
+   */
+  JTextField getTextField() {
+    return textField;
   }
 
 }

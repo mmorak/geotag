@@ -28,7 +28,7 @@ import fi.iki.elonen.NanoHTTPD.Response;
 
 /**
  * A class receiving user preferences or choices from the Google Map and storing
- * them in the Settings
+ * them in the Settings.
  * 
  * @author Andreas Schneider
  * 

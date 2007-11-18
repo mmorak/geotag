@@ -24,17 +24,23 @@ import java.util.List;
 import org.fibs.geotag.Messages;
 
 /**
- * A class for small convenience methods that are used in several places
+ * A class for small convenience methods that are used in several places.
  * 
  * @author Andreas Schneider
  * 
  */
-public class Util {
+public final class Util {
+  /**
+   * hide constructor.
+   */
+  private Util() {
+    // hide constructor
+  }  
 
   /**
    * Given the start and end values of an interval and a point in between, this
    * calculates a ratio of where in the interval the point in between lies, so
-   * that start + ratio * intervalSize = point in between
+   * that start + ratio * intervalSize = point in between.
    * 
    * @param start
    *          The start of the interval
@@ -92,12 +98,12 @@ public class Util {
     double dividend = Math.sqrt(term1 + term2);
     double divisor = Math.sin(lat1) * Math.sin(lat2) + Math.cos(lat1)
         * Math.cos(lat2) * Math.cos(deltaLon);
-    double distance = 6372795 * Math.atan2(dividend, divisor);
+    double distance = Constants.AVERAGE_GREAT_CIRCLE_RADIUS_METRES * Math.atan2(dividend, divisor);
     return distance;
   }
 
   /**
-   * Return the square of number
+   * Return the square of number.
    * 
    * @param x
    *          The number
@@ -117,8 +123,9 @@ public class Util {
    */
   public static long powerOf10(int number) {
     long result = 1;
+    final int ten = 10;
     for (int i = 1; i <= number; i++) {
-      result *= 10;
+      result *= ten;
     }
     return result;
   }
@@ -180,7 +187,7 @@ public class Util {
     };
     for (int i = 0; i < cardinalDirections.length; i++) {
       if (direction.equalsIgnoreCase(cardinalDirections[i])) {
-        return 360.0 / 16.0 * i;
+        return Constants.FULL_CIRCLE_DEGREES/ cardinalDirections.length * i;
       }
     }
     return Double.NaN;
@@ -188,7 +195,7 @@ public class Util {
 
   /**
    * Utility method to check if one byte array starts with a specified sequence
-   * of bytes
+   * of bytes.
    * 
    * @param array
    *          The array to check

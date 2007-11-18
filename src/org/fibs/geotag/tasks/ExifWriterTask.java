@@ -29,20 +29,20 @@ import org.fibs.geotag.table.ImagesTableModel;
 
 /**
  * A class writing the location information for an image to the EXIF data of the
- * image file
+ * image file.
  * 
  * @author Andreas Schneider
  * 
  */
 public class ExifWriterTask extends BackgroundTask<ImageInfo> {
 
-  /** the table model to be informed about changes */
+  /** the table model to be informed about changes. */
   private ImagesTableModel imagesTableModel;
 
-  /** the list of images to be updated */
+  /** the list of images to be updated. */
   private List<ImageInfo> imageInfos;
 
-  /** Keep track of progress */
+  /** Keep track of progress. */
   private int currentProgress = 0;
 
   /**
@@ -89,14 +89,14 @@ public class ExifWriterTask extends BackgroundTask<ImageInfo> {
   protected String doInBackground() throws Exception {
     int imagesUpdated = 0;
     for (ImageInfo imageInfo : imageInfos) {
-      if (terminate) {
+      if (interruptRequested()) {
         break;
       }
       currentProgress++;
       setProgressMessage();
       try {
         ExifWriter exifWriter = new ExifWriter();
-        if (exifWriter.write(imageInfo) == true) {
+        if (exifWriter.write(imageInfo)) {
           // write went OK...
           imagesUpdated++;
           // the location data source is now the image

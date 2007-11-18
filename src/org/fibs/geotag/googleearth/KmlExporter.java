@@ -25,6 +25,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
+import java.util.zip.Deflater;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -55,28 +56,28 @@ import com.google.earth.kml._2.StyleSelectorType;
 import com.google.earth.kml._2.StyleType;
 
 /**
- * A class for exporting to KML/KMZ files
+ * A class for exporting to KML/KMZ files.
  * 
  * @author Andreas Schneider
  * 
  */
 public class KmlExporter {
 
-  /** We need the style name more than once */
+  /** We need the style name more than once. */
   private static final String STYLE = "Photo"; //$NON-NLS-1$
 
-  /** The name of the images folder displayed in Google Earth */
+  /** The name of the images folder displayed in Google Earth. */
   private static final String KML_FOLDER = Messages
       .getString("KmlExporter.Images"); //$NON-NLS-1$
 
-  /** The name of the images folder within KMZ (zip) files */
+  /** The name of the images folder within KMZ (zip) files. */
   private static final String KMZ_IMAGE_FOLDER = "images"; //$NON-NLS-1$
 
-  /** The {@link ImageInfo}s exported */
+  /** The {@link ImageInfo}s exported. */
   private List<ImageInfo> imageInfos;
 
   /**
-   * Constructor
+   * Constructor.
    * 
    * @param imageInfos
    *          ImageInfos to export
@@ -86,7 +87,7 @@ public class KmlExporter {
   }
 
   /**
-   * Write KML to an output stream
+   * Write KML to an output stream.
    * 
    * @param outputStream
    * @param kmz
@@ -145,7 +146,7 @@ public class KmlExporter {
         description.append(imagePath);
         // the image has two possible sources:
         description.append("\"><img src=\""); //$NON-NLS-1$
-        if (kmz && Settings.get(SETTING.KMZ_STORE_THUMBNAILS, false) == true) {
+        if (kmz && Settings.get(SETTING.KMZ_STORE_THUMBNAILS, false)) {
           // image is stored in the KMZ file
           description.append(KMZ_IMAGE_FOLDER);
           description.append(File.separator);
@@ -163,8 +164,8 @@ public class KmlExporter {
         double latitude = Airy.LATITUDE;
         double longitude = Airy.LONGITUDE;
         try {
-          latitude = Double.parseDouble(imageInfo.getGPSLatitude());
-          longitude = Double.parseDouble(imageInfo.getGPSLongitude());
+          latitude = Double.parseDouble(imageInfo.getGpsLatitude());
+          longitude = Double.parseDouble(imageInfo.getGpsLongitude());
         } catch (NumberFormatException e) {
           //
         }
@@ -187,7 +188,7 @@ public class KmlExporter {
   }
 
   /**
-   * Write image data to KML file
+   * Write image data to KML file.
    * 
    * @param file
    * @throws IOException
@@ -199,7 +200,7 @@ public class KmlExporter {
   }
 
   /**
-   * Write image data to KMZ file
+   * Write image data to KMZ file.
    * 
    * @param file
    * @throws IOException
@@ -208,11 +209,11 @@ public class KmlExporter {
     ZipEntry zipEntry = new ZipEntry(Geotag.NAME + ".kml"); //$NON-NLS-1$
     ZipOutputStream zipOutputStream = new ZipOutputStream(new FileOutputStream(
         file));
-    zipOutputStream.setLevel(9);
+    zipOutputStream.setLevel(Deflater.BEST_COMPRESSION);
     zipOutputStream.putNextEntry(zipEntry);
     write(zipOutputStream, true);
     zipOutputStream.closeEntry();
-    if (Settings.get(SETTING.KMZ_STORE_THUMBNAILS, false) == true) {
+    if (Settings.get(SETTING.KMZ_STORE_THUMBNAILS, false)) {
       // store thumbnails in the KMZ file
       for (ImageInfo imageInfo : imageInfos) {
         ImageIcon thumbnail = imageInfo.getThumbnail();

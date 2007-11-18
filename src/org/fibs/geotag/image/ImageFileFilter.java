@@ -25,7 +25,7 @@ import javax.swing.filechooser.FileFilter;
 import org.fibs.geotag.Messages;
 
 /**
- * A class to determine if a file is an image or not
+ * A class to determine if a file is an image or not.
  * 
  * @author Andreas Schneider
  * 
@@ -33,7 +33,7 @@ import org.fibs.geotag.Messages;
 public class ImageFileFilter extends FileFilter implements java.io.FileFilter {
 
   /**
-   * Accept directories and image files
+   * Accept directories and image files.
    * 
    * @see javax.swing.filechooser.FileFilter#accept(java.io.File)
    */
@@ -56,8 +56,9 @@ public class ImageFileFilter extends FileFilter implements java.io.FileFilter {
         return true;
       case XMP:
         return false;
+      default:
+        return false;
     }
-    return false;
   }
 
   /**

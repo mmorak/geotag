@@ -31,7 +31,7 @@ import org.fibs.geotag.Settings.SETTING;
 @SuppressWarnings("serial")
 public class BooleanSettingsPanel extends SettingsPanel {
 
-  /** The check box to select the boolean value */
+  /** The check box to select the boolean value. */
   private JCheckBox checkBox;
 
   /**

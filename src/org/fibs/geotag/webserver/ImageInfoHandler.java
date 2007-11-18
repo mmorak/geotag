@@ -33,7 +33,7 @@ import fi.iki.elonen.NanoHTTPD;
 import fi.iki.elonen.NanoHTTPD.Response;
 
 /**
- * send information about an image back to the Geotag Javascript
+ * send information about an image back to the Geotag Javascript.
  * 
  * @author Andreas Schneider
  * 
@@ -70,7 +70,7 @@ public class ImageInfoHandler implements ContextHandler {
   }
 
   /**
-   * Assemble XML for a list of images
+   * Assemble XML for a list of images.
    * 
    * @param imageIDs
    *          The IDs of the images
@@ -98,16 +98,16 @@ public class ImageInfoHandler implements ContextHandler {
         String longitude = Double.toString(Airy.LONGITUDE);
         latitude = Settings.get(SETTING.LAST_GOOGLE_MAPS_LATITUDE, latitude);
         longitude = Settings.get(SETTING.LAST_GOOGLE_MAPS_LONGITUDE, longitude);
-        if (imageInfo.getGPSLatitude() != null
-            && imageInfo.getGPSLongitude() != null) {
-          latitude = imageInfo.getGPSLatitude();
-          longitude = imageInfo.getGPSLongitude();
+        if (imageInfo.getGpsLatitude() != null
+            && imageInfo.getGpsLongitude() != null) {
+          latitude = imageInfo.getGpsLatitude();
+          longitude = imageInfo.getGpsLongitude();
         }
         stringBuilder.append(" latitude=\"" + latitude + "\""); //$NON-NLS-1$ //$NON-NLS-2$
         stringBuilder.append(" longitude=\"" + longitude + "\""); //$NON-NLS-1$ //$NON-NLS-2$
         String direction = "-1.0"; // indicates 'no direction' //$NON-NLS-1$
-        if (imageInfo.getGPSImgDirection() != null) {
-          direction = imageInfo.getGPSImgDirection();
+        if (imageInfo.getGpsImgDirection() != null) {
+          direction = imageInfo.getGpsImgDirection();
         }
         stringBuilder.append(" direction=\"" + direction + "\""); //$NON-NLS-1$ //$NON-NLS-2$
         stringBuilder.append(" />\n"); //$NON-NLS-1$

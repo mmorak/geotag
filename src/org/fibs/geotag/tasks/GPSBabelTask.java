@@ -19,6 +19,7 @@
 package org.fibs.geotag.tasks;
 
 import java.io.File;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -26,29 +27,30 @@ import java.util.StringTokenizer;
 import org.fibs.geotag.Messages;
 import org.fibs.geotag.gpsbabel.GPSBabel;
 import org.fibs.geotag.track.GpxReader;
+import org.fibs.geotag.util.Constants;
 import org.fibs.geotag.util.InputStreamGobbler;
 
 import com.topografix.gpx._1._0.Gpx;
 
 /**
- * A task that reads data from a GPS
+ * A task that reads data from a GPS.
  * 
  * @author Andreas Schneider
  * 
  */
 public class GPSBabelTask extends BackgroundTask<Gpx> {
 
-  /** The current progress value */
-  int currentProgress;
+  /** The current progress value. */
+  private int currentProgress;
 
-  /** The minimum progress value */
-  int minProgress;
+  /** The minimum progress value. */
+  private int minProgress;
 
-  /** The maximum progress value */
-  int maxProgress;
+  /** The maximum progress value. */
+  private int maxProgress;
 
-  /** Any error messages detected in the GPSBabel output */
-  List<String> errorMessages = new ArrayList<String>();
+  /** Any error messages detected in the GPSBabel output. */
+  private List<String> errorMessages = new ArrayList<String>();
 
   /**
    * @param name
@@ -89,12 +91,40 @@ public class GPSBabelTask extends BackgroundTask<Gpx> {
   }
 
   /**
-   * Check if the terminate variable is set and terminate GPSBabel if it is
+   * @param currentProgress the currentProgress to set
+   */
+  void setCurrentProgress(int currentProgress) {
+    this.currentProgress = currentProgress;
+  }
+
+  /**
+   * @param minProgress the minProgress to set
+   */
+  void setMinProgress(int minProgress) {
+    this.minProgress = minProgress;
+  }
+
+  /**
+   * @param maxProgress the maxProgress to set
+   */
+  void setMaxProgress(int maxProgress) {
+    this.maxProgress = maxProgress;
+  }
+
+  /**
+   * @param errorMessages the errorMessages to set
+   */
+  void setErrorMessages(List<String> errorMessages) {
+    this.errorMessages = errorMessages;
+  }
+
+  /**
+   * Check if the terminate variable is set and terminate GPSBabel if it is.
    * 
    * @return true if GBSBabel has been terminated
    */
   synchronized boolean checkTerminate() {
-    if (terminate) {
+    if (interruptRequested()) {
       GPSBabel.terminate();
       return true;
     }
@@ -112,12 +142,12 @@ public class GPSBabelTask extends BackgroundTask<Gpx> {
       @Override
       public void run() {
         for (;;) {
-          if (checkTerminate() == true) {
+          if (checkTerminate()) {
             break;
           }
           // sleep half a second
           try {
-            Thread.sleep(500);
+            Thread.sleep(Constants.ONE_SECOND_IN_MILLIS / 2);
           } catch (InterruptedException e) {
             e.printStackTrace();
           }
@@ -134,24 +164,27 @@ public class GPSBabelTask extends BackgroundTask<Gpx> {
       }
     }
     // make the termination-check thread terminate
-    terminate = true;
+    interruptRequest();
     return Messages.getString("GPSBabelTask.FinishedGpsTransfer"); //$NON-NLS-1$
   }
 
   /**
    * A utility class reading the output of GPSBabel and generating progress or
-   * error messages
+   * error messages.
    * 
    * @author Andreas Schneider
    * 
    */
   class Gobbler extends InputStreamGobbler {
 
-    /** the progress message sent back */
+    /** The size of the buffer used for gobbling.  */
+    private static final int BUFFER_SIZE = 128; // doesn't need to be big
+    
+    /** the progress message sent back. */
     private String progressMessage = ""; //$NON-NLS-1$
 
     /**
-     * constructor
+     * Constructor.
      */
     public Gobbler() {
       super(null, null);
@@ -162,14 +195,15 @@ public class GPSBabelTask extends BackgroundTask<Gpx> {
      */
     @Override
     public void run() {
-      // 
-      byte[] buffer = new byte[128]; // doesn't need to be big
+      InputStream inputStream = getInputStream();
+      byte[] buffer = new byte[BUFFER_SIZE]; // doesn't need to be big
       int bytesInBuffer = 0;
       try {
         for (;;) {
           int b = inputStream.read();
-          if (b == -1)
+          if (b == -1) {
             break; // lost stream - process probably gone
+          }
           buffer[bytesInBuffer] = (byte) b;
           bytesInBuffer++;
           // stop filling buffer if buffer full or end of line encountered
@@ -197,7 +231,7 @@ public class GPSBabelTask extends BackgroundTask<Gpx> {
     }
 
     /**
-     * Handle a new line of text (progress or error) from GPSBabel
+     * Handle a new line of text (progress or error) from GPSBabel.
      * 
      * @param line
      */
@@ -211,16 +245,18 @@ public class GPSBabelTask extends BackgroundTask<Gpx> {
           tokenizer.nextToken();
           int read = Integer.parseInt(tokenizer.nextToken());
           int expected = Integer.parseInt(tokenizer.nextToken());
-          minProgress = 1;
-          maxProgress = expected;
-          currentProgress = read;
-          String message = Messages.getString("GPSBabelTask.Waypoint") + ' ' + currentProgress + ' ' + Messages.getString("GPSBabelTask.Of") + ' ' + maxProgress; //$NON-NLS-1$ //$NON-NLS-2$
+          setMinProgress(1);
+          setMaxProgress(expected);
+          setCurrentProgress(read);
+          String message = Messages.getString("GPSBabelTask.Waypoint") + ' ' //$NON-NLS-1$
+              + getCurrentProgress() + ' ' + Messages.getString("GPSBabelTask.Of") //$NON-NLS-1$
+              + ' ' + getMaxProgress();
           firePropertyChange("progress", progressMessage, message); //$NON-NLS-1$
           progressMessage = message;
         }
       } catch (RuntimeException e) {
         // that line is no progress message - it's an error message
-        errorMessages.add(line);
+        getErrorMessages().add(line);
       }
     }
   }

@@ -24,23 +24,23 @@ import org.fibs.geotag.GlobalUndoManager;
 import org.fibs.geotag.data.ImageInfo.DATA_SOURCE;
 
 /**
- * A class encapsulating location name updates.
+ * A class encapsulating city name updates.
  * 
  * @author Andreas Schneider
  * 
  */
 @SuppressWarnings("serial")
-public class UpdateLocationName extends AbstractUndoableEdit {
+public class UpdateCityName extends AbstractUndoableEdit {
   /** The {@link ImageInfo}. */
   private ImageInfo imageInfo;
 
-  /** A copy of the previous location name. */
+  /** A copy of the previous city name. */
   private String oldName;
 
   /** A copy of the previous data source. */
   private DATA_SOURCE oldSource;
 
-  /** The new location name. */
+  /** The new city name. */
   private String newName;
 
   /** The new data source. */
@@ -51,13 +51,13 @@ public class UpdateLocationName extends AbstractUndoableEdit {
    * @param newName
    * @param newSource
    */
-  public UpdateLocationName(ImageInfo imageInfo, String newName,
+  public UpdateCityName(ImageInfo imageInfo, String newName,
       DATA_SOURCE newSource) {
     this.imageInfo = imageInfo;
-    this.oldName = imageInfo.getLocationName();
+    this.oldName = imageInfo.getCityName();
     this.oldSource = imageInfo.getSource();
-    imageInfo.setLocationName(newName, newSource);
-    this.newName = imageInfo.getLocationName();
+    imageInfo.setCityName(newName, newSource);
+    this.newName = imageInfo.getCityName();
     this.newSource = imageInfo.getSource();
     GlobalUndoManager.getManager().addEdit(this);
   }
@@ -77,7 +77,7 @@ public class UpdateLocationName extends AbstractUndoableEdit {
   @Override
   public void redo() {
     super.redo();
-    imageInfo.setLocationName(newName, newSource);
+    imageInfo.setCityName(newName, newSource);
   }
 
   /**
@@ -86,6 +86,6 @@ public class UpdateLocationName extends AbstractUndoableEdit {
   @Override
   public void undo() {
     super.undo();
-    imageInfo.setLocationName(oldName, oldSource);
+    imageInfo.setCityName(oldName, oldSource);
   }
 }

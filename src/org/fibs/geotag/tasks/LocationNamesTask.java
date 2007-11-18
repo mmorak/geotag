@@ -18,6 +18,7 @@
 
 package org.fibs.geotag.tasks;
 
+import java.util.Collections;
 import java.util.IllegalFormatException;
 import java.util.List;
 
@@ -25,6 +26,7 @@ import org.fibs.geotag.Messages;
 import org.fibs.geotag.Settings;
 import org.fibs.geotag.Settings.SETTING;
 import org.fibs.geotag.data.ImageInfo;
+import org.fibs.geotag.data.UpdateCityName;
 import org.fibs.geotag.data.UpdateCountryName;
 import org.fibs.geotag.data.UpdateLocationName;
 import org.fibs.geotag.data.UpdateProvinceName;
@@ -36,20 +38,20 @@ import org.fibs.geotag.table.ImagesTableModel;
 import org.fibs.geotag.util.Util;
 
 /**
- * A class finding location names for images
+ * A class finding location names for images.
  * 
  * @author Andreas Schneider
  * 
  */
 public class LocationNamesTask extends UndoableBackgroundTask<ImageInfo> {
 
-  /** the table model to be informed about changes */
+  /** the table model to be informed about changes. */
   private ImagesTableModel imagesTableModel;
 
-  /** the list of images to be updated */
+  /** the list of images to be updated. */
   private List<ImageInfo> imageInfos;
 
-  /** Keep track of progress */
+  /** Keep track of progress. */
   private int currentProgress = 0;
 
   /**
@@ -97,42 +99,86 @@ public class LocationNamesTask extends UndoableBackgroundTask<ImageInfo> {
   protected String doInBackground() throws Exception {
     int namesFound = 0;
     for (ImageInfo imageInfo : imageInfos) {
-      if (terminate) {
+      if (interruptRequested()) {
         break;
       }
       currentProgress++;
       setProgressMessage();
       try {
         LocationHandler locationHandler = new LocationHandler(imageInfo
-            .getGPSLatitude(), imageInfo.getGPSLongitude());
+            .getGpsLatitude(), imageInfo.getGpsLongitude());
         List<Location> locations = locationHandler.getLocations();
         if (Settings.get(SETTING.GEONAMES_USE_WIKIPEDIA, false)) {
           WikipediaHandler wikipediaHandler = new WikipediaHandler(imageInfo
-              .getGPSLatitude(), imageInfo.getGPSLongitude());
+              .getGpsLatitude(), imageInfo.getGpsLongitude());
           // TODO for all wikipedia locations we need to determine country and
           // province - geonames.org say they will add this soon (at least
           // the country)
           locations.addAll(wikipediaHandler.getLocations());
         }
         if (locations.size() > 0) {
-          // we don't sort until Wikipedia entries contain Province/Country
-          // Collections.sort(locations);
+          Collections.sort(locations);
           imageInfo.setNearbyLocations(locations);
-          Location nearest = locations.get(0);
-          // don't perform unnecessary updates
-          if (!Util.sameContent(nearest.getName(), imageInfo.getLocationName())
-              || !Util.sameContent(nearest.getProvince(), imageInfo
-                  .getProvinceName())
-              || !Util.sameContent(nearest.getCountryName(), imageInfo
+          // we go through the locations and fill the fields with the closest
+          // macth
+          boolean locationNeeded = true;
+          boolean cityNeeded = true;
+          boolean provinceNeeded = true;
+          boolean countryNeeded = true;
+          boolean updated = false;
+          for (Location location : locations) {
+            // if the first location we find is a populated place we fill in the
+            // city, but leave the location blank
+            if (cityNeeded && location.getName() != null
+                && location.getName().length() > 0) {
+              if (location.isPopulatedPlace()) {
+                if (!Util.sameContent(location.getName(), imageInfo
+                    .getCityName())) {
+                  new UpdateCityName(imageInfo, location.getName(),
+                      DATA_SOURCE.GEONAMES);
+                  updated = true;
+                }
+                // if we updated or not - we have a city name
+                cityNeeded = false;
+                // and we don't need a location name
+                locationNeeded = false;
+              }
+            }
+            if (locationNeeded && location.getName() != null
+                && location.getName().length() > 0) {
+              if (!Util.sameContent(location.getName(), imageInfo
+                  .getLocationName())) {
+                new UpdateLocationName(imageInfo, location.getName(),
+                    DATA_SOURCE.GEONAMES);
+                updated = true;
+              }
+              // we have a location name now
+              // we still want the nearest populated place
+              locationNeeded = false;
+            }
+            if (provinceNeeded && location.getProvince() != null
+                && location.getProvince().length() > 0) {
+              if (!Util.sameContent(location.getProvince(), imageInfo
+                  .getProvinceName())) {
+                new UpdateProvinceName(imageInfo, location.getProvince(),
+                    DATA_SOURCE.GEONAMES);
+                updated = true;
+              }
+              provinceNeeded = false;
+            }
+            if (countryNeeded && location.getCountryName() != null
+                && location.getCountryName().length() > 0) {
+              if (!Util.sameContent(location.getCountryName(), imageInfo
                   .getCountryName())) {
-            new UpdateLocationName(imageInfo, nearest.getName(),
-                DATA_SOURCE.GEONAMES);
-            new UpdateProvinceName(imageInfo, nearest.getProvince(),
-                DATA_SOURCE.GEONAMES);
-            new UpdateCountryName(imageInfo, nearest.getCountryName(),
-                DATA_SOURCE.GEONAMES);
+                new UpdateCountryName(imageInfo, location.getCountryName(),
+                    DATA_SOURCE.GEONAMES);
+                updated = true;
+              }
+              countryNeeded = false;
+            }
+          }
+          if (updated) {
             namesFound++;
-            // System.out.println(locations.get(0));
           }
         }
         // tell the GUI about the change

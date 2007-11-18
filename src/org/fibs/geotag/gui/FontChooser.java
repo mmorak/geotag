@@ -44,7 +44,7 @@ import javax.swing.event.ChangeListener;
 import org.fibs.geotag.Messages;
 
 /**
- * A font chooser component
+ * A font chooser component.
  * 
  * @author Andreas Schneider
  * 
@@ -52,17 +52,17 @@ import org.fibs.geotag.Messages;
 @SuppressWarnings("serial")
 public class FontChooser extends JDialog {
 
-  /** the smallest font size selectable */
+  /** the smallest font size selectable. */
   private static final int SMALLEST_FONT_SIZE = 6;
 
-  /** the biggest font size selectable */
+  /** the biggest font size selectable. */
   private static final int BIGGEST_FONT_SIZE = 30;
 
-  /** The Font currently displayed in this FontChooser */
-  Font displayedFont;
+  /** The Font currently displayed in this FontChooser. */
+  private Font displayedFont;
 
   /**
-   * construct a FontChooser
+   * construct a FontChooser.
    * 
    * @param parent
    * @param initialFont
@@ -94,13 +94,14 @@ public class FontChooser extends JDialog {
     final JLabel sampleTextLabel = new JLabel(sampleText) {
       @Override
       public Dimension getMinimumSize() {
-        Font largestFont = new Font(displayedFont.getFamily(), Font.PLAIN,
+        Font largestFont = new Font(getDisplayedFont().getFamily(), Font.PLAIN,
             BIGGEST_FONT_SIZE);
         // we want the component taller than the required font height
         FontMetrics fontMetrics = getFontMetrics(largestFont);
         int minumumWidth = fontMetrics.stringWidth(getText());
         // Need the same space again above and below the strings and 2 strings
-        int minimumHeight = fontMetrics.getHeight() * 5;
+        final int factor = 5;
+        int minimumHeight = fontMetrics.getHeight() * factor;
         return new Dimension(minumumWidth, minimumHeight);
       }
 
@@ -115,22 +116,22 @@ public class FontChooser extends JDialog {
         int width = getWidth();
         int height = getHeight();
         int centreLine = height / 2;
-        FontMetrics fontMetrics = getFontMetrics(displayedFont);
+        FontMetrics fontMetrics = getFontMetrics(getDisplayedFont());
         int stringWidth = fontMetrics.stringWidth(sampleText);
         // x and y coordinates refer to the baseline of the leftmost character
         int x = (width - stringWidth) / 2;
         // plain font - one and a half font heights above centre line
-        int y = (int) (centreLine - fontMetrics.getHeight() * 0.5);
+        int y = (int) (centreLine - fontMetrics.getHeight() / 2.0);
         graphics.setColor(getForeground());
         graphics.drawString(sampleText, x, y);
-        Font boldFont = displayedFont.deriveFont(Font.BOLD);
+        Font boldFont = getDisplayedFont().deriveFont(Font.BOLD);
         graphics.setFont(boldFont);
         fontMetrics = getFontMetrics(boldFont);
         stringWidth = fontMetrics.stringWidth(sampleText);
         // x and y coordinates refer to the baseline of the leftmost character
         x = (width - stringWidth) / 2;
         // plain font - one and a half font heights above centre line
-        y = (int) (centreLine + fontMetrics.getHeight() * 1.5);
+        y = (int) (centreLine + fontMetrics.getHeight() * (3.0 / 2.0));
         graphics.drawString(sampleText, x, y);
       }
     };
@@ -157,10 +158,10 @@ public class FontChooser extends JDialog {
       public void itemStateChanged(ItemEvent e) {
         String fontName = (String) fontNamesComboBox.getSelectedItem();
         String fontSize = ((Integer) fontSizesSpinner.getValue()).toString();
-        displayedFont = new Font(fontName, Font.PLAIN, Integer
-            .parseInt(fontSize));
+        setDisplayedFont(new Font(fontName, Font.PLAIN, Integer
+            .parseInt(fontSize)));
         // now re-display the sample text
-        sampleTextLabel.setFont(displayedFont);
+        sampleTextLabel.setFont(getDisplayedFont());
         sampleTextLabel.repaint();
       }
     };
@@ -171,10 +172,10 @@ public class FontChooser extends JDialog {
       public void stateChanged(ChangeEvent e) {
         String fontName = (String) fontNamesComboBox.getSelectedItem();
         String fontSize = ((Integer) fontSizesSpinner.getValue()).toString();
-        displayedFont = new Font(fontName, Font.PLAIN, Integer
-            .parseInt(fontSize));
+        setDisplayedFont(new Font(fontName, Font.PLAIN, Integer
+            .parseInt(fontSize)));
         // now re-display the sample text
-        sampleTextLabel.setFont(displayedFont);
+        sampleTextLabel.setFont(getDisplayedFont());
         sampleTextLabel.repaint();
       }
     };
@@ -194,7 +195,7 @@ public class FontChooser extends JDialog {
     JButton cancelButton = new JButton(Messages.getString("FontChooser.Cancel")); //$NON-NLS-1$
     cancelButton.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        displayedFont = null;
+        setDisplayedFont(null);
         dispose();
       }
     });
@@ -209,7 +210,7 @@ public class FontChooser extends JDialog {
   }
 
   /**
-   * Show the modal dialog and return Font when done
+   * Show the modal dialog and return Font when done.
    * 
    * @return The selected font or null if cancelled
    */
@@ -223,6 +224,20 @@ public class FontChooser extends JDialog {
    */
   public Font getSelectedFont() {
     return displayedFont;
+  }
+  
+  /**
+   * @return the displayed font
+   */
+  Font getDisplayedFont() {
+    return displayedFont;
+  }
+
+  /**
+   * @param displayedFont the displayedFont to set
+   */
+  void setDisplayedFont(Font displayedFont) {
+    this.displayedFont = displayedFont;
   }
 
 }

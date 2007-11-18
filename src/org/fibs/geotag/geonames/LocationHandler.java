@@ -22,11 +22,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import org.fibs.geotag.Settings;
 import org.fibs.geotag.Settings.SETTING;
+import org.fibs.geotag.util.Constants;
+import org.fibs.geotag.util.Proxies;
 import org.fibs.geotag.util.Units;
 import org.fibs.geotag.util.Units.DISTANCE;
 import org.xml.sax.Attributes;
@@ -37,20 +41,20 @@ import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.helpers.XMLReaderFactory;
 
 /**
- * A class sending a request to genames.org and parsing the response
+ * A class sending a request to genames.org and parsing the response.
  * 
  * @author Andreas Schneider
  * 
  */
 public class LocationHandler extends DefaultHandler {
 
-  /** A list of all locations retrieved */
+  /** A list of all locations retrieved. */
   private List<Location> locations = new ArrayList<Location>();
 
-  /** The location we are currently parsing */
+  /** The location we are currently parsing. */
   private Location currentLocation = null;
 
-  /** Used to build the value of the element we are parsing */
+  /** Used to build the value of the element we are parsing. */
   private StringBuilder currentValue = null;
 
   /**
@@ -71,18 +75,25 @@ public class LocationHandler extends DefaultHandler {
       if (useRadius) {
         DISTANCE unit = Units.DISTANCE.values()[Settings.get(
             SETTING.DISTANCE_UNIT, 0)];
-        int radius = Settings.get(SETTING.GEONAMES_RADIUS, 5);
+        int radius = Settings.get(SETTING.GEONAMES_RADIUS,
+            Settings.GEONAMES_DEFAULT_RADIUS);
         double radiusKm = Units
             .convert(radius, unit, Units.DISTANCE.KILOMETRES);
         if (radiusKm != 0) {
           url += "&radius=" + radiusKm; //$NON-NLS-1$
         }
       }
-      int maxRows = Settings.get(SETTING.GEONAMES_MAX_ROWS, 5);
+      int maxRows = Settings.get(SETTING.GEONAMES_MAX_ROWS,
+          Settings.GEONAMES_DEFAULT_MAX_ROWS);
       url += "&maxRows=" + maxRows; //$NON-NLS-1$
+      // finally the language
+      url += "&lang=" + Locale.getDefault().getLanguage(); //$NON-NLS-1$
       System.out.println(url);
       URL request = new URL(url);
-      InputStream inputStream = request.openStream();
+      URLConnection connection = request.openConnection(Proxies.getProxy());
+      // time out after 30 seconds - prevent hangs
+      connection.setReadTimeout((int) Constants.ONE_MINUTE_IN_MILLIS / 2);
+      InputStream inputStream = connection.getInputStream();
       xmlReader.parse(new InputSource(inputStream));
     } catch (MalformedURLException e) {
       e.printStackTrace();
@@ -176,6 +187,11 @@ public class LocationHandler extends DefaultHandler {
           case fcodeName:
             currentLocation.setFeatureName(currentValue.toString());
             break;
+          case fcl:
+            currentLocation.setFeatureClass(currentValue.toString());
+            break;
+          default:
+            break;
         }
       }
     }
@@ -204,25 +220,27 @@ public class LocationHandler extends DefaultHandler {
    * the XML
    */
   enum ELEMENTS {
-    /** Entries are enclosed in a 'geonames' element */
+    /** Entries are enclosed in a 'geonames' element. */
     geonames,
-    /** Name of element containing a geoname */
+    /** Name of element containing a geoname. */
     geoname,
-    /** Element for location name */
+    /** Element for location name. */
     name,
-    /** Element specifying latitude */
+    /** Element specifying latitude. */
     lat,
-    /** Element specifying longitude */
+    /** Element specifying longitude. */
     lng,
-    /** Element for country name */
+    /** Element for country name. */
     countryName,
-    /** Element for province/state */
+    /** Element for province/state. */
     adminName1,
-    /** Element specifying the distance from the requested latitude/longitude */
+    /** Element specifying the distance from the requested latitude/longitude. */
     distance,
-    /** element specifying alternative names for a place */
+    /** element specifying alternative names for a place. */
     alternateNames,
-    /** element for the feature code name */
-    fcodeName
+    /** element for the feature code name. */
+    fcodeName,
+    /** element for feature class. */
+    fcl
   }
 }

@@ -31,11 +31,12 @@ public class FontUtilTest extends TestCase {
    */
   @SuppressWarnings("nls")
   public void testFontIds() {
-    Font font = new Font("Dialog", Font.PLAIN, 12);
+    final int fontSize = 12;
+    Font font = new Font("Dialog", Font.PLAIN, fontSize);
     String fontID = FontUtil.fontToID(font);
     assertEquals("Dialog-12", fontID);
     font = FontUtil.fontFromID(fontID);
     assertEquals("Dialog", font.getFamily());
-    assertEquals(12,font.getSize());
+    assertEquals(fontSize, font.getSize());
   }
 }

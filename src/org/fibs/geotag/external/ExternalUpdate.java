@@ -25,20 +25,20 @@ package org.fibs.geotag.external;
  * 
  */
 public class ExternalUpdate {
-  /** The image's sequence number */
+  /** The image's sequence number. */
   private int imageNumber;
 
-  /** the new latitude */
+  /** the new latitude. */
   private double latitude;
 
-  /** the new longitude */
+  /** the new longitude. */
   private double longitude;
   
-  /** the new direction or NaN if not given*/
+  /** the new direction or NaN if not given. */
   private double direction = Double.NaN;
 
   /**
-   * Create a {@link ExternalUpdate} object
+   * Create a {@link ExternalUpdate} object.
    * 
    * @param imageNumber
    * @param latitude

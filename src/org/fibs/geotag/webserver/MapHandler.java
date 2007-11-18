@@ -58,7 +58,7 @@ public class MapHandler implements ContextHandler {
 
   /**
    * Does the dirty work of assembling the page from the HTML and Javascript
-   * files
+   * files.
    * 
    * @param uri
    * @return The page as InputStream

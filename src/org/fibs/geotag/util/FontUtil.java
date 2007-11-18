@@ -22,16 +22,23 @@ import java.awt.Font;
 import java.util.StringTokenizer;
 
 /**
- * A class with utility methods for Fonts
+ * A class with utility methods for Fonts.
  * 
  * @author Andreas Schneider
  * 
  */
 
-public class FontUtil {
+public final class FontUtil {
 
   /**
-   * Create an id for the given font
+   * hide constructor.
+   */
+  private FontUtil() {
+    // hide constructor
+  }
+  
+  /**
+   * Create an id for the given font.
    * 
    * @param font
    * @return Font id of form Family-Size
@@ -41,7 +48,7 @@ public class FontUtil {
   }
 
   /**
-   * Create a Font given an Id created by fontToID()
+   * Create a Font given an Id created by fontToID().
    * 
    * @param id
    * @return The Font

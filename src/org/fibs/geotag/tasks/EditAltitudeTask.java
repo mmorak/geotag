@@ -29,13 +29,13 @@ import org.fibs.geotag.data.ImageInfo.DATA_SOURCE;
  */
 public class EditAltitudeTask extends UndoableBackgroundTask<ImageInfo> {
 
-  /** The image whose altitude will be set */
+  /** The image whose altitude will be set. */
   private ImageInfo imageInfo;
 
-  /** The new altitude */
+  /** The new altitude. */
   private String newAltitude;
 
-  /** The source of the update */
+  /** The source of the update. */
   private DATA_SOURCE dataSource;
 
   /**

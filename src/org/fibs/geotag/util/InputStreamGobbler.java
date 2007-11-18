@@ -31,18 +31,18 @@ import java.io.OutputStream;
  */
 public class InputStreamGobbler extends Thread {
 
-  /** The InputStream to gobble up */
-  protected InputStream inputStream;
+  /** The InputStream to gobble up. */
+  private InputStream inputStream;
 
   /**
    * The OutputStream to write the gobbled up InputStream to. Can be null, in
    * that case the InputStream is not written. This usually is System.out or
    * null.
    */
-  protected OutputStream outputStream;
+  private OutputStream outputStream;
 
-  /** The size of the buffer used to read the input stream */
-  protected int bufferSize = 1024; // small buffer size for reading process
+  /** The size of the buffer used to read the input stream. */
+  private int bufferSize = Constants.ONE_K; // small buffer size for reading process
                                     // output
 
   /**
@@ -106,5 +106,19 @@ public class InputStreamGobbler extends Thread {
    */
   public void setOutputStream(OutputStream outputStream) {
     this.outputStream = outputStream;
+  }
+
+  /**
+   * @return the bufferSize
+   */
+  protected int getBufferSize() {
+    return bufferSize;
+  }
+
+  /**
+   * @param bufferSize the bufferSize to set
+   */
+  protected void setBufferSize(int bufferSize) {
+    this.bufferSize = bufferSize;
   }
 }

@@ -30,6 +30,32 @@ import junit.framework.TestCase;
  *
  */
 public class BoundsTypeUtilTest extends TestCase {
+  
+  // A couple of constants to keep checkstyle happy
+  /** Width. */
+  private static final int WIDTH = 4000;
+  
+  /** height. */
+  private static final int HEIGHT = 3000;
+  
+  /** the diagonal according to Pythagoras. */
+  private static final int DIAGONAL = 5000;
+  
+  /** smallest latitude. */
+  private static final double SOUTH = 51.0;
+  
+  /** largest latitude. */
+  private static final double NORTH = 52.0;
+  
+  /** smallest longitude. */
+  private static final double EAST = -1.0;
+  
+  /** largest longitude. */
+  private static final double WEST = 1.0;
+  
+  /** Acceptable error. */
+  private static final double DELTA = 0.1;
+  
   /**
    * 
    */
@@ -37,25 +63,25 @@ public class BoundsTypeUtilTest extends TestCase {
     ObjectFactory objectFactory = new ObjectFactory();
     // we have a map 4000x3000 pixels in size
     // the distance between opposite corners is 5000 pixels
-    int width = 4000;
-    int height = 3000;
+    int width = WIDTH;
+    int height = HEIGHT;
     BoundsType mapBounds = objectFactory.createBoundsType();
     // the map is near Greenwich
-    mapBounds.setMinlat(new BigDecimal(51.0));
-    mapBounds.setMaxlat(new BigDecimal(52.0));
-    mapBounds.setMinlon(new BigDecimal(-1.0));
-    mapBounds.setMaxlon(new BigDecimal(1.0));
+    mapBounds.setMinlat(new BigDecimal(SOUTH));
+    mapBounds.setMaxlat(new BigDecimal(NORTH));
+    mapBounds.setMinlon(new BigDecimal(EAST));
+    mapBounds.setMaxlon(new BigDecimal(WEST));
     // here are two points at opposite corners
     // first the top left
     Trkpt point1 = objectFactory.createGpxTrkTrksegTrkpt();
-    point1.setLat(new BigDecimal(52.0));
-    point1.setLon(new BigDecimal(-1.0));
+    point1.setLat(new BigDecimal(NORTH));
+    point1.setLon(new BigDecimal(EAST));
     // then the bottom right
     Trkpt point2 = objectFactory.createGpxTrkTrksegTrkpt();
-    point2.setLat(new BigDecimal(51.0));
-    point2.setLon(new BigDecimal(1.0));
+    point2.setLat(new BigDecimal(SOUTH));
+    point2.setLon(new BigDecimal(WEST));
     // now calulate the distance in pixels
     double distanceInPixels = BoundsTypeUtil.pixelDistance(point1, point2, mapBounds, width, height);
-    assertEquals(5000.0, distanceInPixels, 0.1);
+    assertEquals(DIAGONAL, distanceInPixels, DELTA);
   }
 }

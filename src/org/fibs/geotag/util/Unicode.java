@@ -19,21 +19,21 @@
 package org.fibs.geotag.util;
 
 /**
- * A class with convenience constants for Unicode characters
+ * A class with convenience constants for Unicode characters.
  * 
  * @author Andreas Schneider
  * 
  */
 public class Unicode {
-  /** The symbol for degrees */
+  /** The symbol for degrees. */
   public static final String DEGREE_SYMBOL = "\u00B0"; //$NON-NLS-1$
 
-  /** The symbol for minutes */
+  /** The symbol for minutes. */
   public static final String SINGLE_PRIME_MARK = "\u2032"; //$NON-NLS-1$
 
-  /** the symbol for seconds */
+  /** the symbol for seconds. */
   public static final String DOUBLE_PRIME_MARK = "\u2033"; //$NON-NLS-1$
 
-  /** The plus/minus symbol */
+  /** The plus/minus symbol. */
   public static final String PLUS_MINUS_SIGN = "\u00B1"; //$NON-NLS-1$
 }

@@ -47,12 +47,16 @@ import org.fibs.geotag.Settings.SETTING;
 import com.centerkey.utils.BareBonesBrowserLaunch;
 
 /**
- * The about dialog (with working hyperlinks)
+ * The about dialog (with working hyperlinks).
  * 
  * @author Andreas Schneider
  */
 @SuppressWarnings("serial")
 public class AboutDialog extends JDialog implements HyperlinkListener {
+  
+  /** Size of blank space around text in pixels. */
+  private static final int BORDER_SIZE = 20;
+  
   /**
    * @param owner
    * @param title
@@ -82,13 +86,13 @@ public class AboutDialog extends JDialog implements HyperlinkListener {
     // show the build date
     message.append(Version.BUILD_DATE).append("<br>"); //$NON-NLS-1$
     // show a link to our web site
-    message
-        .append("<a href=\"").append(Geotag.WEBSITE).append("\">").append(Geotag.WEBSITE).append("</a>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    message.append("<a href=\"").append(Geotag.WEBSITE).append("\">").append(//$NON-NLS-1$ //$NON-NLS-2$
+        Geotag.WEBSITE).append("</a>"); //$NON-NLS-1$
     message.append("<br>"); //$NON-NLS-1$
     // show a copyright notice
     message.append(Messages.getString("MainWindow.Copyright")).append(' ') //$NON-NLS-1$
         .append('\u00a9').append(' '); // \u00a9 is the copyright symbol
-    message.append(2007).append(' ');
+    message.append("2007").append(' '); //$NON-NLS-1$
     message.append("Andreas Schneider"); //$NON-NLS-1$
     message.append("<br><br></center>"); //$NON-NLS-1$
     header.setText(message.toString());
@@ -123,7 +127,7 @@ public class AboutDialog extends JDialog implements HyperlinkListener {
         .setText("<center><a href=\"http://www.gnu.org/licenses\">http://www.gnu.org/licenses</a></center>"); //$NON-NLS-1$
     panel.add(footer, BorderLayout.SOUTH);
     // a border, so the text doesn't sit right on the edge of the dialog
-    panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+    panel.setBorder(BorderFactory.createEmptyBorder(BORDER_SIZE, BORDER_SIZE, BORDER_SIZE, BORDER_SIZE));
     // add the panel at the centre of the dialog
     add(panel, BorderLayout.CENTER);
     // Now a panel for the OK button to dismiss the dialog
@@ -155,7 +159,7 @@ public class AboutDialog extends JDialog implements HyperlinkListener {
   }
 
   /**
-   * Launch web browser when a hyperlink is clicked
+   * Launch web browser when a hyperlink is clicked.
    * 
    * @see javax.swing.event.HyperlinkListener#hyperlinkUpdate(javax.swing.event.HyperlinkEvent)
    */

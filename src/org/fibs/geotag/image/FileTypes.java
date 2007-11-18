@@ -23,27 +23,27 @@ import java.io.File;
 import org.fibs.geotag.util.FileUtil;
 
 /**
- * An enumeration of image file types
+ * An enumeration of image file types.
  * 
  * @author Andreas Schneider
  * 
  */
 public enum FileTypes {
-  /** Image file type for unknown files */
+  /** Image file type for unknown files. */
   UNKOWN,
-  /** Image file type JPEG */
+  /** Image file type JPEG. */
   JPEG,
-  /** Image file type RAW (EXIF data read only) */
+  /** Image file type RAW (EXIF data read only). */
   RAW_READ_ONLY,
-  /** Image file type RAW (EXIF data read and write) */
+  /** Image file type RAW (EXIF data read and write). */
   RAW_READ_WRITE,
-  /** Image file type TIFF */
+  /** Image file type TIFF. */
   TIFF,
-  /** Image file type XMP */
+  /** Image file type XMP. */
   XMP;
 
   /**
-   * Determine the type of an image file
+   * Determine the type of an image file.
    * 
    * @param file
    *          The file
@@ -108,7 +108,7 @@ public enum FileTypes {
   }
 
   /**
-   * Check if a file is a RAW file with EXIF read/write
+   * Check if a file is a RAW file with EXIF read/write.
    * 
    * @param file
    *          The file to be checked
@@ -174,7 +174,7 @@ public enum FileTypes {
   }
 
   /**
-   * Check if a file is an XMP file
+   * Check if a file is an XMP file.
    * 
    * @param file
    *          The file to be checked

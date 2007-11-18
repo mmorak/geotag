@@ -36,7 +36,6 @@ import java.util.TimeZone;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
-import javax.swing.JFileChooser;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -51,55 +50,64 @@ import javax.swing.event.ChangeListener;
 import org.fibs.geotag.Messages;
 
 /**
- * A dialog that lets the user select a date and a time
+ * A dialog that lets the user select a date and a time.
  * 
  * @author Andreas Schneider
  * 
  */
 @SuppressWarnings("serial")
 public class DateTimeChooser extends JDialog {
+  
+  /** The number of months in a year. */
+  private static final int MONTHS_IN_YEAR = 12;
+  
+  /** the number of days in a week. */
+  private static final int DAYS_IN_WEEK = 7;
+  
+  /** The maximum number of weeks that can partially fall in a month. */
+  private static final int MAX_WEEKS_IN_MONTH = 6;
 
-  /** The parent JFrame */
+  /** The parent JFrame. */
   private JFrame parent;
 
-  /** The Date displayed by the component */
-  Calendar displayedDate;
+  /** The Date displayed by the component. */
+  private Calendar displayedDate;
 
-  /** The labels for the month names - one per month */
-  private CalendarLabel[] monthLabels = new CalendarLabel[12];
+  /** The labels for the month names - one per month. */
+  private CalendarLabel[] monthLabels = new CalendarLabel[MONTHS_IN_YEAR];
 
   /**
    * The labels for showing the days of the month - we need 6 rows of 7 days
-   * each
+   * each.
    */
-  private CalendarLabel[][] dayLabels = new CalendarLabel[6][7];
+  private CalendarLabel[][] dayLabels = new CalendarLabel[MAX_WEEKS_IN_MONTH][DAYS_IN_WEEK];
 
-  /** One label for displaying the year */
+  /** One label for displaying the year. */
   private CalendarLabel yearLabel;
 
-  /** A panel containing the year and the increment/decrement labels */
+  /** A panel containing the year and the increment/decrement labels. */
   private JPanel yearPanel;
 
-  /** A panel containing the short month names */
+  /** A panel containing the short month names. */
   private JPanel monthsPanel;
 
-  /** A panel showing the days in the month */
+  /** A panel showing the days in the month. */
   private JPanel daysPanel;
 
-  /** A panel containing the yearPanel, monthsPanel and daysPanel */
+  /** A panel containing the yearPanel, monthsPanel and daysPanel. */
   private JPanel calendarPanel;
 
-  /** A panel for choosing the time */
+  /** A panel for choosing the time. */
   private JPanel timePanel;
 
-  /** A panel for the OK, Cancel and Today buttons */
+  /** A panel for the OK, Cancel and Today buttons. */
   private JPanel buttonPanel;
 
-  /** The currently selected time zone */
-  TimeZone currentZone;
+  /** The currently selected time zone. */
+  private TimeZone currentZone;
 
   /**
-   * Create a {@link DateTimeChooser}
+   * Create a {@link DateTimeChooser}.
    * 
    * @param parent
    *          The parent component
@@ -126,125 +134,86 @@ public class DateTimeChooser extends JDialog {
     calendarPanel.setBorder(new EtchedBorder(EtchedBorder.RAISED));
     // the calendar panel contains 3 panels
     // The panel for the year is at the top
-    yearPanel = new JPanel();
-    yearPanel.setBorder(new EtchedBorder(EtchedBorder.LOWERED));
-    // it contains 3 labels in a GridLayout
-    yearPanel.setLayout(new GridLayout(1, 3));
-    // A big and bold decrement label for the year
-    CalendarLabel decrement = new CalendarLabel("-", true, true); //$NON-NLS-1$
-    decrement.setHorizontalAlignment(SwingConstants.RIGHT);
-    decrement.addMouseListener(new MouseAdapter() {
-      @Override
-      public void mouseClicked(MouseEvent event) {
-        // go one year back
-        displayedDate.set(Calendar.YEAR, displayedDate.get(Calendar.YEAR) - 1);
-        updateDateShown();
-      }
-    });
-    // add as the first label in the panel
-    yearPanel.add(decrement);
-    // make the year label bold (the text won't be displayed)
-    yearLabel = new CalendarLabel("Year", true, false); //$NON-NLS-1$
-    // The year is always the selected one, so we highlight it
-    yearLabel.setHighlighted(true);
-    // add it to the right of the decrement button
-    yearPanel.add(yearLabel);
-    // make the increment label big and bold
-    CalendarLabel increment = new CalendarLabel("+", true, true); //$NON-NLS-1$
-    increment.setHorizontalAlignment(SwingConstants.LEFT);
-    increment.addMouseListener(new MouseAdapter() {
-      @Override
-      public void mouseClicked(MouseEvent event) {
-        // go one year forward
-        displayedDate.set(Calendar.YEAR, displayedDate.get(Calendar.YEAR) + 1);
-        updateDateShown();
-      }
-    });
-    // add to the right of the year label
-    yearPanel.add(increment);
+    setupYearPanel();
     // add the lot to the top of the CalendarPanel
     calendarPanel.add(yearPanel, BorderLayout.NORTH);
     // Below the yearsPanel we have a Panel for the month names
-    monthsPanel = new JPanel();
-    monthsPanel.setBorder(new EtchedBorder(EtchedBorder.LOWERED));
-    // we display them in 2 rows with six month names each
-    monthsPanel.setLayout(new GridLayout(2, 6));
-    // get the month symbols Locale independent
-    String[] monthSymbols = new DateFormatSymbols().getShortMonths();
-    for (int month = 0; month < 12; month++) {
-      // for each month we create one label showing its name
-      monthLabels[month] = new CalendarLabel(monthSymbols[month], false, false);
-      // and have the month number [0..11] associated with it
-      monthLabels[month].setNumber(month);
-      monthLabels[month].addMouseListener(new MouseAdapter() {
-        @Override
-        public void mouseClicked(MouseEvent event) {
-          // user clicked on a month
-          int selectedMonth = ((CalendarLabel) event.getSource()).getNumber();
-          // change the month of the date displayed
-          // note that when showing Mar 31, clicking on April will select May
-          // 1st
-          // (as there is no day 31 in April)
-          displayedDate.set(Calendar.MONTH, selectedMonth);
-          updateDateShown();
-        }
-      });
-      // add the label to the panel
-      monthsPanel.add(monthLabels[month]);
-    }
+    setupMonthsPanel();
     // the months are at the centre of the calendar panel
     calendarPanel.add(monthsPanel, BorderLayout.CENTER);
 
     // A panel displaying the days of the month
     // is shown at the bottom of the calendar panel
-    daysPanel = new JPanel();
-    daysPanel.setBorder(new EtchedBorder(EtchedBorder.LOWERED));
-    // there are 7 rows and 7 columns
-    // the first row displays the weekday names, the other display
-    // the numbers representing the days of the month
-    daysPanel.setLayout(new GridLayout(7, 7));
-    // The weekday names are retrieved Locale independent
-    // They are stored in locations 1..7 of the array
-    String[] WeekdayNames = new DateFormatSymbols().getShortWeekdays();
-    // first fill in the labels for the weekday names
-    for (int day = 1; day <= 7; day++) {
-      // make the weekday labels bold
-      CalendarLabel label = new CalendarLabel(WeekdayNames[getNthDayOfWeek(
-          null, day)], true, false);
-      daysPanel.add(label);
-    }
-    // next initialise the days of the week themselves
-    for (int row = 0; row < 6; row++) {
-      for (int col = 0; col < 7; col++) {
-        dayLabels[row][col] = new CalendarLabel("X", false, false); //$NON-NLS-1$
-        dayLabels[row][col].addMouseListener(new MouseAdapter() {
-          @Override
-          public void mouseClicked(MouseEvent event) {
-            // which day did the user click on
-            CalendarLabel daySelected = (CalendarLabel) event.getSource();
-            int day = daySelected.getNumber();
-            if (day > 0) {
-              // change the date to the selected value
-              displayedDate.set(Calendar.DATE, day);
-              updateDateShown();
-            }
-          }
-        });
-        // add the label to the button
-        daysPanel.add(dayLabels[row][col]);
-      }
-    }
+    setupDaysPanel();
     // That's the daysPanel done - add it at the bottom of the calendarPanel
     calendarPanel.add(daysPanel, BorderLayout.SOUTH);
     // The calendarPanel goes at the top the container
     add(calendarPanel, BorderLayout.NORTH);
     // at the centre of the container is the timePanel
+    // create a SpinnerTimeModel
+    final SpinnerDateModel timeModel = new SpinnerDateModel();
+    setupTimePanel(timeModel);
+    // finally add the timePanel to the centre of the container
+    add(timePanel, BorderLayout.CENTER);
+    // at the bottom of the dialog we place two or three buttons
+    buttonPanel = new JPanel();
+    buttonPanel.setLayout(new GridLayout(1, hasNowButton ? 3 : 2));
+    buttonPanel.setBorder(new EtchedBorder(EtchedBorder.RAISED));
+    // A button to confirm the selected date/time
+    JButton okButton = new JButton(Messages.getString("DateTimeChooser.OK")); //$NON-NLS-1$
+    okButton.addMouseListener(new MouseAdapter() {
+      @Override
+      public void mouseClicked(MouseEvent e) {
+        // store the time from the spinner
+        Calendar displayedTime = Calendar.getInstance();
+        displayedTime.setTimeZone(getCurrentZone());
+        displayedTime.setTime(timeModel.getDate());
+        getDisplayedDate().set(Calendar.HOUR_OF_DAY, displayedTime
+            .get(Calendar.HOUR_OF_DAY));
+        getDisplayedDate().set(Calendar.MINUTE, displayedTime.get(Calendar.MINUTE));
+        getDisplayedDate().set(Calendar.SECOND, displayedTime.get(Calendar.SECOND));
+        // close the chooser
+        dispose();
+      }
+    });
+    buttonPanel.add(okButton);
+    JButton cancelButton = new JButton(Messages
+        .getString("DateTimeChooser.Cancel")); //$NON-NLS-1$
+    cancelButton.addMouseListener(new MouseAdapter() {
+      @Override
+      public void mouseClicked(MouseEvent e) {
+        // set the date to null indicating no date was selected
+        setDisplayedDate(null);
+        // close the chooser
+        dispose();
+      }
+    });
+    buttonPanel.add(cancelButton);
+    JButton nowButton = new JButton(Messages.getString("DateTimeChooser.Now")); //$NON-NLS-1$
+    nowButton.addMouseListener(new MouseAdapter() {
+      @Override
+      public void mouseClicked(MouseEvent e) {
+        // set the date to 'now'
+        getDisplayedDate().setTime(new Date());
+        timeModel.setValue(getDisplayedDate().getTime());
+        updateDateShown();
+      }
+    });
+    if (hasNowButton) {
+      buttonPanel.add(nowButton);
+    }
+    // add the buttonPanel at the bottom of the container
+    add(buttonPanel, BorderLayout.SOUTH);
+  }
+
+  /**
+   * @param timeModel 
+   */
+  private void setupTimePanel(SpinnerDateModel timeModel) {
     timePanel = new JPanel();
     // there are two components in there one for the time and one for the time
     // zone
     timePanel.setLayout(new GridLayout(2, 1));
-    // create a SpinnerTimeModel
-    final SpinnerDateModel timeModel = new SpinnerDateModel();
     // and set it to the displayed time
     timeModel.setValue(displayedDate.getTime());
     // create a time spinner with that SpinnerDateModel
@@ -265,14 +234,14 @@ public class DateTimeChooser extends JDialog {
           // we accept the changes
           spinner.commitEdit();
           // create a new Calendar object with the correct time zone
-          Calendar newDate = Calendar.getInstance(displayedDate.getTimeZone());
+          Calendar newDate = Calendar.getInstance(getDisplayedDate().getTimeZone());
           // use the time from the spinner
           newDate.setTime((Date) spinner.getValue());
           // and the date from the displayedDate
-          newDate.set(displayedDate.get(Calendar.YEAR), displayedDate
-              .get(Calendar.MONTH), displayedDate.get(Calendar.DATE));
+          newDate.set(getDisplayedDate().get(Calendar.YEAR), getDisplayedDate()
+              .get(Calendar.MONTH), getDisplayedDate().get(Calendar.DATE));
           // make sure the displayedDate is correct
-          displayedDate = newDate;
+          setDisplayedDate(newDate);
         } catch (ParseException e) {
           e.printStackTrace();
         }
@@ -284,7 +253,7 @@ public class DateTimeChooser extends JDialog {
     ArrayList<String> timeZoneNames = new ArrayList<String>();
     currentZone = displayedDate.getTimeZone();
     timeZoneNames.add(currentZone.getID());
-    for (int offset = -12; offset <= 12; offset++) {
+    for (int offset = -MONTHS_IN_YEAR; offset <= MONTHS_IN_YEAR; offset++) {
       String name = "GMT"; //$NON-NLS-1$
       if (offset >= 0) {
         name += '+';
@@ -295,83 +264,150 @@ public class DateTimeChooser extends JDialog {
     final JComboBox timezoneComboBox = new JComboBox(timeZoneNames.toArray()) {
       @Override
       public void actionPerformed(ActionEvent event) {
-        currentZone = TimeZone.getTimeZone((String) getSelectedItem());
-        Calendar newDisplayedDate = Calendar.getInstance(currentZone);
-        newDisplayedDate.set(Calendar.DATE, displayedDate.get(Calendar.DATE));
-        newDisplayedDate.set(Calendar.MONTH, displayedDate.get(Calendar.MONTH));
-        newDisplayedDate.set(Calendar.YEAR, displayedDate.get(Calendar.YEAR));
-        newDisplayedDate.set(Calendar.HOUR_OF_DAY, displayedDate
+        setCurrentZone(TimeZone.getTimeZone((String) getSelectedItem()));
+        Calendar newDisplayedDate = Calendar.getInstance(getCurrentZone());
+        newDisplayedDate.set(Calendar.DATE, getDisplayedDate().get(Calendar.DATE));
+        newDisplayedDate.set(Calendar.MONTH, getDisplayedDate().get(Calendar.MONTH));
+        newDisplayedDate.set(Calendar.YEAR, getDisplayedDate().get(Calendar.YEAR));
+        newDisplayedDate.set(Calendar.HOUR_OF_DAY, getDisplayedDate()
             .get(Calendar.HOUR_OF_DAY));
-        newDisplayedDate.set(Calendar.MINUTE, displayedDate
+        newDisplayedDate.set(Calendar.MINUTE, getDisplayedDate()
             .get(Calendar.MINUTE));
-        newDisplayedDate.set(Calendar.SECOND, displayedDate
+        newDisplayedDate.set(Calendar.SECOND, getDisplayedDate()
             .get(Calendar.SECOND));
-        displayedDate = newDisplayedDate;
+        setDisplayedDate(newDisplayedDate);
         // make sure the formatter knows about the new time zone
-        timeEditor.getFormat().setTimeZone(currentZone);
+        timeEditor.getFormat().setTimeZone(getCurrentZone());
         // and update the display
-        timeEditor.getTextField().setValue(displayedDate.getTime());
+        timeEditor.getTextField().setValue(getDisplayedDate().getTime());
       }
     };
     timezoneComboBox.setSelectedIndex(0);
     timezoneComboBox.addActionListener(timezoneComboBox);
     timePanel.add(timezoneComboBox);
-    // finally add the timePanel to the centre of the container
-    add(timePanel, BorderLayout.CENTER);
-    // at the bottom of the dialog we place two or three buttons
-    buttonPanel = new JPanel();
-    buttonPanel.setLayout(new GridLayout(1, hasNowButton ? 3 : 2));
-    buttonPanel.setBorder(new EtchedBorder(EtchedBorder.RAISED));
-    // A button to confirm the selected date/time
-    JButton okButton = new JButton(Messages.getString("DateTimeChooser.OK")); //$NON-NLS-1$
-    okButton.addMouseListener(new MouseAdapter() {
-      @Override
-      public void mouseClicked(MouseEvent e) {
-        // store the time from the spinner
-        Calendar displayedTime = Calendar.getInstance();
-        displayedTime.setTimeZone(currentZone);
-        displayedTime.setTime(timeModel.getDate());
-        displayedDate.set(Calendar.HOUR_OF_DAY, displayedTime
-            .get(Calendar.HOUR_OF_DAY));
-        displayedDate.set(Calendar.MINUTE, displayedTime.get(Calendar.MINUTE));
-        displayedDate.set(Calendar.SECOND, displayedTime.get(Calendar.SECOND));
-        // close the chooser
-        dispose();
+  }
+
+  /**
+   * 
+   */
+  private void setupDaysPanel() {
+    daysPanel = new JPanel();
+    daysPanel.setBorder(new EtchedBorder(EtchedBorder.LOWERED));
+    // there are 7 rows and 7 columns
+    // the first row displays the weekday names, the other display
+    // the numbers representing the days of the month
+    daysPanel.setLayout(new GridLayout(MAX_WEEKS_IN_MONTH + 1, DAYS_IN_WEEK));
+    // The weekday names are retrieved Locale independent
+    // They are stored in locations 1..7 of the array
+    String[] weekdayNames = new DateFormatSymbols().getShortWeekdays();
+    // first fill in the labels for the weekday names
+    for (int day = 1; day <= DAYS_IN_WEEK; day++) {
+      // make the weekday labels bold
+      CalendarLabel label = new CalendarLabel(weekdayNames[getNthDayOfWeek(
+          null, day)], true, false);
+      daysPanel.add(label);
+    }
+    // next initialise the days of the week themselves
+    for (int row = 0; row < MAX_WEEKS_IN_MONTH; row++) {
+      for (int col = 0; col < DAYS_IN_WEEK; col++) {
+        dayLabels[row][col] = new CalendarLabel("X", false, false); //$NON-NLS-1$
+        dayLabels[row][col].addMouseListener(new MouseAdapter() {
+          @Override
+          public void mouseClicked(MouseEvent event) {
+            // which day did the user click on
+            CalendarLabel daySelected = (CalendarLabel) event.getSource();
+            int day = daySelected.getNumber();
+            if (day > 0) {
+              // change the date to the selected value
+              getDisplayedDate().set(Calendar.DATE, day);
+              updateDateShown();
+            }
+          }
+        });
+        // add the label to the button
+        daysPanel.add(dayLabels[row][col]);
       }
-    });
-    buttonPanel.add(okButton);
-    JButton cancelButton = new JButton(Messages
-        .getString("DateTimeChooser.Cancel")); //$NON-NLS-1$
-    cancelButton.addMouseListener(new MouseAdapter() {
+    }
+  }
+
+  /**
+   * 
+   */
+  private void setupMonthsPanel() {
+    monthsPanel = new JPanel();
+    monthsPanel.setBorder(new EtchedBorder(EtchedBorder.LOWERED));
+    // we display them in 2 rows with six month names each
+    monthsPanel.setLayout(new GridLayout(2, MONTHS_IN_YEAR / 2));
+    // get the month symbols Locale independent
+    String[] monthSymbols = new DateFormatSymbols().getShortMonths();
+    for (int month = 0; month < MONTHS_IN_YEAR; month++) {
+      // for each month we create one label showing its name
+      monthLabels[month] = new CalendarLabel(monthSymbols[month], false, false);
+      // and have the month number [0..11] associated with it
+      monthLabels[month].setNumber(month);
+      monthLabels[month].addMouseListener(new MouseAdapter() {
+        @Override
+        public void mouseClicked(MouseEvent event) {
+          // user clicked on a month
+          int selectedMonth = ((CalendarLabel) event.getSource()).getNumber();
+          // change the month of the date displayed
+          // note that when showing Mar 31, clicking on April will select May
+          // 1st
+          // (as there is no day 31 in April)
+          getDisplayedDate().set(Calendar.MONTH, selectedMonth);
+          updateDateShown();
+        }
+      });
+      // add the label to the panel
+      monthsPanel.add(monthLabels[month]);
+    }
+  }
+
+  /**
+   * 
+   */
+  private void setupYearPanel() {
+    yearPanel = new JPanel();
+    yearPanel.setBorder(new EtchedBorder(EtchedBorder.LOWERED));
+    // it contains 3 labels in a GridLayout
+    yearPanel.setLayout(new GridLayout(1, 3));
+    // A big and bold decrement label for the year
+    CalendarLabel decrement = new CalendarLabel("-", true, true); //$NON-NLS-1$
+    decrement.setHorizontalAlignment(SwingConstants.RIGHT);
+    decrement.addMouseListener(new MouseAdapter() {
       @Override
-      public void mouseClicked(MouseEvent e) {
-        // set the date to null indicating no date was selected
-        displayedDate = null;
-        // close the chooser
-        dispose();
-      }
-    });
-    buttonPanel.add(cancelButton);
-    JButton nowButton = new JButton(Messages.getString("DateTimeChooser.Now")); //$NON-NLS-1$
-    nowButton.addMouseListener(new MouseAdapter() {
-      @Override
-      public void mouseClicked(MouseEvent e) {
-        // set the date to 'now'
-        displayedDate.setTime(new Date());
-        timeModel.setValue(displayedDate.getTime());
+      public void mouseClicked(MouseEvent event) {
+        // go one year back
+        getDisplayedDate().set(Calendar.YEAR, getDisplayedDate().get(Calendar.YEAR) - 1);
         updateDateShown();
       }
     });
-    if (hasNowButton) {
-      buttonPanel.add(nowButton);
-    }
-    // add the buttonPanel at the bottom of the container
-    add(buttonPanel, BorderLayout.SOUTH);
+    // add as the first label in the panel
+    yearPanel.add(decrement);
+    // make the year label bold (the text won't be displayed)
+    yearLabel = new CalendarLabel("Year", true, false); //$NON-NLS-1$
+    // The year is always the selected one, so we highlight it
+    yearLabel.setHighlighted(true);
+    // add it to the right of the decrement button
+    yearPanel.add(yearLabel);
+    // make the increment label big and bold
+    CalendarLabel increment = new CalendarLabel("+", true, true); //$NON-NLS-1$
+    increment.setHorizontalAlignment(SwingConstants.LEFT);
+    increment.addMouseListener(new MouseAdapter() {
+      @Override
+      public void mouseClicked(MouseEvent event) {
+        // go one year forward
+        getDisplayedDate().set(Calendar.YEAR, getDisplayedDate().get(Calendar.YEAR) + 1);
+        updateDateShown();
+      }
+    });
+    // add to the right of the year label
+    yearPanel.add(increment);
   }
 
   /**
    * Return the n-th day of the week based on the correct first day of the week
-   * of a given calendar
+   * of a given calendar.
    * 
    * @param calendar
    *          The calendar used to determine the first day of the week (can be
@@ -381,34 +417,18 @@ public class DateTimeChooser extends JDialog {
    * @return The {@link Calendar} constant representing that day
    */
   private int getNthDayOfWeek(Calendar calendar, int n) {
-    int days[] = { Calendar.SUNDAY, Calendar.MONDAY, Calendar.TUESDAY,
+    int[] days = { Calendar.SUNDAY, Calendar.MONDAY, Calendar.TUESDAY,
         Calendar.WEDNESDAY, Calendar.THURSDAY, Calendar.FRIDAY,
         Calendar.SATURDAY, Calendar.SUNDAY, Calendar.MONDAY, Calendar.TUESDAY,
         Calendar.WEDNESDAY, Calendar.THURSDAY, Calendar.FRIDAY };
     int firstDayOfWeek = calendar == null ? Calendar.getInstance()
         .getFirstDayOfWeek() : calendar.getFirstDayOfWeek();
-    switch (firstDayOfWeek) {
-      case Calendar.SUNDAY:
-        return days[n - 1];
-      case Calendar.MONDAY:
-        return days[n];
-      case Calendar.TUESDAY:
-        return days[n + 1];
-      case Calendar.WEDNESDAY:
-        return days[n + 2];
-      case Calendar.THURSDAY:
-        return days[n + 3];
-      case Calendar.FRIDAY:
-        return days[n + 4];
-      case Calendar.SATURDAY:
-        return days[n + 5];
-    }
-    // some default
-    return n;
+    // both n and the first day of the week start at 1, so we need to subtract 2
+    return days[n + firstDayOfWeek - 2];
   }
 
   /**
-   * Determine how many days into the week a given day is
+   * Determine how many days into the week a given day is.
    * 
    * @param calendar
    *          Calendar used to determine the first day of the week - can be null
@@ -418,7 +438,7 @@ public class DateTimeChooser extends JDialog {
    *         this day
    */
   private int getDayOfWeek(Calendar calendar, int day) {
-    for (int n = 1; n <= 7; n++) {
+    for (int n = 1; n <= DAYS_IN_WEEK; n++) {
       if (getNthDayOfWeek(calendar, n) == day) {
         return n;
       }
@@ -427,7 +447,7 @@ public class DateTimeChooser extends JDialog {
   }
 
   /**
-   * Update the display to represent the selected date
+   * Update the display to represent the selected date.
    */
   public void updateDateShown() {
     if (displayedDate == null) {
@@ -436,7 +456,7 @@ public class DateTimeChooser extends JDialog {
     // Display the year
     yearLabel.setText(Integer.toString(displayedDate.get(Calendar.YEAR)));
     // highlight the correct month, don't highlight the others
-    for (int month = 0; month < 12; month++) {
+    for (int month = 0; month < MONTHS_IN_YEAR; month++) {
       if (month == displayedDate.get(Calendar.MONTH)) {
         monthLabels[month].setHighlighted(true);
       } else {
@@ -459,8 +479,8 @@ public class DateTimeChooser extends JDialog {
         .getActualMaximum(Calendar.DAY_OF_MONTH);
     // now we set up all the labels for the days in the month
     for (int day = 1; day <= actualDaysInMonth; day++) {
-      int row = (dayOfWeek + day - 2) / 7;
-      int column = (dayOfWeek + day - 2) % 7;
+      int row = (dayOfWeek + day - 2) / DAYS_IN_WEEK;
+      int column = (dayOfWeek + day - 2) % DAYS_IN_WEEK;
       dayLabels[row][column].setText(Integer.toString(day));
       // store the day number with the label
       // highlight the correct date, but not the others
@@ -472,9 +492,9 @@ public class DateTimeChooser extends JDialog {
       }
     }
     // clear the remaining labels
-    for (int position = dayOfWeek + actualDaysInMonth - 1; position < 6 * 7; position++) {
-      int row = position / 7;
-      int column = position % 7;
+    for (int position = dayOfWeek + actualDaysInMonth - 1; position < MAX_WEEKS_IN_MONTH * DAYS_IN_WEEK; position++) {
+      int row = position / DAYS_IN_WEEK;
+      int column = position % DAYS_IN_WEEK;
       dayLabels[row][column].setText(""); //$NON-NLS-1$
       // don't store a day number with this label
       dayLabels[row][column].setNumber(0);
@@ -483,7 +503,7 @@ public class DateTimeChooser extends JDialog {
 
   /**
    * Pop up the {@link DateTimeChooser} dialog initially displaying the given
-   * date. Named after the method in {@link JFileChooser}
+   * date. Named after the method in JFileChooser}
    * 
    * @param date
    *          The initial date
@@ -495,7 +515,7 @@ public class DateTimeChooser extends JDialog {
   }
 
   /**
-   * Pop up the {@link DateTimeChooser} dialog,.
+   * Pop up the {@link DateTimeChooser} dialog.
    * 
    * @return The selected date and time or null if none selected
    */
@@ -524,21 +544,21 @@ public class DateTimeChooser extends JDialog {
   }
 
   /**
-   * A custom label class that has a few extras
+   * A custom label class that has a few extras.
    * 
    * @author Andreas Schneider
    * 
    */
   @SuppressWarnings("serial")
   class CalendarLabel extends JLabel {
-    /** This represents the day, month or year displayed by the label */
+    /** This represents the day, month or year displayed by the label. */
     private int number;
 
-    /** The original default foreground colour of the label */
+    /** The original default foreground colour of the label. */
     private Color defaultForegroundColour;
 
     /**
-     * Create a new {@link CalendarLabel}
+     * Create a new {@link CalendarLabel}.
      * 
      * @param text
      *          The initial text for the label
@@ -553,13 +573,13 @@ public class DateTimeChooser extends JDialog {
       defaultForegroundColour = this.getForeground();
       if (big) {
         int size = this.getFont().getSize();
-        this.setFont(this.getFont().deriveFont((float) (size * 1.5)));
+        this.setFont(this.getFont().deriveFont((float) (size * (3.0 / 2.0))));
       }
       this.enableEvents(AWTEvent.MOUSE_EVENT_MASK);
     }
 
     /**
-     * Change the {@link Font} to one with the selected style
+     * Change the {@link Font} to one with the selected style.
      * 
      * @param style
      *          the Font style (e.g Font.PLAIN or Font.BOLD)
@@ -593,6 +613,34 @@ public class DateTimeChooser extends JDialog {
     public void setNumber(int number) {
       this.number = number;
     }
+  }
+
+  /**
+   * @return the displayedDate
+   */
+  Calendar getDisplayedDate() {
+    return displayedDate;
+  }
+
+  /**
+   * @return the currentZone
+   */
+  TimeZone getCurrentZone() {
+    return currentZone;
+  }
+
+  /**
+   * @param displayedDate the displayedDate to set
+   */
+  void setDisplayedDate(Calendar displayedDate) {
+    this.displayedDate = displayedDate;
+  }
+
+  /**
+   * @param currentZone the currentZone to set
+   */
+  void setCurrentZone(TimeZone currentZone) {
+    this.currentZone = currentZone;
   }
 
 }

@@ -62,8 +62,6 @@ import org.fibs.geotag.tasks.MatchImagesTask;
 import org.fibs.geotag.tasks.SelectLocationNameTask;
 import org.fibs.geotag.tasks.SetOffsetTask;
 import org.fibs.geotag.tasks.ThumbnailsTask;
-import org.fibs.geotag.tasks.UndoableBackgroundTask;
-import org.fibs.geotag.track.TrackMatcher;
 import org.fibs.geotag.track.TrackStore;
 import org.fibs.geotag.util.Airy;
 import org.fibs.geotag.util.Units;
@@ -73,7 +71,7 @@ import com.centerkey.utils.BareBonesBrowserLaunch;
 
 /**
  * A context menu for a image table row. All actions that can be undone should
- * be run as a {@link UndoableBackgroundTask}
+ * be run as a UndoableBackgroundTask
  * 
  * @author Andreas Schneider
  * 
@@ -81,295 +79,301 @@ import com.centerkey.utils.BareBonesBrowserLaunch;
 @SuppressWarnings("serial")
 public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
 
-  /** An ellipsis of three dots */
+  /** the default Google zoom level. */
+  private static final int DEFAULT_GOOGLE_ZOOM_LEVEL = 15;
+
+  /** An ellipsis of three dots. */
   private static final String ELLIPSIS = "..."; //$NON-NLS-1$
 
-  /** Text for sub menu */
+  /** Text for sub menu. */
   private static final String SHOW_ON_MAP = Messages
       .getString("ImagesTablePopupMenu.ShowOnMap"); //$NON-NLS-1$
 
-  /** Text for sub menu item */
+  /** Text for sub menu item. */
   private static final String SHOW_ON_MAP_WITH_DIRECTION = Messages
       .getString("ImagesTablePopupMenu.ShowOnMapWithDirection"); //$NON-NLS-1$
 
-  /** Text for menu item */
+  /** Text for menu item. */
   private static final String SHOW_THIS_IMAGE = Messages
       .getString("ImagesTablePopupMenu.ThisImage"); //$NON-NLS-1$
 
-  /** Text for menu item */
+  /** Text for menu item. */
   private static final String SHOW_SELECTED_IMAGES = Messages
       .getString("ImagesTablePopupMenu.SelectedImages"); //$NON-NLS-1$
 
-  /** Text for menu item */
+  /** Text for menu item. */
   private static final String SHOW_ALL_IMAGES = Messages
       .getString("ImagesTablePopupMenu.AllImages"); //$NON-NLS-1$
 
-  /** Text for sub menu */
+  /** Text for sub menu. */
   private static final String GOOGLEEARTH = Messages
       .getString("ImagesTablePopupMenu.GoogleEarth"); //$NON-NLS-1$
 
-  /** Text for menu item */
+  /** Text for menu item. */
   private static final String SHOW_IN_GOOGLEEARTH = Messages
       .getString("ImagesTablePopupMenu.ShowInGoogleEarth"); //$NON-NLS-1$
 
-  /** Text for menu item */
+  /** Text for menu item. */
   private static final String EXPORT_THIS = Messages
       .getString("ImagesTablePopupMenu.ExportThis"); //$NON-NLS-1$
 
-  /** Text for menu item */
+  /** Text for menu item. */
   private static final String EXPORT_SELECTED = Messages
       .getString("ImagesTablePopupMenu.ExportSelected"); //$NON-NLS-1$
 
-  /** Text for menu item */
+  /** Text for menu item. */
   private static final String EXPORT_ALL = Messages
       .getString("ImagesTablePopupMenu.ExportAll"); //$NON-NLS-1$
 
-  /** Text for menu item */
+  /** Text for menu item. */
   private static final String SELECT_CORRECT_TIME = Messages
       .getString("ImagesTablePopupMenu.SelectCorrectTimeForImage"); //$NON-NLS-1$
 
-  /** Text for sub menu */
+  /** Text for sub menu. */
   private static final String COPY_TIME_OFFSET = Messages
       .getString("ImagesTablePopupMenu.CopyTimeOffset"); //$NON-NLS-1$
 
-  /** Text for menu item */
+  /** Text for menu item. */
   private static final String COPY_TIME_OFFSET_SELECTED = Messages
       .getString("ImagesTablePopupMenu.CopyTimeOffsetToSelectedImages"); //$NON-NLS-1$
 
-  /** Text for menu item */
+  /** Text for menu item. */
   private static final String COPY_TIME_OFFSET_ALL = Messages
       .getString("ImagesTablePopupMenu.CopyTimeOffsetToAllImages"); //$NON-NLS-1$
 
-  /** Text for sub menu */
+  /** Text for sub menu. */
   private static final String MATCH_TRACKS = Messages
       .getString("ImagesTablePopupMenu.MatchTracks"); //$NON-NLS-1$
 
-  /** Text for menu item */
+  /** Text for menu item. */
   private static final String MATCH_TRACK_THIS = Messages
       .getString("ImagesTablePopupMenu.MatchTracksToThisImage"); //$NON-NLS-1$
 
-  /** Text for menu item */
+  /** Text for menu item. */
   private static final String MATCH_TRACK_SELECTED = Messages
       .getString("ImagesTablePopupMenu.MatchTracksToSelectedImages"); //$NON-NLS-1$
 
-  /** Text for menu item */
+  /** Text for menu item. */
   private static final String MATCH_TRACK_ALL = Messages
       .getString("ImagesTablePopupMenu.MatchTracksToAllImages"); //$NON-NLS-1$
 
-  /** Text for sub menu */
+  /** Text for sub menu. */
   private static final String COPY_LOCATION = Messages
       .getString("ImagesTablePopupMenu.CopyLocation"); //$NON-NLS-1$
 
-  /** Text for menu item */
+  /** Text for menu item. */
   private static final String COPY_LOCATION_PREVIOUS = Messages
       .getString("ImagesTablePopupMenu.CopyLocationToPrevious"); //$NON-NLS-1$
 
-  /** Text for menu item */
+  /** Text for menu item. */
   private static final String COPY_LOCATION_NEXT = Messages
       .getString("ImagesTablePopupMenu.CopyLocationToNext"); //$NON-NLS-1$
 
-  /** Text for menu item */
+  /** Text for menu item. */
   private static final String COPY_LOCATION_SELECTED = Messages
       .getString("ImagesTablePopupMenu.CopyLocationToSelected"); //$NON-NLS-1$
 
-  /** Text for menu item */
+  /** Text for menu item. */
   private static final String COPY_LOCATION_ALL = Messages
       .getString("ImagesTablePopupMenu.CopyLocationToAll"); //$NON-NLS-1$
 
-  /** Text for sub menu */
+  /** Text for sub menu. */
   private static final String FILL_GAPS = Messages
       .getString("ImagesTablePopupMenu.FillGaps"); //$NON-NLS-1$
 
-  /** Text for menu item */
+  /** Text for menu item. */
   private static final String FILL_THIS_GAP = Messages
       .getString("ImagesTablePopupMenu.FillThisGap"); //$NON-NLS-1$
 
-  /** Text for menu item */
+  /** Text for menu item. */
   private static final String FILL_SELECTED_GAPS = Messages
       .getString("ImagesTablePopupMenu.FillSelectedGaps"); //$NON-NLS-1$
 
-  /** Text for menu item */
+  /** Text for menu item. */
   private static final String FILL_ALL_GAPS = Messages
       .getString("ImagesTablePopupMenu.FillAllGaps"); //$NON-NLS-1$
 
-  /** Text fir sub menu */
+  /** Text fir sub menu. */
   private static final String LOCATION_NAMES = Messages
       .getString("ImagesTablePopupMenu.LocationNames"); //$NON-NLS-1$
 
-  /** Text for menu item */
+  /** Text for menu item. */
   private static final String LOCATION_NAME_THIS = Messages
       .getString("ImagesTablePopupMenu.LocationForThisImage"); //$NON-NLS-1$
 
-  /** Text for menu item */
+  /** Text for menu item. */
   private static final String LOCATION_NAMES_SELECTED = Messages
       .getString("ImagesTablePopupMenu.LocationForSelectedImages"); //$NON-NLS-1$
 
-  /** Text for menu item */
+  /** Text for menu item. */
   private static final String LOCATION_NAMES_ALL = Messages
       .getString("ImagesTablePopupMenu.LocationForAllImages"); //$NON-NLS-1$
 
-  /** Text for sub menu */
+  /** Text for sub menu. */
   private static final String LOCATION_NAMES_SELECT = Messages
       .getString("ImagesTablePopupMenu.SelectLocation"); //$NON-NLS-1$
 
-  /** Text for sun menu */
+  /** Text for sun menu. */
   private static final String COPY_LOCATION_NAME = Messages
       .getString("ImagesTablePopupMenu.CopyName"); //$NON-NLS-1$
 
-  /** Text for menu item */
+  /** Text for menu item. */
   private static final String COPY_LOCATION_NAME_PREVIOUS = Messages
       .getString("ImagesTablePopupMenu.CopyNamePrevious"); //$NON-NLS-1$
 
-  /** Text for menu item */
+  /** Text for menu item. */
   private static final String COPY_LOCATION_NAME_NEXT = Messages
       .getString("ImagesTablePopupMenu.CopyNameNext"); //$NON-NLS-1$
 
-  /** Text for menu item */
+  /** Text for menu item. */
   private static final String COPY_LOCATION_NAME_SELECTED = Messages
       .getString("ImagesTablePopupMenu.CopyNameSelected"); //$NON-NLS-1$
 
-  /** Text for menu item */
+  /** Text for menu item. */
   private static final String COPY_LOCATION_NAME_ALL = Messages
       .getString("ImagesTablePopupMenu.CopyNameAll"); //$NON-NLS-1$
 
-  /** Text for sub menu */
+  /** Text for sub menu. */
   private static final String SAVE_LOCATIONS = Messages
       .getString("ImagesTablePopupMenu.SaveNewLocations"); //$NON-NLS-1$
 
-  /** Text for menu item */
+  /** Text for menu item. */
   private static final String SAVE_THIS_LOCATION = Messages
       .getString("ImagesTablePopupMenu.SaveThisImage"); //$NON-NLS-1$
 
-  /** Text for menu item */
+  /** Text for menu item. */
   private static final String SAVE_SELECTED_LOCATIONS = Messages
       .getString("ImagesTablePopupMenu.SaveSelectedImages"); //$NON-NLS-1$
 
-  /** Text for menu item */
+  /** Text for menu item. */
   private static final String SAVE_ALL_LOCATIONS = Messages
       .getString("ImagesTablePopupMenu.SaveAllImages"); //$NON-NLS-1$
 
-  /** The parent JFrame */
-  JFrame parent;
+  /** The parent JFrame. */
+  private JFrame parentFrame;
 
-  /** The table displaying the image data */
-  ImagesTable imagesTable;
+  /** The table displaying the image data. */
+  private ImagesTable imagesTable;
 
-  /** the table model is needed here all time, so we keep a reference */
-  ImagesTableModel tableModel;
+  /** the table model is needed here all time, so we keep a reference. */
+  private ImagesTableModel tableModel;
 
   /**
    * An array containing the indices of selected row or an empty array if no
    * rows are selected.
    */
-  int[] selectedRows;
+  private int[] selectedRows;
 
-  /** The menu item used to show an image location on a map */
+  /** The menu item used to show an image location on a map. */
   private JMenuItem showOneOnMapItem;
 
-  /** The menu item used to show selected image locations on a map */
+  /** The menu item used to show selected image locations on a map. */
   private JMenuItem showSelectedOnMapItem;
 
-  /** The menu item used to show all image locations on a map */
+  /** The menu item used to show all image locations on a map. */
   private JMenuItem showAllOnMapItem;
 
-  /** The menu item used to show an image location and direction on a map */
+  /** The menu item used to show an image location and direction on a map. */
   private JMenuItem showOneOnMapWithDirectionItem;
 
-  /** The menu item used to show selected image locations and directions on a map */
+  /**
+   * The menu item used to show selected image locations and directions on a
+   * map.
+   */
   private JMenuItem showSelectedOnMapWithDirectionItem;
 
-  /** The menu item used to show all image locations and directions on a map */
+  /** The menu item used to show all image locations and directions on a map. */
   private JMenuItem showAllOnMapWithDirectionItem;
 
-  /** The menu item used to show an image location in Google Earth */
+  /** The menu item used to show an image location in Google Earth. */
   private JMenuItem showInGoogleEarthItem;
 
-  /** The menu item used to export a single image to a KML/KMZ file */
+  /** The menu item used to export a single image to a KML/KMZ file. */
   private JMenuItem exportOneImageToKmlItem;
 
-  /** The menu item used to export selected images to a KML/KMZ file */
+  /** The menu item used to export selected images to a KML/KMZ file. */
   private JMenuItem exportSelectedToKmlItem;
 
-  /** The menu item used to export all images with locations to a KML/KMZ file */
+  /** The menu item used to export all images with locations to a KML/KMZ file. */
   private JMenuItem exportAllToKmlItem;
 
-  /** The menu item used to select the correct GMT time for a picture */
+  /** The menu item used to select the correct GMT time for a picture. */
   private JMenuItem chooseTimeItem;
 
-  /** The menu item used to copy the offset to all pictures */
+  /** The menu item used to copy the offset to all pictures. */
   private JMenuItem copyOffsetToAllItem;
 
-  /** The menu item used to copy the offset to selected pictures */
+  /** The menu item used to copy the offset to selected pictures. */
   private JMenuItem copyOffsetToSelectedItem;
 
-  /** The menu item used to apply the track data to one image */
+  /** The menu item used to apply the track data to one image. */
   private JMenuItem matchTrackToOneImageItem;
 
-  /** The menu item used to apply the track data to selected images */
+  /** The menu item used to apply the track data to selected images. */
   private JMenuItem matchTrackToSelectedImagesItem;
 
-  /** The menu item used to apply the track data to all images */
+  /** The menu item used to apply the track data to all images. */
   private JMenuItem matchTrackToAllImagesItem;
 
-  /** The menu item used to copy the location to the previous image */
+  /** The menu item used to copy the location to the previous image. */
   private JMenuItem copyLocationToPreviousItem;
 
-  /** The menu item used to copy the location to the next image */
+  /** The menu item used to copy the location to the next image. */
   private JMenuItem copyLocationToNextItem;
 
-  /** The menu item used to copy the location to selected images */
+  /** The menu item used to copy the location to selected images. */
   private JMenuItem copyLocationToSelectedItem;
 
-  /** The menu item used to copy the location to all images */
+  /** The menu item used to copy the location to all images. */
   private JMenuItem copyLocationToAllItem;
 
-  /** The menu item used to fill a one image gap */
+  /** The menu item used to fill a one image gap. */
   private JMenuItem fillThisGapItem;
 
-  /** The menu item used to fill gaps in a selection */
+  /** The menu item used to fill gaps in a selection. */
   private JMenuItem fillGapsInSelectionItem;
 
-  /** The menu item used to fill all gaps */
+  /** The menu item used to fill all gaps. */
   private JMenuItem fillAllGapsItem;
 
-  /** The menu item used to find the location name for one image */
+  /** The menu item used to find the location name for one image. */
   private JMenuItem locationNameThisItem;
 
-  /** The menu item used to find the location names for a selection of images */
+  /** The menu item used to find the location names for a selection of images. */
   private JMenuItem locationNamesSelectedItem;
 
-  /** the menu item used to find the location names for all images */
+  /** the menu item used to find the location names for all images. */
   private JMenuItem locationNamesAllItem;
 
-  /** the menu item used to copy a location name to the previous image */
+  /** the menu item used to copy a location name to the previous image. */
   private JMenuItem copyLocationNamePreviousItem;
 
-  /** the menu item used to copy a location name to the next image */
+  /** the menu item used to copy a location name to the next image. */
   private JMenuItem copyLocationNameNextItem;
 
-  /** the menu item used to copy a location name to a selection of images */
+  /** the menu item used to copy a location name to a selection of images. */
   private JMenuItem copyLocationNameSelectedItem;
 
-  /** the menu item used to copy a location name to all images */
+  /** the menu item used to copy a location name to all images. */
   private JMenuItem copyLocationNameAllItem;
 
-  /** The menu item used to save the location of an image */
+  /** The menu item used to save the location of an image. */
   private JMenuItem saveOneLocationItem;
 
-  /** The menu item used to save new locations of selected images */
+  /** The menu item used to save new locations of selected images. */
   private JMenuItem saveSelectedLocationsItem;
 
-  /** The menu item used to save new locations for all images */
+  /** The menu item used to save new locations for all images. */
   private JMenuItem saveAllLocationsItem;
 
-  /** the {@link ImageInfo} for the image in the row of the table */
-  ImageInfo imageInfo;
+  /** the {@link ImageInfo} for the image in the row of the table. */
+  private ImageInfo imageInfo;
 
   /**
    * Create a {@link ImagesTablePopupMenu} for a given {@link ImagesTable} and
-   * row
+   * row.
    * 
-   * @param parent
+   * @param parentFrame
    *          The parent JFrame
    * @param imagesTable
    *          The {@link ImagesTable}
@@ -379,9 +383,9 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
    *          True if a background task is running (most menu items will be
    *          disabled)
    */
-  public ImagesTablePopupMenu(JFrame parent, ImagesTable imagesTable, int row,
-      boolean backgroundTask) {
-    this.parent = parent;
+  public ImagesTablePopupMenu(JFrame parentFrame, ImagesTable imagesTable,
+      int row, boolean backgroundTask) {
+    this.parentFrame = parentFrame;
     this.imagesTable = imagesTable;
     this.tableModel = (ImagesTableModel) imagesTable.getModel();
     // where are the tracks stored?
@@ -395,101 +399,20 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
 
     JMenuItem headerItem = new JMenuItem(imageInfo.getName());
     int fontSize = headerItem.getFont().getSize();
-    int fontStyle = headerItem.getFont().getStyle() + 10;
+    int fontStyle = headerItem.getFont().getStyle();
     Font font = new Font(headerItem.getFont().getName(), fontStyle, fontSize);
     headerItem.setFont(font);
     headerItem.setEnabled(false);
     add(headerItem);
     add(new JSeparator());
 
-    JMenu showOnMapMenu = new JMenu(SHOW_ON_MAP);
+    boolean enabled;
 
-    showOneOnMapItem = new JMenuItem(SHOW_THIS_IMAGE);
-    boolean enabled = true; // we can always do this safely
-    showOneOnMapItem.setEnabled(enabled);
-    showOneOnMapItem.addActionListener(this);
-    showOnMapMenu.add(showOneOnMapItem);
+    addShowOnMapMenu(backgroundTask);
 
-    showSelectedOnMapItem = new JMenuItem(SHOW_SELECTED_IMAGES);
-    enabled = !backgroundTask && (selectedRows.length > 0);
-    showSelectedOnMapItem.setEnabled(enabled);
-    showSelectedOnMapItem.addActionListener(this);
-    showOnMapMenu.add(showSelectedOnMapItem);
+    addShowOnMapWithDirectionMenu(backgroundTask);
 
-    showAllOnMapItem = new JMenuItem(SHOW_ALL_IMAGES);
-    enabled = !backgroundTask;
-    showAllOnMapItem.setEnabled(enabled);
-    showAllOnMapItem.addActionListener(this);
-    showOnMapMenu.add(showAllOnMapItem);
-
-    add(showOnMapMenu);
-
-    JMenu showOnMapWithDirectionMenu = new JMenu(SHOW_ON_MAP_WITH_DIRECTION);
-
-    showOneOnMapWithDirectionItem = new JMenuItem(SHOW_THIS_IMAGE);
-    enabled = true; // we can always do this safely
-    showOneOnMapWithDirectionItem.setEnabled(enabled);
-    showOneOnMapWithDirectionItem.addActionListener(this);
-    showOnMapWithDirectionMenu.add(showOneOnMapWithDirectionItem);
-
-    showSelectedOnMapWithDirectionItem = new JMenuItem(SHOW_SELECTED_IMAGES);
-    enabled = !backgroundTask && (selectedRows.length > 0);
-    showSelectedOnMapWithDirectionItem.setEnabled(enabled);
-    showSelectedOnMapWithDirectionItem.addActionListener(this);
-    showOnMapWithDirectionMenu.add(showSelectedOnMapWithDirectionItem);
-
-    showAllOnMapWithDirectionItem = new JMenuItem(SHOW_ALL_IMAGES);
-    enabled = !backgroundTask;
-    showAllOnMapWithDirectionItem.setEnabled(enabled);
-    showAllOnMapWithDirectionItem.addActionListener(this);
-    showOnMapWithDirectionMenu.add(showAllOnMapWithDirectionItem);
-
-    add(showOnMapWithDirectionMenu);
-
-    JMenu googleEarthMenu = new JMenu(GOOGLEEARTH);
-
-    showInGoogleEarthItem = new JMenuItem(SHOW_IN_GOOGLEEARTH);
-    enabled = true; // we can always do this safely
-    showInGoogleEarthItem.setEnabled(enabled);
-    showInGoogleEarthItem.addActionListener(this);
-    googleEarthMenu.add(showInGoogleEarthItem);
-
-    exportOneImageToKmlItem = new JMenuItem(EXPORT_THIS);
-    // enable if there is no background task this image has a location
-    enabled = !backgroundTask && imageInfo.hasLocation();
-    exportOneImageToKmlItem.setEnabled(enabled);
-    exportOneImageToKmlItem.addActionListener(this);
-    googleEarthMenu.add(exportOneImageToKmlItem);
-
-    exportSelectedToKmlItem = new JMenuItem(EXPORT_SELECTED);
-    // enable if there is no background task and there is a
-    // selection containing at least on image with location.
-    enabled = false;
-    for (int i = 0; i < selectedRows.length; i++) {
-      if (tableModel.getImageInfo(selectedRows[i]).hasLocation() == true) {
-        enabled = !backgroundTask;
-        break;
-      }
-    }
-    exportSelectedToKmlItem.setEnabled(enabled);
-    exportSelectedToKmlItem.addActionListener(this);
-    googleEarthMenu.add(exportSelectedToKmlItem);
-
-    exportAllToKmlItem = new JMenuItem(EXPORT_ALL);
-    // enable if there is no background task and there is at least one image
-    // that has a location
-    enabled = false;
-    for (int i = 0; i < tableModel.getRowCount(); i++) {
-      if (tableModel.getImageInfo(i).hasLocation() == true) {
-        enabled = !backgroundTask;
-        break;
-      }
-    }
-    exportAllToKmlItem.setEnabled(enabled);
-    exportAllToKmlItem.addActionListener(this);
-    googleEarthMenu.add(exportAllToKmlItem);
-
-    add(googleEarthMenu);
+    addGoogleEarthMenu(backgroundTask);
 
     chooseTimeItem = new JMenuItem(SELECT_CORRECT_TIME + ELLIPSIS);
     enabled = !backgroundTask; // only if no background task
@@ -499,152 +422,81 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
       add(chooseTimeItem);
     }
 
-    JMenu copyOffsetMenu = new JMenu(COPY_TIME_OFFSET);
-    boolean addMenu = false;
+    addCopyOffsetMenu(backgroundTask);
 
-    copyOffsetToSelectedItem = new JMenuItem(COPY_TIME_OFFSET_SELECTED);
-    // enable if there is no background task and there is a selection
-    enabled = !backgroundTask && selectedRows.length > 0;
-    addMenu |= enabled;
-    copyOffsetToSelectedItem.setEnabled(enabled);
-    copyOffsetToSelectedItem.addActionListener(this);
-    copyOffsetMenu.add(copyOffsetToSelectedItem);
+    addMatchTracksMenu(backgroundTask, trackStore);
 
-    copyOffsetToAllItem = new JMenuItem(COPY_TIME_OFFSET_ALL);
-    enabled = !backgroundTask;
-    addMenu |= enabled;
-    copyOffsetToAllItem.setEnabled(enabled);
-    copyOffsetToAllItem.addActionListener(this);
-    copyOffsetMenu.add(copyOffsetToAllItem);
+    addCopyLocationsMenu(row, backgroundTask);
 
-    if (addMenu) {
-      add(copyOffsetMenu);
-    }
+    addFillGapsMenu(backgroundTask, trackStore);
 
-    JMenu matchTracksMenu = new JMenu(MATCH_TRACKS);
+    addLocationNamesMenu(row, backgroundTask);
+
+    addSaveLocationsMenu(backgroundTask);
+  }
+
+  /**
+   * @param backgroundTask
+   */
+  private void addSaveLocationsMenu(boolean backgroundTask) {
+    boolean enabled;
+    boolean addMenu;
+    JMenu saveLocationsMenu = new JMenu(SAVE_LOCATIONS);
+    // enable if exiftool is available
+    saveLocationsMenu.setEnabled(Exiftool.isAvailable());
     addMenu = false;
 
-    matchTrackToOneImageItem = new JMenuItem(MATCH_TRACK_THIS);
-    // enable if there is no background task and tracks have been loaded
-    enabled = !backgroundTask && trackStore.hasTracks();
+    saveOneLocationItem = new JMenuItem(SAVE_THIS_LOCATION);
+    // enabled if there is no background task, the image has a location that's
+    // not coming from the image itself
+    enabled = !backgroundTask && imageInfo.hasNewLocation();
     addMenu |= enabled;
-    matchTrackToOneImageItem.setEnabled(enabled);
-    matchTrackToOneImageItem.addActionListener(this);
-    matchTracksMenu.add(matchTrackToOneImageItem);
+    saveOneLocationItem.setEnabled(enabled);
+    saveOneLocationItem.addActionListener(this);
+    saveLocationsMenu.add(saveOneLocationItem);
 
-    matchTrackToSelectedImagesItem = new JMenuItem(MATCH_TRACK_SELECTED);
-    // enable if there is no background task, there are tracks and a selection
-    enabled = !backgroundTask && trackStore.hasTracks()
-        && (selectedRows.length > 0);
-    addMenu |= enabled;
-    matchTrackToSelectedImagesItem.setEnabled(enabled);
-    matchTrackToSelectedImagesItem.addActionListener(this);
-    matchTracksMenu.add(matchTrackToSelectedImagesItem);
-
-    matchTrackToAllImagesItem = new JMenuItem(MATCH_TRACK_ALL);
-    // enable if there is no background task and there are tracks available
-    enabled = !backgroundTask && trackStore.hasTracks();
-    addMenu |= enabled;
-    matchTrackToAllImagesItem.setEnabled(enabled);
-    matchTrackToAllImagesItem.addActionListener(this);
-    matchTracksMenu.add(matchTrackToAllImagesItem);
-
-    if (addMenu) {
-      add(matchTracksMenu);
-    }
-
-    JMenu copyLocationMenu = new JMenu(COPY_LOCATION);
-    addMenu = false;
-
-    copyLocationToPreviousItem = new JMenuItem(COPY_LOCATION_PREVIOUS);
-    // Enable if there is no background task and this image has a location and
-    // is not the first image
-    enabled = !backgroundTask && imageInfo.hasLocation() && row > 0;
-    addMenu |= enabled;
-    copyLocationToPreviousItem.setEnabled(enabled);
-    copyLocationToPreviousItem.addActionListener(this);
-    copyLocationMenu.add(copyLocationToPreviousItem);
-
-    copyLocationToNextItem = new JMenuItem(COPY_LOCATION_NEXT);
-    // Enable if there is no background task and this image has a location and
-    // is not the last image
-    enabled = !backgroundTask && imageInfo.hasLocation()
-        && row < tableModel.getRowCount() - 1;
-    addMenu |= enabled;
-    copyLocationToNextItem.setEnabled(enabled);
-    copyLocationToNextItem.addActionListener(this);
-    copyLocationMenu.add(copyLocationToNextItem);
-
-    copyLocationToSelectedItem = new JMenuItem(COPY_LOCATION_SELECTED);
-    // Enable if there is no background task and this image has a location and
-    // there is a selection
-    enabled = !backgroundTask && imageInfo.hasLocation()
-        && selectedRows.length > 0;
-    addMenu |= enabled;
-    copyLocationToSelectedItem.setEnabled(enabled);
-    copyLocationToSelectedItem.addActionListener(this);
-    copyLocationMenu.add(copyLocationToSelectedItem);
-
-    copyLocationToAllItem = new JMenuItem(COPY_LOCATION_ALL);
-    // Enable if there is no background task and this image has a location
-    enabled = !backgroundTask && imageInfo.hasLocation();
-    addMenu |= enabled;
-    copyLocationToAllItem.setEnabled(enabled);
-    copyLocationToAllItem.addActionListener(this);
-    copyLocationMenu.add(copyLocationToAllItem);
-
-    if (addMenu) {
-      add(copyLocationMenu);
-    }
-
-    JMenu fillGapsMenu = new JMenu(FILL_GAPS);
-    addMenu = false;
-
-    fillThisGapItem = new JMenuItem(FILL_THIS_GAP);
-    // Enable if there is no background task, there is track data available and
-    // we don't have coordinates for this image yet.
-    enabled = !backgroundTask && trackStore.hasTracks()
-        && imageInfo.hasLocation() == false;
-    addMenu |= enabled;
-    fillThisGapItem.setEnabled(enabled);
-    fillThisGapItem.addActionListener(this);
-    fillGapsMenu.add(fillThisGapItem);
-
-    fillGapsInSelectionItem = new JMenuItem(FILL_SELECTED_GAPS);
-    // enable if there is no background task, there is a selection, we have
-    // tracks and there is at least one image in the selection with
-    // no coordinates
+    saveSelectedLocationsItem = new JMenuItem(SAVE_SELECTED_LOCATIONS);
+    // enable if there is no background task, there is a selection of images
+    // and at least one image in the selection has a new location
     enabled = false;
     for (int i = 0; i < selectedRows.length; i++) {
-      if (tableModel.getImageInfo(selectedRows[i]).hasLocation() == false) {
-        enabled = !backgroundTask && trackStore.hasTracks();
+      if (tableModel.getImageInfo(selectedRows[i]).hasNewLocation()) {
+        enabled = !backgroundTask;
         break;
       }
     }
     addMenu |= enabled;
-    fillGapsInSelectionItem.setEnabled(enabled);
-    fillGapsInSelectionItem.addActionListener(this);
-    fillGapsMenu.add(fillGapsInSelectionItem);
+    saveSelectedLocationsItem.setEnabled(enabled);
+    saveSelectedLocationsItem.addActionListener(this);
+    saveLocationsMenu.add(saveSelectedLocationsItem);
 
-    fillAllGapsItem = new JMenuItem(FILL_ALL_GAPS);
-    // enabled if there is no background task, we have track data and there
-    // is at least one image without coordinates
+    saveAllLocationsItem = new JMenuItem(SAVE_ALL_LOCATIONS);
+    // enable if there is no background task and there is at least one image
+    // that has a new location
     enabled = false;
     for (int i = 0; i < tableModel.getRowCount(); i++) {
-      if (tableModel.getImageInfo(i).hasLocation() == false) {
-        enabled = !backgroundTask && trackStore.hasTracks();
+      if (tableModel.getImageInfo(i).hasNewLocation()) {
+        enabled = !backgroundTask;
         break;
       }
     }
     addMenu |= enabled;
-    fillAllGapsItem.setEnabled(enabled);
-    fillAllGapsItem.addActionListener(this);
-    fillGapsMenu.add(fillAllGapsItem);
+    saveAllLocationsItem.setEnabled(enabled);
+    saveAllLocationsItem.addActionListener(this);
+    saveLocationsMenu.add(saveAllLocationsItem);
 
     if (addMenu) {
-      add(fillGapsMenu);
+      add(saveLocationsMenu);
     }
+  }
 
+  /**
+   * @param row
+   * @param backgroundTask
+   */
+  private void addLocationNamesMenu(int row, boolean backgroundTask) {
+    boolean enabled;
+    boolean addMenu;
     JMenu locationNamesMenu = new JMenu(LOCATION_NAMES);
     addMenu = false;
 
@@ -660,7 +512,7 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
     // and at least one image in the selection has a location
     enabled = false;
     for (int i = 0; i < selectedRows.length; i++) {
-      if (tableModel.getImageInfo(selectedRows[i]).hasLocation() == true) {
+      if (tableModel.getImageInfo(selectedRows[i]).hasLocation()) {
         enabled = !backgroundTask;
         break;
       }
@@ -675,7 +527,7 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
     // that has a location
     enabled = false;
     for (int i = 0; i < tableModel.getRowCount(); i++) {
-      if (tableModel.getImageInfo(i).hasLocation() == true) {
+      if (tableModel.getImageInfo(i).hasLocation()) {
         enabled = !backgroundTask;
         break;
       }
@@ -685,77 +537,7 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
     locationNamesAllItem.addActionListener(this);
     locationNamesMenu.add(locationNamesAllItem);
 
-    JMenu selectLocationMenu = new JMenu(LOCATION_NAMES_SELECT);
-    List<Location> nearbyLocations = imageInfo.getNearbyLocations();
-    if (nearbyLocations != null && nearbyLocations.size() > 0) {
-
-      for (Location location : nearbyLocations) {
-        final Location itemLocation = location;
-        StringBuilder locationText = new StringBuilder(location.getName());
-        if (location.getProvince() != null
-            && location.getProvince().length() > 0) {
-          locationText.append(", ").append(location.getProvince()); //$NON-NLS-1$
-        }
-        if (location.getCountryName() != null
-            && location.getCountryName().length() > 0) {
-          locationText.append(", ").append(location.getCountryName()); //$NON-NLS-1$
-        }
-        // TODO: This should probably show in meters/yards if small enough
-        DISTANCE distanceUnit = DISTANCE.values()[Settings.get(
-            SETTING.DISTANCE_UNIT, 0)];
-        locationText
-            .append(String
-                .format(
-                    " (%s - %.2f %s)", location.getFeatureName(), new Double(location.getDistance(distanceUnit)), Units.getAbbreviation(distanceUnit))); //$NON-NLS-1$
-        if (itemLocation.getAlternateNames() == null) {
-          // no alternate names - add name as menu item
-          JMenuItem selectLocationItem = new JMenuItem(locationText.toString(),
-              location.getIcon());
-          selectLocationItem.addActionListener(new LocationNameActionListener(
-              itemLocation.getName()) {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-              new SelectLocationNameTask(
-                  Messages.getString("ImagesTablePopupMenu.SelectLocationName"), tableModel, imageInfo, itemLocation, itemLocation.getName(), DATA_SOURCE.MANUAL).execute(); //$NON-NLS-1$
-            }
-          });
-          selectLocationMenu.add(selectLocationItem);
-        } else {
-          // alternate names available - add sub-menu
-          JMenu selectLocationNameMenu = new JMenu(locationText.toString());
-          // first add menu item for main name
-          // Don't specify icon, as Wikipedia entries have no alternate names
-          // (yet)
-          JMenuItem selectLocationItem = new JMenuItem(itemLocation.getName());
-          selectLocationItem.addActionListener(new LocationNameActionListener(
-              itemLocation.getName()) {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-              new SelectLocationNameTask(
-                  Messages.getString("ImagesTablePopupMenu.SelectLocationName"), tableModel, imageInfo, itemLocation, getName(), DATA_SOURCE.MANUAL).execute(); //$NON-NLS-1$
-            }
-          });
-          selectLocationNameMenu.add(selectLocationItem);
-          // then menu items for all alternate names
-          for (String alternateName : itemLocation.getAlternateNames()) {
-            selectLocationItem = new JMenuItem(alternateName);
-            selectLocationItem
-                .addActionListener(new LocationNameActionListener(alternateName) {
-                  @Override
-                  public void actionPerformed(ActionEvent e) {
-                    new SelectLocationNameTask(
-                        Messages
-                            .getString("ImagesTablePopupMenu.SelectLocationName"), tableModel, imageInfo, itemLocation, getName(), DATA_SOURCE.MANUAL).execute(); //$NON-NLS-1$
-                  }
-                });
-            selectLocationNameMenu.add(selectLocationItem);
-          }
-          selectLocationMenu.add(selectLocationNameMenu);
-        }
-
-      }
-      locationNamesMenu.add(selectLocationMenu);
-    }
+    addSelectLocationsMenu(locationNamesMenu);
 
     JMenu copyLocationNameMenu = new JMenu(COPY_LOCATION_NAME);
     boolean addSubMenu = false;
@@ -807,54 +589,371 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
     if (addMenu) {
       add(locationNamesMenu);
     }
+  }
 
-    JMenu saveLocationsMenu = new JMenu(SAVE_LOCATIONS);
-    // enable if exiftool is available
-    saveLocationsMenu.setEnabled(Exiftool.isAvailable());
+  /**
+   * @param locationNamesMenu
+   */
+  private void addSelectLocationsMenu(JMenu locationNamesMenu) {
+    JMenu selectLocationMenu = new JMenu(LOCATION_NAMES_SELECT);
+    List<Location> nearbyLocations = imageInfo.getNearbyLocations();
+    if (nearbyLocations != null && nearbyLocations.size() > 0) {
+
+      for (Location location : nearbyLocations) {
+        final Location itemLocation = location;
+        StringBuilder locationText = new StringBuilder(location.getName());
+        if (location.getProvince() != null
+            && location.getProvince().length() > 0) {
+          locationText.append(", ").append(location.getProvince()); //$NON-NLS-1$
+        }
+        if (location.getCountryName() != null
+            && location.getCountryName().length() > 0) {
+          locationText.append(", ").append(location.getCountryName()); //$NON-NLS-1$
+        }
+        // TODO: This should probably show in meters/yards if small enough
+        DISTANCE distanceUnit = DISTANCE.values()[Settings.get(
+            SETTING.DISTANCE_UNIT, 0)];
+        locationText.append(" ("); //$NON-NLS-1$
+        if (location.getFeatureName() != null) {
+          locationText.append(location.getFeatureName());
+          locationText.append(" - "); //$NON-NLS-1$
+        }
+        locationText.append(String.format("%.2f %s)", new Double(location //$NON-NLS-1$
+            .getDistance(distanceUnit)), Units.getAbbreviation(distanceUnit)));
+        if (itemLocation.getAlternateNames() == null) {
+          // no alternate names - add name as menu item
+          JMenuItem selectLocationItem = new JMenuItem(locationText.toString(),
+              location.getIcon());
+          selectLocationItem.addActionListener(new LocationNameActionListener(
+              itemLocation.getName()) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+              new SelectLocationNameTask(Messages
+                  .getString("ImagesTablePopupMenu.SelectLocationName"), //$NON-NLS-1$
+                  getTableModel(), getImageInfo(), itemLocation, itemLocation
+                      .getName(), DATA_SOURCE.MANUAL).execute();
+            }
+          });
+          selectLocationMenu.add(selectLocationItem);
+        } else {
+          // alternate names available - add sub-menu
+          JMenu selectLocationNameMenu = new JMenu(locationText.toString());
+          // first add menu item for main name
+          // Don't specify icon, as Wikipedia entries have no alternate names
+          // (yet)
+          JMenuItem selectLocationItem = new JMenuItem(itemLocation.getName());
+          selectLocationItem.addActionListener(new LocationNameActionListener(
+              itemLocation.getName()) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+              new SelectLocationNameTask(
+                  Messages.getString("ImagesTablePopupMenu.SelectLocationName"), //$NON-NLS-1$
+                  getTableModel(), getImageInfo(), itemLocation, getName(),
+                  DATA_SOURCE.MANUAL).execute();
+            }
+          });
+          selectLocationNameMenu.add(selectLocationItem);
+          // then menu items for all alternate names
+          for (String alternateName : itemLocation.getAlternateNames()) {
+            selectLocationItem = new JMenuItem(alternateName);
+            selectLocationItem
+                .addActionListener(new LocationNameActionListener(alternateName) {
+                  @Override
+                  public void actionPerformed(ActionEvent e) {
+                    new SelectLocationNameTask(
+                        Messages
+                            .getString("ImagesTablePopupMenu.SelectLocationName"), //$NON-NLS-1$
+                        getTableModel(), getImageInfo(), itemLocation,
+                        getName(), DATA_SOURCE.MANUAL).execute();
+                  }
+                });
+            selectLocationNameMenu.add(selectLocationItem);
+          }
+          selectLocationMenu.add(selectLocationNameMenu);
+        }
+
+      }
+      locationNamesMenu.add(selectLocationMenu);
+    }
+  }
+
+  /**
+   * @param backgroundTask
+   * @param trackStore
+   */
+  private void addFillGapsMenu(boolean backgroundTask, TrackStore trackStore) {
+    boolean enabled;
+    boolean addMenu;
+    JMenu fillGapsMenu = new JMenu(FILL_GAPS);
     addMenu = false;
 
-    saveOneLocationItem = new JMenuItem(SAVE_THIS_LOCATION);
-    // enabled if there is no background task, the image has a location that's
-    // not coming from the image itself
-    enabled = !backgroundTask && imageInfo.hasNewLocation();
+    fillThisGapItem = new JMenuItem(FILL_THIS_GAP);
+    // Enable if there is no background task, there is track data available and
+    // we don't have coordinates for this image yet.
+    enabled = !backgroundTask && trackStore.hasTracks()
+        && !imageInfo.hasLocation();
     addMenu |= enabled;
-    saveOneLocationItem.setEnabled(enabled);
-    saveOneLocationItem.addActionListener(this);
-    saveLocationsMenu.add(saveOneLocationItem);
+    fillThisGapItem.setEnabled(enabled);
+    fillThisGapItem.addActionListener(this);
+    fillGapsMenu.add(fillThisGapItem);
 
-    saveSelectedLocationsItem = new JMenuItem(SAVE_SELECTED_LOCATIONS);
-    // enable if there is no background task, there is a selection of images
-    // and at least one image in the selection has a new location
+    fillGapsInSelectionItem = new JMenuItem(FILL_SELECTED_GAPS);
+    // enable if there is no background task, there is a selection, we have
+    // tracks and there is at least one image in the selection with
+    // no coordinates
     enabled = false;
     for (int i = 0; i < selectedRows.length; i++) {
-      if (tableModel.getImageInfo(selectedRows[i]).hasNewLocation() == true) {
-        enabled = !backgroundTask;
+      if (!tableModel.getImageInfo(selectedRows[i]).hasLocation()) {
+        enabled = !backgroundTask && trackStore.hasTracks();
         break;
       }
     }
     addMenu |= enabled;
-    saveSelectedLocationsItem.setEnabled(enabled);
-    saveSelectedLocationsItem.addActionListener(this);
-    saveLocationsMenu.add(saveSelectedLocationsItem);
+    fillGapsInSelectionItem.setEnabled(enabled);
+    fillGapsInSelectionItem.addActionListener(this);
+    fillGapsMenu.add(fillGapsInSelectionItem);
 
-    saveAllLocationsItem = new JMenuItem(SAVE_ALL_LOCATIONS);
-    // enable if there is no background task and there is at least one image
-    // that has a new location
+    fillAllGapsItem = new JMenuItem(FILL_ALL_GAPS);
+    // enabled if there is no background task, we have track data and there
+    // is at least one image without coordinates
     enabled = false;
     for (int i = 0; i < tableModel.getRowCount(); i++) {
-      if (tableModel.getImageInfo(i).hasNewLocation() == true) {
-        enabled = !backgroundTask;
+      if (!tableModel.getImageInfo(i).hasLocation()) {
+        enabled = !backgroundTask && trackStore.hasTracks();
         break;
       }
     }
     addMenu |= enabled;
-    saveAllLocationsItem.setEnabled(enabled);
-    saveAllLocationsItem.addActionListener(this);
-    saveLocationsMenu.add(saveAllLocationsItem);
+    fillAllGapsItem.setEnabled(enabled);
+    fillAllGapsItem.addActionListener(this);
+    fillGapsMenu.add(fillAllGapsItem);
 
     if (addMenu) {
-      add(saveLocationsMenu);
+      add(fillGapsMenu);
     }
+  }
+
+  /**
+   * @param row
+   * @param backgroundTask
+   */
+  private void addCopyLocationsMenu(int row, boolean backgroundTask) {
+    boolean enabled;
+    boolean addMenu;
+    JMenu copyLocationMenu = new JMenu(COPY_LOCATION);
+    addMenu = false;
+
+    copyLocationToPreviousItem = new JMenuItem(COPY_LOCATION_PREVIOUS);
+    // Enable if there is no background task and this image has a location and
+    // is not the first image
+    enabled = !backgroundTask && imageInfo.hasLocation() && row > 0;
+    addMenu |= enabled;
+    copyLocationToPreviousItem.setEnabled(enabled);
+    copyLocationToPreviousItem.addActionListener(this);
+    copyLocationMenu.add(copyLocationToPreviousItem);
+
+    copyLocationToNextItem = new JMenuItem(COPY_LOCATION_NEXT);
+    // Enable if there is no background task and this image has a location and
+    // is not the last image
+    enabled = !backgroundTask && imageInfo.hasLocation()
+        && row < tableModel.getRowCount() - 1;
+    addMenu |= enabled;
+    copyLocationToNextItem.setEnabled(enabled);
+    copyLocationToNextItem.addActionListener(this);
+    copyLocationMenu.add(copyLocationToNextItem);
+
+    copyLocationToSelectedItem = new JMenuItem(COPY_LOCATION_SELECTED);
+    // Enable if there is no background task and this image has a location and
+    // there is a selection
+    enabled = !backgroundTask && imageInfo.hasLocation()
+        && selectedRows.length > 0;
+    addMenu |= enabled;
+    copyLocationToSelectedItem.setEnabled(enabled);
+    copyLocationToSelectedItem.addActionListener(this);
+    copyLocationMenu.add(copyLocationToSelectedItem);
+
+    copyLocationToAllItem = new JMenuItem(COPY_LOCATION_ALL);
+    // Enable if there is no background task and this image has a location
+    enabled = !backgroundTask && imageInfo.hasLocation();
+    addMenu |= enabled;
+    copyLocationToAllItem.setEnabled(enabled);
+    copyLocationToAllItem.addActionListener(this);
+    copyLocationMenu.add(copyLocationToAllItem);
+
+    if (addMenu) {
+      add(copyLocationMenu);
+    }
+  }
+
+  /**
+   * @param backgroundTask
+   * @param trackStore
+   */
+  private void addMatchTracksMenu(boolean backgroundTask, TrackStore trackStore) {
+    boolean enabled;
+    boolean addMenu;
+    JMenu matchTracksMenu = new JMenu(MATCH_TRACKS);
+    addMenu = false;
+
+    matchTrackToOneImageItem = new JMenuItem(MATCH_TRACK_THIS);
+    // enable if there is no background task and tracks have been loaded
+    enabled = !backgroundTask && trackStore.hasTracks();
+    addMenu |= enabled;
+    matchTrackToOneImageItem.setEnabled(enabled);
+    matchTrackToOneImageItem.addActionListener(this);
+    matchTracksMenu.add(matchTrackToOneImageItem);
+
+    matchTrackToSelectedImagesItem = new JMenuItem(MATCH_TRACK_SELECTED);
+    // enable if there is no background task, there are tracks and a selection
+    enabled = !backgroundTask && trackStore.hasTracks()
+        && (selectedRows.length > 0);
+    addMenu |= enabled;
+    matchTrackToSelectedImagesItem.setEnabled(enabled);
+    matchTrackToSelectedImagesItem.addActionListener(this);
+    matchTracksMenu.add(matchTrackToSelectedImagesItem);
+
+    matchTrackToAllImagesItem = new JMenuItem(MATCH_TRACK_ALL);
+    // enable if there is no background task and there are tracks available
+    enabled = !backgroundTask && trackStore.hasTracks();
+    addMenu |= enabled;
+    matchTrackToAllImagesItem.setEnabled(enabled);
+    matchTrackToAllImagesItem.addActionListener(this);
+    matchTracksMenu.add(matchTrackToAllImagesItem);
+
+    if (addMenu) {
+      add(matchTracksMenu);
+    }
+  }
+
+  /**
+   * @param backgroundTask
+   */
+  private void addCopyOffsetMenu(boolean backgroundTask) {
+    boolean enabled;
+    JMenu copyOffsetMenu = new JMenu(COPY_TIME_OFFSET);
+    boolean addMenu = false;
+
+    copyOffsetToSelectedItem = new JMenuItem(COPY_TIME_OFFSET_SELECTED);
+    // enable if there is no background task and there is a selection
+    enabled = !backgroundTask && selectedRows.length > 0;
+    addMenu |= enabled;
+    copyOffsetToSelectedItem.setEnabled(enabled);
+    copyOffsetToSelectedItem.addActionListener(this);
+    copyOffsetMenu.add(copyOffsetToSelectedItem);
+
+    copyOffsetToAllItem = new JMenuItem(COPY_TIME_OFFSET_ALL);
+    enabled = !backgroundTask;
+    addMenu |= enabled;
+    copyOffsetToAllItem.setEnabled(enabled);
+    copyOffsetToAllItem.addActionListener(this);
+    copyOffsetMenu.add(copyOffsetToAllItem);
+
+    if (addMenu) {
+      add(copyOffsetMenu);
+    }
+  }
+
+  /**
+   * @param backgroundTask
+   */
+  private void addGoogleEarthMenu(boolean backgroundTask) {
+    boolean enabled;
+    JMenu googleEarthMenu = new JMenu(GOOGLEEARTH);
+
+    showInGoogleEarthItem = new JMenuItem(SHOW_IN_GOOGLEEARTH);
+    enabled = true; // we can always do this safely
+    showInGoogleEarthItem.setEnabled(enabled);
+    showInGoogleEarthItem.addActionListener(this);
+    googleEarthMenu.add(showInGoogleEarthItem);
+
+    exportOneImageToKmlItem = new JMenuItem(EXPORT_THIS);
+    // enable if there is no background task this image has a location
+    enabled = !backgroundTask && imageInfo.hasLocation();
+    exportOneImageToKmlItem.setEnabled(enabled);
+    exportOneImageToKmlItem.addActionListener(this);
+    googleEarthMenu.add(exportOneImageToKmlItem);
+
+    exportSelectedToKmlItem = new JMenuItem(EXPORT_SELECTED);
+    // enable if there is no background task and there is a
+    // selection containing at least on image with location.
+    enabled = false;
+    for (int i = 0; i < selectedRows.length; i++) {
+      if (tableModel.getImageInfo(selectedRows[i]).hasLocation()) {
+        enabled = !backgroundTask;
+        break;
+      }
+    }
+    exportSelectedToKmlItem.setEnabled(enabled);
+    exportSelectedToKmlItem.addActionListener(this);
+    googleEarthMenu.add(exportSelectedToKmlItem);
+
+    exportAllToKmlItem = new JMenuItem(EXPORT_ALL);
+    // enable if there is no background task and there is at least one image
+    // that has a location
+    enabled = false;
+    for (int i = 0; i < tableModel.getRowCount(); i++) {
+      if (tableModel.getImageInfo(i).hasLocation()) {
+        enabled = !backgroundTask;
+        break;
+      }
+    }
+    exportAllToKmlItem.setEnabled(enabled);
+    exportAllToKmlItem.addActionListener(this);
+    googleEarthMenu.add(exportAllToKmlItem);
+    add(googleEarthMenu);
+  }
+
+  /**
+   * @param backgroundTask
+   */
+  private void addShowOnMapWithDirectionMenu(boolean backgroundTask) {
+    boolean enabled;
+    JMenu showOnMapWithDirectionMenu = new JMenu(SHOW_ON_MAP_WITH_DIRECTION);
+
+    showOneOnMapWithDirectionItem = new JMenuItem(SHOW_THIS_IMAGE);
+    enabled = true; // we can always do this safely
+    showOneOnMapWithDirectionItem.setEnabled(enabled);
+    showOneOnMapWithDirectionItem.addActionListener(this);
+    showOnMapWithDirectionMenu.add(showOneOnMapWithDirectionItem);
+
+    showSelectedOnMapWithDirectionItem = new JMenuItem(SHOW_SELECTED_IMAGES);
+    enabled = !backgroundTask && (selectedRows.length > 0);
+    showSelectedOnMapWithDirectionItem.setEnabled(enabled);
+    showSelectedOnMapWithDirectionItem.addActionListener(this);
+    showOnMapWithDirectionMenu.add(showSelectedOnMapWithDirectionItem);
+
+    showAllOnMapWithDirectionItem = new JMenuItem(SHOW_ALL_IMAGES);
+    enabled = !backgroundTask;
+    showAllOnMapWithDirectionItem.setEnabled(enabled);
+    showAllOnMapWithDirectionItem.addActionListener(this);
+    showOnMapWithDirectionMenu.add(showAllOnMapWithDirectionItem);
+    add(showOnMapWithDirectionMenu);
+  }
+
+  /**
+   * @param backgroundTask
+   */
+  private void addShowOnMapMenu(boolean backgroundTask) {
+    JMenu showOnMapMenu = new JMenu(SHOW_ON_MAP);
+
+    showOneOnMapItem = new JMenuItem(SHOW_THIS_IMAGE);
+    boolean enabled = true; // we can always do this safely
+    showOneOnMapItem.setEnabled(enabled);
+    showOneOnMapItem.addActionListener(this);
+    showOnMapMenu.add(showOneOnMapItem);
+
+    showSelectedOnMapItem = new JMenuItem(SHOW_SELECTED_IMAGES);
+    enabled = !backgroundTask && (selectedRows.length > 0);
+    showSelectedOnMapItem.setEnabled(enabled);
+    showSelectedOnMapItem.addActionListener(this);
+    showOnMapMenu.add(showSelectedOnMapItem);
+
+    showAllOnMapItem = new JMenuItem(SHOW_ALL_IMAGES);
+    enabled = !backgroundTask;
+    showAllOnMapItem.setEnabled(enabled);
+    showAllOnMapItem.addActionListener(this);
+    showOnMapMenu.add(showAllOnMapItem);
+    add(showOnMapMenu);
   }
 
   /**
@@ -934,7 +1033,7 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
   }
 
   /**
-   * Open a web browser and show the image location on a map
+   * Open a web browser and show the image location on a map.
    * 
    * @param showDirection
    *          If the image direction should be shown as well
@@ -946,7 +1045,7 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
   }
 
   /**
-   * Open a web browser and show selected image locations on a map
+   * Open a web browser and show selected image locations on a map.
    * 
    * @param showDirection
    *          If the image direction should be shown as well
@@ -960,7 +1059,7 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
   }
 
   /**
-   * Open a web browser and show all image locations on a map
+   * Open a web browser and show all image locations on a map.
    * 
    * @param showDirection
    *          If the image direction should be shown as well
@@ -1004,7 +1103,7 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
   }
 
   /**
-   * Show locations for a list of images on a map
+   * Show locations for a list of images on a map.
    * 
    * @param images
    * @param showDirection
@@ -1015,49 +1114,51 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
     // between the Airy and WGS84 geoids :-)
     String latitude = Double.toString(Airy.LATITUDE);
     String longitude = Double.toString(Airy.LONGITUDE);
-    int zoomLevel = 5;
+    final int defaultZoomLevel = 5;
+    int zoomLevel = defaultZoomLevel;
     // see if we can find a better default in the settings
     // use the last position set via Google maps
     latitude = Settings.get(SETTING.LAST_GOOGLE_MAPS_LATITUDE, latitude);
     longitude = Settings.get(SETTING.LAST_GOOGLE_MAPS_LONGITUDE, longitude);
     zoomLevel = Settings.get(SETTING.LAST_GOOGLE_MAPS_ZOOM_LEVEL, zoomLevel);
     // and zoom a bit out
-    if (zoomLevel > 6) {
+    if (zoomLevel > defaultZoomLevel + 1) {
       zoomLevel -= 2;
     }
     // a better choice is a location we actually find for one of the images
     for (ImageInfo image : images) {
-      if (image.getGPSLatitude() != null && image.getGPSLongitude() != null) {
-        latitude = image.getGPSLatitude();
-        longitude = image.getGPSLongitude();
-        zoomLevel = Settings.get(SETTING.LAST_GOOGLE_MAPS_ZOOM_LEVEL, 15);
+      if (image.getGpsLatitude() != null && image.getGpsLongitude() != null) {
+        latitude = image.getGpsLatitude();
+        longitude = image.getGpsLongitude();
+        zoomLevel = Settings.get(SETTING.LAST_GOOGLE_MAPS_ZOOM_LEVEL,
+            DEFAULT_GOOGLE_ZOOM_LEVEL);
         break;
       }
     }
-    String URL = "http://localhost:4321/map/map.html?" + //$NON-NLS-1$
+    String url = "http://localhost:4321/map/map.html?" + //$NON-NLS-1$
         "latitude=" //$NON-NLS-1$
         + latitude + "&longitude=" //$NON-NLS-1$
         + longitude + "&direction=" //$NON-NLS-1$
         + showDirection + "&zoom=" //$NON-NLS-1$
         + zoomLevel + "&images="; //$NON-NLS-1$
     for (int index = 0; index < images.size(); index++) {
-      URL += (index == 0 ? "" : "_") + images.get(index).getSequenceNumber(); //$NON-NLS-1$ //$NON-NLS-2$
+      url += (index == 0 ? "" : "_") + images.get(index).getSequenceNumber(); //$NON-NLS-1$ //$NON-NLS-2$
     }
-    URL += "&language=" //$NON-NLS-1$
+    url += "&language=" //$NON-NLS-1$
         + Locale.getDefault().getLanguage() + "&maptype=" //$NON-NLS-1$
         + Settings.get(SETTING.LAST_GOOGLE_MAPS_MAP_TYPE, "Hybrid"); //$NON-NLS-1$
-    URL += "&menuopen=" + Settings.get(SETTING.GOOGLE_MAPS_MENU_OPEN, true); //$NON-NLS-1$
-    URL += "&wheelzoom=" + Settings.get(SETTING.GOOGLE_MAPS_MOUSE_WHEEL_ZOOM, false); //$NON-NLS-1$
-    URL += "&showtracks=" + Settings.get(SETTING.GOOGLE_MAP_SHOW_TRACKS, false); //$NON-NLS-1$
-    URL += "&wikipedia=" + Settings.get(SETTING.GOOGLE_MAP_SHOW_WIKIPEDIA, false); //$NON-NLS-1$
+    url += "&menuopen=" + Settings.get(SETTING.GOOGLE_MAPS_MENU_OPEN, true); //$NON-NLS-1$
+    url += "&wheelzoom=" + Settings.get(SETTING.GOOGLE_MAPS_MOUSE_WHEEL_ZOOM, false); //$NON-NLS-1$
+    url += "&showtracks=" + Settings.get(SETTING.GOOGLE_MAP_SHOW_TRACKS, false); //$NON-NLS-1$
+    url += "&wikipedia=" + Settings.get(SETTING.GOOGLE_MAP_SHOW_WIKIPEDIA, false); //$NON-NLS-1$
     // execute the command
-    System.out.println(URL);
-    BareBonesBrowserLaunch.openURL(Settings.get(SETTING.BROWSER, null), URL
+    System.out.println(url);
+    BareBonesBrowserLaunch.openURL(Settings.get(SETTING.BROWSER, null), url
         .toString());
   }
 
   /**
-   * Launch Google Earth to show the location
+   * Launch Google Earth to show the location.
    */
   private void showInGoogleEarth() {
     // make sure there is a thumbnail - this won't create the
@@ -1065,14 +1166,14 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
     ThumbnailWorker worker = new ThumbnailWorker(imageInfo) {
       @Override
       protected void done() {
-        GoogleEarthLauncher.launch(imageInfo);
+        GoogleEarthLauncher.launch(getImageInfo());
       }
     };
     worker.execute();
   }
 
   /**
-   * Export a single image to a KML/KMZ file
+   * Export a single image to a KML/KMZ file.
    */
   private void exportOneToKml() {
     List<ImageInfo> images = new ArrayList<ImageInfo>();
@@ -1081,13 +1182,13 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
   }
 
   /**
-   * Export images with locations from a selection to a KML/KMZ file
+   * Export images with locations from a selection to a KML/KMZ file.
    */
   private void exportSelectedToKml() {
     List<ImageInfo> images = new ArrayList<ImageInfo>();
     for (int index = 0; index < selectedRows.length; index++) {
       ImageInfo candidate = tableModel.getImageInfo(selectedRows[index]);
-      if (candidate.hasLocation() == true) {
+      if (candidate.hasLocation()) {
         images.add(candidate);
       }
     }
@@ -1095,13 +1196,13 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
   }
 
   /**
-   * Export all images with a location to a KML/KMZ file
+   * Export all images with a location to a KML/KMZ file.
    */
   private void exportAllToKml() {
     List<ImageInfo> images = new ArrayList<ImageInfo>();
     for (int i = 0; i < tableModel.getRowCount(); i++) {
       ImageInfo candidate = tableModel.getImageInfo(i);
-      if (candidate.hasLocation() == true) {
+      if (candidate.hasLocation()) {
         images.add(candidate);
       }
     }
@@ -1109,7 +1210,7 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
   }
 
   /**
-   * Export a list of images to a KML/KMZ file
+   * Export a list of images to a KML/KMZ file.
    * 
    * @param images
    */
@@ -1126,7 +1227,7 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
     chooser.setFileFilter(fileFilter);
     chooser.setMultiSelectionEnabled(false);
 
-    if (chooser.showSaveDialog(parent) == JFileChooser.APPROVE_OPTION) {
+    if (chooser.showSaveDialog(parentFrame) == JFileChooser.APPROVE_OPTION) {
       try {
         File outputFile = chooser.getSelectedFile();
         if (!fileFilter.accept(outputFile)) {
@@ -1139,14 +1240,14 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
           String message = String
               .format(
                   Messages.getString("MainWindow.OverwriteFileFormat"), outputFile.getName()); //$NON-NLS-1$
-          if (JOptionPane.showConfirmDialog(parent, message, title,
+          if (JOptionPane.showConfirmDialog(parentFrame, message, title,
               JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.NO_OPTION) {
             return;
           }
         }
         // do we need to create thumbnail images?
         if (GoogleearthFileFilter.isKmzFile(outputFile)
-            && Settings.get(SETTING.KMZ_STORE_THUMBNAILS, false) == true) {
+            && Settings.get(SETTING.KMZ_STORE_THUMBNAILS, false)) {
           // the output file is kmz and we need to store thumbnails
           // use a ThumbnailsTask and generate KML/KMZ when done
           final File file = outputFile;
@@ -1168,7 +1269,7 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
   }
 
   /**
-   * Finally - export images to a file
+   * Finally - export images to a file.
    * 
    * @param images
    * @param file
@@ -1180,7 +1281,7 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
   }
 
   /**
-   * select the exact time the image was taken
+   * select the exact time the image was taken.
    */
   private void chooseTime() {
     // This will allow us to calculate an offset to GMT
@@ -1191,7 +1292,7 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
       Calendar createCalendar = Calendar.getInstance();
       createCalendar.setTime(cameraDate);
       DateTimeChooser chooser = new DateTimeChooser(
-          parent,
+          parentFrame,
           Messages.getString("ImagesTablePopupMenu.SelectDateAndTime"), createCalendar, false); //$NON-NLS-1$
       Calendar chosenDate = chooser.openChooser();
       if (chosenDate != null) {
@@ -1209,12 +1310,12 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
             super.done();
             String message = Messages
                 .getString("ImagesTablePopupMenu.UseTimeDifferenceforAll"); //$NON-NLS-1$
-            if (JOptionPane.showConfirmDialog(parent, message, ImageInfo
-                .getOffsetString(offset), JOptionPane.YES_NO_OPTION,
+            if (JOptionPane.showConfirmDialog(getParentFrame(), message,
+                ImageInfo.getOffsetString(offset), JOptionPane.YES_NO_OPTION,
                 JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
               copyOffsetToAll();
             }
-            tableModel.sortRows();
+            getTableModel().sortRows();
           }
 
         };
@@ -1226,7 +1327,7 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
   }
 
   /**
-   * Copy the offset of the current picture to all other pictures
+   * Copy the offset of the current picture to all other pictures.
    */
   void copyOffsetToAll() {
     int offset = imageInfo.getOffset();
@@ -1240,7 +1341,7 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
   }
 
   /**
-   * Copy the offset to the selected pictures
+   * Copy the offset to the selected pictures.
    */
   private void copyOffsetToSelected() {
     int offset = imageInfo.getOffset();
@@ -1254,7 +1355,7 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
   }
 
   /**
-   * Use the {@link TrackMatcher} to find coordinates for one image
+   * Use the TrackMatcher to find coordinates for one image.
    */
   private void matchTracksToOneImage() {
     List<ImageInfo> images = new ArrayList<ImageInfo>();
@@ -1264,7 +1365,7 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
   }
 
   /**
-   * Use the {@link TrackMatcher} to find coordinates for all selected images
+   * Use the TrackMatcher to find coordinates for all selected images.
    */
   private void matchTracksToSelectedImages() {
     List<ImageInfo> images = new ArrayList<ImageInfo>();
@@ -1276,7 +1377,7 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
   }
 
   /**
-   * Use the {@link TrackMatcher} to find coordinates for all images
+   * Use the TrackMatcher to find coordinates for all images.
    */
   private void matchTracksToAllImages() {
     List<ImageInfo> images = new ArrayList<ImageInfo>();
@@ -1288,7 +1389,7 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
   }
 
   /**
-   * Copy the location to the previous image
+   * Copy the location to the previous image.
    */
   private void copyLocationToPrevious() {
     int row = tableModel.getRow(imageInfo);
@@ -1301,7 +1402,7 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
   }
 
   /**
-   * Copy the location to the next image
+   * Copy the location to the next image.
    */
   private void copyLocationToNext() {
     int row = tableModel.getRow(imageInfo);
@@ -1314,7 +1415,7 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
   }
 
   /**
-   * Copy the location to all selected images
+   * Copy the location to all selected images.
    */
   private void copyLocationToSelected() {
     List<ImageInfo> imageList = new ArrayList<ImageInfo>();
@@ -1326,7 +1427,7 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
   }
 
   /**
-   * Copy the location to all images
+   * Copy the location to all images.
    */
   private void copyLocationToAll() {
     List<ImageInfo> imageList = new ArrayList<ImageInfo>();
@@ -1338,7 +1439,7 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
   }
 
   /**
-   * Fill the gap this image leaves
+   * Fill the gap this image leaves.
    */
   private void fillThisGap() {
     List<ImageInfo> images = new ArrayList<ImageInfo>();
@@ -1347,13 +1448,13 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
   }
 
   /**
-   * Use adjacent coordinates to fill in the gaps by interpolation
+   * Use adjacent coordinates to fill in the gaps by interpolation.
    */
   private void fillGapsInSelection() {
     List<ImageInfo> images = new ArrayList<ImageInfo>();
     for (int index = 0; index < selectedRows.length; index++) {
       ImageInfo candidate = tableModel.getImageInfo(selectedRows[index]);
-      if (candidate.hasLocation() == false) {
+      if (!candidate.hasLocation()) {
         images.add(candidate);
       }
     }
@@ -1370,7 +1471,7 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
     List<ImageInfo> images = new ArrayList<ImageInfo>();
     for (int i = 0; i < tableModel.getRowCount(); i++) {
       ImageInfo candidate = tableModel.getImageInfo(i);
-      if (candidate.hasLocation() == false) {
+      if (!candidate.hasLocation()) {
         images.add(candidate);
       }
     }
@@ -1378,7 +1479,7 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
   }
 
   /**
-   * Find the location name for a single image
+   * Find the location name for a single image.
    */
   private void findOneLocationName() {
     List<ImageInfo> images = new ArrayList<ImageInfo>();
@@ -1388,13 +1489,13 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
   }
 
   /**
-   * Find the location name for a selection of images (with coordinates)
+   * Find the location name for a selection of images (with coordinates).
    */
   private void findSelectedLocationNames() {
     List<ImageInfo> images = new ArrayList<ImageInfo>();
     for (int index = 0; index < selectedRows.length; index++) {
       ImageInfo candidate = tableModel.getImageInfo(selectedRows[index]);
-      if (candidate.hasLocation() == true) {
+      if (candidate.hasLocation()) {
         images.add(candidate);
       }
     }
@@ -1403,13 +1504,13 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
   }
 
   /**
-   * Find the location name for all images (with coordinates)
+   * Find the location name for all images (with coordinates).
    */
   private void findAllLocationNames() {
     List<ImageInfo> images = new ArrayList<ImageInfo>();
     for (int i = 0; i < tableModel.getRowCount(); i++) {
       ImageInfo candidate = tableModel.getImageInfo(i);
-      if (candidate.hasLocation() == true) {
+      if (candidate.hasLocation()) {
         images.add(candidate);
       }
     }
@@ -1418,7 +1519,7 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
   }
 
   /**
-   * Copy the location name to the previous image
+   * Copy the location name to the previous image.
    */
   private void copyLocationNameToPrevious() {
     int row = tableModel.getRow(imageInfo);
@@ -1432,7 +1533,7 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
   }
 
   /**
-   * Copy the location name to the next image
+   * Copy the location name to the next image.
    */
   private void copyLocationNameToNext() {
     int row = tableModel.getRow(imageInfo);
@@ -1445,7 +1546,7 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
   }
 
   /**
-   * Copy the location name to all selected images
+   * Copy the location name to all selected images.
    */
   private void copyLocationNameToSelected() {
     List<ImageInfo> imageList = new ArrayList<ImageInfo>();
@@ -1458,7 +1559,7 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
   }
 
   /**
-   * Copy the location name to all images
+   * Copy the location name to all images.
    */
   private void copyLocationNameToAll() {
     List<ImageInfo> imageList = new ArrayList<ImageInfo>();
@@ -1470,7 +1571,7 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
   }
 
   /**
-   * Save the EXIF data to all images in the list
+   * Save the EXIF data to all images in the list.
    * 
    * @param images
    */
@@ -1480,7 +1581,7 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
   }
 
   /**
-   * Save the EXIF data to this image
+   * Save the EXIF data to this image.
    */
   private void saveOneLocation() {
     List<ImageInfo> images = new ArrayList<ImageInfo>();
@@ -1489,13 +1590,13 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
   }
 
   /**
-   * Save the EXIF data to all selected images
+   * Save the EXIF data to all selected images.
    */
   private void saveSelectedLocations() {
     List<ImageInfo> images = new ArrayList<ImageInfo>();
     for (int index = 0; index < selectedRows.length; index++) {
       ImageInfo candidate = tableModel.getImageInfo(selectedRows[index]);
-      if (candidate.hasNewLocation() == true) {
+      if (candidate.hasNewLocation()) {
         images.add(candidate);
       }
     }
@@ -1503,13 +1604,13 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
   }
 
   /**
-   * Save the EXIF data to all images
+   * Save the EXIF data to all images.
    */
   private void saveAllLocations() {
     List<ImageInfo> images = new ArrayList<ImageInfo>();
     for (int i = 0; i < tableModel.getRowCount(); i++) {
       ImageInfo candidate = tableModel.getImageInfo(i);
-      if (candidate.hasNewLocation() == true) {
+      if (candidate.hasNewLocation()) {
         images.add(candidate);
       }
     }
@@ -1517,14 +1618,14 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
   }
 
   /**
-   * An action listener remembering a name
+   * An action listener remembering a name.
    */
   abstract class LocationNameActionListener implements ActionListener {
-    /** The name to remember */
+    /** The name to remember. */
     private String name;
 
     /**
-     * Constructor
+     * Constructor.
      * 
      * @param name
      */
@@ -1538,5 +1639,40 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
     public String getName() {
       return name;
     }
+  }
+
+  /**
+   * @return the parent frame
+   */
+  JFrame getParentFrame() {
+    return parentFrame;
+  }
+
+  /**
+   * @return the imagesTable
+   */
+  ImagesTable getImagesTable() {
+    return imagesTable;
+  }
+
+  /**
+   * @return the tableModel
+   */
+  ImagesTableModel getTableModel() {
+    return tableModel;
+  }
+
+  /**
+   * @return the selectedRows
+   */
+  int[] getSelectedRows() {
+    return selectedRows;
+  }
+
+  /**
+   * @return the imageInfo
+   */
+  ImageInfo getImageInfo() {
+    return imageInfo;
   }
 }

@@ -29,27 +29,27 @@ import org.fibs.geotag.data.ImageInfo;
 import org.fibs.geotag.table.ImagesTableModel;
 
 /**
- * a background task for copying the location from one image to others
+ * a background task for copying the location from one image to others.
  * 
  * @author Andreas Schneider
  * 
  */
 public class CopyLocationTask extends UndoableBackgroundTask<ImageInfo> {
 
-  /** keep track of current progress */
+  /** keep track of current progress. */
   private int currentProgress = 0;
 
-  /** The table model */
+  /** The table model. */
   private ImagesTableModel imagesTableModel;
 
-  /** The source of the location data */
+  /** The source of the location data. */
   private ImageInfo source;
 
-  /** The list of images receiving a new location */
+  /** The list of images receiving a new location. */
   private List<ImageInfo> targets;
 
   /**
-   * create a background task to copy a location to other images
+   * create a background task to copy a location to other images.
    * 
    * @param group
    * @param name
@@ -97,17 +97,17 @@ public class CopyLocationTask extends UndoableBackgroundTask<ImageInfo> {
   @Override
   protected String doInBackground() throws Exception {
     for (ImageInfo target : targets) {
-      if (terminate) {
+      if (interruptRequested()) {
         break;
       }
       currentProgress++;
       try {
         setProgressMessage();
-        new UpdateGPSLatitude(target, source.getGPSLatitude(),
+        new UpdateGPSLatitude(target, source.getGpsLatitude(),
             ImageInfo.DATA_SOURCE.COPIED);
-        new UpdateGPSLongitude(target, source.getGPSLongitude(),
+        new UpdateGPSLongitude(target, source.getGpsLongitude(),
             ImageInfo.DATA_SOURCE.COPIED);
-        new UpdateGPSAltitude(target, source.getGPSAltitude(),
+        new UpdateGPSAltitude(target, source.getGpsAltitude(),
             ImageInfo.DATA_SOURCE.COPIED);
         publish(target);
       } catch (RuntimeException e) {

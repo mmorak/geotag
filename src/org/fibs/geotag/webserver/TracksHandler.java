@@ -167,9 +167,10 @@ public class TracksHandler implements ContextHandler {
           }
           // this point is on the map, but it might me too close to the last
           // point added
+          final int tooClose = 10;
           if (lastPointAdded == null
               || BoundsTypeUtil.pixelDistance(lastPointAdded, trackPoint,
-                  mapBounds, mapWidth, mapHeight) > 10) {
+                  mapBounds, mapWidth, mapHeight) > tooClose) {
             filteredSegment.getTrkpt().add(trackPoint);
             lastPointAdded = trackPoint;
           }
@@ -197,7 +198,7 @@ public class TracksHandler implements ContextHandler {
   }
 
   /**
-   * Convert a list of segments to a string in XML format
+   * Convert a list of segments to a string in XML format.
    * 
    * @param segments
    *          the list of segments

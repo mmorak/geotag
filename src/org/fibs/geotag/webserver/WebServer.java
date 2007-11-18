@@ -43,21 +43,21 @@ import fi.iki.elonen.NanoHTTPD;
  */
 public class WebServer extends NanoHTTPD {
 
-  /** The MIME type for XML files */
+  /** The MIME type for XML files. */
   public static final String XML_MIME_TYPE = "application/xml"; //$NON-NLS-1$
 
-  /** Message to send if file or resource not found */
+  /** Message to send if file or resource not found. */
   public static final String FILE_NOT_FOUND = Messages
       .getString("WebServer.Error404"); //$NON-NLS-1$
 
-  /** A list of contexts known to the server */
+  /** A list of contexts known to the server. */
   private List<String> contexts = new ArrayList<String>();
 
-  /** The context handlers registered for the context keys */
+  /** The context handlers registered for the context keys. */
   private Map<String, ContextHandler> contextHandlers = new HashMap<String, ContextHandler>();
 
   /**
-   * Constructor
+   * Constructor.
    * 
    * @param port
    * @param imagesTableModel
@@ -167,7 +167,7 @@ public class WebServer extends NanoHTTPD {
   }
 
   /**
-   * Convenience method
+   * Convenience method.
    * 
    * @param byteArrayOutputStream
    *          A {@link ByteArrayOutputStream} containing XML data

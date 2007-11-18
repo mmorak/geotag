@@ -20,6 +20,7 @@ package org.fibs.geotag.tasks;
 
 import org.fibs.geotag.Messages;
 import org.fibs.geotag.data.ImageInfo;
+import org.fibs.geotag.data.UpdateCityName;
 import org.fibs.geotag.data.UpdateCountryName;
 import org.fibs.geotag.data.UpdateLocationName;
 import org.fibs.geotag.data.UpdateProvinceName;
@@ -32,13 +33,13 @@ import org.fibs.geotag.table.ImagesTableColumns.COLUMN;
  */
 public class ManualEditTask extends UndoableBackgroundTask<ImageInfo> {
 
-  /** The image whose data will be set */
+  /** The image whose data will be set. */
   private ImageInfo imageInfo;
 
-  /** The column that was edited */
+  /** The column that was edited. */
   private COLUMN column;
 
-  /** The new value */
+  /** The new value. */
   private String newValue;
 
   /**
@@ -102,11 +103,16 @@ public class ManualEditTask extends UndoableBackgroundTask<ImageInfo> {
         case LOCATION_NAME:
           new UpdateLocationName(imageInfo, newValue, DATA_SOURCE.MANUAL);
           break;
+        case CITY_NAME:
+          new UpdateCityName(imageInfo, newValue, DATA_SOURCE.MANUAL);
+          break;
         case PROVINCE_NAME:
           new UpdateProvinceName(imageInfo, newValue, DATA_SOURCE.MANUAL);
           break;
         case COUNTRY_NAME:
           new UpdateCountryName(imageInfo, newValue, DATA_SOURCE.MANUAL);
+          break;
+        default:
           break;
       }
       publish(imageInfo);

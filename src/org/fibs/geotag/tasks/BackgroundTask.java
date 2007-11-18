@@ -28,7 +28,7 @@ import javax.swing.SwingWorker;
 import org.fibs.geotag.Messages;
 
 /**
- * A wrapper for SwingWorker with some additional functionality
+ * A wrapper for SwingWorker with some additional functionality.
  * 
  * @author Andreas Schneider
  * @param <V>
@@ -39,17 +39,17 @@ import org.fibs.geotag.Messages;
 public abstract class BackgroundTask<V> extends InterruptibleTask<String, V>
     implements PropertyChangeListener {
 
-  /** The name of the task */
+  /** The name of the task. */
   private String name;
 
-  /** A List of {@link BackgroundTaskListener}s */
-  private static final List<BackgroundTaskListener> listeners = new ArrayList<BackgroundTaskListener>();
+  /** A List of {@link BackgroundTaskListener}s. */
+  private static List<BackgroundTaskListener> listeners = new ArrayList<BackgroundTaskListener>();
 
-  /** A copy of the last progress message */
+  /** A copy of the last progress message. */
   private String oldProgressMessage = null;
 
   /**
-   * Construct a new {@link BackgroundTask}
+   * Construct a new {@link BackgroundTask}.
    * 
    * @param name
    */
@@ -67,21 +67,21 @@ public abstract class BackgroundTask<V> extends InterruptibleTask<String, V>
   }
 
   /**
-   * Must be implemented by subclasses
+   * Must be implemented by subclasses.
    * 
    * @return The minimum value of the progress
    */
   public abstract int getMinProgress();
 
   /**
-   * Must be implemented by subclasses
+   * Must be implemented by subclasses.
    * 
    * @return The maximum value of the progress
    */
   public abstract int getMaxProgress();
 
   /**
-   * Must be implemented by subclasses
+   * Must be implemented by subclasses.
    * 
    * @return The current progress value
    */
@@ -134,7 +134,7 @@ public abstract class BackgroundTask<V> extends InterruptibleTask<String, V>
   }
 
   /**
-   * Register a new listener
+   * Register a new listener.
    * 
    * @param listener
    *          The listener to be registered
@@ -144,7 +144,7 @@ public abstract class BackgroundTask<V> extends InterruptibleTask<String, V>
   }
 
   /**
-   * Unregister a new listener
+   * Unregister a new listener.
    * 
    * @param listener
    *          The listener to be unregistered

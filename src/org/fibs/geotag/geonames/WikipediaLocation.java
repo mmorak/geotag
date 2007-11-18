@@ -21,13 +21,13 @@ package org.fibs.geotag.geonames;
 import javax.swing.ImageIcon;
 
 /**
- * A subclass of Location, adding an icon for Wikipedia locations
+ * A subclass of Location, adding an icon for Wikipedia locations.
  * 
  * @author Andreas Schneider
  */
 public class WikipediaLocation extends Location {
 
-  /** An icon denting a location name derived from Wikipedia */
+  /** An icon denting a location name derived from Wikipedia. */
   private static ImageIcon wikipediaIcon = new ImageIcon(
       WikipediaLocation.class.getResource("/images/wikipedia.png")); //$NON-NLS-1$
 

@@ -29,30 +29,31 @@ import java.io.File;
 import org.fibs.geotag.data.ImageInfo;
 import org.fibs.geotag.image.ImageRotator;
 import org.fibs.geotag.tasks.PreviewLoaderTask;
+import org.fibs.geotag.util.Constants;
 
 /**
- * Swing doesn't have an ImageComponent - here is one
+ * Swing doesn't have an ImageComponent - here is one.
  * 
  * @author Andreas Schneider
  * 
  */
 @SuppressWarnings("serial")
 public class PreviewComponent extends Component {
-  /** The image to be displayed by this component */
+  /** The image to be displayed by this component. */
   private BufferedImage image;
 
-  /** The ImageInfo of the image displayed */
+  /** The ImageInfo of the image displayed. */
   private ImageInfo imageInfo;
 
   /**
-   * Create an ImageComponent with no associated picture
+   * Create an ImageComponent with no associated picture.
    */
   public PreviewComponent() {
     // nothing to be done
   }
 
   /**
-   * create an ImageComponent and set its name
+   * create an ImageComponent and set its name.
    * 
    * @param name
    */
@@ -72,7 +73,7 @@ public class PreviewComponent extends Component {
   }
 
   /**
-   * Determine by what factor the image has to be scaled to fit the component
+   * Determine by what factor the image has to be scaled to fit the component.
    * 
    * @return The scale factor between zero (exclusive) and one (inclusive)
    */
@@ -133,7 +134,7 @@ public class PreviewComponent extends Component {
   }
 
   /**
-   * Set the image to be painted from a file
+   * Set the image to be painted from a file.
    * 
    * @param imageInfo
    *          Information about the image
@@ -141,7 +142,7 @@ public class PreviewComponent extends Component {
   public void setImageInfo(final ImageInfo imageInfo) {
     this.imageInfo = imageInfo;
     File file = new File(imageInfo.getPath());
-    new PreviewLoaderTask(file, 500) {
+    new PreviewLoaderTask(file, Constants.ONE_SECOND_IN_MILLIS / 2) {
       @Override
       protected void done() {
         BufferedImage bufferedImage = getImage();

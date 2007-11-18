@@ -27,27 +27,27 @@ import org.fibs.geotag.data.ImageInfo;
 import org.fibs.geotag.table.ImagesTableModel;
 
 /**
- * a background task for changing the time offset for a list of images
+ * a background task for changing the time offset for a list of images.
  * 
  * @author Andreas Schneider
  * 
  */
 public class SetOffsetTask extends UndoableBackgroundTask<ImageInfo> {
 
-  /** The offset to give the images */
+  /** The offset to give the images. */
   private int offset;
 
-  /** keep track of current progress */
+  /** keep track of current progress. */
   private int currentProgress = 0;
 
-  /** The table model */
+  /** The table model. */
   private ImagesTableModel imagesTableModel;
 
-  /** The list of images receiving a new offset */
+  /** The list of images receiving a new offset. */
   private List<ImageInfo> imageInfos;
 
   /**
-   * create a background task to set the time offset for a list of images
+   * create a background task to set the time offset for a list of images.
    * 
    * @param group
    * @param name
@@ -94,7 +94,7 @@ public class SetOffsetTask extends UndoableBackgroundTask<ImageInfo> {
   @Override
   protected String doInBackground() throws Exception {
     for (ImageInfo imageInfo : imageInfos) {
-      if (terminate) {
+      if (interruptRequested()) {
         break;
       }
       currentProgress++;

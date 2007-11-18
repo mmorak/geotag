@@ -38,14 +38,20 @@ import javax.swing.JFileChooser;
  */
 @SuppressWarnings("nls")
 // This is for developers only - no need to translate
-public class WarningSuppressor {
+public final class WarningSuppressor {
+  /**
+   * hide constructor.
+   */
+  private WarningSuppressor() {
+    // hide constructor
+  }
 
   /**
-   * Lines starting with these strings should be preceded by the annotation This
+   * Lines starting with these strings should be preceded by the annotation. This
    * should of course be more clever with regular expressions or a full blown
    * Java grammar, but that would be slight overkill ;-)
    */
-  private static final String[] patternsToSuppress = { "public class",
+  private static final String[] PATTERNS_TO_SUPPRESS = { "public class",
       "public enum", "public interface", "public abstract class",
       "public final class", "final class", "class" };
 
@@ -53,7 +59,7 @@ public class WarningSuppressor {
    * @param args -
    *          no args
    */
-  public static final void main(String[] args) {
+  public static void main(String[] args) {
     // Choose the source directory to be messed with
     JFileChooser chooser = new JFileChooser();
     // directories only - don't show files
@@ -70,7 +76,7 @@ public class WarningSuppressor {
   }
 
   /**
-   * process all files in this directory and sub-directories
+   * Process all files in this directory and sub-directories.
    * 
    * @param directory
    */
@@ -91,7 +97,7 @@ public class WarningSuppressor {
   }
 
   /**
-   * Process one file - this currently always overwrites the original
+   * Process one file - this currently always overwrites the original.
    * 
    * @param file
    */
@@ -116,8 +122,8 @@ public class WarningSuppressor {
           alreadySuppressed = true;
         }
         // see if the line matches one of the patterns
-        for (int i = 0; i < patternsToSuppress.length; i++) {
-          String pattern = patternsToSuppress[i];
+        for (int i = 0; i < PATTERNS_TO_SUPPRESS.length; i++) {
+          String pattern = PATTERNS_TO_SUPPRESS[i];
           if (line.startsWith(pattern)) {
             // It does indeed match
             if (!alreadySuppressed) {

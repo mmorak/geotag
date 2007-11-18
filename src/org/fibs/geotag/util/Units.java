@@ -27,55 +27,61 @@ import org.fibs.geotag.Messages;
  * @author Andreas Schneider
  * 
  */
-public class Units {
+public final class Units {
   /**
-   * An enumeration of the distance units we support
+   * hide constructor.
+   */
+  private Units() {
+    // hide constructor
+  }
+  /**
+   * An enumeration of the distance units we support.
    */
   public enum DISTANCE {
-    /** Kilometres */
+    /** Kilometres. */
     KILOMETRES,
-    /** Statute miles */
+    /** Statute miles. */
     MILES;
   }
 
   /**
-   * An enumeration of the altitude units we support
+   * An enumeration of the altitude units we support.
    */
   public enum ALTITUDE {
-    /** metres */
+    /** metres. */
     METRES,
-    /** feet */
+    /** feet. */
     FEET
   }
 
-  /** the long names of the distance units */
-  private static final String[] distanceDisplayNames = {
+  /** the long names of the distance units. */
+  private static final String[] DISTANCE_DISPLAY_NAMES = {
       Messages.getString("Units.Kilometers"), //$NON-NLS-1$
       Messages.getString("Units.Miles") //$NON-NLS-1$
   };
 
-  /** Abbreviations for the distance units */
-  private static final String[] distanceAbbreviations = {
+  /** Abbreviations for the distance units. */
+  private static final String[] DISTANCE_ABBREVIATIONS = {
       Messages.getString("Units.km"), //$NON-NLS-1$
       Messages.getString("Units.mi") //$NON-NLS-1$
   };
 
-  /** the long names of the altitude units */
-  private static final String[] altitudeDisplayNames = {
+  /** the long names of the altitude units. */
+  private static final String[] ALTITUDE_DISPLAY_NAMES = {
       Messages.getString("Units.Metres"), //$NON-NLS-1$
       Messages.getString("Units.Feet") //$NON-NLS-1$
   };
 
-  /** Abbreviations for the distance units */
-  private static final String[] altitudeAbbreviations = {
+  /** Abbreviations for the distance units. */
+  private static final String[] ALTITUDE_ABBREVIATIONS = {
       Messages.getString("Units.m"), //$NON-NLS-1$
       Messages.getString("Units.ft") //$NON-NLS-1$
   };
 
-  /** An imperial mile in kilometres */
+  /** An imperial mile in kilometres. */
   private static final double MILE = 1.609344;
 
-  /** A foot in meters */
+  /** A foot in meters. */
   private static final double FOOT = 0.3048;
 
   /**
@@ -89,8 +95,9 @@ public class Units {
         return distance;
       case MILES:
         return distance * MILE;
+      default:
+        return distance;
     }
-    return distance;
   }
 
   /**
@@ -104,8 +111,9 @@ public class Units {
         return kilometres;
       case MILES:
         return kilometres / MILE;
+      default:
+        return kilometres;
     }
-    return kilometres;
   }
 
   /**
@@ -119,8 +127,9 @@ public class Units {
         return altitude;
       case FEET:
         return altitude * FOOT;
+      default:
+        return altitude;
     }
-    return altitude;
   }
 
   /**
@@ -134,12 +143,13 @@ public class Units {
         return metres;
       case FEET:
         return metres / FOOT;
+      default:
+        return metres;
     }
-    return metres;
   }
 
   /**
-   * Convert distances from on unit to another
+   * Convert distances from on unit to another.
    * 
    * @param distance
    * @param from
@@ -152,7 +162,7 @@ public class Units {
   }
 
   /**
-   * Convert altitudes from one unit to another
+   * Convert altitudes from one unit to another.
    * 
    * @param altitude
    * @param from
@@ -169,7 +179,7 @@ public class Units {
    * @return The display name for a distance unit
    */
   public static String getDisplayName(DISTANCE unit) {
-    return distanceDisplayNames[unit.ordinal()];
+    return DISTANCE_DISPLAY_NAMES[unit.ordinal()];
   }
 
   /**
@@ -177,21 +187,21 @@ public class Units {
    * @return The display name for an altitude unit
    */
   public static String getDisplayName(ALTITUDE unit) {
-    return altitudeDisplayNames[unit.ordinal()];
+    return ALTITUDE_DISPLAY_NAMES[unit.ordinal()];
   }
 
   /**
    * @return All available display names
    */
   public static String[] getDistanceUnitNames() {
-    return distanceDisplayNames;
+    return DISTANCE_DISPLAY_NAMES;
   }
 
   /**
    * @return All available display names
    */
   public static String[] getAltitudeUnitNames() {
-    return altitudeDisplayNames;
+    return ALTITUDE_DISPLAY_NAMES;
   }
 
   /**
@@ -199,7 +209,7 @@ public class Units {
    * @return the abbreviation for a distance unit
    */
   public static String getAbbreviation(DISTANCE unit) {
-    return distanceAbbreviations[unit.ordinal()];
+    return DISTANCE_ABBREVIATIONS[unit.ordinal()];
   }
 
   /**
@@ -207,6 +217,6 @@ public class Units {
    * @return the abbreviation for an altitude unit
    */
   public static String getAbbreviation(ALTITUDE unit) {
-    return altitudeAbbreviations[unit.ordinal()];
+    return ALTITUDE_ABBREVIATIONS[unit.ordinal()];
   }
 }

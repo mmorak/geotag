@@ -23,22 +23,22 @@ import java.io.OutputStream;
 import com.topografix.gpx._1._0.Gpx;
 
 /**
- * An interface for classes writing tracks to files and streams
+ * An interface for classes writing tracks to files and streams.
  * @author Andreas Schneider
  */
 public interface TrackWriter {
   /**
-   * Write the tracks from a GPX object to a file
+   * Write the tracks from a GPX object to a file.
    * @param gpx The GPX object containing the tracks
    * @param file the file to write to
    * @throws Exception
    */
-  public void write(Gpx gpx, File file) throws Exception;
+  void write(Gpx gpx, File file) throws Exception;
   /**
-   * Write the tracks from a GPX object to an output stream
+   * Write the tracks from a GPX object to an output stream.
    * @param gpx The GPX object containing the tracks
    * @param outputStream The output stream to write to
    * @throws Exception
    */
-  public void write(Gpx gpx, OutputStream outputStream) throws Exception;
+  void write(Gpx gpx, OutputStream outputStream) throws Exception;
 }

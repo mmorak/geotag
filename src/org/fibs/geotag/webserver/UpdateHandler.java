@@ -33,15 +33,15 @@ import org.fibs.geotag.external.ExternalUpdateConsumer;
 import fi.iki.elonen.NanoHTTPD.Response;
 
 /**
- * A class handling location update messages from the browser
+ * A class handling location update messages from the browser.
  * 
  * @author Andreas Schneider
  * 
  */
 public class UpdateHandler implements ContextHandler {
 
-  /** The parent that needs to receive the updates */
-  ExternalUpdateConsumer parent;
+  /** The parent that needs to receive the updates. */
+  private ExternalUpdateConsumer parent;
 
   /**
    * @param parent
@@ -85,7 +85,7 @@ public class UpdateHandler implements ContextHandler {
       // Notify the parent, but make sure its done in the event thread
       SwingUtilities.invokeLater(new Runnable() {
         public void run() {
-          parent.processExternalUpdates(updateList);
+          getParent().processExternalUpdates(updateList);
         }
       });
       // finally we kept a copy of the latitude and longitude in the
@@ -96,6 +96,13 @@ public class UpdateHandler implements ContextHandler {
     }
     // send back a non-null response
     return server.xmlResponse("<ok/>"); //$NON-NLS-1$
+  }
+
+  /**
+   * @return the parent
+   */
+  ExternalUpdateConsumer getParent() {
+    return parent;
   }
 
 }

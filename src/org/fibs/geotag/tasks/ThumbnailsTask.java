@@ -26,17 +26,17 @@ import org.fibs.geotag.data.ImageInfo.THUMBNAIL_STATUS;
 import org.fibs.geotag.image.ThumbnailGenerator;
 
 /**
- * A class loading a number of thumbnail images and giving feedback
+ * A class loading a number of thumbnail images and giving feedback.
  * 
  * @author Andreas Schneider
  * 
  */
 public class ThumbnailsTask extends BackgroundTask<ImageInfo> {
 
-  /** the list of images to be updated */
+  /** the list of images to be updated. */
   private List<ImageInfo> imageInfos;
 
-  /** Keep track of progress */
+  /** Keep track of progress. */
   private int currentProgress = 0;
 
   /**
@@ -78,7 +78,7 @@ public class ThumbnailsTask extends BackgroundTask<ImageInfo> {
   @Override
   protected String doInBackground() throws Exception {
     for (ImageInfo imageInfo : imageInfos) {
-      if (terminate) {
+      if (interruptRequested()) {
         break;
       }
       currentProgress++;
@@ -87,7 +87,7 @@ public class ThumbnailsTask extends BackgroundTask<ImageInfo> {
       // only start loading it once.. no need to do it again
       // if status is loading, failed or available
       if (imageInfo.getThumbNailStatus() == THUMBNAIL_STATUS.UNKNOWN) {
-        if (ThumbnailGenerator.loadThumbnail(imageInfo) == true) {
+        if (ThumbnailGenerator.loadThumbnail(imageInfo)) {
           publish(imageInfo);
         }
       }

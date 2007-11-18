@@ -26,21 +26,50 @@ import org.fibs.geotag.data.ImageInfo;
 
 /**
  * A utility class that knows how EXIF Orientation tags work and rotates (and
- * mirrors) images accordingly
+ * mirrors) images accordingly.
  * 
  * @author Andreas Schneider
  * 
  */
 
 public class ImageRotator {
-  /** The image to be rotated */
+  
+  /**
+   * the possible image orientations as defined by EXIF.
+   */
+  private enum Orientation {
+    /** Normal image orientation. */
+    NORMAL,
+    /** Flip image left-right. */
+    FLIP_LEFT_RIGHT,
+    /** Rotate image 180 degrees. */
+    ROTATE_180,
+    /** Flip image upside down. */
+    FLIP_UP_DOWN,
+    /** Rotate image 90 degrees clockwise, then flip left-right. */
+    ROTATE_90_CLOCKWISE_FLIP_LEFT_RIGHT,
+    /** Rotate image 90 degrees clockwise. */
+    ROTATE_90_CLOCKWISE,
+    /** Flip image upside-down, then rotate 80 degrees anti-clockwise. */
+    FLIP_UP_DOWN_ROTATE_90_ANTICLOCK,
+    /** Rotate image 90 degrees anti-clockwise. */
+    ROTATE_90_ANTICLOCK;
+    /**
+     * @param exifvalue The orientation as an integer as defined by EXIF
+     * @return The Orientation enum constant representing it.
+     */
+    static Orientation getOrientation(int exifvalue) {
+      return Orientation.values()[exifvalue - 1];
+    }
+  }
+  /** The image to be rotated. */
   private BufferedImage image;
 
-  /** Contains the EXIF data determining which way to rotate */
+  /** Contains the EXIF data determining which way to rotate. */
   private ImageInfo imageInfo;
 
   /**
-   * Create a rotator for an image with given EXIF data
+   * Create a rotator for an image with given EXIF data.
    * 
    * @param image
    *          The image to be rotated
@@ -54,7 +83,7 @@ public class ImageRotator {
 
   /**
    * The orientation is stored in the {@link ImageInfo} as a String. This
-   * methods converts it to an Integer
+   * methods converts it to an Integer.
    * 
    * @return The image orientation between 1 and 8
    */
@@ -71,13 +100,27 @@ public class ImageRotator {
   }
 
   /**
-   * Easy test if the rotation swaps the width and height of the image
+   * Easy test if the rotation swaps the width and height of the image.
    * 
    * @return True if the image aspect changes
    */
   private boolean changesAspect() {
     // only value 5 to 8 change the aspect of the image
-    return getOrientationAsInt() >= 5;
+    Orientation orientation = Orientation.getOrientation(getOrientationAsInt()); getOrientationAsInt();
+    switch (orientation) {
+      case NORMAL:
+      case FLIP_LEFT_RIGHT:
+      case ROTATE_180:
+      case FLIP_UP_DOWN:
+        return false;
+      case ROTATE_90_CLOCKWISE_FLIP_LEFT_RIGHT:
+      case ROTATE_90_CLOCKWISE:
+      case FLIP_UP_DOWN_ROTATE_90_ANTICLOCK:
+      case ROTATE_90_ANTICLOCK:
+        return true;
+      default:
+        return false;    
+    }
   }
 
   /**
@@ -91,45 +134,48 @@ public class ImageRotator {
     // but the do perform the correct image transformations.
     // create a default transformation - the identity transformation
     AffineTransform transform = new AffineTransform();
-    int orientation = getOrientationAsInt();
+    Orientation orientation = Orientation.getOrientation(getOrientationAsInt());
     switch (orientation) {
-      case 1: // correct orientation
+      case NORMAL: // correct orientation
         break;
-      case 2: // flip left-right
+      case FLIP_LEFT_RIGHT: // flip left-right
         transform.scale(-1.0, 1.0);
         transform.translate(-image.getWidth(), 0);
         break;
-      case 3: // rotate 180 degrees
+      case ROTATE_180: // rotate 180 degrees
         transform.quadrantRotate(2);
         transform.translate(-image.getWidth(), -image.getHeight());
         break;
-      case 4: // flip upside-down
+      case FLIP_UP_DOWN: // flip upside-down
         transform.scale(1.0, -1.0);
         transform.translate(0, -image.getHeight());
         break;
-      case 5: // rotate 90 degrees clockwise, then flip left-right
+      case ROTATE_90_CLOCKWISE_FLIP_LEFT_RIGHT: // rotate 90 degrees clockwise, then flip left-right
         transform.quadrantRotate(1);
         transform.scale(1.0, -1.0);
         break;
-      case 6: // rotate 90 degrees clockwise
+      case ROTATE_90_CLOCKWISE: // rotate 90 degrees clockwise
         transform.quadrantRotate(1);
         transform.translate(0, -image.getHeight());
         break;
-      case 7: // flip upside-down, rotate 90 degrees left
+      case FLIP_UP_DOWN_ROTATE_90_ANTICLOCK: // flip upside-down, rotate 90 degrees left
         transform.scale(1.0, -1.0);
         transform.quadrantRotate(1);
         transform.translate(-image.getWidth(), -image.getHeight());
         break;
-      case 8: // rotate 90 degrees left
+      case ROTATE_90_ANTICLOCK: // rotate 90 degrees left
         transform.quadrantRotate(-1);
         transform.translate(-image.getWidth(), 0);
+        break;
+      default:
+        // there are no other values
         break;
     }
     return transform;
   }
 
   /**
-   * Perform the required image transformation to match the EXIF data
+   * Perform the required image transformation to match the EXIF data.
    * 
    * @return The transformed image
    */

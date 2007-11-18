@@ -23,15 +23,18 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.Properties;
 
 import org.fibs.geotag.geonames.Geonames;
+import org.fibs.geotag.util.Constants;
+import org.fibs.geotag.util.Proxies;
 
 import fi.iki.elonen.NanoHTTPD;
 import fi.iki.elonen.NanoHTTPD.Response;
 
 /**
- * A ContextHandler that handles geonames.org requests
+ * A ContextHandler that handles geonames.org requests.
  * 
  * @author Andreas Schneider
  * 
@@ -58,11 +61,14 @@ public class GeonamesHandler implements ContextHandler {
     System.out.println(geonamesUrl.toString());
     try {
       URL url = new URL(geonamesUrl.toString());
-      InputStream inputStream = url.openStream();
+      URLConnection connection = url.openConnection(Proxies.getProxy());
+      // 30 second emergency time out
+      connection.setReadTimeout((int) Constants.ONE_MINUTE_IN_MILLIS / 2);
+      InputStream inputStream = connection.getInputStream();
 
       ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 
-      byte[] buffer = new byte[1024];
+      byte[] buffer = new byte[Constants.ONE_K];
       int read = 0;
       while ((read = inputStream.read(buffer)) != -1) {
         byteArrayOutputStream.write(buffer, 0, read);

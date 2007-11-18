@@ -39,7 +39,7 @@ import org.fibs.geotag.util.FileUtil;
 import org.fibs.geotag.util.InputStreamGobbler;
 
 /**
- * A class for writing EXIF information
+ * A class for writing EXIF information.
  * 
  * @author Andreas Schneider
  * 
@@ -55,7 +55,7 @@ public class ExifWriter {
   }
 
   /**
-   * this does the work of writing the EXIF or XMP data by calling exiftool
+   * this does the work of writing the EXIF or XMP data by calling exiftool.
    * 
    * @param imageInfo
    * @return True if the exiftool process was called successfully
@@ -88,7 +88,7 @@ public class ExifWriter {
   }
 
   /**
-   * Write the EXIF or XMP data
+   * Write the EXIF or XMP data.
    * 
    * @param imageInfo
    * @param xmp
@@ -119,7 +119,7 @@ public class ExifWriter {
     command.add(argumentsFile.getPath());
 
     List<String> arguments = null;
-    if (xmp == true) {
+    if (xmp) {
       arguments = xmpArguments(imageInfo);
     } else {
       arguments = exifArguments(imageInfo);
@@ -181,39 +181,36 @@ public class ExifWriter {
         arguments.add(argument);
       }
     }
-    for (String string : arguments) {
-      System.out.print(string + ' ');
-    }
     // the GPSVersion needs to be set to 2.2.0.0
     arguments.add("-GPSVersionID=2 2 0 0"); //$NON-NLS-1$
     // the latitude
-    if (imageInfo.getGPSLatitude() != null) {
-      double latitude = Double.parseDouble(imageInfo.getGPSLatitude());
+    if (imageInfo.getGpsLatitude() != null) {
+      double latitude = Double.parseDouble(imageInfo.getGpsLatitude());
       arguments.add("-GPSLatitudeRef=" + (latitude >= 0.0 ? 'N' : 'S')); //$NON-NLS-1$
       arguments.add("-GPSLatitude=" + Math.abs(latitude)); //$NON-NLS-1$
     }
     // the longitude
-    if (imageInfo.getGPSLongitude() != null) {
-      double longitude = Double.parseDouble(imageInfo.getGPSLongitude());
+    if (imageInfo.getGpsLongitude() != null) {
+      double longitude = Double.parseDouble(imageInfo.getGpsLongitude());
       arguments.add("-GPSLongitudeRef=" + (longitude >= 0.0 ? 'E' : 'W')); //$NON-NLS-1$
       arguments.add("-GPSLongitude=" + Math.abs(longitude)); //$NON-NLS-1$
     }
     // the altitude
-    if (imageInfo.getGPSAltitude() != null) {
-      double altitude = Double.parseDouble(imageInfo.getGPSAltitude());
+    if (imageInfo.getGpsAltitude() != null) {
+      double altitude = Double.parseDouble(imageInfo.getGpsAltitude());
       arguments.add("-GPSAltitudeRef=" + (altitude >= 0.0 ? '0' : '1')); //$NON-NLS-1$
       arguments.add("-GPSAltitude=" + Math.abs(altitude)); //$NON-NLS-1$
     }
     // the direction if we have one
-    if (imageInfo.getGPSImgDirection() != null) {
-      double direction = Double.parseDouble(imageInfo.getGPSImgDirection());
+    if (imageInfo.getGpsImgDirection() != null) {
+      double direction = Double.parseDouble(imageInfo.getGpsImgDirection());
       arguments.add("-GPSImgDirection=" + direction); //$NON-NLS-1$
       arguments.add("-GPSImgDirectionRef=T"); //$NON-NLS-1$
     }
     // the map datum is always set to WGS-84
     arguments.add("-GPSMapDatum=WGS-84"); //$NON-NLS-1$
     // and finally we set the GPS date and time
-    String gpsDatetime = imageInfo.getGPSDateTime();
+    String gpsDatetime = imageInfo.getGpsDateTime();
     if (gpsDatetime != null) {
       // split the time into the date and the time
       StringTokenizer tokenizer = new StringTokenizer(gpsDatetime); // default
@@ -231,22 +228,25 @@ public class ExifWriter {
     // Now for IPTC location data
     String locationName = imageInfo.getLocationName();
     if (locationName != null && locationName.length() > 0) {
-      arguments.add("-City=" + locationName); //$NON-NLS-1$
+      arguments.add("-IPTC:ContentLocationName=" + locationName); //$NON-NLS-1$
     }
-    String country = imageInfo.getCountryName();
-    if (country != null && country.length() > 0) {
-      arguments.add("-Country-PrimaryLocationName=" + country); //$NON-NLS-1$
+    String city = imageInfo.getCityName();
+    if (city != null && city.length() > 0) {
+      arguments.add("-IPTC:City=" + city); //$NON-NLS-1$
     }
     String province = imageInfo.getProvinceName();
     if (province != null && province.length() > 0) {
-      arguments.add("-Province-State=" + province); //$NON-NLS-1$
+      arguments.add("-IPTC:Province-State=" + province); //$NON-NLS-1$
+    }
+    String country = imageInfo.getCountryName();
+    if (country != null && country.length() > 0) {
+      arguments.add("-IPTC:Country-PrimaryLocationName=" + country); //$NON-NLS-1$
     }
     for (String string : arguments) {
       System.out.print(string + ' ');
     }
     System.out.println();
     arguments.add(imageInfo.getPath());
-
     return arguments;
   }
 
@@ -275,19 +275,19 @@ public class ExifWriter {
     // the GPSVersion needs to be set to 2.2.0.0
     arguments.add("-XMP:GPSVersionID=2.2.0.0"); //$NON-NLS-1$
     // the latitude
-    if (imageInfo.getGPSLatitude() != null) {
-      double latitude = Double.parseDouble(imageInfo.getGPSLatitude());
+    if (imageInfo.getGpsLatitude() != null) {
+      double latitude = Double.parseDouble(imageInfo.getGpsLatitude());
       // No LatitudeRef or LongitudeRef in XMP - used signed values
       arguments.add("-XMP:GPSLatitude=" + latitude); //$NON-NLS-1$
     }
     // the longitude
-    if (imageInfo.getGPSLongitude() != null) {
-      double longitude = Double.parseDouble(imageInfo.getGPSLongitude());
+    if (imageInfo.getGpsLongitude() != null) {
+      double longitude = Double.parseDouble(imageInfo.getGpsLongitude());
       arguments.add("-XMP:GPSLongitude=" + longitude); //$NON-NLS-1$
     }
     // the altitude
-    if (imageInfo.getGPSAltitude() != null) {
-      double altitude = Double.parseDouble(imageInfo.getGPSAltitude());
+    if (imageInfo.getGpsAltitude() != null) {
+      double altitude = Double.parseDouble(imageInfo.getGpsAltitude());
       // Strangely the AltitudeRef is still used in XMP
       arguments.add("-XMP:GPSAltitudeRef=" + (altitude >= 0.0 ? '0' : '1')); //$NON-NLS-1$
       arguments.add("-XMP:GPSAltitude=" + Math.abs(altitude)); //$NON-NLS-1$
@@ -295,7 +295,7 @@ public class ExifWriter {
     // the map datum is always set to WGS-84
     arguments.add("-XMP:GPSMapDatum=WGS-84"); //$NON-NLS-1$
     // and finally we set the GPS date and time
-    String gpsDatetime = imageInfo.getGPSDateTime();
+    String gpsDatetime = imageInfo.getGpsDateTime();
     if (gpsDatetime != null) {
       // split the time into the date and the time
       StringTokenizer tokenizer = new StringTokenizer(gpsDatetime); // default
@@ -312,7 +312,11 @@ public class ExifWriter {
     }
     String location = imageInfo.getLocationName();
     if (location != null && location.length() > 0) {
-      arguments.add("-XMP:City=" + location); //$NON-NLS-1$
+      arguments.add("-XMP:Location=" + location); //$NON-NLS-1$
+    }
+    String city = imageInfo.getCityName();
+    if (city != null && city.length() > 0) {
+      arguments.add("-XMP:City=" + city); //$NON-NLS-1$
     }
     String state = imageInfo.getProvinceName();
     if (state != null && state.length() > 0) {
@@ -323,6 +327,10 @@ public class ExifWriter {
       arguments.add("-XMP:Country=" + country); //$NON-NLS-1$
     }
     arguments.add(xmpFileName(imageInfo));
+    for (String string : arguments) {
+      System.out.print(string + ' ');
+    }
+    System.out.println();
     return arguments;
   }
 
