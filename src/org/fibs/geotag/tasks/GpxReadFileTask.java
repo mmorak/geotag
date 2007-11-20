@@ -34,19 +34,19 @@ import com.topografix.gpx._1._0.Gpx.Trk.Trkseg;
  */
 public class GpxReadFileTask extends BackgroundTask<Gpx> {
 
-  /** The file to be read. */
-  private File file;
+  /** The files to be read. */
+  private File[] files;
 
   /** Number of track points found in that file. */
   private int trackPointsFound = 0;
 
   /**
    * @param name
-   * @param file
+   * @param files
    */
-  public GpxReadFileTask(String name, File file) {
+  public GpxReadFileTask(String name, File[] files) {
     super(name);
-    this.file = file;
+    this.files = files;
   }
 
   /**
@@ -78,14 +78,16 @@ public class GpxReadFileTask extends BackgroundTask<Gpx> {
    */
   @Override
   protected String doInBackground() throws Exception {
-    Gpx gpx = GpxReader.read(file);
-    publish(gpx);
-    if (gpx != null) {
-      List<Trk> tracks = gpx.getTrk();
-      for (Trk trk : tracks) {
-        List<Trkseg> segments = trk.getTrkseg();
-        for (Trkseg segment : segments) {
-          trackPointsFound += segment.getTrkpt().size();
+    for (File file : files) {
+      Gpx gpx = GpxReader.read(file);
+      publish(gpx);
+      if (gpx != null) {
+        List<Trk> tracks = gpx.getTrk();
+        for (Trk trk : tracks) {
+          List<Trkseg> segments = trk.getTrkseg();
+          for (Trkseg segment : segments) {
+            trackPointsFound += segment.getTrkpt().size();
+          }
         }
       }
     }

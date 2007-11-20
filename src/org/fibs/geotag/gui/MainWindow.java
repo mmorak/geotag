@@ -738,11 +738,11 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
     chooser.setFileFilter(new GpxFileFilter());
     chooser.setMultiSelectionEnabled(true);
     if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-      final File file = chooser.getSelectedFile();
-      Settings.put(SETTING.LAST_GPX_FILE_OPENED, file.getPath());
+      final File[] files = chooser.getSelectedFiles();
+      Settings.put(SETTING.LAST_GPX_FILE_OPENED, files[0].getPath());
       Settings.flush();
       new GpxReadFileTask(
-          Messages.getString("MainWindow.LoadTracksFromFile"), file) { //$NON-NLS-1$
+          Messages.getString("MainWindow.LoadTracksFromFile"), files) { //$NON-NLS-1$
 
         @Override
         protected void process(List<Gpx> chunks) {
@@ -754,8 +754,7 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
               JOptionPane
                   .showMessageDialog(
                       MainWindow.this,
-                      Messages.getString("MainWindow.CouldNotReadGpxFile") + ":\n" //$NON-NLS-1$ //$NON-NLS-2$
-                          + file.getPath(),
+                      Messages.getString("MainWindow.CouldNotReadGpxFile"), //$NON-NLS-1$
                       Messages.getString("MainWindow.Error"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
             }
           }

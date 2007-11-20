@@ -20,6 +20,8 @@ package org.fibs.geotag.track;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -79,50 +81,65 @@ public final class TrackStore {
       gpx.getTrk().addAll(newGpx.getTrk());
     }
     // store the segments in a list
-    segmentList = new ArrayList<Trkseg>();
+    List<Trkseg> newSegmentList = new ArrayList<Trkseg>();
     for (Trk track : gpx.getTrk()) {
       for (Trkseg segment : track.getTrkseg()) {
-        segmentList.add(segment);
+        if (segment.getTrkpt().size() > 0) {
+          newSegmentList.add(segment);
+        }
       }
     }
-    createTrackSegmentBounds(newGpx);
+    // System.out.println("No segments: "+newSegmentList.size());
+    SegmentComparator comparator = new SegmentComparator();
+    Collections.sort(newSegmentList, comparator);
+    // now weed out duplicates
+    segmentList = new ArrayList<Trkseg>();
+    Trkseg lastUniqueSegment = null;
+    for (Trkseg segment : newSegmentList) {
+      if (lastUniqueSegment == null
+          || comparator.compare(lastUniqueSegment, segment) != 0) {
+        segmentList.add(segment);
+        lastUniqueSegment = segment;
+      }
+    }
+    // System.out.println("After weeding: "+segmentList.size());
+    createTrackSegmentBounds(segmentList);
   }
 
   /**
-   * @param newGpx
+   * @param segments
    */
-  private void createTrackSegmentBounds(Gpx newGpx) {
+  private void createTrackSegmentBounds(List<Trkseg> segments) {
     // unfortunately GPX only defines a bounds for the entire file, not per
     // track
+    segmentBounds.clear();
     ObjectFactory objectFactory = new ObjectFactory();
-    for (Trk track : newGpx.getTrk()) {
-      for (Trkseg segment : track.getTrkseg()) {
-        if (segment.getTrkpt().size() > 0) {
-          // we calculate bounds for each track segment
-          BoundsType bounds = objectFactory.createBoundsType();
-          for (Trkpt trackpoint : segment.getTrkpt()) {
-            BigDecimal latitude = trackpoint.getLat();
-            BigDecimal longitude = trackpoint.getLon();
-            if (bounds.getMinlat() == null
-                || latitude.compareTo(bounds.getMinlat()) < 0) {
-              bounds.setMinlat(latitude);
-            }
-            if (bounds.getMaxlat() == null
-                || latitude.compareTo(bounds.getMaxlat()) > 0) {
-              bounds.setMaxlat(latitude);
-            }
-            if (bounds.getMinlon() == null
-                || longitude.compareTo(bounds.getMinlon()) < 0) {
-              bounds.setMinlon(longitude);
-            }
-            if (bounds.getMaxlon() == null
-                || longitude.compareTo(bounds.getMaxlon()) > 0) {
-              bounds.setMaxlon(longitude);
-            }
+    for (Trkseg segment : segments) {
+      if (segment.getTrkpt().size() > 0) {
+        // we calculate bounds for each track segment
+        BoundsType bounds = objectFactory.createBoundsType();
+        for (Trkpt trackpoint : segment.getTrkpt()) {
+          BigDecimal latitude = trackpoint.getLat();
+          BigDecimal longitude = trackpoint.getLon();
+          if (bounds.getMinlat() == null
+              || latitude.compareTo(bounds.getMinlat()) < 0) {
+            bounds.setMinlat(latitude);
           }
-          // now that we know the bounds of the track we can store them
-          segmentBounds.put(segment, bounds);
+          if (bounds.getMaxlat() == null
+              || latitude.compareTo(bounds.getMaxlat()) > 0) {
+            bounds.setMaxlat(latitude);
+          }
+          if (bounds.getMinlon() == null
+              || longitude.compareTo(bounds.getMinlon()) < 0) {
+            bounds.setMinlon(longitude);
+          }
+          if (bounds.getMaxlon() == null
+              || longitude.compareTo(bounds.getMaxlon()) > 0) {
+            bounds.setMaxlon(longitude);
+          }
         }
+        // now that we know the bounds of the track we can store them
+        segmentBounds.put(segment, bounds);
       }
     }
   }
@@ -193,5 +210,20 @@ public final class TrackStore {
       }
     }
     return result;
+  }
+
+  /**
+   * A class for comparing timestamps of tracks segments. Only the timestamp of
+   * the first trackpoint is compared.
+   */
+  class SegmentComparator implements Comparator<Trkseg> {
+    /**
+     * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
+     */
+    @Override
+    public int compare(Trkseg segment1, Trkseg segment2) {
+      return segment1.getTrkpt().get(0).getTime().compare(
+          segment2.getTrkpt().get(0).getTime());
+    }
   }
 }
