@@ -72,7 +72,11 @@ public class WikipediaHandler extends DefaultHandler {
           Settings.GEONAMES_DEFAULT_WIKIPEDIA_ENTRIES);
       url += "&maxRows=" + maxRows; //$NON-NLS-1$
       // finally the language
-      url += "&lang=" + Locale.getDefault().getLanguage(); //$NON-NLS-1$
+      String language = Locale.getDefault().getLanguage();
+      if (Settings.get(SETTING.GEONAMES_OVERRIDE_LANGUAGE, false)) {
+        language = Settings.get(SETTING.GEONAMES_LANGUAGE, ""); //$NON-NLS-1$
+      }
+      url += "&lang=" + language; //$NON-NLS-1$
       URL request = new URL(url);
       URLConnection connection = request.openConnection(Proxies.getProxy());
       // 30 second time out:

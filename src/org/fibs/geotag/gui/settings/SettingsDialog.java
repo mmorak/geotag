@@ -310,6 +310,17 @@ public class SettingsDialog extends JDialog implements TreeSelectionListener {
 
     DefaultMutableTreeNode location = new DefaultMutableTreeNode(Messages
         .getString("SettingsDialog.LookUp")); //$NON-NLS-1$
+    DefaultMutableTreeNode geonames = createGeonamesTreeNodes();
+
+    location.add(geonames);
+
+    top.add(location);
+  }
+
+  /**
+   * @return The TreeNodes for geonames settings
+   */
+  private DefaultMutableTreeNode createGeonamesTreeNodes() {
     DefaultMutableTreeNode geonames = new DefaultMutableTreeNode(Messages
         .getString("SettingsDialog.Geonames")); //$NON-NLS-1$
 
@@ -332,9 +343,14 @@ public class SettingsDialog extends JDialog implements TreeSelectionListener {
         Settings.GEONAMES_DEFAULT_WIKIPEDIA_ENTRIES, 0,
         Settings.GEONAMES_MAX_WIKIPEDIA_ENTRIES, 1);
     addPanel(geonames, wikipedia);
-    location.add(geonames);
 
-    top.add(location);
+    StringSettingsPanel language = new StringSettingsPanel(
+        parent,
+        Messages.getString("SettingsDialog.OverrideQueryLanguage"), SETTING.GEONAMES_OVERRIDE_LANGUAGE, false, //$NON-NLS-1$
+        SETTING.GEONAMES_LANGUAGE, ""); //$NON-NLS-1$
+    addPanel(geonames, language);
+
+    return geonames;
   }
 
   /**

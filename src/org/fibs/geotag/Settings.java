@@ -164,6 +164,10 @@ public final class Settings {
     GEONAMES_USE_WIKIPEDIA,
     /** Preferences key for number of Wikipedia entries to retrieve if enabled. */
     GEONAMES_WIKIPEDIA_ENTRIES,
+    /** Preferences key for using an override language for geonames queries. */
+    GEONAMES_OVERRIDE_LANGUAGE,
+    /** Preferences key for the overriding language in geonames queries. */
+    GEONAMES_LANGUAGE,
     /** Preferences key for distance unit (km, mi, nmi). */
     DISTANCE_UNIT,
     /** Preferences key for altitude unit (m, ft). */
