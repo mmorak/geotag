@@ -212,7 +212,7 @@ public class TrackMatcher {
           // more than one meter - update is valid
           update = true;
         }
-      } catch (NumberFormatException e) {
+      } catch (Exception e) {
         e.printStackTrace();
         // the new values seem better than the old ones... update
         update = true;

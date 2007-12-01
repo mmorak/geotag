@@ -1,3 +1,9 @@
+2007-12-01 Release 0.042
+  Fixed bug when reading XMP files with location names, but
+  no coordinates.
+  Fixed bug reading geonames information with non-English
+  query language.
+  
 2007-11-25 Release 0.041
   The geonames.org query language can now be overridden
   in the settings dialog, to stop Norwegian users

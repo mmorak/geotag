@@ -180,8 +180,12 @@ public class LocationHandler extends DefaultHandler {
             currentLocation.setProvince(currentValue.toString());
             break;
           case distance:
+            // geonames sends the distance with a decimal point or a
+            // decimal comma, depending on the language specified.
+            // The replacement of comma with decimal point in all cases
+            // might lead to problems for large distances.
             currentLocation.setDistance(Double.parseDouble(currentValue
-                .toString()));
+                .toString().replace(',', '.')));
             break;
           case alternateNames:
             if (currentValue.toString().length() > 0) {
