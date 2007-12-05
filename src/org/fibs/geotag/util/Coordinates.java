@@ -73,16 +73,16 @@ public final class Coordinates {
           + Unicode.DOUBLE_PRIME_MARK };
 
   /** Prefix for east. */
-  private static final String EAST = Messages.getString("Coordinates.East"); //$NON-NLS-1$
+  public static final String EAST = Messages.getString("Coordinates.East"); //$NON-NLS-1$
 
   /** Prefix for west. */
-  private static final String WEST = Messages.getString("Coordinates.West"); //$NON-NLS-1$
+  public static final String WEST = Messages.getString("Coordinates.West"); //$NON-NLS-1$
 
   /** Prefix for north. */
-  private static final String NORTH = Messages.getString("Coordinates.North"); //$NON-NLS-1$
+  public static final String NORTH = Messages.getString("Coordinates.North"); //$NON-NLS-1$
 
   /** Prefix for south. */
-  private static final String SOUTH = Messages.getString("Coordinates.South"); //$NON-NLS-1$
+  public static final String SOUTH = Messages.getString("Coordinates.South"); //$NON-NLS-1$
 
   /**
    * @param value

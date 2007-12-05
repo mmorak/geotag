@@ -176,8 +176,20 @@ public final class Settings {
     COORDINATES_FORMAT,
     /** Preferences key for proxy type. */
     PROXY_TYPE,
-    /** Preferences type for proxy host/port address. */
-    PROXY_ADDRESS;
+    /** Preferences key for proxy host/port address. */
+    PROXY_ADDRESS,
+    /** Preferences key for allowing coordinates from the clipboard */
+    CLIPBOARD_ENABLED,
+    /** Preferences key for the order of latitude and longitude */
+    CLIPBOARD_LATITUDE_FIRST,
+    /** Preferences key for the letters representing north */
+    CLIPBOARD_NORTH,
+    /** Preferences key for the letters representing south */
+    CLIPBOARD_SOUTH,
+    /** Preferences key for the letters representing east */
+    CLIPBOARD_EAST,
+    /** Preferences key for the letters representing west */
+    CLIPBOARD_WEST;
 
     /**
      * For the actual key I prefer lower case keys with dots.

@@ -64,7 +64,9 @@ public class ImageInfo implements Comparable<ImageInfo> {
     /** Location was copied from another image. */
     COPIED,
     /** Location name was retrieved from geonames.org. */
-    GEONAMES
+    GEONAMES,
+    /** Location arrived from the clipboard */
+    CLIPBOARD
   }
 
   /**

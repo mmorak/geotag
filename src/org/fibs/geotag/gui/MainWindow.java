@@ -31,6 +31,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 import java.util.concurrent.ExecutionException;
@@ -60,6 +61,8 @@ import org.fibs.geotag.data.ImageInfo;
 import org.fibs.geotag.data.ImageInfo.THUMBNAIL_STATUS;
 import org.fibs.geotag.dcraw.Dcraw;
 import org.fibs.geotag.exif.Exiftool;
+import org.fibs.geotag.external.ClipboardUpdate;
+import org.fibs.geotag.external.ClipboardWorker;
 import org.fibs.geotag.external.ExternalUpdate;
 import org.fibs.geotag.external.ExternalUpdateConsumer;
 import org.fibs.geotag.googleearth.KmlRequestHandler;
@@ -70,6 +73,7 @@ import org.fibs.geotag.table.ImagesTable;
 import org.fibs.geotag.table.ImagesTableModel;
 import org.fibs.geotag.tasks.BackgroundTask;
 import org.fibs.geotag.tasks.BackgroundTaskListener;
+import org.fibs.geotag.tasks.ClipboardUpdateTask;
 import org.fibs.geotag.tasks.ExifReaderTask;
 import org.fibs.geotag.tasks.ExternalUpdateTask;
 import org.fibs.geotag.tasks.GPSBabelTask;
@@ -244,14 +248,14 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
       }
     });
 
-    // if external programs want to use the clipboard, uncomment those lines:
-    // ClipboardWorker clipboardMonitor = new ClipboardWorker(this) {
-    // @Override
-    // protected void process(List<ExternalUpdate> clipboardUpdates) {
-    // processExternalUpdates(clipboardUpdates);
-    // }
-    // };
-    // clipboardMonitor.execute();
+    // here we start monitoring changes to the clipboard
+    ClipboardWorker clipboardMonitor = new ClipboardWorker(this) {
+      @Override
+      protected void process(List<ClipboardUpdate> clipboardUpdates) {
+        processClipboardUpdates(clipboardUpdates);
+      }
+    };
+    clipboardMonitor.execute();
     // only add myself to background task listeners after the
     // clipboard monitor has started
     BackgroundTask.addBackgroundTaskListener(this);
@@ -636,6 +640,39 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
       pendingExternalUpdates.add(externalUpdate);
       if (backgroundTask == null) {
         processExternalUpdates();
+      }
+    }
+  }
+
+  /**
+   * Process coordinate updates received from the clipboard.
+   * 
+   * @param clipboardUpdates
+   */
+  public void processClipboardUpdates(List<ClipboardUpdate> clipboardUpdates) {
+    // We've got new coordinates from the clipboard. Let's apply them
+    // to all selected images if there is no background task running.
+    if (backgroundTask == null) {
+      int[] selectedRows = getTable().getSelectedRows();
+      if (selectedRows.length > 0) {
+        List<ImageInfo> selectedImages = new ArrayList<ImageInfo>();
+        for (int row = 0; row < selectedRows.length; row++) {
+          selectedImages.add(tableModel.getImageInfo(row));
+        }
+        // Now we can apply the new coordinates to the selected images
+        ClipboardUpdateTask task = new ClipboardUpdateTask(
+            Messages.getString("MainWindow.CoordinatesFromClipboard"), clipboardUpdates, selectedImages) { //$NON-NLS-1$
+          @Override
+          protected void process(List<ImageInfo> imageInfo) {
+            for (ImageInfo image : imageInfo) {
+              int row = getTableModel().getRow(image);
+              if (row >= 0) {
+                getTableModel().fireTableRowsUpdated(row, row);
+              }
+            }
+          }
+        };
+        task.execute();
       }
     }
   }

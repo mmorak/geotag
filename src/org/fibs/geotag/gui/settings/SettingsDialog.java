@@ -237,6 +237,39 @@ public class SettingsDialog extends JDialog implements TreeSelectionListener {
 
     top.add(general);
 
+    DefaultMutableTreeNode external = createExternalTreeNodes();
+    top.add(external);
+
+    DefaultMutableTreeNode export = new DefaultMutableTreeNode(Messages
+        .getString("SettingsDialog.Export")); //$NON-NLS-1$
+    DefaultMutableTreeNode googleearth = new DefaultMutableTreeNode(Messages
+        .getString("SettingsDialog.GoogleEarth")); //$NON-NLS-1$
+    BooleanSettingsPanel imagesInKmz = new BooleanSettingsPanel(
+        parent,
+        Messages.getString("SettingsDialog.ThumbsInKMZ"), SETTING.KMZ_STORE_THUMBNAILS, false); //$NON-NLS-1$
+    addPanel(googleearth, imagesInKmz);
+
+    StringSettingsPanel kmlImagePath = new StringSettingsPanel(parent, Messages
+        .getString("SettingsDialog.KmlImagePath"), SETTING.KML_IMAGE_PATH, ""); //$NON-NLS-1$ //$NON-NLS-2$
+    addPanel(googleearth, kmlImagePath);
+
+    export.add(googleearth);
+
+    top.add(export);
+
+    DefaultMutableTreeNode location = new DefaultMutableTreeNode(Messages
+        .getString("SettingsDialog.LookUp")); //$NON-NLS-1$
+    DefaultMutableTreeNode geonames = createGeonamesTreeNodes();
+
+    location.add(geonames);
+
+    top.add(location);
+  }
+
+  /**
+   * @return The tree nodes for external program settings
+   */
+  private DefaultMutableTreeNode createExternalTreeNodes() {
     DefaultMutableTreeNode external = new DefaultMutableTreeNode(Messages
         .getString("SettingsDialog.ExternalPrograms")); //$NON-NLS-1$
 
@@ -283,38 +316,49 @@ public class SettingsDialog extends JDialog implements TreeSelectionListener {
 
     DefaultMutableTreeNode dcraw = new DefaultMutableTreeNode(Messages
         .getString("SettingsDialog.Dcraw")); //$NON-NLS-1$
-    external.add(dcraw);
 
     FileSettingsPanel dcrawPath = new FileSettingsPanel(parent, Messages
         .getString("SettingsDialog.DcrawPath"), SETTING.DCRAW_PATH, "dcraw"); //$NON-NLS-1$ //$NON-NLS-2$
     addPanel(dcraw, dcrawPath);
 
-    top.add(external);
+    external.add(dcraw);
 
-    DefaultMutableTreeNode export = new DefaultMutableTreeNode(Messages
-        .getString("SettingsDialog.Export")); //$NON-NLS-1$
-    DefaultMutableTreeNode googleearth = new DefaultMutableTreeNode(Messages
-        .getString("SettingsDialog.GoogleEarth")); //$NON-NLS-1$
-    BooleanSettingsPanel imagesInKmz = new BooleanSettingsPanel(
+    DefaultMutableTreeNode clipboard = new DefaultMutableTreeNode(Messages
+        .getString("SettingsDialog.Clipboard")); //$NON-NLS-1$
+
+    BooleanSettingsPanel enableClipboard = new BooleanSettingsPanel(
         parent,
-        Messages.getString("SettingsDialog.ThumbsInKMZ"), SETTING.KMZ_STORE_THUMBNAILS, false); //$NON-NLS-1$
-    addPanel(googleearth, imagesInKmz);
+        Messages.getString("SettingsDialog.EnableClipboard"), SETTING.CLIPBOARD_ENABLED, false); //$NON-NLS-1$
+    addPanel(clipboard, enableClipboard);
 
-    StringSettingsPanel kmlImagePath = new StringSettingsPanel(parent, Messages
-        .getString("SettingsDialog.KmlImagePath"), SETTING.KML_IMAGE_PATH, ""); //$NON-NLS-1$ //$NON-NLS-2$
-    addPanel(googleearth, kmlImagePath);
+    BooleanSettingsPanel latitudeFirst = new BooleanSettingsPanel(
+        parent,
+        Messages.getString("SettingsDialog.LatitudeFirst"), SETTING.CLIPBOARD_LATITUDE_FIRST, true); //$NON-NLS-1$
+    addPanel(clipboard, latitudeFirst);
 
-    export.add(googleearth);
+    StringSettingsPanel north = new StringSettingsPanel(
+        parent,
+        Messages.getString("SettingsDialog.North"), SETTING.CLIPBOARD_NORTH, Coordinates.NORTH); //$NON-NLS-1$
+    addPanel(clipboard, north);
 
-    top.add(export);
+    StringSettingsPanel south = new StringSettingsPanel(
+        parent,
+        Messages.getString("SettingsDialog.South"), SETTING.CLIPBOARD_SOUTH, Coordinates.SOUTH); //$NON-NLS-1$
+    addPanel(clipboard, south);
 
-    DefaultMutableTreeNode location = new DefaultMutableTreeNode(Messages
-        .getString("SettingsDialog.LookUp")); //$NON-NLS-1$
-    DefaultMutableTreeNode geonames = createGeonamesTreeNodes();
+    StringSettingsPanel east = new StringSettingsPanel(
+        parent,
+        Messages.getString("SettingsDialog.East"), SETTING.CLIPBOARD_EAST, Coordinates.EAST); //$NON-NLS-1$
+    addPanel(clipboard, east);
 
-    location.add(geonames);
+    StringSettingsPanel west = new StringSettingsPanel(
+        parent,
+        Messages.getString("SettingsDialog.West"), SETTING.CLIPBOARD_WEST, Coordinates.WEST); //$NON-NLS-1$
+    addPanel(clipboard, west);
 
-    top.add(location);
+    external.add(clipboard);
+
+    return external;
   }
 
   /**

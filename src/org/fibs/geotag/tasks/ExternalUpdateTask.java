@@ -34,7 +34,7 @@ import org.fibs.geotag.util.Util;
  */
 public class ExternalUpdateTask extends UndoableBackgroundTask<ImageInfo> {
 
-  /** Assume locations if they are closer than this in meters. */
+  /** Assume locations are identical if they are closer than this in meters. */
   private static final double LOCATION_CLOSE = 0.1;
   
   /** the {@link ExternalUpdate} to be applied. */

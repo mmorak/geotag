@@ -1,4 +1,4 @@
-Version 0.033 of the Geotag program has just been released.
+Version 0.043 of the Geotag program has just been released.
 
 Geotag is a platform independent, GUI based application that compares date/time
 information captured by a digital camera with tracks recorded by a GPS unit and
@@ -7,12 +7,10 @@ easily always know exactly where an image was taken.
 Geotag allows fine tuning of locations in external programs like Google Maps 
 in a web browser or Google Earth.
 
-New features:
-Geotag now supports reverse geocoding. It used the webservice of geonames.org
-to assign city, state/province and country names to images that already have
-coordinates.
-Another new feature is the ability to display location markers for nearby
-locations with Wikipedia articles on the Google map. 
+New feature:
+Geotag now supports setting image locations by simply copying to the clipboard
+in any other application. This will greatly increase the possibilities for
+importing geographical coordinates from external sources.
 
 Visit our web site at http://geotag.sourceforge.net to see what the
 program is all about.

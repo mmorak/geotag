@@ -25,11 +25,13 @@ import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
-import java.util.StringTokenizer;
 
 import javax.swing.SwingWorker;
 
+import org.fibs.geotag.Settings;
+import org.fibs.geotag.Settings.SETTING;
 import org.fibs.geotag.util.Constants;
+import org.fibs.geotag.util.CoordinatesParser;
 
 /**
  * A class that monitors the system clipboard for changes and notifies listeners
@@ -38,7 +40,7 @@ import org.fibs.geotag.util.Constants;
  * @author Andreas Schneider
  * 
  */
-public class ClipboardWorker extends SwingWorker<Void, ExternalUpdate> {
+public class ClipboardWorker extends SwingWorker<Void, ClipboardUpdate> {
 
   /** The monitoring thread terminates if this is set to true. */
   private boolean terminating = false;
@@ -112,25 +114,26 @@ public class ClipboardWorker extends SwingWorker<Void, ExternalUpdate> {
       } else {
         // clipboard contents have changed
         clipboardText = text;
-        // try to split the clipboard text into tokens
-        double latitude = Double.NaN;
-        double longitude = Double.NaN;
-        double direction = Double.NaN;
-        int imageNumber = 0;
-        try {
-          StringTokenizer tokenizer = new StringTokenizer(clipboardText, " :"); //$NON-NLS-1$
-          latitude = Double.parseDouble(tokenizer.nextToken());
-          longitude = Double.parseDouble(tokenizer.nextToken());
-          imageNumber = Integer.parseInt(tokenizer.nextToken());
-          if (tokenizer.hasMoreTokens()) {
-            direction = Double.parseDouble(tokenizer.nextToken());
+        // do we care?
+        if (Settings.get(SETTING.CLIPBOARD_ENABLED, false)) {
+          try {
+            CoordinatesParser parser = new CoordinatesParser(clipboardText);
+            double latitude = Double.NaN;
+            double longitude = Double.NaN;
+            if (Settings.get(SETTING.CLIPBOARD_LATITUDE_FIRST, true)) {
+              latitude = parser.nextCoordinate();
+              longitude = parser.nextCoordinate();
+            } else {
+              longitude = parser.nextCoordinate();
+              latitude = parser.nextCoordinate();
+            }
+            if (!Double.isNaN(latitude) && !Double.isNaN(longitude)) {
+              ClipboardUpdate update = new ClipboardUpdate(latitude, longitude);
+              publish(update);
+            }
+          } catch (Exception e) {
+            e.printStackTrace();
           }
-          // we got all the tokens - notify listeners
-          ExternalUpdate update = new ExternalUpdate(imageNumber, latitude,
-              longitude, direction);
-          publish(update);
-        } catch (Exception e) {
-          // e.printStackTrace();
         }
       }
     }
