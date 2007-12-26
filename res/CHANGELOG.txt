@@ -1,3 +1,6 @@
+2007-12-26 Release 0.044
+  Added support for reading GPX 1.1 files.
+  
 2007-12-05 Release 0.043
   Coordinates can now be set by copying them to the
   clipboard from any external application.

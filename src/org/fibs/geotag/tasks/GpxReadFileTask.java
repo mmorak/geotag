@@ -22,6 +22,7 @@ import java.io.File;
 import java.util.List;
 
 import org.fibs.geotag.Messages;
+import org.fibs.geotag.track.Gpx1_1Reader;
 import org.fibs.geotag.track.GpxReader;
 
 import com.topografix.gpx._1._0.Gpx;
@@ -79,7 +80,19 @@ public class GpxReadFileTask extends BackgroundTask<Gpx> {
   @Override
   protected String doInBackground() throws Exception {
     for (File file : files) {
-      Gpx gpx = GpxReader.read(file);
+      Gpx gpx = null;
+      try {
+        gpx = GpxReader.read(file);
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+      if (gpx == null) {
+        try {
+          gpx = Gpx1_1Reader.read(file);
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
+      }
       publish(gpx);
       if (gpx != null) {
         List<Trk> tracks = gpx.getTrk();

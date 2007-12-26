@@ -8,7 +8,7 @@ Geotag allows fine tuning of locations in external programs like Google Maps
 in a web browser or Google Earth.
 
 New feature:
-Geotag now supports setting image locations by simply copying to the clipboard
+Geotag now supports setting image locations by simply copying them to the clipboard
 in any other application. This will greatly increase the possibilities for
 importing geographical coordinates from external sources.
 
