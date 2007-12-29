@@ -18,6 +18,7 @@
 
 package org.fibs.geotag.exif;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -32,7 +33,7 @@ import org.fibs.geotag.util.InputStreamGobbler;
  * 
  */
 public final class Exiftool {
-  
+
   /**
    * hide constructor.
    */
@@ -46,11 +47,21 @@ public final class Exiftool {
    */
   private static boolean available = false;
 
+  /** The version string extracted from exiftool output. */
+  private static String version = null;
+
   /**
    * @return True if exiftool has been detected
    */
   public static boolean isAvailable() {
     return available;
+  }
+
+  /**
+   * @return The exiftool version string if available, null if not.
+   */
+  public static String getVersion() {
+    return version;
   }
 
   /**
@@ -70,13 +81,21 @@ public final class Exiftool {
       // now start a thread that reads the input stream of the process and
       // writes it to stdout
       final InputStream inputStream = process.getInputStream();
-      new InputStreamGobbler(inputStream, System.out).start();
+      ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+      new InputStreamGobbler(inputStream, outputStream).start();
       // we wait for the process to finish
       process.waitFor();
+      byte[] output = outputStream.toByteArray();
+      String outputText = new String(output);
+      version = outputText.trim();
+      System.out.println("Exiftool " + version); //$NON-NLS-1$
     } catch (IOException e) {
       e.printStackTrace();
       found = false;
     } catch (InterruptedException e) {
+      e.printStackTrace();
+      found = false;
+    } catch (NumberFormatException e) {
       e.printStackTrace();
       found = false;
     }

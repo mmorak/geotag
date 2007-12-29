@@ -22,7 +22,7 @@ import java.io.File;
 import java.util.List;
 
 import org.fibs.geotag.Messages;
-import org.fibs.geotag.track.Gpx1_1Reader;
+import org.fibs.geotag.track.GpxOneOneReader;
 import org.fibs.geotag.track.GpxReader;
 
 import com.topografix.gpx._1._0.Gpx;
@@ -88,7 +88,7 @@ public class GpxReadFileTask extends BackgroundTask<Gpx> {
       }
       if (gpx == null) {
         try {
-          gpx = Gpx1_1Reader.read(file);
+          gpx = GpxOneOneReader.read(file);
         } catch (Exception e) {
           e.printStackTrace();
         }

@@ -178,17 +178,17 @@ public final class Settings {
     PROXY_TYPE,
     /** Preferences key for proxy host/port address. */
     PROXY_ADDRESS,
-    /** Preferences key for allowing coordinates from the clipboard */
+    /** Preferences key for allowing coordinates from the clipboard. */
     CLIPBOARD_ENABLED,
-    /** Preferences key for the order of latitude and longitude */
+    /** Preferences key for the order of latitude and longitude. */
     CLIPBOARD_LATITUDE_FIRST,
-    /** Preferences key for the letters representing north */
+    /** Preferences key for the letters representing north. */
     CLIPBOARD_NORTH,
-    /** Preferences key for the letters representing south */
+    /** Preferences key for the letters representing south. */
     CLIPBOARD_SOUTH,
-    /** Preferences key for the letters representing east */
+    /** Preferences key for the letters representing east. */
     CLIPBOARD_EAST,
-    /** Preferences key for the letters representing west */
+    /** Preferences key for the letters representing west. */
     CLIPBOARD_WEST;
 
     /**

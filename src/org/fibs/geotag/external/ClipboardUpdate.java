@@ -19,7 +19,7 @@
 package org.fibs.geotag.external;
 
 /**
- * A class encapsulating updates from the clipbboard
+ * A class encapsulating updates from the clipbboard.
  * 
  * @author Andreas Schneider
  * 

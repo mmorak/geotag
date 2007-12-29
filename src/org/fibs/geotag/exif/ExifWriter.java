@@ -306,8 +306,12 @@ public class ExifWriter {
         // that's what we expect
         String date = tokenizer.nextToken();
         String time = tokenizer.nextToken();
-        arguments
-            .add("-XMP:GPSTimeStamp=" + '"' + date + ' ' + time + 'Z' + '"'); //$NON-NLS-1$
+        // The tag to write changed with exiftool 7.04
+        String tag = "-XMP:GPSTimeStamp="; // up to 7.03 //$NON-NLS-1$
+        if ("7.04".compareTo(Exiftool.getVersion()) <= 0) { //$NON-NLS-1$
+          tag = "-XMP:GPSDateTime="; // since 7.04 //$NON-NLS-1$
+        }
+        arguments.add(tag + '"' + date + ' ' + time + 'Z' + '"');
       }
     }
     String location = imageInfo.getLocationName();

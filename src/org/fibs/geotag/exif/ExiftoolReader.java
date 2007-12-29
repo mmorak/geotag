@@ -73,7 +73,10 @@ public class ExiftoolReader implements ExifReader {
   /** exiftool GPSDatetime output lines start with this text. */
   private static final String GPS_DATE_TIME_TAG = "GPSDateTime: "; //$NON-NLS-1$
 
-  /** exiftool XMP:GPSTimeStamp output lines start with this text. */
+  /**
+   * exiftool XMP:GPSTimeStamp output lines start with this text. (only up to
+   * exiftool 7.03)
+   */
   private static final String GPS_TIME_STAMP_TAG = "GPSTimeStamp: "; //$NON-NLS-1$
 
   /** exiftool Orientation output lines start with this text. */
@@ -101,62 +104,78 @@ public class ExiftoolReader implements ExifReader {
   private static final String STATE_TAG = "State: "; //$NON-NLS-1$
 
   /**
-   * the exiftool command line arguments.
+   * Create the exiftool command line arguments.
+   * 
+   * @return The arguments as an array of strings
    */
-  private String[] exifToolArguments = new String[] { // -S generates short
-  // output
-      "-S", //$NON-NLS-1$
-      // -n generates numeric output (not descriptive)
-      "-n", //$NON-NLS-1$
-      // retrieve the CreateDate first */
-      "-CreateDate", //$NON-NLS-1$
-      // then retrieve the DateTimeOriginal to override it
-      "-DateTimeOriginal", //$NON-NLS-1$
-      // retrieve the latitude
-      "-GPSLatitude", //$NON-NLS-1$
-      // retrieve the longitude
-      "-GPSLongitude", //$NON-NLS-1$
-      // retrieve the altitude
-      "-GPSAltitude", //$NON-NLS-1$
-      // retrieve the GPS date/time
-      "-GPSDateTime", //$NON-NLS-1$
-      // retrieve the image orientation
-      "-Orientation", //$NON-NLS-1$
-      // retrieve IPTC image location
-      "-ContentLocationName", //$NON-NLS-1$
-      // retrieve IPTC city name
-      "-City", //$NON-NLS-1$
-      // retrieve IPTC country
-      "-Country-PrimaryLocationName", //$NON-NLS-1$
-      // retrieve IPTC province/state
-      "-Province-State" }; //$NON-NLS-1$
+  private String[] exifToolArguments() {
+    List<String> args = new ArrayList<String>();
+    // -S generates short outputoutput
+    args.add("-S"); //$NON-NLS-1$
+    // -n generates numeric output (not descriptive)
+    args.add("-n"); //$NON-NLS-1$
+    // retrieve the CreateDate first */
+    args.add("-CreateDate"); //$NON-NLS-1$
+    // then retrieve the DateTimeOriginal to override it
+    args.add("-DateTimeOriginal"); //$NON-NLS-1$
+    // retrieve the latitude
+    args.add("-GPSLatitude"); //$NON-NLS-1$
+    // retrieve the longitude
+    args.add("-GPSLongitude"); //$NON-NLS-1$
+    // retrieve the altitude
+    args.add("-GPSAltitude"); //$NON-NLS-1$
+    // retrieve the GPS date/time
+    args.add("-GPSDateTime"); //$NON-NLS-1$
+    // retrieve the image orientation
+    args.add("-Orientation"); //$NON-NLS-1$
+    // retrieve IPTC image location
+    args.add("-ContentLocationName"); //$NON-NLS-1$
+    // retrieve IPTC city name
+    args.add("-City"); //$NON-NLS-1$
+    // retrieve IPTC country
+    args.add("-Country-PrimaryLocationName"); //$NON-NLS-1$
+    // retrieve IPTC province/state
+    args.add("-Province-State"); //$NON-NLS-1$
+    return args.toArray(new String[0]);
+  }
 
   /**
-   * the exiftool XMP command line arguments.
+   * Create the exiftool XMP command line arguments.
+   * 
+   * @return The arguments as an array of strings
    */
-  private String[] exifToolXmpArguments = new String[] { // -S generates short
-  // output
-      "-S", //$NON-NLS-1$
-      // -n generates numeric output (not descriptive)
-      "-n", //$NON-NLS-1$
-      // retrieve the latitude
-      "-XMP:GPSLatitude", //$NON-NLS-1$
-      // retrieve the longitude
-      "-XMP:GPSLongitude", //$NON-NLS-1$
-      // retrieve the altitude
-      "-XMP:GPSAltitude", //$NON-NLS-1$
-      // retrieve the GPS date/time
-      "-XMP:GPSTimeStamp", //$NON-NLS-1$
-      // retrieve the image orientation
-      "-XMP:Orientation", //$NON-NLS-1$
-      // retrieve the image location
-      "-XMP:Location", //$NON-NLS-1$
-      // retrieve XMP City
-      "-XMP:City", //$NON-NLS-1$
-      // retrieve XMP Country
-      "-XMP:Country", //$NON-NLS-1$
-      // retrieve XMP state
-      "-XMP:State" }; //$NON-NLS-1$
+  private String[] exifToolXmpArguments() {
+    List<String> args = new ArrayList<String>();
+    // -S generates short output
+    args.add("-S"); //$NON-NLS-1$
+    // -n generates numeric output (not descriptive)
+    args.add("-n"); //$NON-NLS-1$
+    // retrieve the latitude
+    args.add("-XMP:GPSLatitude"); //$NON-NLS-1$
+    // retrieve the longitude
+    args.add("-XMP:GPSLongitude"); //$NON-NLS-1$
+    // retrieve the altitude
+    args.add("-XMP:GPSAltitude"); //$NON-NLS-1$
+    // retrieve the GPS date/time - this changed in version 7.04 of exiftool
+    if ("7.04".compareTo(Exiftool.getVersion()) > 0) { //$NON-NLS-1$
+      // old behaviour
+      args.add("-XMP:GPSTimeStamp"); //$NON-NLS-1$
+    } else {
+      // new argument since 7.04
+      args.add("-XMP:GPSDateTime"); //$NON-NLS-1$
+    }
+    // retrieve the image orientation
+    args.add("-XMP:Orientation"); //$NON-NLS-1$
+    // retrieve the image location
+    args.add("-XMP:Location"); //$NON-NLS-1$
+    // retrieve XMP City
+    args.add("-XMP:City"); //$NON-NLS-1$
+    // retrieve XMP Country
+    args.add("-XMP:Country"); //$NON-NLS-1$
+    // retrieve XMP state
+    args.add("-XMP:State"); //$NON-NLS-1$
+    return args.toArray(new String[0]);
+  }
 
   /**
    * Read EXIF data from a file and create an {@link ImageInfo} object.
@@ -172,9 +191,9 @@ public class ExiftoolReader implements ExifReader {
     // First we build the command line
     List<String> command = new ArrayList<String>();
     command.add(Settings.get(SETTING.EXIFTOOL_PATH, "exiftool")); //$NON-NLS-1$
-    String[] arguments = exifToolArguments;
+    String[] arguments = exifToolArguments();
     if (FileTypes.fileType(file) == FileTypes.XMP) {
-      arguments = exifToolXmpArguments;
+      arguments = exifToolXmpArguments();
     }
     for (String argument : arguments) {
       command.add(argument);

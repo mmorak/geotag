@@ -24,7 +24,7 @@ import java.util.regex.Pattern;
 import junit.framework.TestCase;
 
 /**
- * Unit tests for the coordinate parser
+ * Unit tests for the coordinate parser.
  * 
  * @author Andreas Schneider
  * 

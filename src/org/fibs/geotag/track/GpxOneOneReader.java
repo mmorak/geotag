@@ -45,12 +45,12 @@ import com.topografix.gpx._1._0.Gpx.Trk.Trkseg.Trkpt;
  * @author Andreas Schneider
  * 
  */
-public final class Gpx1_1Reader {
+public final class GpxOneOneReader {
 
   /**
    * hide constructor.
    */
-  private Gpx1_1Reader() {
+  private GpxOneOneReader() {
     // hide constructor
   }
 
@@ -98,36 +98,36 @@ public final class Gpx1_1Reader {
   }
 
   /**
-   * Convert GPX 1.1 data to GPX 1.0
+   * Convert GPX 1.1 data to GPX 1.0.
    * 
    * @param gpxType
    *          the data read from a GPX 1.1 file
    * @return The data in GPX 1.0 format
    */
   private static Gpx convert(GpxType gpxType) {
-    ObjectFactory objectFactory1_0 = new ObjectFactory();
-    Gpx gpx = objectFactory1_0.createGpx();
-    List<Trk> tracks1_0 = gpx.getTrk();
-    for (TrkType track1_1 : gpxType.getTrk()) {
-      Trk track1_0 = objectFactory1_0.createGpxTrk();
-      tracks1_0.add(track1_0);
-      track1_0.setName(track1_1.getName());
-      track1_0.setNumber(track1_1.getNumber());
-      List<Trkseg> segments1_0 = track1_0.getTrkseg();
-      for (TrksegType segment1_1 : track1_1.getTrkseg()) {
-        Trkseg segment1_0 = objectFactory1_0.createGpxTrkTrkseg();
-        segments1_0.add(segment1_0);
-        List<Trkpt> trackpoints1_0 = segment1_0.getTrkpt();
-        for (WptType trkpt1_1 : segment1_1.getTrkpt()) {
-          Trkpt trkpt1_0 = objectFactory1_0.createGpxTrkTrksegTrkpt();
-          trackpoints1_0.add(trkpt1_0);
-          trkpt1_0.setCmt(trkpt1_1.getCmt());
-          trkpt1_0.setDesc(trkpt1_1.getDesc());
-          trkpt1_0.setLat(trkpt1_1.getLat());
-          trkpt1_0.setLon(trkpt1_1.getLon());
-          trkpt1_0.setEle(trkpt1_1.getEle());
-          trkpt1_0.setName(trkpt1_1.getName());
-          trkpt1_0.setTime(trkpt1_1.getTime());
+    ObjectFactory objectFactoryOneZero = new ObjectFactory();
+    Gpx gpx = objectFactoryOneZero.createGpx();
+    List<Trk> tracksOneZero = gpx.getTrk();
+    for (TrkType trackOneOne : gpxType.getTrk()) {
+      Trk trackOneZero = objectFactoryOneZero.createGpxTrk();
+      tracksOneZero.add(trackOneZero);
+      trackOneZero.setName(trackOneOne.getName());
+      trackOneZero.setNumber(trackOneOne.getNumber());
+      List<Trkseg> segmentsOneZero = trackOneZero.getTrkseg();
+      for (TrksegType segmentOneOne : trackOneOne.getTrkseg()) {
+        Trkseg segmentOneZero = objectFactoryOneZero.createGpxTrkTrkseg();
+        segmentsOneZero.add(segmentOneZero);
+        List<Trkpt> trackpointsOneZero = segmentOneZero.getTrkpt();
+        for (WptType trkptOneOne : segmentOneOne.getTrkpt()) {
+          Trkpt trkptOneZero = objectFactoryOneZero.createGpxTrkTrksegTrkpt();
+          trackpointsOneZero.add(trkptOneZero);
+          trkptOneZero.setCmt(trkptOneOne.getCmt());
+          trkptOneZero.setDesc(trkptOneOne.getDesc());
+          trkptOneZero.setLat(trkptOneOne.getLat());
+          trkptOneZero.setLon(trkptOneOne.getLon());
+          trkptOneZero.setEle(trkptOneOne.getEle());
+          trkptOneZero.setName(trkptOneOne.getName());
+          trkptOneZero.setTime(trkptOneOne.getTime());
         }
       }
     }

@@ -36,7 +36,7 @@ public class ClipboardUpdateTask extends UndoableBackgroundTask<ImageInfo> {
   /** the {@link ClipboardUpdate}s to be applied. */
   private List<ClipboardUpdate> clipboardUpdates;
 
-  /** the images the update should be applied to */
+  /** the images the update should be applied to. */
   private List<ImageInfo> images;
 
   /**
