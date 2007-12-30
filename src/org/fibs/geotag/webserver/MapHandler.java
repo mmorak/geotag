@@ -26,6 +26,8 @@ import java.io.InputStreamReader;
 import java.util.Properties;
 import java.util.StringTokenizer;
 
+import org.fibs.geotag.Messages;
+
 import fi.iki.elonen.NanoHTTPD;
 import fi.iki.elonen.NanoHTTPD.Response;
 
@@ -86,7 +88,14 @@ public class MapHandler implements ContextHandler {
           BufferedReader includeReader = new BufferedReader(
               new InputStreamReader(includeStream));
           while ((line = includeReader.readLine()) != null) {
-            page.append(line).append('\n');
+            if (line.startsWith("//#includeI18N")) { //$NON-NLS-1$
+              // The language dependent strings of the javascript file are
+              // injected here. This allows us the maintain all translatable
+              // text in one place.
+              createJavascriptLanguageStrings(page);
+            } else {
+              page.append(line).append('\n');
+            }
           }
           includeReader.close();
           // closing </script> tag
@@ -101,5 +110,43 @@ public class MapHandler implements ContextHandler {
     }
     // convert the page into an InputStream
     return new ByteArrayInputStream(page.toString().getBytes());
+  }
+
+  /**
+   * Add the language dependent strings of the javascript file
+   * 
+   * @param page
+   */
+  private void createJavascriptLanguageStrings(StringBuilder page) {
+    addText(page, "title", Messages.getString("MapHandler.Geotag")); //$NON-NLS-1$ //$NON-NLS-2$
+    addText(page, "showMenuText", Messages.getString("MapHandler.ShowMenu")); //$NON-NLS-1$ //$NON-NLS-2$
+    addText(page, "hideMenuText", Messages.getString("MapHandler.HideMenu")); //$NON-NLS-1$ //$NON-NLS-2$
+    addText(page, "mouseZoomText", Messages.getString("MapHandler.MouseZoom")); //$NON-NLS-1$ //$NON-NLS-2$
+    addText(page,
+        "showTracksText", Messages.getString("MapHandler.DisplayTracks")); //$NON-NLS-1$ //$NON-NLS-2$
+    addText(page,
+        "showWikipediaText", Messages.getString("MapHandler.ShowWikipedia")); //$NON-NLS-1$ //$NON-NLS-2$
+    addText(page,
+        "currentImageText", Messages.getString("MapHandler.CurrentImage")); //$NON-NLS-1$ //$NON-NLS-2$
+    addText(page, "nextImageText", Messages.getString("MapHandler.NextImage")); //$NON-NLS-1$ //$NON-NLS-2$
+    addText(page,
+        "previousImageText", Messages.getString("MapHandler.PreviousImage")); //$NON-NLS-1$ //$NON-NLS-2$
+    addText(page, "showAllText", Messages.getString("MapHandler.ShowAllImages")); //$NON-NLS-1$ //$NON-NLS-2$
+    addText(page, "instructions", Messages.getString("MapHandler.Instructions")); //$NON-NLS-1$ //$NON-NLS-2$
+    addText(
+        page,
+        "instructionsWithDirection", Messages.getString("MapHandler.InstructionsWithDirection")); //$NON-NLS-1$ //$NON-NLS-2$
+  }
+
+  /**
+   * Generate a line for the Javascript file: <code>var name = 'value'</code>
+   * 
+   * @param page
+   * @param name
+   * @param value
+   */
+  private void addText(StringBuilder page, String name, String value) {
+    page
+        .append("  var ").append(name).append(" = '").append(value).append("'\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
   }
 }

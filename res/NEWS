@@ -1,4 +1,4 @@
-Version 0.043 of the Geotag program has just been released.
+Version 0.046 of the Geotag program has just been released.
 
 Geotag is a platform independent, GUI based application that compares date/time
 information captured by a digital camera with tracks recorded by a GPS unit and
@@ -8,9 +8,10 @@ Geotag allows fine tuning of locations in external programs like Google Maps
 in a web browser or Google Earth.
 
 New feature:
-Geotag now supports setting image locations by simply copying them to the clipboard
-in any other application. This will greatly increase the possibilities for
-importing geographical coordinates from external sources.
+Geotag is now available in Danish. The translation was kindly provided by Uffe Ougaard.
+The program will automatically detect a Danish language operating system and the user
+interface and Google maps interface will be displayed in Danish. Other supported
+languages are American English, English and German.
 
 Visit our web site at http://geotag.sourceforge.net to see what the
 program is all about.

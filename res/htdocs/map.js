@@ -29,25 +29,6 @@ if (GBrowserIsCompatible()) {
   // the image the map will be centred on
   var activeImage = null
   
-  // create the instructions (depening on language and showDirection) 
-  function getInstructions(showDirection) {
-  	var instructions
-    if (showDirection) {
-      instructions = "Move camera marker to<br>select a different location.<br>Move other marker to<br>change image direction."
-    } else {
-      instructions = "Move the marker to<br>select a different location"
-    }
-    if (language == "de") {
-    	// Auf Deutsch bitte..
-    	if (showDirection) {
-        instructions = "Verschieben Sie die Kamera um<br>den Ort zu &auml;ndern.<br>Verschieben Sie die Markierung<br>um die Richtung zu &auml;ndern"
-      } else {
-        instructions = "Verschieben Sie die Markierung<br>um den Ort zu &auml;ndern"
-      }
-    }
-    return instructions
-  }
-  
   // a simple ArrayList class
   function ArrayList() {
     count = 0
@@ -388,67 +369,37 @@ if (GBrowserIsCompatible()) {
   // enabled mouse wheel zooming
   
   // now the language dependent bits
-  var title = "Geotag" // not translated, but might be later
-  var showMenuText = 'Show menu'
-  var hideMenuText = 'Hide menu'
-  var toggleMenuShortcut = 'm'
-  var mouseZoomText = 'Enable scroll wheel zoom'
-  var mouseZoomShortcut = 'z'
-  var showTracksText = 'Display tracks'
-  var showTracksShortcut = 't'
-  var showWikipediaText = 'Show Wikipedia entries'
-  var showWikipediaShortcut = 'W';
-  var currentImageText = "Current image"
-  var currentImageShortcut = 'C'
-  var nextImageText = 'Next image'
-  var nextImageShortcut = 'N'
-  var previousImageText = 'Previous image'
-  var previousImageShortcut = 'P'
-  var showAllText = "Show all images"
-  var showAllShortcut = 'a'
+//#includeI18N  
 
-  // Auf Deutsch bitte
-  if (language == "de") {
-    title = "Geotag"
-    showMenuText = "Men&uuml; &ouml;ffnen"
-    hideMenuText = 'Men&uuml; schliessen'
-    toggleMenuShortcut = 'M'
-    mouseZoomText = "Mit Mausrad zoomen"
-    mouseZoomShortcut = 'z'
-    showTracksText = "Strecken anzeigen"
-    showTracksShortcut = 'S'
-    showWikipediaText = 'Wikipedia Eintr&auml;ge zeigen'
-    showWikipediaShortcut = 'W'
-    currentImageText = "Aktuelles Bild"
-    currentImageShortcut = 'B'
-    nextImageText = 'N&auml;chstes Bild'
-    nextImageShortcut = 'N'
-    previousImageText = 'Voriges Bild'
-    previousImageShortcut = 'V'
-    showAllText = "Alle Bilder zeigen"
-    showAllShortcut = 'A'
+  
+  // create the instructions (depending on showDirection) 
+  function getInstructions(showDirection) {
+    if (showDirection) {
+    	return instructionsWithDirection
+    }
+    return instructions 
   }
   
   // setup the menu shortcuts
-  setShortcut = function (text, shortcut) {
-  	return text.replace(shortcut, '<u>'+shortcut+'</u>')
+  findShortcut = function(text) {
+  	return text.replace(/.*<u>/,'').replace(/<.u>.*/,'')
   }
-  showMenuText = setShortcut(showMenuText, toggleMenuShortcut)
-  hideMenuText = setShortcut(hideMenuText, toggleMenuShortcut)
-  mouseZoomText = setShortcut(mouseZoomText, mouseZoomShortcut)
-  showTracksText = setShortcut(showTracksText, showTracksShortcut)
-  showWikipediaText = setShortcut(showWikipediaText, showWikipediaShortcut)
-  currentImageText = setShortcut(currentImageText, currentImageShortcut)
-  nextImageText = setShortcut(nextImageText, nextImageShortcut)
-  previousImageText = setShortcut(previousImageText, previousImageShortcut)
-  showAllText = setShortcut(showAllText, showAllShortcut)
+  var toggleMenuShortcut = findShortcut(showMenuText) 
+  var mouseZoomShortcut = findShortcut(mouseZoomText)
+  var showTracksShortcut = findShortcut(showTracksText)
+  var showWikipediaShortcut = findShortcut(showWikipediaText)
+  var currentImageShortcut = findShortcut(currentImageText)
+  var nextImageShortcut = findShortcut(nextImageText)
+  var previousImageShortcut = findShortcut(previousImageText)
+  var showAllShortcut = findShortcut(showAllText)
   
   document.title=title
   
   // create the instructions control
   var instructions = getInstructions(showDirection)
   removeElementById("instructions")
-  var html = '<div class="htmlControl" style="font-weight: bold"><center>'+instructions+'</center></div>'
+  var html = '<div class="htmlControl" style="font-weight: bold; font-size: 100% "><center>'+instructions+'</center></div>'
+  
   instructionsControl = new HtmlControl(html)
   map.addControl(instructionsControl, new GControlPosition(G_ANCHOR_TOP_RIGHT, new GSize(7, 30)))
   
@@ -512,7 +463,7 @@ if (GBrowserIsCompatible()) {
       map.disableScrollWheelZoom()
     }
     // tell the main program about it
-    wheelZommRequest = GXmlHttp.create()
+    wheelZoomRequest = GXmlHttp.create()
     wheelZoomRequest.open("GET", "/settings/set.html?wheelzoom="+checked, true)
     wheelZoomRequest.send(null)
   } 
@@ -661,9 +612,7 @@ if (GBrowserIsCompatible()) {
     } else if (keyChar == showAllShortcut.toUpperCase()) {
     	showAllImages()
     }
-    return false
-  }
-  
+    return false  }  
   // make sure the map still shows the marker when resized
   window.onresize = function() {
   	if (activeImage != null) {
