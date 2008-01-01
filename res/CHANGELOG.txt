@@ -1,3 +1,6 @@
+2008-01-01 Release 0.047
+  Fixed bug generating KMZ files under Windows.
+  
 2007-12-30 Release 0.046
   Added Danish translation by Uffe Ougaard.
   

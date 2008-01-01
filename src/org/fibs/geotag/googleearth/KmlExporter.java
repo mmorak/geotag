@@ -222,7 +222,9 @@ public class KmlExporter {
           try {
             ImageIO.write((RenderedImage) thumbnail.getImage(),
                 "jpg", byteArrayOutputStream); //$NON-NLS-1$
-            zipEntry = new ZipEntry(KMZ_IMAGE_FOLDER + File.separator
+            // Do not use File.separator here 
+            // Googleearth only likes forward slashes
+            zipEntry = new ZipEntry(KMZ_IMAGE_FOLDER + '/'
                 + imageInfo.getName());
             zipOutputStream.putNextEntry(zipEntry);
             zipOutputStream.write(byteArrayOutputStream.toByteArray());
