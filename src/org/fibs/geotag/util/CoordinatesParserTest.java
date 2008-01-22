@@ -19,7 +19,6 @@
 package org.fibs.geotag.util;
 
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import junit.framework.TestCase;
 

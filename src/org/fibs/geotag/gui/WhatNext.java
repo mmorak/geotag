@@ -121,6 +121,7 @@ public final class WhatNext {
     suggestFindingExiftool(exiftoolAvailable, suggestions);
     suggestFindingGPSBabel(gpsbabelAvailable, suggestions);
     suggestFindingDcraw(dcrawAvailable, rawImagesAvailable, suggestions);
+    suggestRemovingImages(imagesAvailable, suggestions);
 
     // build the final message
     StringBuilder message = new StringBuilder("<html>"); //$NON-NLS-1$
@@ -140,6 +141,7 @@ public final class WhatNext {
 
   /**
    * Check if finding dcraw should be suggested and do so it if should.
+   * 
    * @param dcrawAvailable
    * @param rawImagesAvailable
    * @param suggestions
@@ -157,6 +159,7 @@ public final class WhatNext {
 
   /**
    * Check if finding GPSBabel should be suggested and do so it if should.
+   * 
    * @param gpsbabelAvailable
    * @param suggestions
    */
@@ -173,6 +176,7 @@ public final class WhatNext {
 
   /**
    * Check if finding Exiftool should be suggested and do so it if should.
+   * 
    * @param exiftoolAvailable
    * @param suggestions
    */
@@ -189,6 +193,7 @@ public final class WhatNext {
 
   /**
    * Check if finding location names should be suggested and do so it if should.
+   * 
    * @param imagesWithLocationAvailable
    * @param locationNamesFound
    * @param suggestions
@@ -205,6 +210,7 @@ public final class WhatNext {
 
   /**
    * Check if saving should be suggested and do so it if should.
+   * 
    * @param imagesWithNewLocationAvailable
    * @param suggestions
    */
@@ -220,6 +226,7 @@ public final class WhatNext {
 
   /**
    * Check if filling gaps should be suggested and do so it if should.
+   * 
    * @param gapsAvailable
    * @param suggestions
    */
@@ -235,7 +242,9 @@ public final class WhatNext {
   }
 
   /**
-   * Check if matching tracks to images should be suggested and do so it if should.
+   * Check if matching tracks to images should be suggested and do so it if
+   * should.
+   * 
    * @param imagesAvailable
    * @param tracksAvailable
    * @param suggestions
@@ -252,7 +261,9 @@ public final class WhatNext {
   }
 
   /**
-   * Check if showing images on a map should be suggested and do so it if should.
+   * Check if showing images on a map should be suggested and do so it if
+   * should.
+   * 
    * @param imagesAvailable
    * @param suggestions
    */
@@ -267,7 +278,9 @@ public final class WhatNext {
   }
 
   /**
-   * Check if checking images time stamps should be suggested and do so it if should.
+   * Check if checking images time stamps should be suggested and do so it if
+   * should.
+   * 
    * @param imagesAvailable
    * @param suggestions
    */
@@ -285,6 +298,7 @@ public final class WhatNext {
 
   /**
    * Check if loading tracks should be suggested and do so it if should.
+   * 
    * @param gpsbabelAvailable
    * @param tracksAvailable
    * @param suggestions
@@ -311,6 +325,7 @@ public final class WhatNext {
 
   /**
    * Check if loading images should be suggested and do so it if should.
+   * 
    * @param imagesAvailable
    * @param suggestions
    */
@@ -322,6 +337,23 @@ public final class WhatNext {
           .format(
               Messages.getString("WhatNext.SuggestLoadingImagesFormat"), //$NON-NLS-1$
               Messages.getString("MainWindow.File"), Messages.getString("MainWindow.AddDirectory")); //$NON-NLS-1$ //$NON-NLS-2$
+      suggestions.add(text);
+    }
+  }
+
+  /**
+   * Check if images are available and suggest removing some of them.
+   * 
+   * @param imagesAvailable
+   * @param suggestions
+   */
+  private static void suggestRemovingImages(boolean imagesAvailable,
+      List<String> suggestions) {
+    if (imagesAvailable) {
+      // images are available - suggest removing some of them
+      String text = String.format(Messages
+          .getString("WhatNext.SuggestRemovingImagesFormat"), //$NON-NLS-1$
+          Messages.getString("ImagesTablePopupMenu.RemoveImages")); //$NON-NLS-1$
       suggestions.add(text);
     }
   }

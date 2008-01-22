@@ -26,11 +26,13 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.util.List;
 
 import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultCellEditor;
 import javax.swing.ImageIcon;
@@ -137,9 +139,36 @@ public class ImagesTable extends NavigableTable {
     // Edit cell on single click (default is double click)
     ((DefaultCellEditor) getDefaultEditor(String.class))
         .setClickCountToStart(1);
+    // Now a workaround for
+    // http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6503981
+    fixBug6503981();
     // use preferred font after editor component is set up
     usePreferredFont();
     setupActions();
+  }
+
+  /**
+   * A fix for Java bug 6503981. The bug and the workaround are described at
+   * http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6503981 This bug should
+   * be fixed soon and this method might need to check the Java version to apply
+   * the fix selectively.
+   */
+  private void fixBug6503981() {
+    final JTableHeader header = getTableHeader();
+    header.addMouseListener(new MouseAdapter() {
+      @Override
+      public void mousePressed(MouseEvent event) {
+        int column = header.getColumnModel().getColumnIndexAtX(
+            event.getPoint().x);
+        if (column >= 0) {
+          ImagesTable.this.setColumnSelectionInterval(column, column);
+          final Action focusAction = ImagesTable.this.getActionMap().get(
+              "focusHeader"); //$NON-NLS-1$
+          focusAction.actionPerformed(new ActionEvent(ImagesTable.this, 0,
+              "focusHeader")); //$NON-NLS-1$
+        }
+      }
+    });
   }
 
   /**
@@ -613,7 +642,8 @@ public class ImagesTable extends NavigableTable {
   }
 
   /**
-   * @param lastMouseMovedEvent the lastMouseMovedEvent to set
+   * @param lastMouseMovedEvent
+   *          the lastMouseMovedEvent to set
    */
   void setLastMouseMovedEvent(MouseEvent lastMouseMovedEvent) {
     this.lastMouseMovedEvent = lastMouseMovedEvent;
@@ -627,7 +657,8 @@ public class ImagesTable extends NavigableTable {
   }
 
   /**
-   * @param mouseOnRow the mouseOnRow to set
+   * @param mouseOnRow
+   *          the mouseOnRow to set
    */
   void setMouseOnRow(int mouseOnRow) {
     this.mouseOnRow = mouseOnRow;

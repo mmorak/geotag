@@ -1,3 +1,13 @@
+Release 0.048
+  Images can now be removed from the images table. Note
+  that this will not delete the images, but just remove 
+  them from view.
+  CRW files can now be geotagged (using XMP files only)
+  Fixed bug [1865891]:
+  "copy location name" function not copying "city" field
+  Added workaround for Java/Swing bug preventing table
+  columns to be moved properly. 
+
 2008-01-01 Release 0.047
   Fixed bug generating KMZ files under Windows.
   

@@ -113,7 +113,7 @@ public class MapHandler implements ContextHandler {
   }
 
   /**
-   * Add the language dependent strings of the javascript file
+   * Add the language dependent strings of the javascript file.
    * 
    * @param page
    */
@@ -139,7 +139,7 @@ public class MapHandler implements ContextHandler {
   }
 
   /**
-   * Generate a line for the Javascript file: <code>var name = 'value'</code>
+   * Generate a line for the Javascript file: <code>var name = 'value'</code>.
    * 
    * @param page
    * @param name

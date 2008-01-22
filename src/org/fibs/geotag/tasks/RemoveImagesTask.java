@@ -23,19 +23,15 @@ import java.util.List;
 
 import org.fibs.geotag.Messages;
 import org.fibs.geotag.data.ImageInfo;
-import org.fibs.geotag.data.UpdateCityName;
-import org.fibs.geotag.data.UpdateCountryName;
-import org.fibs.geotag.data.UpdateLocationName;
-import org.fibs.geotag.data.UpdateProvinceName;
 import org.fibs.geotag.table.ImagesTableModel;
 
 /**
- * a background task for copying the location name from one image to others.
+ * A background task for removing images from the table.
  * 
  * @author Andreas Schneider
  * 
  */
-public class CopyLocationNameTask extends UndoableBackgroundTask<ImageInfo> {
+public class RemoveImagesTask extends UndoableBackgroundTask<ImageInfo> {
 
   /** keep track of current progress. */
   private int currentProgress = 0;
@@ -43,27 +39,21 @@ public class CopyLocationNameTask extends UndoableBackgroundTask<ImageInfo> {
   /** The table model. */
   private ImagesTableModel imagesTableModel;
 
-  /** The source of the location data. */
-  private ImageInfo source;
-
-  /** The list of images receiving a new location. */
-  private List<ImageInfo> targets;
+  /** The list of images to be removed. */
+  private List<ImageInfo> imageInfos;
 
   /**
-   * create a background task to copy a location name to other images.
+   * create a background task to remove a list of images from the table.
    * 
    * @param group
    * @param name
    * @param imagesTableModel
-   * @param source
-   * @param targets
+   * @param imageInfos
    */
-  public CopyLocationNameTask(String group, String name,
-      ImagesTableModel imagesTableModel, ImageInfo source,
-      List<ImageInfo> targets) {
+  public RemoveImagesTask(String group, String name,
+      ImagesTableModel imagesTableModel, List<ImageInfo> imageInfos) {
     super(group, name);
-    this.source = source;
-    this.targets = targets;
+    this.imageInfos = imageInfos;
     this.imagesTableModel = imagesTableModel;
   }
 
@@ -80,7 +70,7 @@ public class CopyLocationNameTask extends UndoableBackgroundTask<ImageInfo> {
    */
   @Override
   public int getMaxProgress() {
-    return targets.size();
+    return imageInfos.size();
   }
 
   /**
@@ -97,37 +87,27 @@ public class CopyLocationNameTask extends UndoableBackgroundTask<ImageInfo> {
   @SuppressWarnings("boxing")
   @Override
   protected String doInBackground() throws Exception {
-    for (ImageInfo target : targets) {
+    for (ImageInfo imageInfo : imageInfos) {
       if (interruptRequested()) {
         break;
       }
       currentProgress++;
+      setProgressMessage();
       try {
-        setProgressMessage();
-        new UpdateLocationName(target, source.getLocationName(),
-            ImageInfo.DATA_SOURCE.COPIED);
-        new UpdateProvinceName(target, source.getProvinceName(),
-            ImageInfo.DATA_SOURCE.COPIED);
-        new UpdateCountryName(target, source.getCountryName(),
-            ImageInfo.DATA_SOURCE.COPIED);
-        new UpdateCityName(target, source.getCityName(),
-            ImageInfo.DATA_SOURCE.COPIED);
-        publish(target);
+        publish(imageInfo);
       } catch (RuntimeException e) {
-        // catch all Runtime Exceptions, so the task doesn't terminate
+        // catch all RuntimeExceptions
         e.printStackTrace();
       }
     }
     String result = null;
     if (currentProgress == 1) {
-      result = Messages
-          .getString("CopyLocationNameTask.LocationNameCopiedToOne"); //$NON-NLS-1$
+      result = Messages.getString("RemoveImagesTask.OneImageRemoved"); //$NON-NLS-1$
     } else {
       try {
         result = String
             .format(
-                Messages
-                    .getString("CopyLocationNameTask.LocationNameCopiedFormat"), currentProgress); //$NON-NLS-1$
+                Messages.getString("RemoveImagesTask.ImagesRemovedFormat"), currentProgress); //$NON-NLS-1$
       } catch (IllegalFormatException e) {
         e.printStackTrace();
       }
@@ -141,8 +121,47 @@ public class CopyLocationNameTask extends UndoableBackgroundTask<ImageInfo> {
   @Override
   protected void process(List<ImageInfo> images) {
     for (ImageInfo imageInfo : images) {
-      int imageRow = imagesTableModel.getRow(imageInfo);
-      imagesTableModel.fireTableRowsUpdated(imageRow, imageRow);
+      int row = imagesTableModel.getRow(imageInfo);
+      imagesTableModel.removeRow(row);
     }
+    imagesTableModel.fireTableDataChanged();
+  }
+
+  /**
+   * @see javax.swing.SwingWorker#done()
+   */
+  @Override
+  protected void done() {
+    // the order of row may have changed
+    // This is safe here, as we're back on the event thread
+    imagesTableModel.sortRows();
+    super.done();
+  }
+
+  /**
+   * @see org.fibs.geotag.tasks.UndoableBackgroundTask#redo()
+   */
+  @Override
+  public void undo() {
+    // Needs to call super
+    super.undo();
+    for (ImageInfo imageInfo : imageInfos) {
+      imagesTableModel.addImageInfo(imageInfo);
+    }
+    imagesTableModel.fireTableDataChanged();
+  }
+
+  /**
+   * @see org.fibs.geotag.tasks.UndoableBackgroundTask#undo()
+   */
+  @Override
+  public void redo() {
+    // Needs to call super
+    super.redo();
+    for (ImageInfo imageInfo : imageInfos) {
+      int row = imagesTableModel.getRow(imageInfo);
+      imagesTableModel.removeRow(row);
+    }
+    imagesTableModel.fireTableDataChanged();
   }
 }

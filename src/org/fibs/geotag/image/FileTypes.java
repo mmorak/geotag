@@ -137,7 +137,10 @@ public enum FileTypes {
           // Pentax (RAW) Electronic Format
           extension.equals("pef") || //$NON-NLS-1$
           // Panasonic RAW format
-          extension.equals("raw")) { //$NON-NLS-1$
+          extension.equals("raw") || //$NON-NLS-1$
+          // Canon RAW format. Can't write GPS data to it,
+          // but XMP files can be used for that purpose.
+          extension.equals("crw")) { //$NON-NLS-1$
         return true;
       }
     }

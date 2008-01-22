@@ -59,6 +59,7 @@ import org.fibs.geotag.tasks.FillGapsTask;
 import org.fibs.geotag.tasks.GoogleEarthExportTask;
 import org.fibs.geotag.tasks.LocationNamesTask;
 import org.fibs.geotag.tasks.MatchImagesTask;
+import org.fibs.geotag.tasks.RemoveImagesTask;
 import org.fibs.geotag.tasks.SelectLocationNameTask;
 import org.fibs.geotag.tasks.SetOffsetTask;
 import org.fibs.geotag.tasks.ThumbnailsTask;
@@ -249,6 +250,22 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
   private static final String SAVE_ALL_LOCATIONS = Messages
       .getString("ImagesTablePopupMenu.SaveAllImages"); //$NON-NLS-1$
 
+  /** Text for sub menu */
+  private static final String REMOVE_IMAGES = Messages
+      .getString("ImagesTablePopupMenu.RemoveImages"); //$NON-NLS-1$
+
+  /** Text for menu item */
+  private static final String REMOVE_THIS_IMAGE = Messages
+      .getString("ImagesTablePopupMenu.RemoveThisImage"); //$NON-NLS-1$
+
+  /** Text for menu item */
+  private static final String REMOVE_SELECTED_IMAGES = Messages
+      .getString("ImagesTablePopupMenu.RemoveSelectedImages"); //$NON-NLS-1$
+
+  /** Text for menu item */
+  private static final String REMOVE_ALL_IMAGES = Messages
+      .getString("ImagesTablePopupMenu.RemoveAllImages"); //$NON-NLS-1$
+
   /** The parent JFrame. */
   private JFrame parentFrame;
 
@@ -366,6 +383,15 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
   /** The menu item used to save new locations for all images. */
   private JMenuItem saveAllLocationsItem;
 
+  /** The menu item used to remove a single image */
+  private JMenuItem removeThisImageItem;
+
+  /** The menu item used to remove selected images */
+  private JMenuItem removeSelectedImagesItem;
+
+  /** the menu item used to remove all images */
+  private JMenuItem removeAllImagesItem;
+
   /** the {@link ImageInfo} for the image in the row of the table. */
   private ImageInfo imageInfo;
 
@@ -433,6 +459,8 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
     addLocationNamesMenu(row, backgroundTask);
 
     addSaveLocationsMenu(backgroundTask);
+
+    addRemoveImagesMenu(backgroundTask);
   }
 
   /**
@@ -459,8 +487,8 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
     // enable if there is no background task, there is a selection of images
     // and at least one image in the selection has a new location
     enabled = false;
-    for (int i = 0; i < selectedRows.length; i++) {
-      if (tableModel.getImageInfo(selectedRows[i]).hasNewLocation()) {
+    for (int index = 0; index < selectedRows.length; index++) {
+      if (tableModel.getImageInfo(selectedRows[index]).hasNewLocation()) {
         enabled = !backgroundTask;
         break;
       }
@@ -474,8 +502,8 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
     // enable if there is no background task and there is at least one image
     // that has a new location
     enabled = false;
-    for (int i = 0; i < tableModel.getRowCount(); i++) {
-      if (tableModel.getImageInfo(i).hasNewLocation()) {
+    for (int index = 0; index < tableModel.getRowCount(); index++) {
+      if (tableModel.getImageInfo(index).hasNewLocation()) {
         enabled = !backgroundTask;
         break;
       }
@@ -511,8 +539,8 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
     // enable if there is no background task, there is a selection of images
     // and at least one image in the selection has a location
     enabled = false;
-    for (int i = 0; i < selectedRows.length; i++) {
-      if (tableModel.getImageInfo(selectedRows[i]).hasLocation()) {
+    for (int index = 0; index < selectedRows.length; index++) {
+      if (tableModel.getImageInfo(selectedRows[index]).hasLocation()) {
         enabled = !backgroundTask;
         break;
       }
@@ -526,8 +554,8 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
     // enable if there is no background task and there is at least one image
     // that has a location
     enabled = false;
-    for (int i = 0; i < tableModel.getRowCount(); i++) {
-      if (tableModel.getImageInfo(i).hasLocation()) {
+    for (int index = 0; index < tableModel.getRowCount(); index++) {
+      if (tableModel.getImageInfo(index).hasLocation()) {
         enabled = !backgroundTask;
         break;
       }
@@ -702,8 +730,8 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
     // tracks and there is at least one image in the selection with
     // no coordinates
     enabled = false;
-    for (int i = 0; i < selectedRows.length; i++) {
-      if (!tableModel.getImageInfo(selectedRows[i]).hasLocation()) {
+    for (int index = 0; index < selectedRows.length; index++) {
+      if (!tableModel.getImageInfo(selectedRows[index]).hasLocation()) {
         enabled = !backgroundTask && trackStore.hasTracks();
         break;
       }
@@ -717,8 +745,8 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
     // enabled if there is no background task, we have track data and there
     // is at least one image without coordinates
     enabled = false;
-    for (int i = 0; i < tableModel.getRowCount(); i++) {
-      if (!tableModel.getImageInfo(i).hasLocation()) {
+    for (int index = 0; index < tableModel.getRowCount(); index++) {
+      if (!tableModel.getImageInfo(index).hasLocation()) {
         enabled = !backgroundTask && trackStore.hasTracks();
         break;
       }
@@ -856,6 +884,41 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
   /**
    * @param backgroundTask
    */
+  private void addRemoveImagesMenu(boolean backgroundTask) {
+    boolean enabled;
+    JMenu removeImagesMenu = new JMenu(REMOVE_IMAGES);
+    boolean addMenu = false;
+
+    removeThisImageItem = new JMenuItem(REMOVE_THIS_IMAGE);
+    enabled = !backgroundTask;
+    addMenu |= enabled;
+    removeThisImageItem.setEnabled(enabled);
+    removeThisImageItem.addActionListener(this);
+    removeImagesMenu.add(removeThisImageItem);
+
+    removeSelectedImagesItem = new JMenuItem(REMOVE_SELECTED_IMAGES);
+    // enable if there is no background task and there is a selection
+    enabled = !backgroundTask && selectedRows.length > 0;
+    addMenu |= enabled;
+    removeSelectedImagesItem.setEnabled(enabled);
+    removeSelectedImagesItem.addActionListener(this);
+    removeImagesMenu.add(removeSelectedImagesItem);
+
+    removeAllImagesItem = new JMenuItem(REMOVE_ALL_IMAGES);
+    enabled = !backgroundTask;
+    addMenu |= enabled;
+    removeAllImagesItem.setEnabled(enabled);
+    removeAllImagesItem.addActionListener(this);
+    removeImagesMenu.add(removeAllImagesItem);
+
+    if (addMenu) {
+      add(removeImagesMenu);
+    }
+  }
+
+  /**
+   * @param backgroundTask
+   */
   private void addGoogleEarthMenu(boolean backgroundTask) {
     boolean enabled;
     JMenu googleEarthMenu = new JMenu(GOOGLEEARTH);
@@ -877,8 +940,8 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
     // enable if there is no background task and there is a
     // selection containing at least on image with location.
     enabled = false;
-    for (int i = 0; i < selectedRows.length; i++) {
-      if (tableModel.getImageInfo(selectedRows[i]).hasLocation()) {
+    for (int index = 0; index < selectedRows.length; index++) {
+      if (tableModel.getImageInfo(selectedRows[index]).hasLocation()) {
         enabled = !backgroundTask;
         break;
       }
@@ -891,8 +954,8 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
     // enable if there is no background task and there is at least one image
     // that has a location
     enabled = false;
-    for (int i = 0; i < tableModel.getRowCount(); i++) {
-      if (tableModel.getImageInfo(i).hasLocation()) {
+    for (int index = 0; index < tableModel.getRowCount(); index++) {
+      if (tableModel.getImageInfo(index).hasLocation()) {
         enabled = !backgroundTask;
         break;
       }
@@ -1029,6 +1092,12 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
       saveSelectedLocations();
     } else if (event.getSource() == saveAllLocationsItem) {
       saveAllLocations();
+    } else if (event.getSource() == removeThisImageItem) {
+      removeOneImage();
+    } else if (event.getSource() == removeSelectedImagesItem) {
+      removeSelectedImages();
+    } else if (event.getSource() == removeAllImagesItem) {
+      removeAllImages();
     }
   }
 
@@ -1066,8 +1135,8 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
    */
   private void showAllImagesOnMap(boolean showDirection) {
     List<ImageInfo> images = new ArrayList<ImageInfo>();
-    for (int i = 0; i < tableModel.getRowCount(); i++) {
-      images.add(tableModel.getImageInfo(i));
+    for (int index = 0; index < tableModel.getRowCount(); index++) {
+      images.add(tableModel.getImageInfo(index));
     }
     showImagesOnMap(images, showDirection);
   }
@@ -1200,8 +1269,8 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
    */
   private void exportAllToKml() {
     List<ImageInfo> images = new ArrayList<ImageInfo>();
-    for (int i = 0; i < tableModel.getRowCount(); i++) {
-      ImageInfo candidate = tableModel.getImageInfo(i);
+    for (int index = 0; index < tableModel.getRowCount(); index++) {
+      ImageInfo candidate = tableModel.getImageInfo(index);
       if (candidate.hasLocation()) {
         images.add(candidate);
       }
@@ -1332,8 +1401,8 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
   void copyOffsetToAll() {
     int offset = imageInfo.getOffset();
     List<ImageInfo> imageList = new ArrayList<ImageInfo>();
-    for (int i = 0; i < tableModel.getRowCount(); i++) {
-      ImageInfo image = tableModel.getImageInfo(i);
+    for (int index = 0; index < tableModel.getRowCount(); index++) {
+      ImageInfo image = tableModel.getImageInfo(index);
       imageList.add(image);
     }
     new SetOffsetTask(COPY_TIME_OFFSET, COPY_TIME_OFFSET_ALL, tableModel,
@@ -1381,8 +1450,8 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
    */
   private void matchTracksToAllImages() {
     List<ImageInfo> images = new ArrayList<ImageInfo>();
-    for (int i = 0; i < tableModel.getRowCount(); i++) {
-      images.add(tableModel.getImageInfo(i));
+    for (int index = 0; index < tableModel.getRowCount(); index++) {
+      images.add(tableModel.getImageInfo(index));
     }
     new MatchImagesTask(MATCH_TRACKS, MATCH_TRACK_ALL, imagesTable, images)
         .execute();
@@ -1431,8 +1500,8 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
    */
   private void copyLocationToAll() {
     List<ImageInfo> imageList = new ArrayList<ImageInfo>();
-    for (int i = 0; i < tableModel.getRowCount(); i++) {
-      imageList.add(tableModel.getImageInfo(i));
+    for (int iindex = 0; iindex < tableModel.getRowCount(); iindex++) {
+      imageList.add(tableModel.getImageInfo(iindex));
     }
     new CopyLocationTask(COPY_LOCATION, COPY_LOCATION_ALL, tableModel,
         imageInfo, imageList).execute();
@@ -1469,8 +1538,8 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
    */
   private void fillAllGaps() {
     List<ImageInfo> images = new ArrayList<ImageInfo>();
-    for (int i = 0; i < tableModel.getRowCount(); i++) {
-      ImageInfo candidate = tableModel.getImageInfo(i);
+    for (int index = 0; index < tableModel.getRowCount(); index++) {
+      ImageInfo candidate = tableModel.getImageInfo(index);
       if (!candidate.hasLocation()) {
         images.add(candidate);
       }
@@ -1508,8 +1577,8 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
    */
   private void findAllLocationNames() {
     List<ImageInfo> images = new ArrayList<ImageInfo>();
-    for (int i = 0; i < tableModel.getRowCount(); i++) {
-      ImageInfo candidate = tableModel.getImageInfo(i);
+    for (int index = 0; index < tableModel.getRowCount(); index++) {
+      ImageInfo candidate = tableModel.getImageInfo(index);
       if (candidate.hasLocation()) {
         images.add(candidate);
       }
@@ -1563,8 +1632,8 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
    */
   private void copyLocationNameToAll() {
     List<ImageInfo> imageList = new ArrayList<ImageInfo>();
-    for (int i = 0; i < tableModel.getRowCount(); i++) {
-      imageList.add(tableModel.getImageInfo(i));
+    for (int index = 0; index < tableModel.getRowCount(); index++) {
+      imageList.add(tableModel.getImageInfo(index));
     }
     new CopyLocationNameTask(LOCATION_NAMES + " - " + COPY_LOCATION_NAME, //$NON-NLS-1$
         COPY_LOCATION_NAME_ALL, tableModel, imageInfo, imageList).execute();
@@ -1608,13 +1677,48 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
    */
   private void saveAllLocations() {
     List<ImageInfo> images = new ArrayList<ImageInfo>();
-    for (int i = 0; i < tableModel.getRowCount(); i++) {
-      ImageInfo candidate = tableModel.getImageInfo(i);
+    for (int index = 0; index < tableModel.getRowCount(); index++) {
+      ImageInfo candidate = tableModel.getImageInfo(index);
       if (candidate.hasNewLocation()) {
         images.add(candidate);
       }
     }
     saveLocations(images);
+  }
+
+  /**
+   * Remove one image from the table
+   */
+  private void removeOneImage() {
+    List<ImageInfo> images = new ArrayList<ImageInfo>();
+    images.add(imageInfo);
+    new RemoveImagesTask(REMOVE_IMAGES, REMOVE_THIS_IMAGE, tableModel, images)
+        .execute();
+  }
+
+  /**
+   * Remove selected images from the table
+   */
+  private void removeSelectedImages() {
+    List<ImageInfo> images = new ArrayList<ImageInfo>();
+    for (int index = 0; index < selectedRows.length; index++) {
+      images.add(tableModel.getImageInfo(selectedRows[index]));
+    }
+    new RemoveImagesTask(REMOVE_IMAGES, REMOVE_SELECTED_IMAGES, tableModel,
+        images).execute();
+  }
+
+  /**
+   * Remove all images from the table
+   */
+  private void removeAllImages() {
+    List<ImageInfo> images = new ArrayList<ImageInfo>();
+    for (int index = 0; index < tableModel.getRowCount(); index++) {
+      images.add(tableModel.getImageInfo(index));
+    }
+    new RemoveImagesTask(REMOVE_IMAGES, REMOVE_ALL_IMAGES, tableModel, images)
+        .execute();
+
   }
 
   /**
