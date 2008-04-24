@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="ANSI_X3.4-1968" standalone="no"?>
+<jardesc>
+    <jar path="/home/andreas/workspace/Geotag/geotag.jar"/>
+    <options buildIfNeeded="true" compress="true" descriptionLocation="/Geotag/geotag.jardesc" exportErrors="true" exportWarnings="true" includeDirectoryEntries="true" overwrite="false" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
+    <storedRefactorings deprecationInfo="true" structuralOnly="false"/>
+    <selectedProjects/>
+    <manifest generateManifest="true" mainClassHandleIdentifier="=Geotag/src&lt;org.fibs.geotag{Geotag.java[Geotag" manifestLocation="/Geotag/MANIFEST.MF" manifestVersion="1.0" reuseManifest="false" saveManifest="true" usesManifest="true">
+        <sealing sealJar="false">
+            <packagesToSeal/>
+            <packagesToUnSeal/>
+        </sealing>
+    </manifest>
+    <selectedElements exportClassFiles="true" exportJavaFiles="false" exportOutputFolder="false">
+        <javaElement handleIdentifier="=Geotag/src"/>
+        <javaElement handleIdentifier="=Geotag/res"/>
+    </selectedElements>
+</jardesc>

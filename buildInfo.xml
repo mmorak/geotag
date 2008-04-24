@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Build info generator" default="build.info" basedir=".">
+  <!-- target to generate version numbers -->
+  <target name="build.info">
+    <tstamp>
+      <format property="build.date" pattern="yyyy-MM-dd" locale="en" />
+      <format property="build.time" pattern="HH:mm:ss" locale="en" />
+    </tstamp>
+    <propertyfile file="res/build.info" comment="Build info">
+      <entry key="build.date" value="${build.date}" />
+      <entry key="build.time" value="${build.time}" />
+    	<entry key="build.number" type="int" default="00000" operation="+" pattern="00000"/>
+    </propertyfile>
+    <echo message="${build.date} ${build.time}"/>
+  </target>
+</project>
