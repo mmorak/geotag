@@ -53,10 +53,10 @@ import com.centerkey.utils.BareBonesBrowserLaunch;
  */
 @SuppressWarnings("serial")
 public class AboutDialog extends JDialog implements HyperlinkListener {
-  
+
   /** Size of blank space around text in pixels. */
   private static final int BORDER_SIZE = 20;
-  
+
   /**
    * @param owner
    * @param title
@@ -81,7 +81,7 @@ public class AboutDialog extends JDialog implements HyperlinkListener {
     message.append("<center><font size=\"+1\"<b>"); //$NON-NLS-1$
     // Show program name version and build number
     message.append(Geotag.NAME).append(' ').append(Version.VERSION).append(' ')
-        .append('(').append(Version.BUILD_NUMBER).append(')');
+        .append("(Build ").append(Version.BUILD_NUMBER).append(')'); //$NON-NLS-1$
     message.append("</b></font><br><br>"); //$NON-NLS-1$
     // show the build date
     message.append(Version.BUILD_DATE).append("<br>"); //$NON-NLS-1$
@@ -127,7 +127,8 @@ public class AboutDialog extends JDialog implements HyperlinkListener {
         .setText("<center><a href=\"http://www.gnu.org/licenses\">http://www.gnu.org/licenses</a></center>"); //$NON-NLS-1$
     panel.add(footer, BorderLayout.SOUTH);
     // a border, so the text doesn't sit right on the edge of the dialog
-    panel.setBorder(BorderFactory.createEmptyBorder(BORDER_SIZE, BORDER_SIZE, BORDER_SIZE, BORDER_SIZE));
+    panel.setBorder(BorderFactory.createEmptyBorder(BORDER_SIZE, BORDER_SIZE,
+        BORDER_SIZE, BORDER_SIZE));
     // add the panel at the centre of the dialog
     add(panel, BorderLayout.CENTER);
     // Now a panel for the OK button to dismiss the dialog

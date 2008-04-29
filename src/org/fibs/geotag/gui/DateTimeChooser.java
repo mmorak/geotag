@@ -21,6 +21,7 @@ package org.fibs.geotag.gui;
 import java.awt.AWTEvent;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -31,6 +32,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
 import javax.swing.JButton;
@@ -48,6 +50,8 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import org.fibs.geotag.Messages;
+import org.fibs.geotag.Settings;
+import org.fibs.geotag.Settings.SETTING;
 
 /**
  * A dialog that lets the user select a date and a time.
@@ -57,13 +61,16 @@ import org.fibs.geotag.Messages;
  */
 @SuppressWarnings("serial")
 public class DateTimeChooser extends JDialog {
-  
+
   /** The number of months in a year. */
   private static final int MONTHS_IN_YEAR = 12;
-  
+
+  /** The number of hours in one day */
+  private static final int HOURS_IN_DAY = 24;
+
   /** the number of days in a week. */
   private static final int DAYS_IN_WEEK = 7;
-  
+
   /** The maximum number of weeks that can partially fall in a month. */
   private static final int MAX_WEEKS_IN_MONTH = 6;
 
@@ -168,10 +175,12 @@ public class DateTimeChooser extends JDialog {
         Calendar displayedTime = Calendar.getInstance();
         displayedTime.setTimeZone(getCurrentZone());
         displayedTime.setTime(timeModel.getDate());
-        getDisplayedDate().set(Calendar.HOUR_OF_DAY, displayedTime
-            .get(Calendar.HOUR_OF_DAY));
-        getDisplayedDate().set(Calendar.MINUTE, displayedTime.get(Calendar.MINUTE));
-        getDisplayedDate().set(Calendar.SECOND, displayedTime.get(Calendar.SECOND));
+        getDisplayedDate().set(Calendar.HOUR_OF_DAY,
+            displayedTime.get(Calendar.HOUR_OF_DAY));
+        getDisplayedDate().set(Calendar.MINUTE,
+            displayedTime.get(Calendar.MINUTE));
+        getDisplayedDate().set(Calendar.SECOND,
+            displayedTime.get(Calendar.SECOND));
         // close the chooser
         dispose();
       }
@@ -207,7 +216,7 @@ public class DateTimeChooser extends JDialog {
   }
 
   /**
-   * @param timeModel 
+   * @param timeModel
    */
   private void setupTimePanel(SpinnerDateModel timeModel) {
     timePanel = new JPanel();
@@ -234,7 +243,8 @@ public class DateTimeChooser extends JDialog {
           // we accept the changes
           spinner.commitEdit();
           // create a new Calendar object with the correct time zone
-          Calendar newDate = Calendar.getInstance(getDisplayedDate().getTimeZone());
+          Calendar newDate = Calendar.getInstance(getDisplayedDate()
+              .getTimeZone());
           // use the time from the spinner
           newDate.setTime((Date) spinner.getValue());
           // and the date from the displayedDate
@@ -252,8 +262,14 @@ public class DateTimeChooser extends JDialog {
     // now for the time zone chooser
     ArrayList<String> timeZoneNames = new ArrayList<String>();
     currentZone = displayedDate.getTimeZone();
-    timeZoneNames.add(currentZone.getID());
-    for (int offset = -MONTHS_IN_YEAR; offset <= MONTHS_IN_YEAR; offset++) {
+    String lastUsedTimeZone = Settings.get(SETTING.LAST_USED_TIMEZONE,
+        displayedDate.getTimeZone().getID());
+    timeZoneNames.add(lastUsedTimeZone);
+    String defaultZone = new GregorianCalendar().getTimeZone().getID();
+    if (!lastUsedTimeZone.equals(defaultZone)) {
+      timeZoneNames.add(defaultZone);
+    }
+    for (int offset = -HOURS_IN_DAY / 2; offset <= HOURS_IN_DAY / 2; offset++) {
       String name = "GMT"; //$NON-NLS-1$
       if (offset >= 0) {
         name += '+';
@@ -261,20 +277,28 @@ public class DateTimeChooser extends JDialog {
       name += offset;
       timeZoneNames.add(TimeZone.getTimeZone(name).getID());
     }
+    // also add all known timezone ids
+    for (String timezoneId : TimeZone.getAvailableIDs()) {
+      timeZoneNames.add(timezoneId);
+    }
     final JComboBox timezoneComboBox = new JComboBox(timeZoneNames.toArray()) {
       @Override
       public void actionPerformed(ActionEvent event) {
         setCurrentZone(TimeZone.getTimeZone((String) getSelectedItem()));
+        Settings.put(SETTING.LAST_USED_TIMEZONE, getCurrentZone().getID());
         Calendar newDisplayedDate = Calendar.getInstance(getCurrentZone());
-        newDisplayedDate.set(Calendar.DATE, getDisplayedDate().get(Calendar.DATE));
-        newDisplayedDate.set(Calendar.MONTH, getDisplayedDate().get(Calendar.MONTH));
-        newDisplayedDate.set(Calendar.YEAR, getDisplayedDate().get(Calendar.YEAR));
-        newDisplayedDate.set(Calendar.HOUR_OF_DAY, getDisplayedDate()
-            .get(Calendar.HOUR_OF_DAY));
-        newDisplayedDate.set(Calendar.MINUTE, getDisplayedDate()
-            .get(Calendar.MINUTE));
-        newDisplayedDate.set(Calendar.SECOND, getDisplayedDate()
-            .get(Calendar.SECOND));
+        newDisplayedDate.set(Calendar.DATE, getDisplayedDate().get(
+            Calendar.DATE));
+        newDisplayedDate.set(Calendar.MONTH, getDisplayedDate().get(
+            Calendar.MONTH));
+        newDisplayedDate.set(Calendar.YEAR, getDisplayedDate().get(
+            Calendar.YEAR));
+        newDisplayedDate.set(Calendar.HOUR_OF_DAY, getDisplayedDate().get(
+            Calendar.HOUR_OF_DAY));
+        newDisplayedDate.set(Calendar.MINUTE, getDisplayedDate().get(
+            Calendar.MINUTE));
+        newDisplayedDate.set(Calendar.SECOND, getDisplayedDate().get(
+            Calendar.SECOND));
         setDisplayedDate(newDisplayedDate);
         // make sure the formatter knows about the new time zone
         timeEditor.getFormat().setTimeZone(getCurrentZone());
@@ -284,6 +308,11 @@ public class DateTimeChooser extends JDialog {
     };
     timezoneComboBox.setSelectedIndex(0);
     timezoneComboBox.addActionListener(timezoneComboBox);
+    // make sure that "America/Argentina/ComodRivadavia"
+    // doesn't mess up the layout of the dialog
+    Dimension preferredSize = timezoneComboBox.getPreferredSize();
+    preferredSize.width = 42;
+    timezoneComboBox.setPreferredSize(preferredSize);
     timePanel.add(timezoneComboBox);
   }
 
@@ -378,7 +407,8 @@ public class DateTimeChooser extends JDialog {
       @Override
       public void mouseClicked(MouseEvent event) {
         // go one year back
-        getDisplayedDate().set(Calendar.YEAR, getDisplayedDate().get(Calendar.YEAR) - 1);
+        getDisplayedDate().set(Calendar.YEAR,
+            getDisplayedDate().get(Calendar.YEAR) - 1);
         updateDateShown();
       }
     });
@@ -397,7 +427,8 @@ public class DateTimeChooser extends JDialog {
       @Override
       public void mouseClicked(MouseEvent event) {
         // go one year forward
-        getDisplayedDate().set(Calendar.YEAR, getDisplayedDate().get(Calendar.YEAR) + 1);
+        getDisplayedDate().set(Calendar.YEAR,
+            getDisplayedDate().get(Calendar.YEAR) + 1);
         updateDateShown();
       }
     });
@@ -492,7 +523,8 @@ public class DateTimeChooser extends JDialog {
       }
     }
     // clear the remaining labels
-    for (int position = dayOfWeek + actualDaysInMonth - 1; position < MAX_WEEKS_IN_MONTH * DAYS_IN_WEEK; position++) {
+    for (int position = dayOfWeek + actualDaysInMonth - 1; position < MAX_WEEKS_IN_MONTH
+        * DAYS_IN_WEEK; position++) {
       int row = position / DAYS_IN_WEEK;
       int column = position % DAYS_IN_WEEK;
       dayLabels[row][column].setText(""); //$NON-NLS-1$
@@ -630,14 +662,16 @@ public class DateTimeChooser extends JDialog {
   }
 
   /**
-   * @param displayedDate the displayedDate to set
+   * @param displayedDate
+   *          the displayedDate to set
    */
   void setDisplayedDate(Calendar displayedDate) {
     this.displayedDate = displayedDate;
   }
 
   /**
-   * @param currentZone the currentZone to set
+   * @param currentZone
+   *          the currentZone to set
    */
   void setCurrentZone(TimeZone currentZone) {
     this.currentZone = currentZone;

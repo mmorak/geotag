@@ -225,7 +225,7 @@ public class FontChooser extends JDialog {
   public Font getSelectedFont() {
     return displayedFont;
   }
-  
+
   /**
    * @return the displayed font
    */
@@ -234,7 +234,8 @@ public class FontChooser extends JDialog {
   }
 
   /**
-   * @param displayedFont the displayedFont to set
+   * @param displayedFont
+   *          the displayedFont to set
    */
   void setDisplayedFont(Font displayedFont) {
     this.displayedFont = displayedFont;

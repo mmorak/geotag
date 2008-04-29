@@ -44,9 +44,9 @@ import org.fibs.geotag.Settings;
 import org.fibs.geotag.Settings.SETTING;
 import org.fibs.geotag.gpsbabel.GPSBabel;
 import org.fibs.geotag.util.Coordinates;
+import org.fibs.geotag.util.FontUtil;
 import org.fibs.geotag.util.Proxies;
 import org.fibs.geotag.util.Units;
-import org.fibs.geotag.util.FontUtil;
 
 /**
  * Second version of the SettingsDialog. This time using a JTree

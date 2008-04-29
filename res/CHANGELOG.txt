@@ -1,3 +1,7 @@
+Release 0.051 (Alice Springs Edition)
+  Now supporting time zones that don't have a whole number
+  offset from GMT (like Alice Springs).
+
 Release 0.050
   Speed up for loading images on Windows. Linux should not
   be affected. Any feedback (better/worse/unchanged) is

@@ -189,7 +189,9 @@ public final class Settings {
     /** Preferences key for the letters representing east. */
     CLIPBOARD_EAST,
     /** Preferences key for the letters representing west. */
-    CLIPBOARD_WEST;
+    CLIPBOARD_WEST,
+    /** Preferences key for the last used time zone */
+    LAST_USED_TIMEZONE;
 
     /**
      * For the actual key I prefer lower case keys with dots.
