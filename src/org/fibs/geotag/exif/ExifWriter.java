@@ -227,19 +227,19 @@ public class ExifWriter {
     }
     // Now for IPTC location data
     String locationName = imageInfo.getLocationName();
-    if (locationName != null && locationName.length() > 0) {
+    if (locationName != null) {
       arguments.add("-IPTC:ContentLocationName=" + locationName); //$NON-NLS-1$
     }
     String city = imageInfo.getCityName();
-    if (city != null && city.length() > 0) {
+    if (city != null) {
       arguments.add("-IPTC:City=" + city); //$NON-NLS-1$
     }
     String province = imageInfo.getProvinceName();
-    if (province != null && province.length() > 0) {
+    if (province != null) {
       arguments.add("-IPTC:Province-State=" + province); //$NON-NLS-1$
     }
     String country = imageInfo.getCountryName();
-    if (country != null && country.length() > 0) {
+    if (country != null) {
       arguments.add("-IPTC:Country-PrimaryLocationName=" + country); //$NON-NLS-1$
     }
     for (String string : arguments) {
@@ -315,21 +315,13 @@ public class ExifWriter {
       }
     }
     String location = imageInfo.getLocationName();
-    if (location != null && location.length() > 0) {
-      arguments.add("-XMP:Location=" + location); //$NON-NLS-1$
-    }
+    arguments.add("-XMP:Location=" + (location == null ? "" : location)); //$NON-NLS-1$ //$NON-NLS-2$
     String city = imageInfo.getCityName();
-    if (city != null && city.length() > 0) {
-      arguments.add("-XMP:City=" + city); //$NON-NLS-1$
-    }
+    arguments.add("-XMP:City=" + (city == null ? "" : city)); //$NON-NLS-1$ //$NON-NLS-2$
     String state = imageInfo.getProvinceName();
-    if (state != null && state.length() > 0) {
-      arguments.add("-XMP:State=" + state); //$NON-NLS-1$
-    }
+    arguments.add("-XMP:State=" + (state == null ? "" : state)); //$NON-NLS-1$ //$NON-NLS-2$
     String country = imageInfo.getCountryName();
-    if (country != null && country.length() > 0) {
-      arguments.add("-XMP:Country=" + country); //$NON-NLS-1$
-    }
+    arguments.add("-XMP:Country=" + (country == null ? "" : country)); //$NON-NLS-1$ //$NON-NLS-2$
     arguments.add(xmpFileName(imageInfo));
     for (String string : arguments) {
       System.out.print(string + ' ');

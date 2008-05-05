@@ -21,6 +21,9 @@ package org.fibs.geotag.data;
 import javax.swing.undo.AbstractUndoableEdit;
 
 import org.fibs.geotag.GlobalUndoManager;
+import org.fibs.geotag.Settings;
+import org.fibs.geotag.Settings.SETTING;
+import org.fibs.geotag.util.Units;
 
 /**
  * A class encapsulating altitude updates.
@@ -52,10 +55,25 @@ public class UpdateGPSAltitude extends AbstractUndoableEdit {
    */
   public UpdateGPSAltitude(ImageInfo imageInfo, String newAltitude,
       ImageInfo.DATA_SOURCE newDataSource) {
+    Units.ALTITUDE unit = Units.ALTITUDE.values()[Settings.get(
+        SETTING.ALTITUDE_UNIT, 0)];
+    String altitudeMetres = newAltitude;
+    if (unit != Units.ALTITUDE.METRES) {
+      try {
+        if (newAltitude != null && newAltitude.length() > 0) {
+          double altitudeFeet = Double.parseDouble(newAltitude);
+          double realAltitude = Units.convert(altitudeFeet, unit,
+              Units.ALTITUDE.METRES);
+          altitudeMetres = Double.toString(realAltitude);
+        }
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    }
     this.imageInfo = imageInfo;
     this.oldAltitude = imageInfo.getGpsAltitude();
     this.oldDataSource = imageInfo.getSource();
-    imageInfo.setGpsAltitude(newAltitude, newDataSource);
+    imageInfo.setGpsAltitude(altitudeMetres, newDataSource);
     this.newAltitude = imageInfo.getGpsAltitude();
     this.newDataSource = imageInfo.getSource();
     GlobalUndoManager.getManager().addEdit(this);
