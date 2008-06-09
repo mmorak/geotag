@@ -21,7 +21,7 @@ package org.fibs.geotag.util;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.fibs.geotag.Messages;
+import org.fibs.geotag.i18n.Messages;
 
 /**
  * A class for small convenience methods that are used in several places.

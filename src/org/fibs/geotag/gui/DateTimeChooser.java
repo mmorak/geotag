@@ -49,9 +49,9 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import org.fibs.geotag.Messages;
 import org.fibs.geotag.Settings;
 import org.fibs.geotag.Settings.SETTING;
+import org.fibs.geotag.i18n.Messages;
 
 /**
  * A dialog that lets the user select a date and a time.
@@ -581,7 +581,6 @@ public class DateTimeChooser extends JDialog {
    * @author Andreas Schneider
    * 
    */
-  @SuppressWarnings("serial")
   class CalendarLabel extends JLabel {
     /** This represents the day, month or year displayed by the label. */
     private int number;

@@ -20,7 +20,6 @@ package org.fibs.geotag.tasks;
 
 import java.util.List;
 
-import org.fibs.geotag.Messages;
 import org.fibs.geotag.data.ImageInfo;
 import org.fibs.geotag.data.UpdateCityName;
 import org.fibs.geotag.data.UpdateCountryName;
@@ -29,6 +28,7 @@ import org.fibs.geotag.data.UpdateProvinceName;
 import org.fibs.geotag.data.ImageInfo.DATA_SOURCE;
 import org.fibs.geotag.geonames.Location;
 import org.fibs.geotag.geonames.WikipediaLocation;
+import org.fibs.geotag.i18n.Messages;
 import org.fibs.geotag.table.ImagesTableModel;
 import org.fibs.geotag.util.Util;
 

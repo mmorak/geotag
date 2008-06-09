@@ -44,6 +44,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.JSplitPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.WindowConstants;
@@ -54,7 +55,6 @@ import net.iharder.dnd.FileDrop;
 
 import org.fibs.geotag.Geotag;
 import org.fibs.geotag.GlobalUndoManager;
-import org.fibs.geotag.Messages;
 import org.fibs.geotag.Settings;
 import org.fibs.geotag.Settings.SETTING;
 import org.fibs.geotag.data.ImageInfo;
@@ -68,6 +68,7 @@ import org.fibs.geotag.external.ExternalUpdateConsumer;
 import org.fibs.geotag.googleearth.KmlRequestHandler;
 import org.fibs.geotag.gpsbabel.GPSBabel;
 import org.fibs.geotag.gui.settings.SettingsDialog;
+import org.fibs.geotag.i18n.Messages;
 import org.fibs.geotag.image.ImageFileFilter;
 import org.fibs.geotag.table.ImagesTable;
 import org.fibs.geotag.table.ImagesTableModel;
@@ -82,6 +83,7 @@ import org.fibs.geotag.tasks.UndoableBackgroundTask;
 import org.fibs.geotag.track.GpxFileFilter;
 import org.fibs.geotag.track.GpxWriter;
 import org.fibs.geotag.track.TrackStore;
+import org.fibs.geotag.util.BrowserLauncher;
 import org.fibs.geotag.webserver.GeonamesHandler;
 import org.fibs.geotag.webserver.ImageInfoHandler;
 import org.fibs.geotag.webserver.MapHandler;
@@ -92,7 +94,6 @@ import org.fibs.geotag.webserver.TracksHandler;
 import org.fibs.geotag.webserver.UpdateHandler;
 import org.fibs.geotag.webserver.WebServer;
 
-import com.centerkey.utils.BareBonesBrowserLaunch;
 import com.topografix.gpx._1._0.Gpx;
 import com.topografix.gpx._1._0.Gpx.Trk;
 import com.topografix.gpx._1._0.Gpx.Trk.Trkseg;
@@ -438,7 +439,7 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
         .getString("MainWindow.WebSiteFormat") + ELLIPSIS, Geotag.NAME)); //$NON-NLS-1$
     websiteItem.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        BareBonesBrowserLaunch.openURL(Settings.get(SETTING.BROWSER, null),
+        BrowserLauncher.openURL(Settings.get(SETTING.BROWSER, null),
             Geotag.WEBSITE);
       }
     });
@@ -541,6 +542,17 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
     selectMenu.add(selectNoneItem);
 
     editMenu.add(selectMenu);
+    if (TranslationWindow.getLocaleToTranslate() != null) {
+      editMenu.add(new JSeparator());
+      JMenuItem translateItem = new JMenuItem(Messages
+          .getString("MainWindow.Translate") + ELLIPSIS); //$NON-NLS-1$
+      editMenu.add(translateItem);
+      translateItem.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          TranslationWindow.showWindow();
+        }
+      });
+    }
     return editMenu;
   }
 

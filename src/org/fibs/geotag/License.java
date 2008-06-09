@@ -21,6 +21,7 @@ package org.fibs.geotag;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.fibs.geotag.i18n.Messages;
 import org.fibs.geotag.util.Util;
 
 /**

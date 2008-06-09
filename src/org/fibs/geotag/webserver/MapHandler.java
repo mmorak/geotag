@@ -26,7 +26,7 @@ import java.io.InputStreamReader;
 import java.util.Properties;
 import java.util.StringTokenizer;
 
-import org.fibs.geotag.Messages;
+import org.fibs.geotag.i18n.Messages;
 
 import fi.iki.elonen.NanoHTTPD;
 import fi.iki.elonen.NanoHTTPD.Response;

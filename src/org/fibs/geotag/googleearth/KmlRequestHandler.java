@@ -31,10 +31,10 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
-import org.fibs.geotag.Messages;
 import org.fibs.geotag.data.ImageInfo;
 import org.fibs.geotag.external.ExternalUpdate;
 import org.fibs.geotag.external.ExternalUpdateConsumer;
+import org.fibs.geotag.i18n.Messages;
 import org.fibs.geotag.util.Airy;
 import org.fibs.geotag.webserver.ContextHandler;
 import org.fibs.geotag.webserver.WebServer;

@@ -18,9 +18,9 @@
 
 package org.fibs.geotag.table;
 
-import org.fibs.geotag.Messages;
 import org.fibs.geotag.Settings;
 import org.fibs.geotag.Settings.SETTING;
+import org.fibs.geotag.i18n.Messages;
 import org.fibs.geotag.util.Units;
 
 /**

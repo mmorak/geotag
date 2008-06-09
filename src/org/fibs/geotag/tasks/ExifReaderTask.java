@@ -23,12 +23,12 @@ import java.util.ArrayList;
 import java.util.IllegalFormatException;
 import java.util.List;
 
-import org.fibs.geotag.Messages;
 import org.fibs.geotag.data.ImageInfo;
 import org.fibs.geotag.exif.ExifReader;
 import org.fibs.geotag.exif.Exiftool;
 import org.fibs.geotag.exif.ExiftoolReader;
 import org.fibs.geotag.exif.MetadataExtractorReader;
+import org.fibs.geotag.i18n.Messages;
 import org.fibs.geotag.image.FileTypes;
 import org.fibs.geotag.table.ImagesTableModel;
 import org.fibs.geotag.util.FileUtil;

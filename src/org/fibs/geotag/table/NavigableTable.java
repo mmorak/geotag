@@ -37,6 +37,7 @@ import javax.swing.table.TableModel;
  * @author Andreas Schneider
  * 
  */
+@SuppressWarnings("serial")
 public abstract class NavigableTable extends JTable {
 
   /** keep track of the cell being edited. */

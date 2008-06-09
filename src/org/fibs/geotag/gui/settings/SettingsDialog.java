@@ -39,10 +39,10 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeSelectionModel;
 
-import org.fibs.geotag.Messages;
 import org.fibs.geotag.Settings;
 import org.fibs.geotag.Settings.SETTING;
 import org.fibs.geotag.gpsbabel.GPSBabel;
+import org.fibs.geotag.i18n.Messages;
 import org.fibs.geotag.util.Coordinates;
 import org.fibs.geotag.util.FontUtil;
 import org.fibs.geotag.util.Proxies;
@@ -190,6 +190,12 @@ public class SettingsDialog extends JDialog implements TreeSelectionListener {
     DefaultMutableTreeNode general = new DefaultMutableTreeNode(Messages
         .getString("SettingsDialog.GeneralSettings")); //$NON-NLS-1$
 
+    IntegerSettingsPanel mouseClicks = new IntegerSettingsPanel(
+        parent,
+        Messages.getString("SettingsDialog.MouseClicksToEdit"), SETTING.CLICKS_TO_EDIT, //$NON-NLS-1$
+        Settings.DEFAULT_CLICKS_TO_EDIT, 1, 2, 1);
+    addPanel(general, mouseClicks);
+
     FontSettingsPanel font = new FontSettingsPanel(parent, Messages
         .getString("SettingsDialog.Font"), SETTING.FONT, FontUtil //$NON-NLS-1$
         .fontToID(UIManager.getLookAndFeel().getDefaults()
@@ -200,6 +206,12 @@ public class SettingsDialog extends JDialog implements TreeSelectionListener {
         parent,
         Messages.getString("SettingsDialog.ThumbnailsInTooltips"), SETTING.TUMBNAILS_IN_TOOLTIPS, true); //$NON-NLS-1$
     addPanel(general, tooltipThumbnails);
+
+    IntegerSettingsPanel thumbnailsSize = new IntegerSettingsPanel(
+        parent,
+        Messages.getString("SettingsDialog.ThumbnailsSize"), SETTING.THUMBNAIL_SIZE, //$NON-NLS-1$
+        Settings.DEFAULT_THUMBNAIL_SIZE, 100, 800, 10);
+    addPanel(general, thumbnailsSize);
 
     BooleanSettingsPanel xmpOnly = new BooleanSettingsPanel(
         parent,

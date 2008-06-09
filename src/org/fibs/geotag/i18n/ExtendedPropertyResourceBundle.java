@@ -16,32 +16,33 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.fibs.geotag.util;
+package org.fibs.geotag.i18n;
 
-import java.util.ArrayList;
-import java.util.GregorianCalendar;
-import java.util.List;
-import java.util.TimeZone;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.PropertyResourceBundle;
+import java.util.Set;
 
 /**
- * Utility class for time zone names
- * 
- * @author Andreas Schneider
- * 
+ * A sub-class of PropertyResourceBundle, exposing handleKeySet()
  */
-public class TimeZones {
+public class ExtendedPropertyResourceBundle extends PropertyResourceBundle {
+
   /**
-   * @return A list of available time zone ids, with the current (local) time
-   *         zone leading the list
+   * Constructor
+   * 
+   * @param stream
+   * @throws IOException
    */
-  public static String[] getAvailable() {
-    String currentZone = new GregorianCalendar().getTimeZone().getID();
-    List<String> available = new ArrayList<String>();
-    available.add(currentZone);
-    String[] ids = TimeZone.getAvailableIDs();
-    for (String id : ids) {
-      available.add(id);
-    }
-    return available.toArray(new String[available.size()]);
+  ExtendedPropertyResourceBundle(InputStream stream) throws IOException {
+    super(stream);
   }
+
+  /**
+   * @return the set of keys for just this one bundle (without parents)
+   */
+  public Set<String> getKeySet() {
+    return handleKeySet();
+  }
+
 }

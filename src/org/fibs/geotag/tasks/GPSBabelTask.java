@@ -24,8 +24,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import org.fibs.geotag.Messages;
 import org.fibs.geotag.gpsbabel.GPSBabel;
+import org.fibs.geotag.i18n.Messages;
 import org.fibs.geotag.track.GpxReader;
 import org.fibs.geotag.util.Constants;
 import org.fibs.geotag.util.InputStreamGobbler;

@@ -24,16 +24,20 @@ import java.io.PrintStream;
 import java.util.Locale;
 
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 import org.fibs.geotag.gui.MainWindow;
+import org.fibs.geotag.gui.TranslationWindow;
+import org.fibs.geotag.i18n.Messages;
 import org.fibs.geotag.util.Constants;
+import org.fibs.geotag.util.LocaleUtil;
 import org.fibs.geotag.util.Util;
 
 import com.jgoodies.looks.plastic.Plastic3DLookAndFeel;
 
 /**
- * A class providing the entry point of the application.
+ * A class providing the entry point for the application.
  * 
  * @author Andreas Schneider
  */
@@ -48,7 +52,7 @@ public final class Geotag {
 
   /** Minimum memory in megabytes. */
   private static final int MIN_MEMORY = 127;
-  
+
   /** the application name - should we ever feel the need to change it. */
   public static final String NAME = "Geotag"; //$NON-NLS-1$
 
@@ -85,10 +89,13 @@ public final class Geotag {
         // start just after the equals sign
         String value = arg.substring(equalsPos + 1);
         // now see what to do with them
-        if (key.equals("lang") && value.length() == 2) { //$NON-NLS-1$
-          // a two letter argument to -lang is used as the language
-          // for this program
-          Locale.setDefault(new Locale(value));
+        if (key.equals("language") && value.length() > 0) { //$NON-NLS-1$
+          Locale locale = LocaleUtil.localeFromString(value);
+          Locale.setDefault(locale);
+        } else if (key.equals("translate") && value.length() > 0) { //$NON-NLS-1$
+          Locale locale = LocaleUtil.localeFromString(value);
+          Locale.setDefault(locale);
+          TranslationWindow.setLocaleToTranslate(locale);
         } else if (key.equals("console") && value.equals("yes")) { //$NON-NLS-1$ //$NON-NLS-2$
           redirectConsole = false;
         }
@@ -133,7 +140,12 @@ public final class Geotag {
           .getString("Geotag.NewVersion"), //$NON-NLS-1$
           JOptionPane.INFORMATION_MESSAGE);
     }
-    MainWindow mainWindow = new MainWindow();
-    mainWindow.setVisible(true);
+    SwingUtilities.invokeLater(new Runnable() {
+      public void run() {
+        MainWindow mainWindow = new MainWindow();
+        mainWindow.setVisible(true);
+      }
+    });
+
   }
 }

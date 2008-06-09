@@ -18,7 +18,7 @@
 
 package org.fibs.geotag.util;
 
-import org.fibs.geotag.Messages;
+import org.fibs.geotag.i18n.Messages;
 
 /**
  * A class encapsulation distance units. Nautical miles left out on purpose

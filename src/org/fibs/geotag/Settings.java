@@ -18,6 +18,10 @@
 
 package org.fibs.geotag;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
@@ -48,7 +52,7 @@ public final class Settings {
     MAIN_WINDOW_WIDHTH,
     /** Preferences key for the preview height. */
     PREVIEW_HEIGHT,
-    /** Preference key for thumbnail size. */
+    /** Preference key for thumbnail size (longest side in pixels) . */
     THUMBNAIL_SIZE,
     /** Preferences key for showing thumbnails in tooltips. */
     TUMBNAILS_IN_TOOLTIPS,
@@ -191,7 +195,9 @@ public final class Settings {
     /** Preferences key for the letters representing west. */
     CLIPBOARD_WEST,
     /** Preferences key for the last used time zone */
-    LAST_USED_TIMEZONE;
+    LAST_USED_TIMEZONE,
+    /** Preferences key for number of clicks to edit */
+    CLICKS_TO_EDIT;
 
     /**
      * For the actual key I prefer lower case keys with dots.
@@ -201,6 +207,68 @@ public final class Settings {
     @Override
     public String toString() {
       return name().toLowerCase().replace('_', '.');
+    }
+  }
+
+  /**
+   * An interface to be be implemented by anyone who wants to be notified
+   * whenever a setting changes
+   */
+  public static interface SettingsListener {
+    /**
+     * Called whenever a setting changes. The new value can then be retrieved
+     * via one of the Settings.get() methods.
+     * 
+     * @param setting
+     *          The setting that has changed.
+     */
+    public void settingChanged(SETTING setting);
+  }
+
+  /** Here each setting has a (maybe null) list of listeners */
+  private static Map<SETTING, List<SettingsListener>> listeners = new HashMap<SETTING, List<SettingsListener>>();
+
+  /**
+   * Add a listener for a setting
+   * 
+   * @param setting
+   *          The setting to be listened for
+   * @param listener
+   *          The listener
+   */
+  public static void addListener(SETTING setting, SettingsListener listener) {
+    List<SettingsListener> listenerList = listeners.get(setting);
+    if (listenerList == null) {
+      listenerList = new ArrayList<SettingsListener>();
+      listeners.put(setting, listenerList);
+    }
+    listenerList.add(listener);
+  }
+
+  /**
+   * Remove a listener for a setting
+   * 
+   * @param setting
+   * @param listener
+   */
+  public static void removeListener(SETTING setting, SettingsListener listener) {
+    List<SettingsListener> listenerList = listeners.get(setting);
+    if (listenerList != null) {
+      listenerList.remove(listener);
+    }
+  }
+
+  /**
+   * Notify all listeners for a setting, that the setting has changed
+   * 
+   * @param setting
+   */
+  private static void notifyListeners(SETTING setting) {
+    List<SettingsListener> listenerList = listeners.get(setting);
+    if (listenerList != null) {
+      for (SettingsListener listener : listenerList) {
+        listener.settingChanged(setting);
+      }
     }
   }
 
@@ -218,6 +286,12 @@ public final class Settings {
 
   /** Maximum value of GEONAMES_WIKIPEDIA_ENTRIES. */
   public static final int GEONAMES_MAX_WIKIPEDIA_ENTRIES = 50;
+
+  /** Default value for the thumbnail size */
+  public static final int DEFAULT_THUMBNAIL_SIZE = 150;
+
+  /** Default value for clicks to edit */
+  public static final int DEFAULT_CLICKS_TO_EDIT = 1;
 
   /** The preferences for the main package. */
   private static Preferences preferences = Preferences
@@ -251,6 +325,7 @@ public final class Settings {
    */
   public static void put(SETTING key, int value) {
     preferences.putInt(key.toString(), value);
+    notifyListeners(key);
   }
 
   /**
@@ -268,6 +343,7 @@ public final class Settings {
    */
   public static void put(SETTING key, String value) {
     preferences.put(key.toString(), value);
+    notifyListeners(key);
   }
 
   /**
@@ -285,5 +361,6 @@ public final class Settings {
    */
   public static void put(SETTING key, boolean value) {
     preferences.putBoolean(key.toString(), value);
+    notifyListeners(key);
   }
 }

@@ -21,8 +21,8 @@ package org.fibs.geotag.tasks;
 import java.util.IllegalFormatException;
 import java.util.List;
 
-import org.fibs.geotag.Messages;
 import org.fibs.geotag.data.ImageInfo;
+import org.fibs.geotag.i18n.Messages;
 import org.fibs.geotag.table.ImagesTableModel;
 import org.fibs.geotag.track.TrackMatcher;
 

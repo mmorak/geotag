@@ -18,10 +18,10 @@
 
 package org.fibs.geotag.tasks;
 
-import org.fibs.geotag.Messages;
 import org.fibs.geotag.data.ImageInfo;
 import org.fibs.geotag.data.UpdateGPSLongitude;
 import org.fibs.geotag.data.ImageInfo.DATA_SOURCE;
+import org.fibs.geotag.i18n.Messages;
 
 /**
  * @author Andreas Schneider

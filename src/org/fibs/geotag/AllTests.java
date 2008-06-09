@@ -23,6 +23,7 @@ import junit.framework.TestSuite;
 
 import org.fibs.geotag.track.KmlTest;
 import org.fibs.geotag.track.TrackStoreTest;
+import org.fibs.geotag.util.Ascii2NativeTest;
 import org.fibs.geotag.util.BoundsTypeUtilTest;
 import org.fibs.geotag.util.CoordinatesTest;
 import org.fibs.geotag.util.FileUtilTest;
@@ -44,6 +45,7 @@ public class AllTests extends TestSuite {
     suite.addTestSuite(BoundsTypeUtilTest.class);
     suite.addTestSuite(KmlTest.class);
     suite.addTestSuite(CoordinatesTest.class);
+    suite.addTestSuite(Ascii2NativeTest.class);
     return suite;
   }
 }

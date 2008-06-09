@@ -24,7 +24,11 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 import java.util.zip.Deflater;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -37,10 +41,10 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
 import org.fibs.geotag.Geotag;
-import org.fibs.geotag.Messages;
 import org.fibs.geotag.Settings;
 import org.fibs.geotag.Settings.SETTING;
 import org.fibs.geotag.data.ImageInfo;
+import org.fibs.geotag.i18n.Messages;
 import org.fibs.geotag.util.Airy;
 
 import com.google.earth.kml._2.DocumentType;
@@ -54,6 +58,7 @@ import com.google.earth.kml._2.PlacemarkType;
 import com.google.earth.kml._2.PointType;
 import com.google.earth.kml._2.StyleSelectorType;
 import com.google.earth.kml._2.StyleType;
+import com.google.earth.kml._2.TimeStampType;
 
 /**
  * A class for exporting to KML/KMZ files.
@@ -140,6 +145,13 @@ public class KmlExporter {
         }
         PlacemarkType placemark = factory.createPlacemarkType();
         placemark.setName(imageInfo.getName());
+        TimeStampType timeStamp = factory.createTimeStampType();
+        Date date = imageInfo.getTimeGMT().getTime();
+        // Is there a better way to get the ISO format?
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"); //$NON-NLS-1$
+        dateFormat.setTimeZone(TimeZone.getTimeZone("GMT")); //$NON-NLS-1$
+        timeStamp.setWhen(dateFormat.format(date));
+        placemark.setTimePrimitive(factory.createTimeStamp(timeStamp));
         StringBuilder description = new StringBuilder();
         // clicking on the image opens the image via imagePath
         description.append("<a href=\""); //$NON-NLS-1$
@@ -156,9 +168,15 @@ public class KmlExporter {
         } else {
           // the imagePath is used
           description.append(imagePath);
-          description.append("\" width=\"200\"/>"); //$NON-NLS-1$
+                    description.append("\" width=\"" ); //$NON-NLS-1$
+                    description.append(Settings.get(SETTING.THUMBNAIL_SIZE, Settings.DEFAULT_THUMBNAIL_SIZE));
+                    description.append("\"/>"); //$NON-NLS-1$
         }
         description.append("</a>"); //$NON-NLS-1$
+        String locString = getLocationString(imageInfo);
+        if (locString != null) {
+          description.append("<br>").append(locString); //$NON-NLS-1$
+        }
         placemark.setDescription(description.toString());
         PointType point = factory.createPointType();
         double latitude = Airy.LATITUDE;
@@ -186,6 +204,40 @@ public class KmlExporter {
       e.printStackTrace();
     }
   }
+
+    /**
+     * Builds a location description if possible
+     * @param imageInfo
+     * @return The location string or null
+     */
+    private static String getLocationString( ImageInfo imageInfo ) {
+        StringBuilder location = new StringBuilder();
+        addLocationItem( location, imageInfo.getLocationName() );
+        addLocationItem( location, imageInfo.getCityName() );
+        addLocationItem( location, imageInfo.getProvinceName() );
+        addLocationItem( location, imageInfo.getCountryName() );
+        if ( location.length() > 0 ) {
+          return location.toString();
+        }
+        return null;
+      }
+    
+      /**
+       * Adds a location item to a StringBuilder. Also makes
+       * sure to insert commas where appropriate.
+       * @param builder
+       * @param item
+       */
+      private static void addLocationItem( StringBuilder builder, String item ) {
+        if ( item == null )
+          return;
+    
+        if ( builder.length() > 0 ) {
+          builder.append(", "); //$NON-NLS-1$
+        }
+        builder.append( item );
+      }
+    
 
   /**
    * Write image data to KML file.

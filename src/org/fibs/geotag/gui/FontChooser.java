@@ -41,7 +41,7 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import org.fibs.geotag.Messages;
+import org.fibs.geotag.i18n.Messages;
 
 /**
  * A font chooser component.

@@ -26,10 +26,10 @@ import java.util.List;
 import javax.swing.JOptionPane;
 
 import org.fibs.geotag.Geotag;
-import org.fibs.geotag.Messages;
 import org.fibs.geotag.dcraw.Dcraw;
 import org.fibs.geotag.exif.Exiftool;
 import org.fibs.geotag.gpsbabel.GPSBabel;
+import org.fibs.geotag.i18n.Messages;
 import org.fibs.geotag.image.FileTypes;
 import org.fibs.geotag.table.ImagesTableModel;
 import org.fibs.geotag.track.TrackStore;

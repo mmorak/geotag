@@ -55,8 +55,18 @@ public class UpdateGPSAltitude extends AbstractUndoableEdit {
    */
   public UpdateGPSAltitude(ImageInfo imageInfo, String newAltitude,
       ImageInfo.DATA_SOURCE newDataSource) {
-    Units.ALTITUDE unit = Units.ALTITUDE.values()[Settings.get(
-        SETTING.ALTITUDE_UNIT, 0)];
+    this(imageInfo, newAltitude, newDataSource,
+        Units.ALTITUDE.values()[Settings.get(SETTING.ALTITUDE_UNIT, 0)]);
+  }
+
+  /**
+   * @param imageInfo
+   * @param newAltitude
+   * @param newDataSource
+   * @param unit
+   */
+  public UpdateGPSAltitude(ImageInfo imageInfo, String newAltitude,
+      ImageInfo.DATA_SOURCE newDataSource, Units.ALTITUDE unit) {
     String altitudeMetres = newAltitude;
     if (unit != Units.ALTITUDE.METRES) {
       try {

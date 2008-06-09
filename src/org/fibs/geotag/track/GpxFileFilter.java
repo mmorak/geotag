@@ -22,7 +22,7 @@ import java.io.File;
 
 import javax.swing.filechooser.FileFilter;
 
-import org.fibs.geotag.Messages;
+import org.fibs.geotag.i18n.Messages;
 import org.fibs.geotag.util.FileUtil;
 
 /**

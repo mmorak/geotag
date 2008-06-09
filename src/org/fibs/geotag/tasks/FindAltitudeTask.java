@@ -21,49 +21,42 @@ package org.fibs.geotag.tasks;
 import java.util.IllegalFormatException;
 import java.util.List;
 
-import org.fibs.geotag.data.UpdateGPSAltitude;
-import org.fibs.geotag.data.UpdateGPSLatitude;
-import org.fibs.geotag.data.UpdateGPSLongitude;
 import org.fibs.geotag.data.ImageInfo;
+import org.fibs.geotag.data.UpdateGPSAltitude;
+import org.fibs.geotag.data.ImageInfo.DATA_SOURCE;
+import org.fibs.geotag.geonames.AltitudeHandler;
 import org.fibs.geotag.i18n.Messages;
 import org.fibs.geotag.table.ImagesTableModel;
+import org.fibs.geotag.util.Units;
 
 /**
- * a background task for copying the location from one image to others.
+ * A class finding altitudes for images.
  * 
  * @author Andreas Schneider
  * 
  */
-public class CopyLocationTask extends UndoableBackgroundTask<ImageInfo> {
+public class FindAltitudeTask extends UndoableBackgroundTask<ImageInfo> {
 
-  /** keep track of current progress. */
-  private int currentProgress = 0;
-
-  /** The table model. */
+  /** the table model to be informed about changes. */
   private ImagesTableModel imagesTableModel;
 
-  /** The source of the location data. */
-  private ImageInfo source;
+  /** the list of images to be updated. */
+  private List<ImageInfo> imageInfos;
 
-  /** The list of images receiving a new location. */
-  private List<ImageInfo> targets;
+  /** Keep track of progress. */
+  private int currentProgress = 0;
 
   /**
-   * create a background task to copy a location to other images.
-   * 
    * @param group
    * @param name
-   * @param imagesTableModel
-   * @param source
-   * @param targets
+   * @param imagestableModel
+   * @param imageInfos
    */
-  public CopyLocationTask(String group, String name,
-      ImagesTableModel imagesTableModel, ImageInfo source,
-      List<ImageInfo> targets) {
+  public FindAltitudeTask(String group, String name,
+      ImagesTableModel imagestableModel, List<ImageInfo> imageInfos) {
     super(group, name);
-    this.source = source;
-    this.targets = targets;
-    this.imagesTableModel = imagesTableModel;
+    this.imagesTableModel = imagestableModel;
+    this.imageInfos = imageInfos;
   }
 
   /**
@@ -79,7 +72,7 @@ public class CopyLocationTask extends UndoableBackgroundTask<ImageInfo> {
    */
   @Override
   public int getMaxProgress() {
-    return targets.size();
+    return imageInfos.size();
   }
 
   /**
@@ -96,33 +89,41 @@ public class CopyLocationTask extends UndoableBackgroundTask<ImageInfo> {
   @SuppressWarnings("boxing")
   @Override
   protected String doInBackground() throws Exception {
-    for (ImageInfo target : targets) {
+    int altitudesFound = 0;
+    for (ImageInfo imageInfo : imageInfos) {
       if (interruptRequested()) {
         break;
       }
       currentProgress++;
+      setProgressMessage();
       try {
-        setProgressMessage();
-        new UpdateGPSLatitude(target, source.getGpsLatitude(),
-            ImageInfo.DATA_SOURCE.COPIED);
-        new UpdateGPSLongitude(target, source.getGpsLongitude(),
-            ImageInfo.DATA_SOURCE.COPIED);
-        new UpdateGPSAltitude(target, source.getGpsAltitude(),
-            ImageInfo.DATA_SOURCE.COPIED);
-        publish(target);
+        AltitudeHandler altitudeHandler = new AltitudeHandler(imageInfo
+            .getGpsLatitude(), imageInfo.getGpsLongitude());
+        // update the altitude
+        String altitude = altitudeHandler.getAltitude();
+        if (altitude != null) {
+          // That's the special value for "sea level" / "unknown":
+          if (!altitude.startsWith("-32768")) { //$NON-NLS-1$
+            new UpdateGPSAltitude(imageInfo, altitude, DATA_SOURCE.GEONAMES,
+                Units.ALTITUDE.METRES);
+            altitudesFound++;
+          }
+          // tell the GUI about the change
+          publish(imageInfo);
+        }
       } catch (RuntimeException e) {
-        // catch all Runtime Exceptions, so the task doesn't terminate
+        // catch all runtime exceptions - no need to terminate early
         e.printStackTrace();
       }
     }
     String result = null;
-    if (currentProgress == 1) {
-      result = Messages.getString("CopyLocationTask.LocationCopiedToOne"); //$NON-NLS-1$
+    if (altitudesFound == 1) {
+      result = Messages.getString("FindAltitudeTask.OneAltitudeFound"); //$NON-NLS-1$
     } else {
       try {
-        result = String
-            .format(
-                Messages.getString("CopyLocationTask.LocationsCopiedFormat"), currentProgress); //$NON-NLS-1$
+        result = String.format(Messages
+            .getString("FindAltitudeTask.AltitudesFoundFormat"), //$NON-NLS-1$
+            altitudesFound);
       } catch (IllegalFormatException e) {
         e.printStackTrace();
       }
@@ -134,10 +135,11 @@ public class CopyLocationTask extends UndoableBackgroundTask<ImageInfo> {
    * @see javax.swing.SwingWorker#process(java.util.List)
    */
   @Override
-  protected void process(List<ImageInfo> images) {
-    for (ImageInfo imageInfo : images) {
+  protected void process(List<ImageInfo> chunks) {
+    for (ImageInfo imageInfo : chunks) {
       int imageRow = imagesTableModel.getRow(imageInfo);
       imagesTableModel.fireTableRowsUpdated(imageRow, imageRow);
     }
   }
+
 }

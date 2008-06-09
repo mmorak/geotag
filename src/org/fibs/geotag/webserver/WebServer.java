@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import org.fibs.geotag.Messages;
+import org.fibs.geotag.i18n.Messages;
 import org.fibs.geotag.table.ImagesTableModel;
 
 import fi.iki.elonen.NanoHTTPD;

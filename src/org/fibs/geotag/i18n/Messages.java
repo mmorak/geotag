@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.fibs.geotag;
+package org.fibs.geotag.i18n;
 
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
@@ -27,11 +27,17 @@ import java.util.ResourceBundle;
  */
 public final class Messages {
   /***/
-  private static final String BUNDLE_NAME = "org.fibs.geotag.messages"; //$NON-NLS-1$
+  private static final String BUNDLE_NAME = "org.fibs.geotag.geotag"; //$NON-NLS-1$
+
+  /**
+   * A resource bundle control that tries to load property files from local
+   * files first
+   */
+  private static final LocalFileResourceBundleControl control = new LocalFileResourceBundleControl();
 
   /***/
-  private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
-      .getBundle(BUNDLE_NAME);
+  private static ResourceBundle bundle = ResourceBundle.getBundle(BUNDLE_NAME,
+      control);
 
   /**
    * 
@@ -46,9 +52,19 @@ public final class Messages {
    */
   public static String getString(String key) {
     try {
-      return RESOURCE_BUNDLE.getString(key);
+      return bundle.getString(key);
     } catch (MissingResourceException e) {
-      return '!' + key + '!';
+      return '?' + key + '?';
     }
   }
+
+  /**
+   * Reloads the message bundle. Might be useful to update translations on the
+   * fly.
+   */
+  public static void reloadBundle() {
+    ResourceBundle.clearCache(Messages.class.getClassLoader());
+    bundle = ResourceBundle.getBundle(BUNDLE_NAME, control);
+  }
+
 }

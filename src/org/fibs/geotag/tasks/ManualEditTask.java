@@ -18,13 +18,13 @@
 
 package org.fibs.geotag.tasks;
 
-import org.fibs.geotag.Messages;
 import org.fibs.geotag.data.ImageInfo;
 import org.fibs.geotag.data.UpdateCityName;
 import org.fibs.geotag.data.UpdateCountryName;
 import org.fibs.geotag.data.UpdateLocationName;
 import org.fibs.geotag.data.UpdateProvinceName;
 import org.fibs.geotag.data.ImageInfo.DATA_SOURCE;
+import org.fibs.geotag.i18n.Messages;
 import org.fibs.geotag.table.ImagesTableColumns.COLUMN;
 
 /**

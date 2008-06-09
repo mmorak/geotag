@@ -47,6 +47,7 @@ import javax.swing.table.TableCellRenderer;
 
 import org.fibs.geotag.Settings;
 import org.fibs.geotag.Settings.SETTING;
+import org.fibs.geotag.Settings.SettingsListener;
 import org.fibs.geotag.data.ImageInfo;
 import org.fibs.geotag.data.ImageInfo.THUMBNAIL_STATUS;
 import org.fibs.geotag.image.ImageToolTip;
@@ -135,10 +136,23 @@ public class ImagesTable extends NavigableTable {
     textCellEditor.setFont(getFont());
     textCellEditor.setBorder(BorderFactory.createLineBorder(Color.BLACK));
     setDefaultEditor(String.class, new DefaultCellEditor(textCellEditor));
-    // setDefaultEditor(Object.class, new KeyableCellEditor());
-    // Edit cell on single click (default is double click)
-    ((DefaultCellEditor) getDefaultEditor(String.class))
-        .setClickCountToStart(1);
+    // How many clicks needed to edit a cell
+    // we also want to know if that setting chages
+    // So we create a settings listener
+    SettingsListener settingsListener = new SettingsListener() {
+      @Override
+      public void settingChanged(SETTING setting) {
+        // no need really to check
+        int clicksToEdit = Settings.get(SETTING.CLICKS_TO_EDIT,
+            Settings.DEFAULT_CLICKS_TO_EDIT);
+        ((DefaultCellEditor) getDefaultEditor(String.class))
+            .setClickCountToStart(clicksToEdit);
+      }
+    };
+    // kick it once
+    settingsListener.settingChanged(SETTING.CLICKS_TO_EDIT);
+    // and install it
+    Settings.addListener(SETTING.CLICKS_TO_EDIT, settingsListener);
     // Now a workaround for
     // http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6503981
     fixBug6503981();
@@ -561,7 +575,8 @@ public class ImagesTable extends NavigableTable {
           if (tooltip.isShowing()) {
             tooltip.setImageIcon(chunks.get(0).getThumbnail());
             // see
-            // http://forum.java.sun.com/thread.jspa?threadID=320183&messageID=1294878
+            // http://forum.java.sun.com/thread.jspa?threadID=320183&messageID=
+            // 1294878
             // for details about this nasty hack:
             dispatchEvent(getLastMouseMovedEvent());
           }

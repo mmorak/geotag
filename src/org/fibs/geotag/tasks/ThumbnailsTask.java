@@ -20,9 +20,9 @@ package org.fibs.geotag.tasks;
 
 import java.util.List;
 
-import org.fibs.geotag.Messages;
 import org.fibs.geotag.data.ImageInfo;
 import org.fibs.geotag.data.ImageInfo.THUMBNAIL_STATUS;
+import org.fibs.geotag.i18n.Messages;
 import org.fibs.geotag.image.ThumbnailGenerator;
 
 /**

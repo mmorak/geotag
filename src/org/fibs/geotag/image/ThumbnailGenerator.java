@@ -37,19 +37,13 @@ import org.fibs.geotag.data.ImageInfo.THUMBNAIL_STATUS;
  * 
  */
 public final class ThumbnailGenerator {
-  
+
   /**
    * hide constructor.
    */
   private ThumbnailGenerator() {
     // hide constructor
   }
-
-  /**
-   * Default for the longest size of thumbnails - in case we don't have a
-   * preference yet.
-   */
-  public static final int DEFAULT_THUMBNAIL_SIZE = 150;
 
   /**
    * Create a thumbnail image.
@@ -105,7 +99,7 @@ public final class ThumbnailGenerator {
           // now we create a thumbnail image
           BufferedImage thumbImage = ThumbnailGenerator.createThumbnailImage(
               rotatedImage, Settings.get(SETTING.THUMBNAIL_SIZE,
-                  DEFAULT_THUMBNAIL_SIZE));
+                  Settings.DEFAULT_THUMBNAIL_SIZE));
           ImageIcon imageIcon = new ImageIcon(thumbImage);
           imageInfo.setThumbnail(imageIcon);
           imageInfo.setThumbNailStatus(THUMBNAIL_STATUS.AVAILABLE);

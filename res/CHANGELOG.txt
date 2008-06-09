@@ -1,3 +1,10 @@
+Release 0.053
+  Impoved KML export (Jason Winnebeck)
+  Thumbnail size now configurable (Jason Winnebeck)
+  Click count for manual edits now configurable.
+  Altitudes can now be retrieved from geonames.org.
+  Preparations for a built-in translation tool.
+
 Release 0.052
   Fixed bug [1955019]: can't save empty location
   Fixed bug [1892267]: Broken Manually Editing Altitude

@@ -40,7 +40,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
 
-import org.fibs.geotag.Messages;
 import org.fibs.geotag.Settings;
 import org.fibs.geotag.Settings.SETTING;
 import org.fibs.geotag.data.ImageInfo;
@@ -49,6 +48,7 @@ import org.fibs.geotag.exif.Exiftool;
 import org.fibs.geotag.geonames.Location;
 import org.fibs.geotag.googleearth.GoogleEarthLauncher;
 import org.fibs.geotag.googleearth.GoogleearthFileFilter;
+import org.fibs.geotag.i18n.Messages;
 import org.fibs.geotag.image.ThumbnailWorker;
 import org.fibs.geotag.table.ImagesTable;
 import org.fibs.geotag.table.ImagesTableModel;
@@ -56,6 +56,7 @@ import org.fibs.geotag.tasks.CopyLocationNameTask;
 import org.fibs.geotag.tasks.CopyLocationTask;
 import org.fibs.geotag.tasks.ExifWriterTask;
 import org.fibs.geotag.tasks.FillGapsTask;
+import org.fibs.geotag.tasks.FindAltitudeTask;
 import org.fibs.geotag.tasks.GoogleEarthExportTask;
 import org.fibs.geotag.tasks.LocationNamesTask;
 import org.fibs.geotag.tasks.MatchImagesTask;
@@ -65,10 +66,9 @@ import org.fibs.geotag.tasks.SetOffsetTask;
 import org.fibs.geotag.tasks.ThumbnailsTask;
 import org.fibs.geotag.track.TrackStore;
 import org.fibs.geotag.util.Airy;
+import org.fibs.geotag.util.BrowserLauncher;
 import org.fibs.geotag.util.Units;
 import org.fibs.geotag.util.Units.DISTANCE;
-
-import com.centerkey.utils.BareBonesBrowserLaunch;
 
 /**
  * A context menu for a image table row. All actions that can be undone should
@@ -254,6 +254,22 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
   private static final String REMOVE_IMAGES = Messages
       .getString("ImagesTablePopupMenu.RemoveImages"); //$NON-NLS-1$
 
+  /** Text for sub menu */
+  private static final String FIND_ALTITUDE = Messages
+      .getString("ImagesTablePopupMenu.FIndAltitude"); //$NON-NLS-1$
+
+  /** Text for menu item */
+  private static final String FIND_THIS_ALTITUDE = Messages
+      .getString("ImagesTablePopupMenu.FindThisAltitude"); //$NON-NLS-1$
+
+  /** Text for menu item */
+  private static final String FIND_SELECTED_ALTITUDES = Messages
+      .getString("ImagesTablePopupMenu.FindSelectedAltitudes"); //$NON-NLS-1$
+
+  /** Text for menu item */
+  private static final String FIND_ALL_ALTITUDES = Messages
+      .getString("ImagesTablePopupMenu.FindAllAltitudes"); //$NON-NLS-1$
+
   /** Text for menu item */
   private static final String REMOVE_THIS_IMAGE = Messages
       .getString("ImagesTablePopupMenu.RemoveThisImage"); //$NON-NLS-1$
@@ -389,8 +405,17 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
   /** The menu item used to remove selected images */
   private JMenuItem removeSelectedImagesItem;
 
-  /** the menu item used to remove all images */
+  /** The menu item used to remove all images */
   private JMenuItem removeAllImagesItem;
+
+  /** The menu item used to find altitude for a single image */
+  private JMenuItem findAltitudeThisImageItem;
+
+  /** The menu item used to find altitude for selected images */
+  private JMenuItem findAltitudeSelectedImagesItem;
+
+  /** The menu item used to find altitude for all images */
+  private JMenuItem findAltitudeAllImagesItem;
 
   /** the {@link ImageInfo} for the image in the row of the table. */
   private ImageInfo imageInfo;
@@ -458,6 +483,8 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
 
     addLocationNamesMenu(row, backgroundTask);
 
+    addFindAltitudeMenu(row, backgroundTask);
+
     addSaveLocationsMenu(backgroundTask);
 
     addRemoveImagesMenu(backgroundTask);
@@ -515,6 +542,58 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
 
     if (addMenu) {
       add(saveLocationsMenu);
+    }
+  }
+
+  /**
+   * @param row
+   * @param backgroundTask
+   */
+  private void addFindAltitudeMenu(int row, boolean backgroundTask) {
+    boolean enabled;
+    boolean addMenu;
+    JMenu findAltitudeMenu = new JMenu(FIND_ALTITUDE);
+    addMenu = false;
+
+    findAltitudeThisImageItem = new JMenuItem(FIND_THIS_ALTITUDE);
+    enabled = !backgroundTask && imageInfo.hasLocation();
+    addMenu |= enabled;
+    findAltitudeThisImageItem.setEnabled(enabled);
+    findAltitudeThisImageItem.addActionListener(this);
+    findAltitudeMenu.add(findAltitudeThisImageItem);
+
+    findAltitudeSelectedImagesItem = new JMenuItem(FIND_SELECTED_ALTITUDES);
+    // enable if there is no background task, there is a selection of images
+    // and at least one image in the selection has a location
+    enabled = false;
+    for (int index = 0; index < selectedRows.length; index++) {
+      if (tableModel.getImageInfo(selectedRows[index]).hasLocation()) {
+        enabled = !backgroundTask;
+        break;
+      }
+    }
+    addMenu |= enabled;
+    findAltitudeSelectedImagesItem.setEnabled(enabled);
+    findAltitudeSelectedImagesItem.addActionListener(this);
+    findAltitudeMenu.add(findAltitudeSelectedImagesItem);
+
+    findAltitudeAllImagesItem = new JMenuItem(FIND_ALL_ALTITUDES);
+    // enable if there is no background task and there is at least one image
+    // that has a location
+    enabled = false;
+    for (int index = 0; index < tableModel.getRowCount(); index++) {
+      if (tableModel.getImageInfo(index).hasLocation()) {
+        enabled = !backgroundTask;
+        break;
+      }
+    }
+    addMenu |= enabled;
+    findAltitudeAllImagesItem.setEnabled(enabled);
+    findAltitudeAllImagesItem.addActionListener(this);
+    findAltitudeMenu.add(findAltitudeAllImagesItem);
+
+    if (addMenu) {
+      add(findAltitudeMenu);
     }
   }
 
@@ -1098,6 +1177,12 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
       removeSelectedImages();
     } else if (event.getSource() == removeAllImagesItem) {
       removeAllImages();
+    } else if (event.getSource() == findAltitudeThisImageItem) {
+      findThisAltitude();
+    } else if (event.getSource() == findAltitudeSelectedImagesItem) {
+      findSelectedAltitudes();
+    } else if (event.getSource() == findAltitudeAllImagesItem) {
+      findAllAltitudes();
     }
   }
 
@@ -1222,8 +1307,8 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
     url += "&wikipedia=" + Settings.get(SETTING.GOOGLE_MAP_SHOW_WIKIPEDIA, false); //$NON-NLS-1$
     // execute the command
     System.out.println(url);
-    BareBonesBrowserLaunch.openURL(Settings.get(SETTING.BROWSER, null), url
-        .toString());
+    BrowserLauncher
+        .openURL(Settings.get(SETTING.BROWSER, null), url.toString());
   }
 
   /**
@@ -1585,6 +1670,46 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener {
     }
     new LocationNamesTask(LOCATION_NAMES, LOCATION_NAMES_ALL, tableModel,
         images).execute();
+  }
+
+  /**
+   * Find the location name for a single image.
+   */
+  private void findThisAltitude() {
+    List<ImageInfo> images = new ArrayList<ImageInfo>();
+    images.add(imageInfo);
+    new FindAltitudeTask(FIND_ALTITUDE, FIND_THIS_ALTITUDE, tableModel, images)
+        .execute();
+  }
+
+  /**
+   * Find the location name for a selection of images (with coordinates).
+   */
+  private void findSelectedAltitudes() {
+    List<ImageInfo> images = new ArrayList<ImageInfo>();
+    for (int index = 0; index < selectedRows.length; index++) {
+      ImageInfo candidate = tableModel.getImageInfo(selectedRows[index]);
+      if (candidate.hasLocation()) {
+        images.add(candidate);
+      }
+    }
+    new FindAltitudeTask(FIND_ALTITUDE, FIND_SELECTED_ALTITUDES, tableModel,
+        images).execute();
+  }
+
+  /**
+   * Find the location name for all images (with coordinates).
+   */
+  private void findAllAltitudes() {
+    List<ImageInfo> images = new ArrayList<ImageInfo>();
+    for (int index = 0; index < tableModel.getRowCount(); index++) {
+      ImageInfo candidate = tableModel.getImageInfo(index);
+      if (candidate.hasLocation()) {
+        images.add(candidate);
+      }
+    }
+    new FindAltitudeTask(FIND_ALTITUDE, FIND_ALL_ALTITUDES, tableModel, images)
+        .execute();
   }
 
   /**

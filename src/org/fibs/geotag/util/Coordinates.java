@@ -22,9 +22,9 @@ import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.StringTokenizer;
 
-import org.fibs.geotag.Messages;
 import org.fibs.geotag.Settings;
 import org.fibs.geotag.Settings.SETTING;
+import org.fibs.geotag.i18n.Messages;
 
 /**
  * A class allowing formatting of coordinates.

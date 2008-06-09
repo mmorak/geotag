@@ -31,8 +31,8 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
 import org.fibs.geotag.Geotag;
-import org.fibs.geotag.Messages;
 import org.fibs.geotag.data.ImageInfo;
+import org.fibs.geotag.i18n.Messages;
 import org.fibs.geotag.util.Airy;
 
 import com.google.earth.kml._2.AltitudeModeEnum;

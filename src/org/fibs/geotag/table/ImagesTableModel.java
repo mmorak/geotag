@@ -26,11 +26,11 @@ import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
 
-import org.fibs.geotag.Messages;
 import org.fibs.geotag.Settings;
 import org.fibs.geotag.Settings.SETTING;
 import org.fibs.geotag.data.ImageInfo;
 import org.fibs.geotag.data.ImageInfo.DATA_SOURCE;
+import org.fibs.geotag.i18n.Messages;
 import org.fibs.geotag.table.ImagesTableColumns.COLUMN;
 import org.fibs.geotag.tasks.EditAltitudeTask;
 import org.fibs.geotag.tasks.EditDirectionTask;

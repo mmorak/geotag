@@ -22,9 +22,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-import org.fibs.geotag.Messages;
 import org.fibs.geotag.data.ImageInfo;
 import org.fibs.geotag.googleearth.KmlExporter;
+import org.fibs.geotag.i18n.Messages;
 
 /**
  * @author Andreas Schneider

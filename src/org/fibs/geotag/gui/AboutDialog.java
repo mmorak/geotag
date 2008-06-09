@@ -39,12 +39,11 @@ import javax.swing.event.HyperlinkListener;
 
 import org.fibs.geotag.Geotag;
 import org.fibs.geotag.License;
-import org.fibs.geotag.Messages;
 import org.fibs.geotag.Settings;
 import org.fibs.geotag.Version;
 import org.fibs.geotag.Settings.SETTING;
-
-import com.centerkey.utils.BareBonesBrowserLaunch;
+import org.fibs.geotag.i18n.Messages;
+import org.fibs.geotag.util.BrowserLauncher;
 
 /**
  * The about dialog (with working hyperlinks).
@@ -167,7 +166,7 @@ public class AboutDialog extends JDialog implements HyperlinkListener {
   @Override
   public void hyperlinkUpdate(HyperlinkEvent event) {
     if (event.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-      BareBonesBrowserLaunch.openURL(Settings.get(SETTING.BROWSER, null), event
+      BrowserLauncher.openURL(Settings.get(SETTING.BROWSER, null), event
           .getURL().toString());
     }
   }

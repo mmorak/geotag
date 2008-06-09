@@ -24,9 +24,9 @@ import java.net.SocketAddress;
 import java.net.Proxy.Type;
 import java.util.StringTokenizer;
 
-import org.fibs.geotag.Messages;
 import org.fibs.geotag.Settings;
 import org.fibs.geotag.Settings.SETTING;
+import org.fibs.geotag.i18n.Messages;
 
 /**
  * A class to help with proxy connections.

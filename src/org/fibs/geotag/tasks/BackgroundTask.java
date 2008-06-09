@@ -25,7 +25,7 @@ import java.util.List;
 
 import javax.swing.SwingWorker;
 
-import org.fibs.geotag.Messages;
+import org.fibs.geotag.i18n.Messages;
 
 /**
  * A wrapper for SwingWorker with some additional functionality.
