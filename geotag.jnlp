@@ -12,8 +12,10 @@
         <description kind="short">Geotag matches time information from photos
             with location information from GPS units</description>
         <offline-allowed/>
-        <icon href="geotag-128.png" height="128" width="128"/>
-        <icon kind="splash" href="geotag-128.png"/>
+        <icon href="http://geotag.sourceforge.net/geotag-32.gif" height="32" width="32" kind="default"/>
+        <icon href="http://geotag.sourceforge.net/geotag-64.gif" height="64" width="64" kind="default"/>
+        <icon href="http://geotag.sourceforge.net/geotag-128.gif" kind="splash"/>
+    <offline-allowed/>
    </information>
    <resources>     
        <jar href="http://downloads.sourceforge.net/geotag/geotag-VERSION.jar"/>   

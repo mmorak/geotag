@@ -22,13 +22,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
-import java.util.Properties;
 import java.util.ResourceBundle;
-import java.util.Set;
 import java.util.ResourceBundle.Control;
 
 /**
@@ -36,9 +32,6 @@ import java.util.ResourceBundle.Control;
  * http://java.sun.com/developer/JDCTechTips/2005/tt1018.html
  */
 public class LocalFileResourceBundleControl extends ResourceBundle.Control {
-
-  /** The properties available for each locale loaded from a local file */
-  private Map<Locale, Properties> propertiesByLocale = new HashMap<Locale, Properties>();
 
   /**
    * @see java.util.ResourceBundle.Control#getFormats(java.lang.String)
@@ -61,47 +54,42 @@ public class LocalFileResourceBundleControl extends ResourceBundle.Control {
         || (loader == null)) {
       throw new NullPointerException();
     }
-    ExtendedPropertyResourceBundle bundle = null;
+    EditableResourceBundle bundle = null;
     if (format.equals("java.properties")) { //$NON-NLS-1$
       // we try to load from a file first
-      String bundleName = toBundleName(baseName, locale) + '.' + "properties"; //$NON-NLS-1$
+      String bundleName = toBundleName(baseName, locale);
+      String bundleFileName = bundleName+ '.' + "properties"; //$NON-NLS-1$
       System.out
-          .println("Trying to load resource bundle for " + locale + " from " + bundleName); //$NON-NLS-1$ //$NON-NLS-2$
-      File bundleFile = new File(bundleName);
+          .println("Trying to load resource bundle file for " + locale + " from " + bundleName); //$NON-NLS-1$ //$NON-NLS-2$
+      File bundleFile = new File(bundleFileName);
       System.out.println(bundleFile.getAbsolutePath());
       if (bundleFile.exists()) {
         try {
           InputStream inputStream = new FileInputStream(bundleFile);
-          bundle = new ExtendedPropertyResourceBundle(inputStream);
-          storeProperties(locale, bundle);
+          bundle = new EditableResourceBundle(inputStream);
           inputStream.close();
-          return bundle;
         } catch (Exception e) {
           e.printStackTrace();
         }
+      } else {
+        // load as a resource
+        String resourceName = toResourceName(bundleName, "properties"); //$NON-NLS-1$
+        InputStream inputStream = loader.getResourceAsStream(resourceName);
+        if (inputStream != null) {
+          try {
+            bundle = new EditableResourceBundle(inputStream);
+          } catch (Exception e) {
+            // it's a;right to fail
+          } finally {
+            inputStream.close();
+          }
+        }
       }
     }
-    // Couldn't load from local file - try normal properties resource bundle
-    // loading from the jar
-    return super.newBundle(baseName, locale, format, loader, reload);
-  }
-
-  /**
-   * Takes a bundle, makes a new Properties object and stores it the global hash
-   * map with the locale as key.
-   * 
-   * @param locale
-   * @param bundle
-   */
-  private void storeProperties(Locale locale,
-      ExtendedPropertyResourceBundle bundle) {
-    Set<String> keySet = bundle.getKeySet();
-    Properties properties = new Properties();
-    for (String key : keySet) {
-      Object value = bundle.getObject(key);
-      properties.put(key, value);
+    if (bundle != null) {
+      Translations.addLocale(locale, bundle);
     }
-    propertiesByLocale.put(locale, properties);
+    return bundle;
   }
-
+  
 }

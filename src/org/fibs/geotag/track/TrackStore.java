@@ -84,7 +84,15 @@ public final class TrackStore {
     List<Trkseg> newSegmentList = new ArrayList<Trkseg>();
     for (Trk track : gpx.getTrk()) {
       for (Trkseg segment : track.getTrkseg()) {
-        if (segment.getTrkpt().size() > 0) {
+        List<Trkpt> trackpointList = new ArrayList<Trkpt>();
+        for (Trkpt trackpoint : segment.getTrkpt()) {
+          // There are cases where gpx files are missing time
+          // stamps. Ignore those track points
+          if (trackpoint.getTime() != null) {
+            trackpointList.add(trackpoint);
+          }
+        }
+        if (trackpointList.size() > 0) {
           newSegmentList.add(segment);
         }
       }

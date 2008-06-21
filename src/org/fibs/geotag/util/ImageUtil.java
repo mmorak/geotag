@@ -20,7 +20,11 @@ package org.fibs.geotag.util;
 
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * A class with image utility methods.
@@ -35,6 +39,7 @@ public final class ImageUtil {
   private ImageUtil() {
     // hide constructor
   }
+
   /**
    * Create a BufferedImage from an Image.
    * 
@@ -53,5 +58,32 @@ public final class ImageUtil {
       g.drawImage(image, 0, 0, null);
     }
     return bufferedImage;
+  }
+
+  /**
+   * @param name
+   * @return An image for the given path
+   */
+  public static Image loadImage(String name) {
+    InputStream stream = ImageUtil.class.getClassLoader().getResourceAsStream(
+        name);
+    if (stream != null) {
+      byte[] buffer = new byte[32000];
+      BufferedInputStream bufferedStream = new BufferedInputStream(stream);
+      try {
+        int read = bufferedStream.read(buffer);
+        if (read > 0) {
+          Image image = Toolkit.getDefaultToolkit().createImage(buffer);
+          return image;
+        }
+        System.out
+            .println("Error reading " + name + ' ' + read + " bytes read"); //$NON-NLS-1$//$NON-NLS-2$
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+    } else {
+      System.out.println("Resource not found " + name); //$NON-NLS-1$
+    }
+    return null;
   }
 }

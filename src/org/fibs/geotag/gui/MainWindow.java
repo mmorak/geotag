@@ -22,6 +22,7 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.HeadlessException;
+import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -84,6 +85,7 @@ import org.fibs.geotag.track.GpxFileFilter;
 import org.fibs.geotag.track.GpxWriter;
 import org.fibs.geotag.track.TrackStore;
 import org.fibs.geotag.util.BrowserLauncher;
+import org.fibs.geotag.util.ImageUtil;
 import org.fibs.geotag.webserver.GeonamesHandler;
 import org.fibs.geotag.webserver.ImageInfoHandler;
 import org.fibs.geotag.webserver.MapHandler;
@@ -116,6 +118,13 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
 
   /** the port for the built-in web server. */
   private static final int WEB_SERVER_PORT = 4321;
+
+  /** The directory containing the icon files */
+  private static final String ICON_DIRECTORY = "images"; //$NON-NLS-1$
+
+  /** the names of the icon files */
+  private static final String[] ICON_NAMES = {
+      "geotag-32.png", "geotag-64.png", "geotag-128.png" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
   /** Text for menu item to add individual files. */
   static final String ADD_FILE = Messages.getString("MainWindow.AddFile"); //$NON-NLS-1$
@@ -188,6 +197,14 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
     Exiftool.checkExiftoolAvailable();
     GPSBabel.checkGPSBabelAvailable();
     Dcraw.checkDcrawAvailable();
+    // Handle application icons
+    List<Image> iconImageList = new ArrayList<Image>();
+    for (String iconName : ICON_NAMES) {
+      System.out.println(ICON_DIRECTORY + '/' + iconName);
+      Image image = ImageUtil.loadImage(ICON_DIRECTORY + '/' + iconName);
+      iconImageList.add(image);
+    }
+    setIconImages(iconImageList);
     // now we can deal with the menu bar
     setupMenuBar();
     setJMenuBar(menuBar);

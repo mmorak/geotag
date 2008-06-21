@@ -6,10 +6,6 @@ copy of that license in the file GPL.txt
 
 Geotag includes the source of several other packages:
 
-com.centerkey.utils:
-BareBonesBrowserLauncher by Dem Pilafian
-Released as public domain software
-
 com.drew
 MetadataExtractor by Drew Noakes
 Released as public domain software
@@ -21,7 +17,6 @@ Released under a BSD license - see individual files
 com.acme.JPM.Decoders:
 A few classes from Acme.JPM by Jef Poskanzer
 Released under a BSD license - see individual files
-
 
 fi.iki.elonen:
 NanoHTTPD by Jarno Elonen
@@ -38,6 +33,11 @@ Released as public domain software
 HtmlControl.js:
 An HTML GControl by Martin Pearman.
 Released as Freeware.
+
+res/images/flags
+Flag icons - http://www.famfamfam.com
+Created by Mark James
+These icons are public domain.
 
 Thanks to the above authors for making their
 software freely available.

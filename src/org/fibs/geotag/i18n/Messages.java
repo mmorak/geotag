@@ -27,7 +27,7 @@ import java.util.ResourceBundle;
  */
 public final class Messages {
   /***/
-  private static final String BUNDLE_NAME = "org.fibs.geotag.geotag"; //$NON-NLS-1$
+  static final String BUNDLE_NAME = "org.fibs.geotag.geotag"; //$NON-NLS-1$
 
   /**
    * A resource bundle control that tries to load property files from local
@@ -39,6 +39,9 @@ public final class Messages {
   private static ResourceBundle bundle = ResourceBundle.getBundle(BUNDLE_NAME,
       control);
 
+  static {
+    Translations.getKnownLocales();
+  }
   /**
    * 
    */
@@ -66,5 +69,5 @@ public final class Messages {
     ResourceBundle.clearCache(Messages.class.getClassLoader());
     bundle = ResourceBundle.getBundle(BUNDLE_NAME, control);
   }
-
+  
 }

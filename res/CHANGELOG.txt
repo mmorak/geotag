@@ -1,3 +1,11 @@
+Release 0.054
+  Geotag now has its own icon!
+  Geotag application icon produced by Bruce McKenzie
+  with input from David Hall, icerabbit 
+  and Andreas Schneider.
+  Further preparations for the translation tool.
+  Fixed bug [1999376]: Track points without time stamps
+  
 Release 0.053
   Impoved KML export (Jason Winnebeck)
   Thumbnail size now configurable (Jason Winnebeck)
