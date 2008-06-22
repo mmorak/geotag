@@ -23,17 +23,20 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.FontMetrics;
+import java.awt.Image;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextPane;
+import javax.swing.border.EmptyBorder;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
@@ -44,6 +47,7 @@ import org.fibs.geotag.Version;
 import org.fibs.geotag.Settings.SETTING;
 import org.fibs.geotag.i18n.Messages;
 import org.fibs.geotag.util.BrowserLauncher;
+import org.fibs.geotag.util.ImageUtil;
 
 /**
  * The about dialog (with working hyperlinks).
@@ -53,6 +57,9 @@ import org.fibs.geotag.util.BrowserLauncher;
 @SuppressWarnings("serial")
 public class AboutDialog extends JDialog implements HyperlinkListener {
 
+  /** The path to the icon displayed in the dialog */
+  private static final String ICON_NAME = "images/geotag-48.png"; //$NON-NLS-1$
+  
   /** Size of blank space around text in pixels. */
   private static final int BORDER_SIZE = 20;
 
@@ -63,6 +70,11 @@ public class AboutDialog extends JDialog implements HyperlinkListener {
   public AboutDialog(Window owner, String title) {
     super(owner, title, ModalityType.APPLICATION_MODAL);
     System.out.println(title);
+    Image image = ImageUtil.loadImage(ICON_NAME);
+    ImageIcon icon = new ImageIcon(image);
+    JLabel logo = new JLabel(icon);
+    logo.setBorder(new EmptyBorder(BORDER_SIZE,0,BORDER_SIZE, 0));
+    add(logo, BorderLayout.NORTH);
     // a panel containing all the text
     JPanel panel = new JPanel(new BorderLayout());
     // The first lines contain hyperlinks, so we use a JTextPane
@@ -126,7 +138,7 @@ public class AboutDialog extends JDialog implements HyperlinkListener {
         .setText("<center><a href=\"http://www.gnu.org/licenses\">http://www.gnu.org/licenses</a></center>"); //$NON-NLS-1$
     panel.add(footer, BorderLayout.SOUTH);
     // a border, so the text doesn't sit right on the edge of the dialog
-    panel.setBorder(BorderFactory.createEmptyBorder(BORDER_SIZE, BORDER_SIZE,
+    panel.setBorder(BorderFactory.createEmptyBorder(0, BORDER_SIZE,
         BORDER_SIZE, BORDER_SIZE));
     // add the panel at the centre of the dialog
     add(panel, BorderLayout.CENTER);

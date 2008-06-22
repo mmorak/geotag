@@ -1,3 +1,6 @@
+Release 0.055
+  Improved Webstart file.
+  
 Release 0.054
   Geotag now has its own icon!
   Geotag application icon produced by Bruce McKenzie

@@ -1,27 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- JNLP File for Geotag -->
 
-<jnlp spec="1.0+"
-    codebase="http://geotag.sourceforge.net/" 
-    href="geotag.jnlp">
+<jnlp spec="6.0+" codebase="http://geotag.sourceforge.net/" href="geotag.jnlp">
     <information>
         <title>Geotag</title>
         <vendor>Andreas Schneider, Geotag</vendor>
-        <description>Geotag Demo</description>
+        <description>Geotag</description>
         <homepage href="http://geotag.sourceforge.net"/>
-        <description kind="short">Geotag matches time information from photos
+        <description>Geotag matches time information from photos
             with location information from GPS units</description>
         <offline-allowed/>
-        <icon href="http://geotag.sourceforge.net/geotag-32.gif" height="32" width="32" kind="default"/>
-        <icon href="http://geotag.sourceforge.net/geotag-64.gif" height="64" width="64" kind="default"/>
-        <icon href="http://geotag.sourceforge.net/geotag-128.gif" kind="splash"/>
-    <offline-allowed/>
+        <icon href="geotag-128.png" height="128" width="128" kind="default"/>
+        <icon href="geotag-128.icns" kind="default"/>
+        <icon href="geotag-128.png" kind="splash"/>
+        <shortcut online="true">
+            <desktop/>
+            <menu/>
+        </shortcut>
+        <offline-allowed/>
    </information>
    <resources>     
        <jar href="http://downloads.sourceforge.net/geotag/geotag-VERSION.jar"/>   
-       <j2se version="1.6+"
-            java-vm-args="-Xmx256m"
-            href="http://java.sun.com/products/autodl/j2se"/>
+       <java version="1.6+" href="http://java.sun.com/products/autodl/j2se" initial-heap-size="128m" max-heap-size="512m" />
+       <java version="1.6+" initial-heap-size="128m" max-heap-size="512m" />
    </resources>
    <security>
        <all-permissions/>
