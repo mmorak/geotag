@@ -69,7 +69,7 @@ public class LocationHandler extends DefaultHandler {
       xmlReader.setContentHandler(this);
       // Build the request
       // String url = Geonames.GEONAMES_URL + "/findNearbyPlaceName?lat="
-      String url = Geonames.GEONAMES_URL + "/findNearby?lat=" //$NON-NLS-1$
+      String url = Geonames.getURL() + "/findNearby?lat=" //$NON-NLS-1$
           + latitude + "&lng=" + longitude + "&style=FULL"; //$NON-NLS-1$ //$NON-NLS-2$
       boolean useRadius = Settings.get(SETTING.GEONAMES_USE_RADIUS, false);
       if (useRadius) {

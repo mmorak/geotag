@@ -18,11 +18,20 @@
 
 package org.fibs.geotag.geonames;
 
+import org.fibs.geotag.Settings;
+import org.fibs.geotag.Settings.SETTING;
+
 /**
  * @author Andreas Schneider
  * 
  */
 public class Geonames {
-  /** The geonames web services URL. */
-  public static final String GEONAMES_URL = "http://ws.geonames.org"; //$NON-NLS-1$
+  /**
+   * @return The geonames URL with leading http://
+   */
+  public static String getURL() {
+    StringBuilder url = new StringBuilder("http://"); //$NON-NLS-1$
+    url.append(Settings.get(SETTING.GEONAMES_URL, Settings.GEONAMES_DEFAULT_URL));
+    return url.toString();
+  }
 }

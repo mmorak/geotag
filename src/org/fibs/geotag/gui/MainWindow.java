@@ -70,6 +70,7 @@ import org.fibs.geotag.googleearth.KmlRequestHandler;
 import org.fibs.geotag.gpsbabel.GPSBabel;
 import org.fibs.geotag.gui.settings.SettingsDialog;
 import org.fibs.geotag.i18n.Messages;
+import org.fibs.geotag.i18n.Translations;
 import org.fibs.geotag.image.ImageFileFilter;
 import org.fibs.geotag.table.ImagesTable;
 import org.fibs.geotag.table.ImagesTableModel;
@@ -559,7 +560,7 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
     selectMenu.add(selectNoneItem);
 
     editMenu.add(selectMenu);
-    if (TranslationWindow.getLocaleToTranslate() != null) {
+    if (new Translations().getTranslationLocale() != null) {
       editMenu.add(new JSeparator());
       JMenuItem translateItem = new JMenuItem(Messages
           .getString("MainWindow.Translate") + ELLIPSIS); //$NON-NLS-1$

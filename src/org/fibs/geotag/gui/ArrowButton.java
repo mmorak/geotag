@@ -28,34 +28,33 @@ import java.util.List;
 import javax.swing.JLabel;
 
 /**
- * A button like label with an arrow icon.
- * Used for collapsable panes
+ * A button like label with an arrow icon. Used for collapsable panes
+ * 
  * @author andreas
- *
+ * 
  */
 @SuppressWarnings("serial")
 public class ArrowButton extends JLabel {
-  
+
   /** A down arrow icon */
-  ArrowIcon downArrow = new ArrowIcon(7,
-      ArrowIcon.Orientation.DOWN);
+  ArrowIcon downArrow = new ArrowIcon(7, ArrowIcon.Orientation.DOWN);
 
-  /** A right arrow icon*/
-  ArrowIcon rightArrow = new ArrowIcon(7,
-      ArrowIcon.Orientation.RIGHT);
+  /** A right arrow icon */
+  ArrowIcon rightArrow = new ArrowIcon(7, ArrowIcon.Orientation.RIGHT);
 
-  /** Keeps track of the selected state of the "button"*/
+  /** Keeps track of the selected state of the "button" */
   boolean selected = false;
-  
-  /** Used to generate action event ids*/
+
+  /** Used to generate action event ids */
   int clickCounter = 0;
-  
-  /** Listeners to be notified if the "button" is clicked*/
+
+  /** Listeners to be notified if the "button" is clicked */
   List<ActionListener> listeners = new ArrayList<ActionListener>();
 
   /**
    * create a new ArrowButton. The state will be "not selected" and the default
    * icon is a right arrow
+   * 
    * @param text
    */
   public ArrowButton(String text) {
@@ -69,24 +68,24 @@ public class ArrowButton extends JLabel {
       public void mouseClicked(MouseEvent e) {
         super.mouseClicked(e);
         clickCounter++;
-        selected = ! selected;
-        setIcon(selected ? downArrow : rightArrow);
+        setSelected(!selected);
         System.out.println(selected);
         for (ActionListener listener : listeners) {
-          listener.actionPerformed(new ActionEvent(ArrowButton.this, clickCounter, "click")); //$NON-NLS-1$
+          listener.actionPerformed(new ActionEvent(ArrowButton.this,
+              clickCounter, "click")); //$NON-NLS-1$
         }
       }
-      
+
     });
   }
-  
+
   /**
    * @param listener
    */
   public void addActionListener(ActionListener listener) {
     listeners.add(listener);
   }
-  
+
   /**
    * @param listener
    */
@@ -102,9 +101,11 @@ public class ArrowButton extends JLabel {
   }
 
   /**
-   * @param selected the selected to set
+   * @param selected
+   *          the selected to set
    */
   public void setSelected(boolean selected) {
     this.selected = selected;
+    setIcon(selected ? downArrow : rightArrow);
   }
 }

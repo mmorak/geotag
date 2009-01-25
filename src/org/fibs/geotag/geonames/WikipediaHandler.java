@@ -66,7 +66,7 @@ public class WikipediaHandler extends DefaultHandler {
       // This object is the context handler
       xmlReader.setContentHandler(this);
       // Build the request
-      String url = "http://ws.geonames.org/findNearbyWikipedia?lat=" + latitude + "&lng=" + longitude; //$NON-NLS-1$ //$NON-NLS-2$
+      String url = Geonames.getURL()+"/findNearbyWikipedia?lat=" + latitude + "&lng=" + longitude; //$NON-NLS-1$ //$NON-NLS-2$
       // how many entries should we retrieve
       int maxRows = Settings.get(SETTING.GEONAMES_WIKIPEDIA_ENTRIES,
           Settings.GEONAMES_DEFAULT_WIKIPEDIA_ENTRIES);

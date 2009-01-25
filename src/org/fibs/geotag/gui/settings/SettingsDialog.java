@@ -380,6 +380,11 @@ public class SettingsDialog extends JDialog implements TreeSelectionListener {
     DefaultMutableTreeNode geonames = new DefaultMutableTreeNode(Messages
         .getString("SettingsDialog.Geonames")); //$NON-NLS-1$
 
+    StringSettingsPanel url = new StringSettingsPanel(parent, Messages
+        .getString("SettingsDialog.GeonamesURL"), SETTING.GEONAMES_URL, //$NON-NLS-1$
+        Settings.GEONAMES_DEFAULT_URL);
+    addPanel(geonames, url);
+    
     IntegerSettingsPanel radius = new IntegerSettingsPanel(parent, Messages
         .getString("SettingsDialog.Radius"), SETTING.GEONAMES_USE_RADIUS, //$NON-NLS-1$
         false, SETTING.GEONAMES_RADIUS, Settings.GEONAMES_DEFAULT_RADIUS, 0,

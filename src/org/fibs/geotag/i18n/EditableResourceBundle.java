@@ -29,16 +29,15 @@ import java.util.ResourceBundle;
 import java.util.Set;
 
 /**
- * Our own implementation of a property resource bundle.
- * The default implementation doesn't do what we want and
- * the properties in it are private, so we need to
- * re-invent the wheel.
+ * Our own implementation of a property resource bundle. The default
+ * implementation doesn't do what we want and the properties in it are private,
+ * so we need to re-invent the wheel.
  */
 public class EditableResourceBundle extends ResourceBundle {
 
   /** This is where we store the properties */
   private Map<Object, Object> resources;
-  
+
   /**
    * Constructor
    * 
@@ -65,10 +64,11 @@ public class EditableResourceBundle extends ResourceBundle {
     Set<Object> bundleKeys = resources.keySet();
     return new KeyEnumeration(parentKeys, bundleKeys);
   }
-  
+
   /**
-   * Unlike getKeys() this returns the keys for just this
-   * bundle, not considering any parent bundles
+   * Unlike getKeys() this returns the keys for just this bundle, not
+   * considering any parent bundles
+   * 
    * @return the key map
    */
   public Map<Object, Object> getKeyMap() {
@@ -85,26 +85,36 @@ public class EditableResourceBundle extends ResourceBundle {
     }
     return resources.get(key);
   }
-  
+
+  /**
+   * @param key
+   * @return The value stored for this bundle only, without looking at parent
+   *         bundles
+   */
+  public String getValue(String key) {
+    return (String) resources.get(key);
+  }
+
   /**
    * This allows editing the resources
+   * 
    * @param key
    * @param value
    */
   public void putResource(Object key, Object value) {
     resources.put(key, value);
   }
-  
+
   /**
-   * The parent keys are available as an Enumeration, whereas
-   * the HashMap has a key set with an Iterator.
-   * this class combines the two to create an Enumeration
-   * as required by getKeys().
+   * The parent keys are available as an Enumeration, whereas the HashMap has a
+   * key set with an Iterator. this class combines the two to create an
+   * Enumeration as required by getKeys().
    */
   private class KeyEnumeration implements Enumeration<Object> {
-    
+
     /** The Enumeration of the parent bundle's keys */
     private Enumeration<Object> parentKeys;
+
     /** The iterator for the bundle keys */
     private Iterator<Object> bundleKeys;
 
@@ -116,7 +126,7 @@ public class EditableResourceBundle extends ResourceBundle {
       this.parentKeys = parentKeys;
       this.bundleKeys = bundleKeys.iterator();
     }
-    
+
     /**
      * @see java.util.Enumeration#hasMoreElements()
      */

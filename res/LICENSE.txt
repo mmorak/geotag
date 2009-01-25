@@ -34,10 +34,5 @@ HtmlControl.js:
 An HTML GControl by Martin Pearman.
 Released as Freeware.
 
-res/images/flags
-Flag icons - http://www.famfamfam.com
-Created by Mark James
-These icons are public domain.
-
 Thanks to the above authors for making their
 software freely available.

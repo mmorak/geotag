@@ -28,8 +28,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 import org.fibs.geotag.gui.MainWindow;
-import org.fibs.geotag.gui.TranslationWindow;
 import org.fibs.geotag.i18n.Messages;
+import org.fibs.geotag.i18n.Translations;
 import org.fibs.geotag.util.Constants;
 import org.fibs.geotag.util.LocaleUtil;
 import org.fibs.geotag.util.Util;
@@ -95,7 +95,7 @@ public final class Geotag {
         } else if (key.equals("translate") && value.length() > 0) { //$NON-NLS-1$
           Locale locale = LocaleUtil.localeFromString(value);
           Locale.setDefault(locale);
-          TranslationWindow.setLocaleToTranslate(locale);
+          Translations.setTranslationLocale(locale);
         } else if (key.equals("console") && value.equals("yes")) { //$NON-NLS-1$ //$NON-NLS-2$
           redirectConsole = false;
         }

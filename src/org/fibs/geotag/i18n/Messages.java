@@ -40,7 +40,8 @@ public final class Messages {
       control);
 
   static {
-    Translations.getKnownLocales();
+    // make sure all bundles are loaded
+    new Translations().getKnownLocales();
   }
   /**
    * 

@@ -1,3 +1,7 @@
+Release 0.056
+  The geonames.org is now a user setting.
+  this resolves problem [2535122]
+
 Release 0.055
   Improved Webstart file.
   

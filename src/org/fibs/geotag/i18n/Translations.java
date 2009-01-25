@@ -32,20 +32,33 @@ import java.util.Vector;
 import org.fibs.geotag.util.LocaleUtil;
 
 /**
- * A class to discover known translations and their resource bundles
+ * A class to discover known translations and their resource bundles.
+ * This is the translation model.
  * 
  * @author andreas
  */
-public class Translations {
+@SuppressWarnings("all")
+public class Translations implements TranslationController.Model {
 
   /** The officially supported translations */
   private static final String[] translations = { "en_GB", //$NON-NLS-1$
       "de", //$NON-NLS-1$
       "da" }; //$NON-NLS-1$
 
+  /** The root locale */
+  private static Locale rootLocale = Locale.ROOT;
+  
+  /** The locale to translate to, if any */
+  private static Locale translationLocale = null;
+  
+  private static List<Locale> otherLocales = new Vector<Locale>();
+
+  private static List<Locale> knownLocales = new Vector<Locale>();
+  
   /** Map a locale to a resource bundle */
   private static Map<Locale, EditableResourceBundle> bundles = new HashMap<Locale, EditableResourceBundle>();
 
+  /** 
   /** How locales are sorted */
   private static Comparator<Locale> localeComparator = new Comparator<Locale>() {
     @Override
@@ -81,16 +94,18 @@ public class Translations {
    */
   public static void addLocale(Locale locale, EditableResourceBundle bundle) {
     bundles.put(locale, bundle);
-  }
-
-  /**
-   * @return A list of locales we have come across.
-   */
-  public static List<Locale> getKnownLocales() {
-    List<Locale> knownLocales = new Vector<Locale>();
-    knownLocales.addAll(bundles.keySet());
-    Collections.sort(knownLocales, localeComparator);
-    return knownLocales;
+    if (!knownLocales.contains(locale)) {
+      knownLocales.add(locale);
+      Collections.sort(knownLocales, localeComparator);
+    }
+    if (!locale.equals(rootLocale)) {
+      if (translationLocale== null || !translationLocale.equals(locale)) {
+        if (!otherLocales.contains(locale)) {
+          otherLocales.add(locale);
+          Collections.sort(otherLocales, localeComparator);
+        }
+      }
+    }
   }
 
   /**
@@ -150,5 +165,60 @@ public class Translations {
     Collections.sort(result);
     return result;
   }
+
+  /**
+   * @param locale
+   * @param className
+   * @param identifier
+   * @return The translation if available, or null if not translated yet
+   */
+  public String getTranslation(Locale locale, String className,
+      String identifier) {
+    EditableResourceBundle bundle = getBundle(locale);
+    String translation = bundle.getValue(className + '.' + identifier);
+    if (translation == null || translation.length() == 0) {
+      return null;
+    }
+    return translation;
+  }
+  
+  /**
+   * Update the translation for a locale
+   * @param locale
+   * @param className
+   * @param identifier
+   * @param translation
+   */
+  public void setTranslation(Locale locale, String className, String identifier, String translation) {
+    EditableResourceBundle bundle = getBundle(locale);
+    bundle.putResource(className+'.'+identifier, translation);
+  }
+  
+  public static void setTranslationLocale(Locale locale) {
+    translationLocale = locale;
+  }
+
+  @Override
+  public List<Locale> getOtherLocales() {
+    return new Vector<Locale>(otherLocales);
+  }
+
+  /**
+   * @return A list of locales we have come across.
+   */
+  public List<Locale> getKnownLocales() {
+    return new Vector<Locale>(knownLocales);
+  }
+
+  @Override
+  public Locale getRootLocale() {
+    return rootLocale;
+  }
+
+  @Override
+  public Locale getTranslationLocale() {
+    return translationLocale;
+  }
+
 
 }

@@ -49,7 +49,7 @@ public class AltitudeHandler extends DefaultHandler {
     try {
       // Build the request
       // String url = Geonames.GEONAMES_URL + "/findNearbyPlaceName?lat="
-      String url = Geonames.GEONAMES_URL + "/srtm3?lat=" //$NON-NLS-1$
+      String url = Geonames.getURL() + "/srtm3?lat=" //$NON-NLS-1$
           + latitude + "&lng=" + longitude; //$NON-NLS-1$
       System.out.println(url);
       URL request = new URL(url);

@@ -49,7 +49,7 @@ public class GeonamesHandler implements ContextHandler {
   public Response serve(WebServer server, String uri, String method,
       Properties header, Properties parms) {
     System.out.println(uri);
-    StringBuilder geonamesUrl = new StringBuilder(Geonames.GEONAMES_URL);
+    StringBuilder geonamesUrl = new StringBuilder(Geonames.getURL());
     geonamesUrl.append(uri);
     Object[] keys = parms.keySet().toArray();
     for (int i = 0; i < keys.length; i++) {

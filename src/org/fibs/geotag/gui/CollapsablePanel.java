@@ -77,6 +77,15 @@ public class CollapsablePanel extends JPanel {
    */
   public void setExpanded(boolean expanded) {
     content.setVisible(expanded);
+    arrowButton.setSelected(expanded);
+    arrowButton.repaint();
+  }
+
+  /**
+   * @return True if the panel is expanded
+   */
+  public boolean isExpanded() {
+    return content.isVisible();
   }
 
 }

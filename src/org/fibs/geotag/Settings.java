@@ -155,6 +155,8 @@ public final class Settings {
      * path.
      */
     KML_IMAGE_PATH,
+    /** Preferences key for the geonames URL */
+    GEONAMES_URL,
     /** Preferences key for using geonames search radius. */
     GEONAMES_USE_RADIUS,
     /** Preferences key for geonames search radius in km. */
@@ -272,6 +274,9 @@ public final class Settings {
     }
   }
 
+  /** Default value for GEONAMES_URL */
+  public static final String GEONAMES_DEFAULT_URL = "ws.geonames.org"; //$NON-NLS-1$
+  
   /** Default value for GEONAMES_RADIUS. */
   public static final int GEONAMES_DEFAULT_RADIUS = 5;
 
