@@ -1,6 +1,6 @@
 /**
  * Geotag
- * Copyright (C) 2007,2008 Andreas Schneider
+ * Copyright (C) 2007-2009 Andreas Schneider
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -35,6 +35,7 @@ import org.fibs.geotag.Settings;
 import org.fibs.geotag.Settings.SETTING;
 import org.fibs.geotag.data.ImageInfo;
 import org.fibs.geotag.image.FileTypes;
+import org.fibs.geotag.util.CommandLineTokenizer;
 import org.fibs.geotag.util.FileUtil;
 import org.fibs.geotag.util.InputStreamGobbler;
 
@@ -175,9 +176,8 @@ public class ExifWriter {
     // there might be additional exiftool arguments required
     String additionalArguments = Settings.get(SETTING.EXIFTOOL_ARGUMENTS, ""); //$NON-NLS-1$
     if (additionalArguments.length() > 0) {
-      StringTokenizer tokenizer = new StringTokenizer(additionalArguments);
-      while (tokenizer.hasMoreTokens()) {
-        String argument = tokenizer.nextToken();
+      for (String argument : new CommandLineTokenizer(additionalArguments)
+          .tokenize()) {
         arguments.add(argument);
       }
     }

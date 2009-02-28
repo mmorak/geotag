@@ -1,6 +1,6 @@
 /**
  * Geotag
- * Copyright (C) 2007,2008 Andreas Schneider
+ * Copyright (C) 2007-2009 Andreas Schneider
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,6 +25,7 @@ import org.fibs.geotag.track.KmlTest;
 import org.fibs.geotag.track.TrackStoreTest;
 import org.fibs.geotag.util.Ascii2NativeTest;
 import org.fibs.geotag.util.BoundsTypeUtilTest;
+import org.fibs.geotag.util.CommandLineTokenizerTest;
 import org.fibs.geotag.util.CoordinatesTest;
 import org.fibs.geotag.util.FileUtilTest;
 import org.fibs.geotag.util.FontUtilTest;
@@ -46,6 +47,7 @@ public class AllTests extends TestSuite {
     suite.addTestSuite(KmlTest.class);
     suite.addTestSuite(CoordinatesTest.class);
     suite.addTestSuite(Ascii2NativeTest.class);
+    suite.addTestSuite(CommandLineTokenizerTest.class);
     return suite;
   }
 }

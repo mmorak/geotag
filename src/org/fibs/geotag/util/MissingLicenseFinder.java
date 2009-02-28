@@ -1,6 +1,6 @@
 /**
  * Geotag
- * Copyright (C) 2007,2008 Andreas Schneider
+ * Copyright (C) 2007-2009 Andreas Schneider
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -19,14 +19,19 @@
 package org.fibs.geotag.util;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 import javax.swing.JFileChooser;
 
 /**
- * A class to look at our source files and check if the license comment is.
+ * A class to look at our source files and check if the license comment is
  * correct
  * 
  * @author Andreas Schneider
@@ -34,11 +39,17 @@ import javax.swing.JFileChooser;
  */
 public final class MissingLicenseFinder {
 
+  /** Overwrite files if true */
+  private static boolean OVERWRITE = false;
+  
   /** Number of files checked. */
   private static int filesChecked = 0;
 
   /** Number of files that failed the test. */
   private static int filesFailed = 0;
+  
+  /** Number of files corrected */
+  private static int filesCorrected = 0;
 
   /**
    * hide constructor.
@@ -47,11 +58,14 @@ public final class MissingLicenseFinder {
     // hide constructor
   }
 
+  /** The current year */
+  private static final int YEAR = new GregorianCalendar().get(Calendar.YEAR);
+  
   /** The lines we expect at the beginning of each file. */
-  public static final String[] CORRECT_LINES = {
+  private static final String[] CORRECT_LINES = {
       "/**", //$NON-NLS-1$
       " * Geotag", //$NON-NLS-1$
-      " * Copyright (C) 2007,2008 Andreas Schneider", //$NON-NLS-1$
+      " * Copyright (C) 2007-"+YEAR+" Andreas Schneider", //$NON-NLS-1$ //$NON-NLS-2$
       " *", //$NON-NLS-1$
       " * This program is free software; you can redistribute it and/or", //$NON-NLS-1$
       " * modify it under the terms of the GNU General Public License", //$NON-NLS-1$
@@ -70,9 +84,12 @@ public final class MissingLicenseFinder {
 
   /**
    * @param args -
-   *          no args
+   *          OVERWRITE as first argument sets overwrite mode
    */
   public static void main(String[] args) {
+    if (args.length == 1 && "OVERWRITE".equals(args[0])) { //$NON-NLS-1$
+      OVERWRITE = true;
+    }
     // Choose the source directory to be examined
     JFileChooser chooser = new JFileChooser();
     // guess the default directory. If run from Eclipse "user.dir" points at the
@@ -96,6 +113,7 @@ public final class MissingLicenseFinder {
       // and process directory and all sub-directories and java files
       processDirectory(directory);
       System.out.println("Failures: " + filesFailed + "/" + filesChecked); //$NON-NLS-1$//$NON-NLS-2$
+      System.out.println("Corrected: "+filesCorrected + "/" +filesFailed); //$NON-NLS-1$ //$NON-NLS-2$
     }
   }
 
@@ -115,41 +133,93 @@ public final class MissingLicenseFinder {
         processDirectory(file);
       } else {
         // convert the file
-        processFile(file);
+        try {
+          processFile(file);
+        } catch (IOException exception) {
+          exception.printStackTrace();
+        }
       }
     }
   }
 
   /**
-   * Process one file - this currently always overwrites the original.
+   * Process one file
    * 
    * @param file
+   * @throws IOException 
    */
-  private static void processFile(File file) {
+  private static void processFile(File file) throws IOException {
+    boolean failed = false;
+    File tempFile = File.createTempFile(file.getName(), null);
+    tempFile.deleteOnExit();
+    BufferedWriter tempFileWriter = new BufferedWriter(new FileWriter(tempFile));
     filesChecked++;
     // see if the file starts with the right lines GNU license
     BufferedReader bufferedReader = null;
+    String lineFromFile = null;
     try {
       bufferedReader = new BufferedReader(new FileReader(file));
       for (int i = 0; i < CORRECT_LINES.length; i++) {
-        String lineFromFile = bufferedReader.readLine();
+        tempFileWriter.write(CORRECT_LINES[i]);
+        tempFileWriter.newLine();
+        lineFromFile = bufferedReader.readLine();
         if (!lineFromFile.equals(CORRECT_LINES[i])) {
           filesFailed++;
-          System.out.println(file.getName()
-              + " line " + (i + 1) + " != '" + CORRECT_LINES[i] + '\''); //$NON-NLS-1$ //$NON-NLS-2$
-          break;
+          if (!failed) {
+            System.out.println(file.getName()
+                + " line " + (i + 1) + " != '" + CORRECT_LINES[i] + '\''); //$NON-NLS-1$ //$NON-NLS-2$
+          }
+          failed= true;
         }
+      }
+      // now read the rest of the file and append to the temp file
+      while ((lineFromFile = bufferedReader.readLine())!=null) {
+        tempFileWriter.write(lineFromFile);
+        tempFileWriter.newLine();
+      }
+      bufferedReader.close();
+      bufferedReader = null;
+      tempFileWriter.close();
+      if (failed && OVERWRITE) {
+        overwrite(tempFile, file);
       }
     } catch (Exception e) {
       e.printStackTrace();
     } finally {
-      if (bufferedReader != null) {
         try {
+          if (bufferedReader != null) {
           bufferedReader.close();
+          }
         } catch (IOException e) {
           e.printStackTrace();
         }
-      }
     }
+  }
+  
+  /**
+   * Copy contents of one file to another
+   * @param from One file
+   * @param to Another file
+   */
+  private static void overwrite(File from, File to) {
+    try {
+      BufferedReader bufferedReader = new BufferedReader(new FileReader(from));
+      BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(to));
+      String line = null;
+      while ((line = bufferedReader.readLine())!= null) {
+        bufferedWriter.write(line);
+        bufferedWriter.newLine();
+      }
+      bufferedReader.close();
+      bufferedWriter.close();
+      filesCorrected++;
+    } catch (FileNotFoundException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+
   }
 }

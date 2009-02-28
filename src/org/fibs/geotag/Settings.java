@@ -1,6 +1,6 @@
 /**
  * Geotag
- * Copyright (C) 2007,2008 Andreas Schneider
+ * Copyright (C) 2007-2009 Andreas Schneider
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -276,7 +276,7 @@ public final class Settings {
 
   /** Default value for GEONAMES_URL */
   public static final String GEONAMES_DEFAULT_URL = "ws.geonames.org"; //$NON-NLS-1$
-  
+
   /** Default value for GEONAMES_RADIUS. */
   public static final int GEONAMES_DEFAULT_RADIUS = 5;
 
