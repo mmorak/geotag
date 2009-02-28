@@ -265,9 +265,8 @@ public class ExifWriter {
     // there might be additional exiftool arguments required
     String additionalArguments = Settings.get(SETTING.EXIFTOOL_ARGUMENTS, ""); //$NON-NLS-1$
     if (additionalArguments.length() > 0) {
-      StringTokenizer tokenizer = new StringTokenizer(additionalArguments);
-      while (tokenizer.hasMoreTokens()) {
-        String argument = tokenizer.nextToken();
+      for (String argument : new CommandLineTokenizer(additionalArguments)
+          .tokenize()) {
         arguments.add(argument);
       }
     }

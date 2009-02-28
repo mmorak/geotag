@@ -1,3 +1,6 @@
+Release 0.058
+  Overlooked one place where [2648519] wasn't fixed.
+  
 Release 0.057
   Fixed [2648519] Need to be able to specify
   arguments containing spaces
