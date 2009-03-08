@@ -1,3 +1,9 @@
+Release 0.059
+  Fixed bug [2039352]:
+  When alt is set to feet location copies turn to meters
+  Fixed bug [2020068]:
+  geotagging fails for GPX data without <ele> tags
+
 Release 0.058
   Overlooked one place where [2648519] wasn't fixed.
   

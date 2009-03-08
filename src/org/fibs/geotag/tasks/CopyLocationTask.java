@@ -21,12 +21,13 @@ package org.fibs.geotag.tasks;
 import java.util.IllegalFormatException;
 import java.util.List;
 
+import org.fibs.geotag.data.ImageInfo;
 import org.fibs.geotag.data.UpdateGPSAltitude;
 import org.fibs.geotag.data.UpdateGPSLatitude;
 import org.fibs.geotag.data.UpdateGPSLongitude;
-import org.fibs.geotag.data.ImageInfo;
 import org.fibs.geotag.i18n.Messages;
 import org.fibs.geotag.table.ImagesTableModel;
+import org.fibs.geotag.util.Units.ALTITUDE;
 
 /**
  * a background task for copying the location from one image to others.
@@ -107,8 +108,9 @@ public class CopyLocationTask extends UndoableBackgroundTask<ImageInfo> {
             ImageInfo.DATA_SOURCE.COPIED);
         new UpdateGPSLongitude(target, source.getGpsLongitude(),
             ImageInfo.DATA_SOURCE.COPIED);
+        // The altitude is retrieved in metres
         new UpdateGPSAltitude(target, source.getGpsAltitude(),
-            ImageInfo.DATA_SOURCE.COPIED);
+            ImageInfo.DATA_SOURCE.COPIED, ALTITUDE.METRES);
         publish(target);
       } catch (RuntimeException e) {
         // catch all Runtime Exceptions, so the task doesn't terminate
