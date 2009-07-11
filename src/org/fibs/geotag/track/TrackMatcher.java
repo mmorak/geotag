@@ -18,6 +18,7 @@
 
 package org.fibs.geotag.track;
 
+import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
@@ -246,7 +247,7 @@ public class TrackMatcher {
 	/**
 	 * A class holding the information found out by the matcher.
 	 */
-	public class Match {
+	public static class Match {
 		/** The matching segment. */
 		private Trkseg matchingSegment;
 
@@ -308,8 +309,11 @@ public class TrackMatcher {
 	 * @author Andreas Schneider
 	 * 
 	 */
-	class TrackPointComparator implements Comparator<Trkpt> {
-		/**
+	static class TrackPointComparator implements Comparator<Trkpt>, Serializable {
+		/***/
+    private static final long serialVersionUID = 1L;
+
+    /**
 		 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
 		 */
 		@Override

@@ -80,6 +80,12 @@ public final class ImageUtil {
             .println("Error reading " + name + ' ' + read + " bytes read"); //$NON-NLS-1$//$NON-NLS-2$
       } catch (IOException e) {
         e.printStackTrace();
+      } finally {
+    		try {
+				bufferedStream.close();
+		    } catch (IOException e) {
+				  e.printStackTrace();
+			  }
       }
     } else {
       System.out.println("Resource not found " + name); //$NON-NLS-1$

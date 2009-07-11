@@ -105,6 +105,7 @@ public class MapHandler implements ContextHandler {
           page.append(line).append('\n');
         }
       }
+      bufferedReader.close();
     } catch (IOException e) {
       e.printStackTrace();
     }

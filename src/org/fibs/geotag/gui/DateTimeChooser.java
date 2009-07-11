@@ -581,7 +581,7 @@ public class DateTimeChooser extends JDialog {
    * @author Andreas Schneider
    * 
    */
-  class CalendarLabel extends JLabel {
+  static class CalendarLabel extends JLabel {
     /** This represents the day, month or year displayed by the label. */
     private int number;
 

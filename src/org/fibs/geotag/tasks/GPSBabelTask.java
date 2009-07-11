@@ -31,6 +31,8 @@ import org.fibs.geotag.util.Constants;
 import org.fibs.geotag.util.InputStreamGobbler;
 
 import com.topografix.gpx._1._0.Gpx;
+import com.topografix.gpx._1._0.Gpx.Trk;
+import com.topografix.gpx._1._0.Gpx.Trk.Trkseg;
 
 /**
  * A task that reads data from a GPS.
@@ -40,6 +42,9 @@ import com.topografix.gpx._1._0.Gpx;
  */
 public class GPSBabelTask extends BackgroundTask<Gpx> {
 
+  /** Number of track points received from GPS. */
+  private int trackPointsReceived = 0;
+	  
   /** The current progress value. */
   private int currentProgress;
 
@@ -154,6 +159,7 @@ public class GPSBabelTask extends BackgroundTask<Gpx> {
         }
       }
     }.start();
+    firePropertyChange("progress", null, Messages.getString("GPSBabelTask.ConnectingToGPS")); //$NON-NLS-1$ //$NON-NLS-2$
     // read the file using GPSBabel - use our own Gobbler to handle the output
     File file = GPSBabel.readTracks(new Gobbler());
     // now we have to read that file
@@ -161,11 +167,23 @@ public class GPSBabelTask extends BackgroundTask<Gpx> {
       Gpx gpx = GpxReader.read(file);
       if (gpx != null) {
         publish(gpx);
+        List<Trk> tracks = gpx.getTrk();
+        for (Trk trk : tracks) {
+          List<Trkseg> segments = trk.getTrkseg();
+          for (Trkseg segment : segments) {
+            trackPointsReceived += segment.getTrkpt().size();
+          }
+        }
       }
     }
     // make the termination-check thread terminate
     interruptRequest();
-    return Messages.getString("GPSBabelTask.FinishedGpsTransfer"); //$NON-NLS-1$
+    StringBuilder message = new StringBuilder();
+    message.append(Messages.getString("GPSBabelTask.FinishedGpsTransfer")); //$NON-NLS-1$
+    message.append(' ').append(trackPointsReceived).append(' ');
+    // Message reused from GpxReadFileTask
+    message.append(Messages.getString("GpxReadFileTask.LocationsLoaded")); //$NON-NLS-1$
+    return message.toString();
   }
 
   /**
@@ -253,6 +271,8 @@ public class GPSBabelTask extends BackgroundTask<Gpx> {
               + ' ' + getMaxProgress();
           firePropertyChange("progress", progressMessage, message); //$NON-NLS-1$
           progressMessage = message;
+        } else {
+          getErrorMessages().add(line);
         }
       } catch (RuntimeException e) {
         // that line is no progress message - it's an error message

@@ -82,7 +82,7 @@ class ImageToolTipUI extends BasicToolTipUI {
   private ImageIcon imageIcon;
 
   /** the text to display if there is no image. */
-  private String text = new String(); // default to empty String
+  private String text = ""; //$NON-NLS-1$
 
   /** the size in pixels of the space left around the text. */
   private static final int GAP = 2;

@@ -61,7 +61,7 @@ public final class WhatNext {
    * @param tableModel
    *          The table model
    */
-  static void helpWhatNext(Component parentComponent,
+  public static void helpWhatNext(Component parentComponent,
       ImagesTableModel tableModel) {
     boolean exiftoolAvailable = Exiftool.isAvailable();
     boolean gpsbabelAvailable = GPSBabel.isAvailable();
@@ -109,6 +109,7 @@ public final class WhatNext {
       }
     }
     List<String> suggestions = new ArrayList<String>();
+    suggestFindingExiftool(exiftoolAvailable, suggestions);
     suggestLoadingImages(imagesAvailable, suggestions);
     suggestLoadingTracks(gpsbabelAvailable, tracksAvailable, suggestions);
     suggestCheckingTimes(imagesAvailable, suggestions);
@@ -118,7 +119,6 @@ public final class WhatNext {
     suggestSaving(imagesWithNewLocationAvailable, suggestions);
     suggestLocationNames(imagesWithLocationAvailable, locationNamesFound,
         suggestions);
-    suggestFindingExiftool(exiftoolAvailable, suggestions);
     suggestFindingGPSBabel(gpsbabelAvailable, suggestions);
     suggestFindingDcraw(dcrawAvailable, rawImagesAvailable, suggestions);
     suggestRemovingImages(imagesAvailable, suggestions);
@@ -310,7 +310,7 @@ public final class WhatNext {
       String text = String
           .format(
               Messages.getString("WhatNext.SuggestOpeningTrackFormat"), //$NON-NLS-1$
-              Messages.getString("MainWindow.File"), Messages.getString("MainWindow.OpenTrack")); //$NON-NLS-1$ //$NON-NLS-2$
+              Messages.getString("MainWindow.File"), Messages.getString("MainWindow.LoadTracksFromFile")); //$NON-NLS-1$ //$NON-NLS-2$
       suggestions.add(text);
 
       if (gpsbabelAvailable) {

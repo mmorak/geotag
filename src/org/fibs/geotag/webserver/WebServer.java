@@ -110,7 +110,7 @@ public class WebServer extends NanoHTTPD {
     // System.out.println();
 
     // find the longest matching context
-    String context = new String(); // empty string
+    String context = ""; //$NON-NLS-1$
     for (String candidate : contexts) {
       if (uri.startsWith(candidate) && candidate.length() > context.length()) {
         context = candidate;

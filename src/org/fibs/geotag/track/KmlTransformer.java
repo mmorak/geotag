@@ -69,7 +69,7 @@ public class KmlTransformer {
       placemark.setName("Path"); //$NON-NLS-1$
       placemark.setStyleUrl("#linestyle"); //$NON-NLS-1$
       LineStringType lineString = objectFactory.createLineStringType();
-      lineString.setTessellate(new Boolean(true));
+      lineString.setTessellate(Boolean.valueOf(true));
       List<String> coordinates = lineString.getCoordinates();
       for (Trkseg segment : track.getTrkseg()) {
         for (Trkpt trackPoint : segment.getTrkpt()) {

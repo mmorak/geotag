@@ -18,6 +18,7 @@
 
 package org.fibs.geotag.track;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -224,7 +225,10 @@ public final class TrackStore {
    * A class for comparing timestamps of tracks segments. Only the timestamp of
    * the first trackpoint is compared.
    */
-  class SegmentComparator implements Comparator<Trkseg> {
+  static class SegmentComparator implements Comparator<Trkseg>, Serializable {
+    /***/
+    private static final long serialVersionUID = 1L;
+
     /**
      * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
      */

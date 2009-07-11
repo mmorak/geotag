@@ -102,7 +102,7 @@ public final class GoogleEarthLauncher {
       FolderType folder = factory.createFolderType();
       folder.setName(Geotag.NAME + ' '
           + Messages.getString("GoogleEarthLauncher.Folder")); //$NON-NLS-1$
-      folder.setOpen(new Boolean(true));
+      folder.setOpen(Boolean.valueOf(true));
       LookAtType lookAt = factory.createLookAtType();
       lookAt.setLatitude(new Double(latitude));
       lookAt.setLongitude(new Double(longitude));
@@ -141,8 +141,8 @@ public final class GoogleEarthLauncher {
       NetworkLinkType networkLink = factory.createNetworkLinkType();
       networkLink.setName(Geotag.NAME + ' '
           + Messages.getString("GoogleEarthLauncher.Link")); //$NON-NLS-1$
-      networkLink.setOpen(new Boolean(true));
-      networkLink.setVisibility(new Boolean(true));
+      networkLink.setOpen(Boolean.valueOf(true));
+      networkLink.setVisibility(Boolean.valueOf(true));
       LinkType link = factory.createLinkType();
       link.setRefreshMode(RefreshModeEnum.ON_CHANGE);
       // link.setRefreshInterval(new Float(5));

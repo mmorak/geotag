@@ -92,13 +92,16 @@ public class ImageInfo implements Comparable<ImageInfo> {
   /** The date format pattern used. */
   private static final String DATE_FORMAT_PATTERN = "yyyy:MM:dd HH:mm:ss"; //$NON-NLS-1$
 
-  /** Defines how date/time is formatted in EXIF terms. */
-  private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat(
+  /** Defines how date/time is formatted in EXIF terms. 
+   * Do not use static date formats. They are not thread safe
+   * and should not be shared.
+   */
+  private final SimpleDateFormat dateFormat = new SimpleDateFormat(
       DATE_FORMAT_PATTERN);
 
   // don't forget to set the time zone for the DateFormat as well
-  static {
-    DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("GMT")); //$NON-NLS-1$
+  {
+    dateFormat.setTimeZone(TimeZone.getTimeZone("GMT")); //$NON-NLS-1$
   }
 
   /** we keep track of number of instances created. */
@@ -196,12 +199,12 @@ public class ImageInfo implements Comparable<ImageInfo> {
    * @param localDateString
    * @return The time difference in seconds
    */
-  public static int calculateOffset(String gmtDateString, String localDateString) {
+  public int calculateOffset(String gmtDateString, String localDateString) {
     int offset = 0;
     if (gmtDateString != null && localDateString != null) {
       try {
-        Date gmtDate = DATE_FORMAT.parse(gmtDateString);
-        Date localDate = DATE_FORMAT.parse(localDateString);
+        Date gmtDate = dateFormat.parse(gmtDateString);
+        Date localDate = dateFormat.parse(localDateString);
 
         offset = (int) ((localDate.getTime() - gmtDate.getTime()) / (double) Constants.ONE_SECOND_IN_MILLIS);
       } catch (ParseException e) {
@@ -219,15 +222,15 @@ public class ImageInfo implements Comparable<ImageInfo> {
    * @param offset
    * @return The adjusted time as a string
    */
-  public static String subtractOffset(String localDateString, int offset) {
+  public String subtractOffset(String localDateString, int offset) {
     try {
-      Date date = DATE_FORMAT.parse(localDateString);
+      Date date = dateFormat.parse(localDateString);
       date.setTime(date.getTime() - offset * Constants.ONE_SECOND_IN_MILLIS);
-      return DATE_FORMAT.format(date);
+      return dateFormat.format(date);
     } catch (ParseException e) {
       e.printStackTrace();
     }
-    return new String(); // empty string
+    return ""; //$NON-NLS-1$
   }
 
   /**
@@ -451,7 +454,7 @@ public class ImageInfo implements Comparable<ImageInfo> {
     hours *= negative ? -1 : 1;
     return String
         .format(
-            "%+d:%02d:%02d", new Integer(hours), new Integer(minutes), new Integer(seconds)); //$NON-NLS-1$
+            "%+d:%02d:%02d", Integer.valueOf(hours), Integer.valueOf(minutes), Integer.valueOf(seconds)); //$NON-NLS-1$
   }
 
   /**
@@ -569,7 +572,7 @@ public class ImageInfo implements Comparable<ImageInfo> {
     this.gpsDateTime = dateTime;
     if (dateTime != null) {
       try {
-        exactTimeGMT.setTime(DATE_FORMAT.parse(dateTime));
+        exactTimeGMT.setTime(dateFormat.parse(dateTime));
       } catch (ParseException e) {
         e.printStackTrace();
       }
@@ -741,8 +744,8 @@ public class ImageInfo implements Comparable<ImageInfo> {
    * 
    * @return The standard GMT date format used in this class
    */
-  public static SimpleDateFormat getDateFormat() {
-    return DATE_FORMAT;
+  public SimpleDateFormat getDateFormat() {
+    return dateFormat;
   }
 
   /**

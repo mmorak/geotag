@@ -111,7 +111,7 @@ public abstract class UndoableBackgroundTask<V> extends BackgroundTask<V>
    * @see javax.swing.undo.UndoableEdit#getPresentationName()
    */
   public String getPresentationName() {
-    String presentationName = new String();
+    String presentationName = ""; //$NON-NLS-1$
     if (group != null) {
       presentationName += group + " - "; //$NON-NLS-1$
     }

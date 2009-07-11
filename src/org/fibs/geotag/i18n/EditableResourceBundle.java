@@ -110,7 +110,7 @@ public class EditableResourceBundle extends ResourceBundle {
    * key set with an Iterator. this class combines the two to create an
    * Enumeration as required by getKeys().
    */
-  private class KeyEnumeration implements Enumeration<Object> {
+  private static class KeyEnumeration implements Enumeration<Object> {
 
     /** The Enumeration of the parent bundle's keys */
     private Enumeration<Object> parentKeys;

@@ -161,7 +161,7 @@ public final class Coordinates {
       case SIGNED_DEGREES_MINUTES:
         degrees = Math.floor(absValue);
         minutes = (absValue - degrees) * Constants.MINUTES_PER_DEGREE;
-        coordinates = String.format("%d%s%08.5f%s", new Integer((int) degrees), //$NON-NLS-1$
+        coordinates = String.format("%d%s%08.5f%s", Integer.valueOf((int) degrees), //$NON-NLS-1$
             Unicode.DEGREE_SYMBOL, new Double(minutes),
             Unicode.SINGLE_PRIME_MARK);
         break;
@@ -173,8 +173,8 @@ public final class Coordinates {
         seconds = (absValue - degrees - minutes / Constants.MINUTES_PER_DEGREE)
             * Constants.SECONDS_PER_DEGREE;
         coordinates = String.format(
-            "%d%s%02d%s%05.2f%s", new Integer((int) degrees), //$NON-NLS-1$
-            Unicode.DEGREE_SYMBOL, new Integer((int) minutes),
+            "%d%s%02d%s%05.2f%s", Integer.valueOf((int) degrees), //$NON-NLS-1$
+            Unicode.DEGREE_SYMBOL, Integer.valueOf((int) minutes),
             Unicode.SINGLE_PRIME_MARK, new Double(seconds),
             Unicode.DOUBLE_PRIME_MARK);
         break;

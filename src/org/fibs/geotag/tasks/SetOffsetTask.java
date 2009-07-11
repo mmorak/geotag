@@ -100,7 +100,7 @@ public class SetOffsetTask extends UndoableBackgroundTask<ImageInfo> {
       currentProgress++;
       setProgressMessage();
       try {
-        String gmtDate = ImageInfo.subtractOffset(imageInfo.getCameraDate(),
+        String gmtDate = imageInfo.subtractOffset(imageInfo.getCameraDate(),
             offset);
         new UpdateGPSDateTime(imageInfo, gmtDate);
         publish(imageInfo);

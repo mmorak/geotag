@@ -69,9 +69,9 @@ public class TracksHandler implements ContextHandler {
       } else if (parameter.equals("east")) { //$NON-NLS-1$
         east = new Double(Double.parseDouble(value));
       } else if (parameter.equals("width")) { //$NON-NLS-1$
-        width = new Integer(Integer.parseInt(value));
+        width = Integer.valueOf(Integer.parseInt(value));
       } else if (parameter.equals("height")) { //$NON-NLS-1$
-        height = new Integer(Integer.parseInt(value));
+        height = Integer.valueOf(Integer.parseInt(value));
       }
     }
     ObjectFactory gpxObjectFactory = new ObjectFactory();

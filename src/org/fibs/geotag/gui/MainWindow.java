@@ -37,7 +37,6 @@ import java.util.List;
 import java.util.Vector;
 import java.util.concurrent.ExecutionException;
 
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -48,6 +47,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JSplitPane;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.undo.UndoManager;
@@ -59,7 +59,6 @@ import org.fibs.geotag.GlobalUndoManager;
 import org.fibs.geotag.Settings;
 import org.fibs.geotag.Settings.SETTING;
 import org.fibs.geotag.data.ImageInfo;
-import org.fibs.geotag.data.ImageInfo.THUMBNAIL_STATUS;
 import org.fibs.geotag.dcraw.Dcraw;
 import org.fibs.geotag.exif.Exiftool;
 import org.fibs.geotag.external.ClipboardUpdate;
@@ -68,10 +67,10 @@ import org.fibs.geotag.external.ExternalUpdate;
 import org.fibs.geotag.external.ExternalUpdateConsumer;
 import org.fibs.geotag.googleearth.KmlRequestHandler;
 import org.fibs.geotag.gpsbabel.GPSBabel;
-import org.fibs.geotag.gui.settings.SettingsDialog;
+import org.fibs.geotag.gui.menus.FileMenu;
+import org.fibs.geotag.gui.menus.MenuConstants;
 import org.fibs.geotag.i18n.Messages;
 import org.fibs.geotag.i18n.Translations;
-import org.fibs.geotag.image.ImageFileFilter;
 import org.fibs.geotag.table.ImagesTable;
 import org.fibs.geotag.table.ImagesTableModel;
 import org.fibs.geotag.tasks.BackgroundTask;
@@ -79,12 +78,7 @@ import org.fibs.geotag.tasks.BackgroundTaskListener;
 import org.fibs.geotag.tasks.ClipboardUpdateTask;
 import org.fibs.geotag.tasks.ExifReaderTask;
 import org.fibs.geotag.tasks.ExternalUpdateTask;
-import org.fibs.geotag.tasks.GPSBabelTask;
-import org.fibs.geotag.tasks.GpxReadFileTask;
 import org.fibs.geotag.tasks.UndoableBackgroundTask;
-import org.fibs.geotag.track.GpxFileFilter;
-import org.fibs.geotag.track.GpxWriter;
-import org.fibs.geotag.track.TrackStore;
 import org.fibs.geotag.util.BrowserLauncher;
 import org.fibs.geotag.util.ImageUtil;
 import org.fibs.geotag.webserver.GeonamesHandler;
@@ -97,10 +91,6 @@ import org.fibs.geotag.webserver.TracksHandler;
 import org.fibs.geotag.webserver.UpdateHandler;
 import org.fibs.geotag.webserver.WebServer;
 
-import com.topografix.gpx._1._0.Gpx;
-import com.topografix.gpx._1._0.Gpx.Trk;
-import com.topografix.gpx._1._0.Gpx.Trk.Trkseg;
-
 /**
  * A class representing the main Window of the application.
  * 
@@ -109,7 +99,7 @@ import com.topografix.gpx._1._0.Gpx.Trk.Trkseg;
  */
 @SuppressWarnings("serial")
 public class MainWindow extends JFrame implements BackgroundTaskListener,
-    ExternalUpdateConsumer {
+    ExternalUpdateConsumer, MenuConstants {
 
   /** The default aspect ratio of the preview component. The width */
   private static final int PREVIEW_ASPECT_RATIO_X = 4;
@@ -126,15 +116,6 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
   /** the names of the icon files */
   private static final String[] ICON_NAMES = {
       "geotag-32.png", "geotag-64.png", "geotag-128.png" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-
-  /** Text for menu item to add individual files. */
-  static final String ADD_FILE = Messages.getString("MainWindow.AddFile"); //$NON-NLS-1$
-
-  /** Text for menu item to add all files in a directory. */
-  static final String ADD_FILES = Messages.getString("MainWindow.AddDirectory"); //$NON-NLS-1$
-
-  /** An ellipsis of three dots. */
-  private static final String ELLIPSIS = "..."; //$NON-NLS-1$
 
   /** The tableModel for the data displayed in this window. */
   private ImagesTableModel tableModel;
@@ -160,24 +141,6 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
   /** Where we store external updates while background tasks are running. */
   private Vector<ExternalUpdate> pendingExternalUpdates = new Vector<ExternalUpdate>();
 
-  /** Menu item to add one file. */
-  private JMenuItem addFileItem;
-
-  /** Menu item to add all files in a directory. */
-  private JMenuItem addDirectoryItem;
-
-  /** Menu item to add a GPX file. */
-  private JMenuItem addTrackItem;
-
-  /** Menu item to save tracks as a GPX file. */
-  private JMenuItem saveTrackItem;
-
-  /** Menu item to load track from GPS. */
-  private JMenuItem loadTrackFromGpsItem;
-
-  /** Menu item to open the settings dialog. */
-  private JMenuItem settingsItem;
-
   /** Menu item to undo the last task. */
   private JMenuItem undoItem;
 
@@ -186,6 +149,9 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
 
   /** Menu item to cancel a running task. */
   private JMenuItem cancelItem;
+
+  /** The file menu */
+  private FileMenu fileMenu;
 
   /**
    * Constructor for the main window.
@@ -206,22 +172,18 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
       iconImageList.add(image);
     }
     setIconImages(iconImageList);
+    setLayout(new BorderLayout());
+    setupTable();
     // now we can deal with the menu bar
     setupMenuBar();
     setJMenuBar(menuBar);
-    setLayout(new BorderLayout());
-    setupTable();
     setupSizeAndPosition();
     tableScrollPane = new JScrollPane(table);
     setupPreviewComponent();
     final JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
         false, tableScrollPane, previewComponent);
     add(splitPane, BorderLayout.CENTER);
-    progressBar = new JProgressBar();
-    progressBar.setStringPainted(true);
-    progressBar.setBorderPainted(false);
-    progressBar.setString(""); //$NON-NLS-1$
-    add(progressBar, BorderLayout.SOUTH);
+    add(getProgressBar(), BorderLayout.SOUTH);
 
     this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 
@@ -417,7 +379,7 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
    * Create the menubar and make sure all actions are handled properly.
    */
   private void setupMenuBar() {
-    JMenu fileMenu = setupFileMenu();
+    fileMenu = new FileMenu(table, getProgressBar());
     menuBar.add(fileMenu);
 
     JMenu editMenu = setupEditMenu();
@@ -425,6 +387,7 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
 
     JMenu helpMenu = setupHelpMenu();
     menuBar.add(helpMenu);
+    
   }
 
   /**
@@ -574,90 +537,7 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
     return editMenu;
   }
 
-  /**
-   * @return the file menu
-   */
-  private JMenu setupFileMenu() {
-    JMenu fileMenu = new JMenu(Messages.getString("MainWindow.File")); //$NON-NLS-1$
-    addFileItem = new JMenuItem(ADD_FILE + ELLIPSIS);
-    addFileItem.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        addFile();
-      }
-    });
-    fileMenu.add(addFileItem);
 
-    addDirectoryItem = new JMenuItem(ADD_FILES + ELLIPSIS);
-    addDirectoryItem.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        addDirectory();
-      }
-    });
-    fileMenu.add(addDirectoryItem);
-
-    addTrackItem = new JMenuItem(
-        Messages.getString("MainWindow.OpenTrack") + ELLIPSIS); //$NON-NLS-1$
-    addTrackItem.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        addTrackFromFile();
-      }
-    });
-    fileMenu.add(addTrackItem);
-
-    saveTrackItem = new JMenuItem(
-        Messages.getString("MainWindow.SaveTrack") + ELLIPSIS); //$NON-NLS-1$
-    saveTrackItem.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        saveTrack();
-      }
-    });
-    saveTrackItem.setEnabled(false);
-    fileMenu.add(saveTrackItem);
-
-    loadTrackFromGpsItem = new JMenuItem(Messages
-        .getString("MainWindow.LoadTrackFromGPS")); //$NON-NLS-1$
-    loadTrackFromGpsItem.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        loadTracksFromGps();
-      }
-    });
-    loadTrackFromGpsItem.setEnabled(GPSBabel.isAvailable());
-    fileMenu.add(loadTrackFromGpsItem);
-
-    settingsItem = new JMenuItem(
-        Messages.getString("MainWindow.Settings") + ELLIPSIS); //$NON-NLS-1$
-    settingsItem.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        // remember availability of dcraw
-        boolean dcrawAvailable = Dcraw.isAvailable();
-        SettingsDialog settingsDialog = new SettingsDialog(MainWindow.this);
-        settingsDialog.openDialog();
-        // after the settings dialog has closed we might need to check again
-        // if the external programs are still available
-        Exiftool.checkExiftoolAvailable();
-        GPSBabel.checkGPSBabelAvailable();
-        Dcraw.checkDcrawAvailable();
-        if (!dcrawAvailable && Dcraw.isAvailable()) {
-          // dcraw wasn't available, but now it isn't
-          for (int row = 0; row < getTableModel().getRowCount(); row++) {
-            if (getTableModel().getImageInfo(row).getThumbNailStatus() == THUMBNAIL_STATUS.FAI1LED) {
-              // now that dcraw is available, loading the thumbnail might work
-              getTableModel().getImageInfo(row).setThumbNailStatus(
-                  THUMBNAIL_STATUS.UNKNOWN);
-            }
-          }
-        }
-        // the menu item to load tracks from the GPS should
-        // only be enabled if GPSBabel is available
-        getLoadTrackFromGpsItem().setEnabled(GPSBabel.isAvailable());
-        // we might need to change the font
-        getTable().usePreferredFont();
-        getTableModel().fireTableDataChanged();
-      }
-    });
-    fileMenu.add(settingsItem);
-    return fileMenu;
-  }
 
   /**
    * Put external updates in list of pending update and process them if
@@ -744,204 +624,6 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
   }
 
   /**
-   * Select an image file and add it to the table.
-   */
-  void addFile() {
-    JFileChooser chooser = new JFileChooser();
-    String fileName = Settings.get(SETTING.LAST_FILE_OPENED, null);
-    if (fileName != null) {
-      File file = new File(fileName);
-      if (file.exists()) {
-        chooser.setSelectedFile(file);
-      }
-    }
-    chooser.setFileFilter(new ImageFileFilter());
-    chooser.setMultiSelectionEnabled(true);
-    if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-      File[] files = chooser.getSelectedFiles();
-      // just save the first selected file
-      Settings.put(SETTING.LAST_FILE_OPENED, files[0].getPath());
-      Settings.flush();
-      ExifReaderTask task = new ExifReaderTask(ADD_FILE, tableModel, files);
-      task.execute();
-    }
-  }
-
-  /**
-   * Select a directory and add all image files in it.
-   */
-  void addDirectory() {
-    JFileChooser chooser = new JFileChooser();
-    String directoryName = Settings.get(SETTING.LAST_DIRECTORY_OPENED, null);
-    if (directoryName != null) {
-      File directory = new File(directoryName);
-      if (directory.exists() && directory.isDirectory()) {
-        chooser.setCurrentDirectory(directory);
-      }
-    }
-    ImageFileFilter filter = new ImageFileFilter();
-    chooser.setFileFilter(filter);
-    chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-    if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-      File directory = chooser.getSelectedFile();
-      Settings.put(SETTING.LAST_DIRECTORY_OPENED, directory.getPath());
-      Settings.flush();
-      File[] files = directory.listFiles(filter);
-      ExifReaderTask task = new ExifReaderTask(ADD_FILES, tableModel, files);
-      task.execute();
-    }
-  }
-
-  /**
-   * Choose a GPX file and read the information from it.
-   */
-  void addTrackFromFile() {
-    JFileChooser chooser = new JFileChooser();
-    String lastFile = Settings.get(SETTING.LAST_GPX_FILE_OPENED, null);
-    if (lastFile != null) {
-      File file = new File(lastFile);
-      if (file.exists()) {
-        chooser.setSelectedFile(file);
-      }
-    }
-    chooser.setFileFilter(new GpxFileFilter());
-    chooser.setMultiSelectionEnabled(true);
-    if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-      final File[] files = chooser.getSelectedFiles();
-      Settings.put(SETTING.LAST_GPX_FILE_OPENED, files[0].getPath());
-      Settings.flush();
-      new GpxReadFileTask(
-          Messages.getString("MainWindow.LoadTracksFromFile"), files) { //$NON-NLS-1$
-
-        @Override
-        protected void process(List<Gpx> chunks) {
-          super.process(chunks);
-          for (Gpx gpx : chunks) {
-            if (gpx != null) {
-              TrackStore.getTrackStore().addGPX(gpx);
-            } else {
-              JOptionPane
-                  .showMessageDialog(
-                      MainWindow.this,
-                      Messages.getString("MainWindow.CouldNotReadGpxFile"), //$NON-NLS-1$
-                      Messages.getString("MainWindow.Error"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-            }
-          }
-        }
-
-        @Override
-        protected void done() {
-          super.done();
-          // now that we have a track, we are allowed to save it
-          getSaveTrackItem().setEnabled(true);
-        }
-      }.execute();
-    }
-  }
-
-  /**
-   * Save the tracks to a file selected by the user.
-   */
-  void saveTrack() {
-    JFileChooser chooser = new JFileChooser();
-    String lastFile = Settings.get(SETTING.LAST_GPX_FILE_OPENED, null);
-    if (lastFile != null) {
-      File file = new File(lastFile);
-      if (file.exists() && file.getParentFile() != null) {
-        chooser.setCurrentDirectory(file.getParentFile());
-      }
-    }
-    GpxFileFilter gpxFileFilter = new GpxFileFilter();
-    chooser.setFileFilter(gpxFileFilter);
-    chooser.setMultiSelectionEnabled(false);
-    if (chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
-      try {
-        File outputFile = chooser.getSelectedFile();
-        if (!gpxFileFilter.accept(outputFile)) {
-          // not a gpx file selected - add .gpx suffix
-          outputFile = new File(chooser.getSelectedFile().getPath() + ".gpx"); //$NON-NLS-1$
-        }
-        if (outputFile.exists()) {
-          String title = Messages.getString("MainWindow.FileExists"); //$NON-NLS-1$
-          String message = String
-              .format(
-                  Messages.getString("MainWindow.OverwriteFileFormat"), outputFile.getName()); //$NON-NLS-1$
-          if (JOptionPane.showConfirmDialog(this, message, title,
-              JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.NO_OPTION) {
-            return;
-          }
-        }
-        new GpxWriter().write(TrackStore.getTrackStore().getGpx(), outputFile);
-        String message = String.format(Messages
-            .getString("MainWindow.TracksSavedFormat"), outputFile.getPath()); //$NON-NLS-1$
-        progressBar.setString(message);
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
-    }
-  }
-
-  /**
-   * Try reading track logs from a GPS device.
-   */
-  void loadTracksFromGps() {
-    GPSBabelTask task = new GPSBabelTask(Messages
-        .getString("MainWindow.LoadTrackFromGPS")) { //$NON-NLS-1$
-
-      @Override
-      protected void process(List<Gpx> chunks) {
-        int numTrackpoints = 0;
-        for (Gpx gpx : chunks) {
-          TrackStore.getTrackStore().addGPX(gpx);
-          List<Trk> tracks = gpx.getTrk();
-          for (Trk trk : tracks) {
-            List<Trkseg> segments = trk.getTrkseg();
-            for (Trkseg segment : segments) {
-              numTrackpoints += segment.getTrkpt().size();
-            }
-          }
-        }
-        String message = "" + numTrackpoints + ' ' + Messages.getString("MainWindow.LocationsLoaded"); //$NON-NLS-1$ //$NON-NLS-2$
-        getProgressBar().setString(message);
-        // now that we have a track, we are allowed to save it
-        getSaveTrackItem().setEnabled(true);
-      }
-
-      @Override
-      protected void done() {
-        List<String> errorMessages = getErrorMessages();
-        if (errorMessages.size() > 0) {
-          // there have been error messages.. display them
-          StringBuilder message = new StringBuilder();
-          for (String string : errorMessages) {
-            message.append(string).append('\n');
-          }
-          JOptionPane
-              .showMessageDialog(
-                  MainWindow.this,
-                  message,
-                  Messages.getString("MainWindow.GPSBabelError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-        }
-      }
-    };
-    task.execute();
-  }
-
-  /**
-   * Some menu items need to disabled while a background task is running.
-   * 
-   * @param enable
-   *          Whether to enable (true) or disable (false) those items
-   */
-  private void updateMenuAvailability(boolean enable) {
-    addFileItem.setEnabled(enable);
-    addDirectoryItem.setEnabled(enable);
-    addTrackItem.setEnabled(enable);
-    loadTrackFromGpsItem.setEnabled(enable);
-    settingsItem.setEnabled(enable);
-  }
-
-  /**
    * Check that the image displayed in the preview component (image viewer) is
    * still available and hasn't been removed. If the image has been removed,
    * clear the image viewer.
@@ -959,14 +641,16 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
   public void backgroundTaskStarted(BackgroundTask<?> task) {
     // System.out.println("Started "+task.getName());
     backgroundTask = task;
-
-    progressBar.setMinimum(task.getMinProgress());
-    progressBar.setMaximum(task.getMaxProgress());
-    progressBar.setValue(task.getMinProgress());
-    progressBar.setString(""); //$NON-NLS-1$
+    int minProgress = task.getMinProgress();
+    int maxProgress = task.getMaxProgress();
+    getProgressBar().setMinimum(minProgress);
+    getProgressBar().setMaximum(maxProgress);
+    getProgressBar().setValue(minProgress);
+    getProgressBar().setIndeterminate(minProgress == maxProgress);
+    getProgressBar().setString(""); //$NON-NLS-1$
 
     // disable the menu items that can cause trouble
-    updateMenuAvailability(false);
+    fileMenu.updateMenuAvailability(false);
     undoItem.setEnabled(false);
     redoItem.setEnabled(false);
     String name = task.getName();
@@ -986,10 +670,13 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
   public void backgroundTaskProgress(BackgroundTask<?> task,
       String progressMessage) {
     // System.out.println(progressMessage);
-    progressBar.setString(progressMessage);
-    progressBar.setMinimum(task.getMinProgress());
-    progressBar.setMaximum(task.getMaxProgress());
-    progressBar.setValue(task.getCurrentProgress());
+	int minProgress = task.getMinProgress();
+	int maxProgress = task.getMaxProgress();
+    getProgressBar().setString(progressMessage);
+    getProgressBar().setMinimum(minProgress);
+    getProgressBar().setMaximum(maxProgress);
+    getProgressBar().setValue(task.getCurrentProgress());
+    getProgressBar().setIndeterminate(minProgress == maxProgress);
   }
 
   /**
@@ -997,7 +684,7 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
    */
   public void backgroundTaskFinished(BackgroundTask<?> task) {
     // System.out.println("Finished "+task.getName());
-    progressBar.setValue(task.getMinProgress());
+    getProgressBar().setValue(task.getMinProgress());
     String result = ""; //$NON-NLS-1$
     try {
       result = task.get();
@@ -1006,10 +693,11 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
     } catch (ExecutionException e) {
       e.printStackTrace();
     }
-    progressBar.setString(result);
+    getProgressBar().setString(result);
+    getProgressBar().setIndeterminate(false);
     backgroundTask = null;
     // re-enable menu items
-    updateMenuAvailability(true);
+    fileMenu.updateMenuAvailability(true);
     updateUndoMenuItems();
     validatePreview();
     cancelItem.setVisible(false);
@@ -1029,7 +717,7 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
   /**
    * @return the tableModel
    */
-  ImagesTableModel getTableModel() {
+  public ImagesTableModel getTableModel() {
     return tableModel;
   }
 
@@ -1044,6 +732,12 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
    * @return the progressBar
    */
   JProgressBar getProgressBar() {
+    if (progressBar == null) {
+      progressBar = new JProgressBar();
+      progressBar.setStringPainted(true);
+      progressBar.setBorderPainted(false);
+      progressBar.setString(""); //$NON-NLS-1$
+    }
     return progressBar;
   }
 
@@ -1062,23 +756,19 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
   }
 
   /**
-   * @return the saveTrackItem
-   */
-  JMenuItem getSaveTrackItem() {
-    return saveTrackItem;
-  }
-
-  /**
-   * @return the loadTrackFromGpsItem
-   */
-  JMenuItem getLoadTrackFromGpsItem() {
-    return loadTrackFromGpsItem;
-  }
-
-  /**
    * @return the cancelItem
    */
   JMenuItem getCancelItem() {
     return cancelItem;
   }
+  
+  /**
+   * A utility method for finding the main window.
+   * @param component The component somewhere in the main window
+   * @return the JFrame this is ultimately in.
+   */
+  public static JFrame getMainWindow(Component component) {
+    return (JFrame) SwingUtilities.getAncestorOfClass(JFrame.class, component);
+  }
+  
 }

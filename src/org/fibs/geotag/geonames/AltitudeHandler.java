@@ -60,6 +60,7 @@ public class AltitudeHandler extends DefaultHandler {
       BufferedReader reader = new BufferedReader(new InputStreamReader(
           inputStream));
       altitude = reader.readLine();
+      reader.close();
     } catch (MalformedURLException e) {
       e.printStackTrace();
     } catch (IOException e) {

@@ -168,7 +168,10 @@ public final class GPSBabel {
     }
     if (process == null) {
       // process was interrupted - file is invalid
-      file.delete();
+      // Ignoring return value - not much we can do if file can't be deleted.
+      if (!file.delete()) {
+        System.out.println("Failed to delete temp gpx file"); //$NON-NLS-1$
+      }
       file = null;
     }
     process = null;

@@ -237,7 +237,7 @@ public class MetadataExtractorReader implements ExifReader {
         // format them as a String
         time = String
             .format(
-                "%02d:%02d:%02d", new Integer(hours), new Integer(minutes), new Integer(seconds)); //$NON-NLS-1$
+                "%02d:%02d:%02d", Integer.valueOf(hours), Integer.valueOf(minutes), Integer.valueOf(seconds)); //$NON-NLS-1$
       }
     } catch (Exception e) {
       e.printStackTrace();

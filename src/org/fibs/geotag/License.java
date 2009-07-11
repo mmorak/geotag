@@ -51,9 +51,9 @@ public final class License {
     String paragraph2 = Messages.getString("License.Paragraph2"); //$NON-NLS-1$
     String paragraph3 = Messages.getString("License.Paragraph3"); //$NON-NLS-1$
     lines.addAll(Util.splitString(paragraph1, MAX_LINE_LENGTH));
-    lines.add(new String()); // blank line
+    lines.add(""); //$NON-NLS-1$
     lines.addAll(Util.splitString(paragraph2, MAX_LINE_LENGTH));
-    lines.add(new String());
+    lines.add(""); //$NON-NLS-1$
     lines.addAll(Util.splitString(paragraph3, MAX_LINE_LENGTH));
     return lines;
   }

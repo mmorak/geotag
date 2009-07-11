@@ -129,7 +129,7 @@ public class KmlExporter {
       // now a folder for the placemarks
       FolderType folder = factory.createFolderType();
       folder.setName(KML_FOLDER);
-      folder.setOpen(new Boolean(false));
+      folder.setOpen(Boolean.valueOf(false));
       List<JAXBElement<? extends FeatureType>> folderFeatures = folder
           .getFeature();
       for (ImageInfo imageInfo : imageInfos) {

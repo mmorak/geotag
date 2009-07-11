@@ -163,7 +163,7 @@ public final class MissingLicenseFinder {
         tempFileWriter.write(CORRECT_LINES[i]);
         tempFileWriter.newLine();
         lineFromFile = bufferedReader.readLine();
-        if (!lineFromFile.equals(CORRECT_LINES[i])) {
+        if (!CORRECT_LINES[i].equals(lineFromFile)) {
           filesFailed++;
           if (!failed) {
             System.out.println(file.getName()

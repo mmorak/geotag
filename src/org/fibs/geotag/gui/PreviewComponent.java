@@ -153,7 +153,7 @@ public class PreviewComponent extends Component {
                 imageInfo)).rotate();
             setImage(rotatedImage);
           } else {
-            setImage(bufferedImage); // i.e. null
+            setImage(null);
           }
         }
       }.execute();

@@ -1,3 +1,10 @@
+Release 0.060
+  [2820048] Geotag now always shows the 'What next' dialog
+  if exiftool is not found on startup.
+  [2817511] Geotag claims success when exiftool fails.
+  [2810269] Loading GPX file should show progress
+  Code cleanup
+
 Release 0.059
   Fixed bug [2039352]:
   When alt is set to feet location copies turn to meters

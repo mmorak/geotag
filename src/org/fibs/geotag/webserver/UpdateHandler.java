@@ -71,7 +71,7 @@ public class UpdateHandler implements ContextHandler {
       } else if (parameter.equals("longitude")) { //$NON-NLS-1$
         longitude = new Double(Double.parseDouble(value));
       } else if (parameter.equals("image")) { //$NON-NLS-1$
-        image = new Integer(Integer.parseInt(value));
+        image = Integer.valueOf(Integer.parseInt(value));
       } else if (parameter.equals("direction")) { //$NON-NLS-1$
         direction = new Double(Double.parseDouble(value));
       }

@@ -15,27 +15,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-package org.fibs.geotag.util;
-
-import junit.framework.TestCase;
+package org.fibs.geotag.gui.menus.actions;
 
 /**
  * @author andreas
- * 
+ *
  */
-public class Ascii2NativeTest extends TestCase {
+public interface MenuAction {
   /**
-   * test case
+   * perform the action
    */
-  public void testConversion() {
-    String nat = "\u00E4\u00F6\u00FCABC"; //$NON-NLS-1$
-    assertEquals(6, nat.length());
-    String asc = Ascii2Native.native2Ascii(nat);
-    System.out.println(asc);
-    assertEquals("\\u00E4\\u00F6\\u00FCABC", asc); //$NON-NLS-1$
-    String back = Ascii2Native.ascii2Native(asc);
-    System.out.println(back);
-    assertEquals(nat, back);
-  }
+  public void perform();
 }

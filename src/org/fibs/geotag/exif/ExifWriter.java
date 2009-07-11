@@ -18,6 +18,7 @@
 
 package org.fibs.geotag.exif;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -147,10 +148,12 @@ public class ExifWriter {
       // now start a thread that reads the input stream of the process and
       // writes it to stdout
       final InputStream inputStream = process.getInputStream();
-      new InputStreamGobbler(inputStream, System.out).start();
+      ByteArrayOutputStream exiftoolOutput = new ByteArrayOutputStream();
+      new InputStreamGobbler(inputStream, exiftoolOutput).start();
       // we wait for the process to finish
       process.waitFor();
-      success = true;
+      System.out.println(exiftoolOutput.toString());
+      success = ! exiftoolOutput.toString().contains("files weren't updated due to errors"); //$NON-NLS-1$
     } catch (IOException e) {
       e.printStackTrace();
     } catch (InterruptedException e) {

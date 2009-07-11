@@ -27,7 +27,9 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
+import org.fibs.geotag.exif.Exiftool;
 import org.fibs.geotag.gui.MainWindow;
+import org.fibs.geotag.gui.WhatNext;
 import org.fibs.geotag.i18n.Messages;
 import org.fibs.geotag.i18n.Translations;
 import org.fibs.geotag.util.Constants;
@@ -125,7 +127,7 @@ public final class Geotag {
       String message = "<html><center>" //$NON-NLS-1$
           + String.format(Messages.getString("Geotag.MemoryWarningFormat") //$NON-NLS-1$
               + "<br><b><code>java -Xmx256M -jar geotag.jar</code></b>", //$NON-NLS-1$
-              NAME, new Integer(maxMemory), WEBSITE) + "</center></html>"; //$NON-NLS-1$
+              NAME, Integer.valueOf(maxMemory), WEBSITE) + "</center></html>"; //$NON-NLS-1$
       JOptionPane.showMessageDialog(null, message, Messages
           .getString("Geotag.NotEnoughMemory"), //$NON-NLS-1$
           JOptionPane.WARNING_MESSAGE);
@@ -144,6 +146,10 @@ public final class Geotag {
       public void run() {
         MainWindow mainWindow = new MainWindow();
         mainWindow.setVisible(true);
+        if (!Exiftool.isAvailable()) {
+          WhatNext.helpWhatNext(mainWindow, mainWindow.getTableModel());
+
+        }
       }
     });
 

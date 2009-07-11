@@ -637,7 +637,7 @@ public class ImagesTableModel extends AbstractTableModel {
    */
   private String round(String value, int decimals) {
     String result = value;
-    String format = String.format("%%.%df", new Integer(decimals)); //$NON-NLS-1$
+    String format = String.format("%%.%df", Integer.valueOf(decimals)); //$NON-NLS-1$
     if (value != null && value.length() > 0) {
       try {
         Double theValue = new Double(value);
