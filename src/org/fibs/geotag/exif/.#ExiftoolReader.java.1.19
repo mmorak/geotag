@@ -82,15 +82,15 @@ public class ExiftoolReader implements ExifReader {
   /** exiftool Orientation output lines start with this text. */
   private static final String ORIENTATION_TAG = "Orientation: "; //$NON-NLS-1$
 
-  /** exiftool EXIF Location output lines start with this text. */
-  private static final String LOCATION_TAG = "ContentLocationName: "; //$NON-NLS-1$
+  /** exiftool EXIF Location output lines can start with this text. */
+  private static final String LOCATION_TAG_1 = "ContentLocationName: "; //$NON-NLS-1$
   
-  /** exiftool Sub-Location lines start with this text */
-  private static final String SUB_LOCATION_TAG = "Sub-location: "; //$NON-NLS-1$
+  /** exiftool EXIF Location output lines can start with this text. */
+  private static final String LOCATION_TAG_1_A = "ContentLocationName: "; //$NON-NLS-1$
 
   /** exiftool XMP Location output lines start with this text. */
   private static final String LOCATION_TAG_2 = "Location: "; //$NON-NLS-1$
-
+  
   /** exiftool City output lines start with this text. */
   private static final String CITY_TAG = "City: "; //$NON-NLS-1$
 
@@ -133,7 +133,7 @@ public class ExiftoolReader implements ExifReader {
     args.add("-Orientation"); //$NON-NLS-1$
     // retrieve IPTC image location
     args.add("-ContentLocationName"); //$NON-NLS-1$
-    // retrieve sub-location (seems better choice than content location)
+    // this can also be stored in the Sub-Location field
     args.add("-Sub-Location"); //$NON-NLS-1$
     // retrieve IPTC city name
     args.add("-City"); //$NON-NLS-1$
@@ -304,12 +304,9 @@ public class ExiftoolReader implements ExifReader {
           }
         } else if (text.startsWith(ORIENTATION_TAG)) {
           imageInfo.setOrientation(text.substring(ORIENTATION_TAG.length()));
-        } else if (text.startsWith(LOCATION_TAG)) {
-          new UpdateLocationName(imageInfo, text.substring(LOCATION_TAG
+        } else if (text.startsWith(LOCATION_TAG_1)) {
+          new UpdateLocationName(imageInfo, text.substring(LOCATION_TAG_1
               .length()), DATA_SOURCE.IMAGE);
-        } else if (text.startsWith(SUB_LOCATION_TAG)) {
-            new UpdateLocationName(imageInfo, text.substring(SUB_LOCATION_TAG
-                    .length()), DATA_SOURCE.IMAGE);
         } else if (text.startsWith(LOCATION_TAG_2)) {
           new UpdateLocationName(imageInfo, text.substring(LOCATION_TAG_2
               .length()), DATA_SOURCE.IMAGE);

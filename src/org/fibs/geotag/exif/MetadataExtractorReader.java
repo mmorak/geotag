@@ -140,6 +140,10 @@ public class MetadataExtractorReader implements ExifReader {
         String location = directory
             .getString(IptcDirectory.TAG_CONTENT_LOCATION_NAME);
         new UpdateLocationName(imageInfo, location, DATA_SOURCE.IMAGE);
+      } else if (directory.containsTag(IptcDirectory.TAG_SUB_LOCATION)) {
+          String location = directory
+          .getString(IptcDirectory.TAG_SUB_LOCATION);
+      new UpdateLocationName(imageInfo, location, DATA_SOURCE.IMAGE);    	  
       }
     } catch (Exception e) {
       e.printStackTrace();

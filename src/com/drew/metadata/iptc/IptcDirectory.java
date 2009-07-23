@@ -51,6 +51,8 @@ public class IptcDirectory extends Directory {
   public static final int TAG_CONTENT_LOCATION_NAME = 0x021b;
 
   public static final int TAG_CITY = 0x025a;
+  
+  public static final int TAG_SUB_LOCATION = 0x25c;
 
   public static final int TAG_PROVINCE_OR_STATE = 0x025f;
 

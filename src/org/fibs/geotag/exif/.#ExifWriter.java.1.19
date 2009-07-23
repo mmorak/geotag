@@ -231,8 +231,7 @@ public class ExifWriter {
     // Now for IPTC location data
     String locationName = imageInfo.getLocationName();
     if (locationName != null) {
-      arguments.add("-IPTC:ContentLocationName=" + locationName); //$NON-NLS-1$
-      // also write this to the Sub-Location 
+ //FIXME      arguments.add("-IPTC:ContentLocationName=" + locationName); //$NON-NLS-1$
       arguments.add("-IPTC:Sub-Location=" + locationName); //$NON-NLS-1$
     }
     String city = imageInfo.getCityName();
