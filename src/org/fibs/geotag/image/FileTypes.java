@@ -19,7 +19,11 @@
 package org.fibs.geotag.image;
 
 import java.io.File;
+import java.util.StringTokenizer;
 
+import org.fibs.geotag.Settings;
+import org.fibs.geotag.Settings.SETTING;
+import org.fibs.geotag.exif.Exiftool;
 import org.fibs.geotag.util.FileUtil;
 
 /**
@@ -40,7 +44,9 @@ public enum FileTypes {
   /** Image file type TIFF. */
   TIFF,
   /** Image file type XMP. */
-  XMP;
+  XMP,
+  /** Image file with XMP file (user specified) */
+  CUSTOM_FILE_WITH_XMP;
 
   /**
    * Determine the type of an image file.
@@ -60,6 +66,8 @@ public enum FileTypes {
       return TIFF;
     } else if (isXmpFile(file)) {
       return XMP;
+    } else if (isCustomFileWithXmpFile(file)) {
+      return FileTypes.CUSTOM_FILE_WITH_XMP;
     }
     return UNKOWN;
   }
@@ -143,6 +151,12 @@ public enum FileTypes {
           extension.equals("crw")) { //$NON-NLS-1$
         return true;
       }
+      if (extension.equals("rw2")) { //$NON-NLS-1$
+        // Panasonic RW2 files are read/write supported since Exiftool 7.73
+        if (Exiftool.getVersion() != null && Exiftool.getVersion().compareTo("7.73") >=0) { //$NON-NLS-1$
+          return true;
+        }
+      }
     }
     return false;
   }
@@ -190,6 +204,33 @@ public enum FileTypes {
     String extension = FileUtil.getExtension(file);
     if (extension != null) {
       if (extension.equals("xmp")) { //$NON-NLS-1$
+        return true;
+      }
+    }
+    return false;
+  }
+  
+  /**
+   * Check if a file is of a type specified by the user
+   * as not being supported, but having an XMP file to read
+   * and write the data from and to.
+   * @param file The file to be checked
+   * @return True if the file is a custom file with XMP sidecar
+   */
+  private static boolean isCustomFileWithXmpFile(File file) {
+    if (file.isDirectory()) {
+      return false;
+    }
+    String extension = FileUtil.getExtension(file);
+    // Get the user setting
+    String fileTypesSetting = Settings.get(SETTING.FILE_TYPES_SUPPORTED_BY_XMP, ""); //$NON-NLS-1$
+    // Tokenize the setting
+    // We allow spaces and commas as separators. We also allow dots in case the user
+    // specifies for example 'img' files by '.img'
+    StringTokenizer tokenizer = new StringTokenizer(fileTypesSetting, " ,."); //$NON-NLS-1$
+    while (tokenizer.hasMoreTokens()) {
+      String token = tokenizer.nextToken();
+      if (token.toLowerCase().equals(extension)) {
         return true;
       }
     }

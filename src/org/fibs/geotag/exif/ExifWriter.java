@@ -78,6 +78,9 @@ public class ExifWriter {
     } else if (xmpFile != null && fileType == FileTypes.RAW_READ_ONLY) {
       // can't write to image file, must write XMP
       return write(imageInfo, true);
+    } else if (xmpFile != null && fileType == FileTypes.CUSTOM_FILE_WITH_XMP) {
+      // can't write to image file - must write to XMP file
+      return write(imageInfo, true);
     } else if (xmpFile != null && xmpFile.exists()) {
       // Can write XMP
       return write(imageInfo, true);
@@ -315,7 +318,12 @@ public class ExifWriter {
         if ("7.04".compareTo(Exiftool.getVersion()) <= 0) { //$NON-NLS-1$
           tag = "-XMP:GPSDateTime="; // since 7.04 //$NON-NLS-1$
         }
-        arguments.add(tag + '"' + date + ' ' + time + 'Z' + '"');
+        // Add 'Z' as a timezone if none is specified
+        String zone = ""; //$NON-NLS-1$
+        if (!time.endsWith("Z") && !time.contains("-") && !time.contains("+") ) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+          zone = "Z"; //$NON-NLS-1$
+        }
+        arguments.add(tag + '"' + date + ' ' + time + zone + '"');
       }
     }
     String location = imageInfo.getLocationName();

@@ -246,6 +246,11 @@ public class SettingsDialog extends JDialog implements TreeSelectionListener {
     StringSettingsPanel proxyAddress = new StringSettingsPanel(parent, Messages
         .getString("SettingsDialog.ProxyAddress"), SETTING.PROXY_ADDRESS, ""); //$NON-NLS-1$//$NON-NLS-2$
     addPanel(general, proxyAddress);
+    
+    StringSettingsPanel xmpFileTypes = new StringSettingsPanel(parent,
+        Messages.getString("SettingsDialog.AdditionalFileTypesWithXmp"), //$NON-NLS-1$
+        SETTING.FILE_TYPES_SUPPORTED_BY_XMP, ""); //$NON-NLS-1$
+    addPanel(general, xmpFileTypes);
 
     top.add(general);
 

@@ -1,3 +1,8 @@
+Release 0.062
+  [2826751] Added support for Panasonic RW2 files, if
+  exiftool version >= 7.73 is installed
+  [2826752] Add support for XMP files as images
+  
 Release 0.061
   [2825930] Support for IPTC:Sub-Location
   

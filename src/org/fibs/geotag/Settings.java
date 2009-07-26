@@ -199,7 +199,9 @@ public final class Settings {
     /** Preferences key for the last used time zone */
     LAST_USED_TIMEZONE,
     /** Preferences key for number of clicks to edit */
-    CLICKS_TO_EDIT;
+    CLICKS_TO_EDIT,
+    /** Preferences key for file types that are supported by reading only XMP files */
+    FILE_TYPES_SUPPORTED_BY_XMP;
 
     /**
      * For the actual key I prefer lower case keys with dots.

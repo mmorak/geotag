@@ -83,13 +83,15 @@ public class ExifReaderTask extends UndoableBackgroundTask<ImageInfo> {
   private ImageInfo readExifData(File file) {
     ImageInfo result = null;
     ExifReader exifReader = null;
-    switch (FileTypes.fileType(file)) {
+    FileTypes fileType = FileTypes.fileType(file);
+    switch (fileType) {
       case JPEG:
         exifReader = new MetadataExtractorReader();
         break;
       case RAW_READ_ONLY:
       case RAW_READ_WRITE:
       case TIFF:
+      case CUSTOM_FILE_WITH_XMP:
         exifReader = new ExiftoolReader();
         break;
       case UNKOWN:
@@ -99,7 +101,10 @@ public class ExifReaderTask extends UndoableBackgroundTask<ImageInfo> {
         break;
     }
     if (exifReader != null) {
-      result = exifReader.readExifData(file, null);
+      // Don't read from image file if it is a custom file with XMP
+      if (FileTypes.CUSTOM_FILE_WITH_XMP != fileType) {
+        result = exifReader.readExifData(file, null);
+      }
       // now check if there is an XMP sidecar file for our file
       String xmpFileName = FileUtil.replaceExtension(file.getPath(), "xmp"); //$NON-NLS-1$
       if (xmpFileName != null) {
@@ -144,43 +149,6 @@ public class ExifReaderTask extends UndoableBackgroundTask<ImageInfo> {
   @SuppressWarnings("boxing")
   @Override
   protected String doInBackground() throws Exception {
-    // long start = System.currentTimeMillis();
-    // we split our files into two groups:
-    // Files that need to be handled individually and files
-    // that can be handled by exiftool in one go:
-    List<File> handleOneByOne = new ArrayList<File>();
-    List<File> handleInOneGo = new ArrayList<File>();
-    for (File file : files) {
-      switch (FileTypes.fileType(file)) {
-        case JPEG:
-          // Jpeg as best best handled by the MetadataExtractor
-          // on a per file basis
-          handleOneByOne.add(file);
-          break;
-        case RAW_READ_ONLY:
-        case RAW_READ_WRITE:
-        case TIFF:
-          // how those files are handled depends on the presence of
-          // XMP sidecar files.
-          String xmpFileName = FileUtil.replaceExtension(file.getPath(), "xmp"); //$NON-NLS-1$
-          if (xmpFileName != null) {
-            File xmpFile = new File(xmpFileName);
-            if (xmpFile.exists()) {
-              handleOneByOne.add(file);
-            } else {
-              handleInOneGo.add(file);
-            }
-          }
-          break;
-        case UNKOWN:
-        case XMP:
-          break;
-        default:
-          break;
-      }
-    }
-    // System.out.println("One by one: "+handleOneByOne.size());
-    // System.out.println("In one go: "+handleInOneGo.size());
     ImageInfo imageInfo;
     int imagesPublished = 0;
     int imagesFailed = 0;

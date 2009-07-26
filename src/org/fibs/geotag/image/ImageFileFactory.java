@@ -46,6 +46,7 @@ public final class ImageFileFactory {
         return new TiffImageFile(file);
       case RAW_READ_ONLY:
       case RAW_READ_WRITE:
+      case CUSTOM_FILE_WITH_XMP:
         return new RawImageFile(file);
       case XMP:
       case UNKOWN:

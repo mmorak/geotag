@@ -155,6 +155,8 @@ public class ExiftoolReader implements ExifReader {
     args.add("-S"); //$NON-NLS-1$
     // -n generates numeric output (not descriptive)
     args.add("-n"); //$NON-NLS-1$
+    // date time information in XMP file overrides data from image Exif
+    //args.add("-XMP:DateTimeOriginal"); //$NON-NLS-1$
     // retrieve the latitude
     args.add("-XMP:GPSLatitude"); //$NON-NLS-1$
     // retrieve the longitude

@@ -56,6 +56,8 @@ public class ImageFileFilter extends FileFilter implements java.io.FileFilter {
         return true;
       case XMP:
         return false;
+      case CUSTOM_FILE_WITH_XMP:
+        return true;
       default:
         return false;
     }
