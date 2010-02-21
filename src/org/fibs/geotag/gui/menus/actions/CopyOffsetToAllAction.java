@@ -26,18 +26,19 @@ import org.fibs.geotag.gui.menus.MenuConstants;
 import org.fibs.geotag.table.ImagesTable;
 import org.fibs.geotag.table.ImagesTableModel;
 import org.fibs.geotag.tasks.SetOffsetTask;
+import org.fibs.geotag.tasks.TaskExecutor;
 
 /**
  * @author andreas
- *
+ * 
  */
-public class CopyOffsetToAllAction implements MenuAction, MenuConstants{
+public class CopyOffsetToAllAction implements MenuAction, MenuConstants {
   /** Image to copy from */
   private ImageInfo fromImage;
-  
-  /** The table of images*/
+
+  /** The table of images */
   private ImagesTable imagesTable;
-  
+
   /**
    * @param fromImage
    * @param imagesTable
@@ -46,7 +47,7 @@ public class CopyOffsetToAllAction implements MenuAction, MenuConstants{
     this.fromImage = fromImage;
     this.imagesTable = imagesTable;
   }
-  
+
   /**
    * @see org.fibs.geotag.gui.menus.actions.MenuAction#perform()
    */
@@ -59,8 +60,8 @@ public class CopyOffsetToAllAction implements MenuAction, MenuConstants{
       ImageInfo image = tableModel.getImageInfo(index);
       imageList.add(image);
     }
-    new SetOffsetTask(COPY_TIME_OFFSET, COPY_TIME_OFFSET_ALL, tableModel,
-        offset, imageList).execute();
+    TaskExecutor.execute(new SetOffsetTask(COPY_TIME_OFFSET,
+        COPY_TIME_OFFSET_ALL, tableModel, offset, imageList));
   }
 
 }

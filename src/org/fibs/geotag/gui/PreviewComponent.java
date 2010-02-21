@@ -29,6 +29,7 @@ import java.io.File;
 import org.fibs.geotag.data.ImageInfo;
 import org.fibs.geotag.image.ImageRotator;
 import org.fibs.geotag.tasks.PreviewLoaderTask;
+import org.fibs.geotag.tasks.TaskExecutor;
 import org.fibs.geotag.util.Constants;
 
 /**
@@ -143,7 +144,8 @@ public class PreviewComponent extends Component {
     this.imageInfo = imageInfo;
     if (imageInfo != null) {
       File file = new File(imageInfo.getPath());
-      new PreviewLoaderTask(file, Constants.ONE_SECOND_IN_MILLIS / 2) {
+      TaskExecutor.execute(new PreviewLoaderTask(file,
+          Constants.ONE_SECOND_IN_MILLIS / 2) {
         @Override
         protected void done() {
           BufferedImage bufferedImage = getImage();
@@ -156,7 +158,7 @@ public class PreviewComponent extends Component {
             setImage(null);
           }
         }
-      }.execute();
+      });
     } else {
       setImage(null);
     }

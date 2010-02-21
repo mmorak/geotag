@@ -15,6 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package org.fibs.geotag.gui.menus;
 
 import java.awt.event.ActionEvent;
@@ -46,6 +47,7 @@ import org.fibs.geotag.table.ImagesTableModel;
 import org.fibs.geotag.tasks.ExifReaderTask;
 import org.fibs.geotag.tasks.GPSBabelTask;
 import org.fibs.geotag.tasks.GpxReadFileTask;
+import org.fibs.geotag.tasks.TaskExecutor;
 import org.fibs.geotag.track.GpxFileFilter;
 import org.fibs.geotag.track.GpxWriter;
 import org.fibs.geotag.track.TrackStore;
@@ -56,17 +58,17 @@ import com.topografix.gpx._1._0.Gpx.Trk.Trkseg;
 
 /**
  * @author andreas
- *
+ * 
  */
 @SuppressWarnings("serial")
-public class FileMenu extends JMenu implements MenuConstants{
+public class FileMenu extends JMenu implements MenuConstants {
 
   /** Menu item to add one file. */
   private JMenuItem addFileItem;
 
   /** Menu item to add all files in a directory. */
   private JMenuItem addDirectoryItem;
-  
+
   /** Sub-menu to save files with new locations */
   SaveLocationsMenu saveLocationsMenu;
 
@@ -82,16 +84,19 @@ public class FileMenu extends JMenu implements MenuConstants{
   /** Menu item to open the settings dialog. */
   private JMenuItem settingsItem;
 
-  /** The images table*/
+  /** The images table */
   private ImagesTable imagesTable;
-  
+
   /** The progress bar */
   private JProgressBar progressBar;
-  
+
   /**
    * Constructor for File menu. We need to inject two bit here:
-   * @param imagesTable The images table
-   * @param progressBar The progress bar
+   * 
+   * @param imagesTable
+   *          The images table
+   * @param progressBar
+   *          The progress bar
    */
   public FileMenu(ImagesTable imagesTable, JProgressBar progressBar) {
     super(FILE_MENU_NAME);
@@ -112,12 +117,11 @@ public class FileMenu extends JMenu implements MenuConstants{
       }
     });
     this.add(addDirectoryItem);
-    
+
     saveLocationsMenu = new SaveLocationsMenu(false, imagesTable, null);
     this.add(saveLocationsMenu);
 
-    addTrackItem = new JMenuItem(
-        LOAD_TRACKS_FROM_FILE + ELLIPSIS);
+    addTrackItem = new JMenuItem(LOAD_TRACKS_FROM_FILE + ELLIPSIS);
     addTrackItem.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         addTrackFromFile();
@@ -125,8 +129,7 @@ public class FileMenu extends JMenu implements MenuConstants{
     });
     this.add(addTrackItem);
 
-    saveTrackItem = new JMenuItem(
-        SAVE_TRACK + ELLIPSIS);
+    saveTrackItem = new JMenuItem(SAVE_TRACK + ELLIPSIS);
     saveTrackItem.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         saveTrack();
@@ -144,8 +147,7 @@ public class FileMenu extends JMenu implements MenuConstants{
     loadTrackFromGpsItem.setEnabled(GPSBabel.isAvailable());
     this.add(loadTrackFromGpsItem);
 
-    settingsItem = new JMenuItem(
-        SETTINGS + ELLIPSIS);
+    settingsItem = new JMenuItem(SETTINGS + ELLIPSIS);
     settingsItem.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         // remember availability of dcraw
@@ -182,39 +184,41 @@ public class FileMenu extends JMenu implements MenuConstants{
       public void popupMenuCanceled(PopupMenuEvent e) {
         // TODO Auto-generated method stub
       }
+
       @Override
       public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
         // TODO Auto-generated method stub
       }
+
       @Override
       public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
         saveLocationsMenu.populate(false, getTable(), null);
       }
-      
+
     });
   }
-  
+
   /**
    * @return the images table
    */
   ImagesTable getTable() {
     return imagesTable;
   }
-  
+
   /**
    * @return the image table's model
    */
   ImagesTableModel getTableModel() {
     return (ImagesTableModel) imagesTable.getModel();
   }
-  
+
   /**
    * @return The progress bar
    */
   JProgressBar getProgressBar() {
     return progressBar;
   }
-  
+
   /**
    * Select an image file and add it to the table.
    */
@@ -235,7 +239,7 @@ public class FileMenu extends JMenu implements MenuConstants{
       Settings.put(SETTING.LAST_FILE_OPENED, files[0].getPath());
       Settings.flush();
       ExifReaderTask task = new ExifReaderTask(ADD_FILE, getTableModel(), files);
-      task.execute();
+      TaskExecutor.execute(task);
     }
   }
 
@@ -259,10 +263,12 @@ public class FileMenu extends JMenu implements MenuConstants{
       Settings.put(SETTING.LAST_DIRECTORY_OPENED, directory.getPath());
       Settings.flush();
       File[] files = directory.listFiles(filter);
-      ExifReaderTask task = new ExifReaderTask(ADD_FILES, getTableModel(), files);
-      task.execute();
+      ExifReaderTask task = new ExifReaderTask(ADD_FILES, getTableModel(),
+          files);
+      TaskExecutor.execute(task);
     }
   }
+
   /**
    * Choose a GPX file and read the information from it.
    */
@@ -281,8 +287,7 @@ public class FileMenu extends JMenu implements MenuConstants{
       final File[] files = chooser.getSelectedFiles();
       Settings.put(SETTING.LAST_GPX_FILE_OPENED, files[0].getPath());
       Settings.flush();
-      new GpxReadFileTask(
-          LOAD_TRACKS_FROM_FILE, files) {
+      TaskExecutor.execute(new GpxReadFileTask(LOAD_TRACKS_FROM_FILE, files) {
 
         @Override
         protected void process(List<Gpx> chunks) {
@@ -306,7 +311,7 @@ public class FileMenu extends JMenu implements MenuConstants{
           // now that we have a track, we are allowed to save it
           saveTrackItem.setEnabled(true);
         }
-      }.execute();
+      });
     }
   }
 
@@ -337,7 +342,8 @@ public class FileMenu extends JMenu implements MenuConstants{
           String message = String
               .format(
                   Messages.getString("MainWindow.OverwriteFileFormat"), outputFile.getName()); //$NON-NLS-1$
-          if (JOptionPane.showConfirmDialog(MainWindow.getMainWindow(FileMenu.this), message, title,
+          if (JOptionPane.showConfirmDialog(MainWindow
+              .getMainWindow(FileMenu.this), message, title,
               JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.NO_OPTION) {
             return;
           }
@@ -394,8 +400,9 @@ public class FileMenu extends JMenu implements MenuConstants{
         }
       }
     };
-    task.execute();
+    TaskExecutor.execute(task);
   }
+
   /**
    * Some menu items need to disabled while a background task is running.
    * 
@@ -409,5 +416,5 @@ public class FileMenu extends JMenu implements MenuConstants{
     loadTrackFromGpsItem.setEnabled(enable);
     settingsItem.setEnabled(enable);
   }
-  
+
 }

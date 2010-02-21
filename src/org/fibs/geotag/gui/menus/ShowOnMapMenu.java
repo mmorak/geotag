@@ -15,6 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package org.fibs.geotag.gui.menus;
 
 import java.awt.event.ActionEvent;
@@ -33,24 +34,26 @@ import org.fibs.geotag.i18n.Messages;
 import org.fibs.geotag.image.ThumbnailWorker;
 import org.fibs.geotag.table.ImagesTable;
 import org.fibs.geotag.table.ImagesTableModel;
+import org.fibs.geotag.tasks.TaskExecutor;
 import org.fibs.geotag.tasks.ThumbnailsTask;
 import org.fibs.geotag.util.Airy;
 import org.fibs.geotag.util.BrowserLauncher;
 
 /**
  * @author andreas
- *
+ * 
  */
 @SuppressWarnings("serial")
-public class ShowOnMapMenu extends JMenu implements ActionListener, MenuConstants {
+public class ShowOnMapMenu extends JMenu implements ActionListener,
+    MenuConstants {
 
   /** the default Google zoom level. */
   private static final int DEFAULT_GOOGLE_ZOOM_LEVEL = 15;
-  
+
   /** Text for menu. */
   private static final String SHOW_ON_MAP = Messages
       .getString("ImagesTablePopupMenu.ShowOnMap"); //$NON-NLS-1$
-  
+
   /** Text for menu. */
   private static final String SHOW_ON_MAP_WITH_DIRECTION = Messages
       .getString("ImagesTablePopupMenu.ShowOnMapWithDirection"); //$NON-NLS-1$
@@ -63,29 +66,30 @@ public class ShowOnMapMenu extends JMenu implements ActionListener, MenuConstant
 
   /** The menu item used to show all image locations on a map. */
   private JMenuItem showAllOnMapItem;
-  
+
   /** The images table */
   private ImagesTable imagesTable;
-  
+
   /** The image the mouse is over - might be null */
   private ImageInfo imageInfo;
-  
+
   /** True if the image(s) should be shown with direction */
   private boolean withDirection;
-  
+
   /**
    * @param backgroundTask
-   * @param imagesTable 
-   * @param imageInfo 
-   * @param withDirection 
+   * @param imagesTable
+   * @param imageInfo
+   * @param withDirection
    */
-  public ShowOnMapMenu(boolean backgroundTask, ImagesTable imagesTable, ImageInfo imageInfo, boolean withDirection) {
+  public ShowOnMapMenu(boolean backgroundTask, ImagesTable imagesTable,
+      ImageInfo imageInfo, boolean withDirection) {
     super(withDirection ? SHOW_ON_MAP_WITH_DIRECTION : SHOW_ON_MAP);
 
     this.imagesTable = imagesTable;
     this.imageInfo = imageInfo;
     this.withDirection = withDirection;
-    
+
     showOneOnMapItem = new JMenuItem(SHOW_THIS_IMAGE);
     boolean enabled = true; // we can always do this safely
     showOneOnMapItem.setEnabled(enabled);
@@ -119,7 +123,7 @@ public class ShowOnMapMenu extends JMenu implements ActionListener, MenuConstant
       showAllImagesOnMap(withDirection);
     }
   }
-  
+
   /**
    * Open a web browser and show the image location on a map.
    * 
@@ -174,25 +178,25 @@ public class ShowOnMapMenu extends JMenu implements ActionListener, MenuConstant
     if (images.size() == 1) {
       // if there is only one image we don't need the feedback
       // coming from a BackgroundTask.. the simple Worker will suffice.
-      new ThumbnailWorker(images.get(0)) {
+      TaskExecutor.execute(new ThumbnailWorker(images.get(0)) {
         @Override
         public void done() {
           showOnMap(images, showDirection);
         }
-      }.execute();
+      });
     } else {
       // more than one thumbnail to be generated. This could take a while
       // and we use a BackgroundTask to give visual feedback via progress bar.
-      new ThumbnailsTask(Messages
+      TaskExecutor.execute(new ThumbnailsTask(Messages
           .getString("ImagesTablePopupMenu.GenerateThumbnails"), images) { //$NON-NLS-1$
-        @Override
-        public void done() {
-          showOnMap(images, showDirection);
-        }
-      }.execute();
+            @Override
+            public void done() {
+              showOnMap(images, showDirection);
+            }
+          });
     }
   }
-  
+
   /**
    * Show locations for a list of images on a map.
    * 

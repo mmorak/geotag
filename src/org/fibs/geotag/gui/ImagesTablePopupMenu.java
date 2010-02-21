@@ -60,6 +60,7 @@ import org.fibs.geotag.tasks.LocationNamesTask;
 import org.fibs.geotag.tasks.RemoveImagesTask;
 import org.fibs.geotag.tasks.SelectLocationNameTask;
 import org.fibs.geotag.tasks.SetOffsetTask;
+import org.fibs.geotag.tasks.TaskExecutor;
 import org.fibs.geotag.track.TrackStore;
 import org.fibs.geotag.util.Units;
 import org.fibs.geotag.util.Units.DISTANCE;
@@ -72,14 +73,13 @@ import org.fibs.geotag.util.Units.DISTANCE;
  * 
  */
 @SuppressWarnings("serial")
-public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener, MenuConstants {
+public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener,
+    MenuConstants {
 
   /** Text for menu item. */
   private static final String SELECT_CORRECT_TIME = Messages
       .getString("ImagesTablePopupMenu.SelectCorrectTimeForImage"); //$NON-NLS-1$
 
-
-  
   /** Text for sub menu. */
   private static final String FILL_GAPS = Messages
       .getString("ImagesTablePopupMenu.FillGaps"); //$NON-NLS-1$
@@ -136,8 +136,6 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener, 
   private static final String COPY_LOCATION_NAME_ALL = Messages
       .getString("ImagesTablePopupMenu.CopyNameAll"); //$NON-NLS-1$
 
-
-
   /** Text for sub menu */
   private static final String REMOVE_IMAGES = Messages
       .getString("ImagesTablePopupMenu.RemoveImages"); //$NON-NLS-1$
@@ -187,7 +185,6 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener, 
 
   /** The menu item used to select the correct GMT time for a picture. */
   private JMenuItem chooseTimeItem;
-
 
   /** The menu item used to fill a one image gap. */
   private JMenuItem fillThisGapItem;
@@ -292,18 +289,21 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener, 
     if (enabled) {
       add(chooseTimeItem);
     }
-    
-    JMenu copyOffsetMenu = new CopyOffsetMenu(backgroundTask, imagesTable, imageInfo);
+
+    JMenu copyOffsetMenu = new CopyOffsetMenu(backgroundTask, imagesTable,
+        imageInfo);
     if (copyOffsetMenu.isEnabled()) {
       add(copyOffsetMenu);
     }
 
-    JMenu matchTracksMenu = new MatchTracksMenu(backgroundTask, imagesTable, imageInfo, trackStore);
+    JMenu matchTracksMenu = new MatchTracksMenu(backgroundTask, imagesTable,
+        imageInfo, trackStore);
     if (matchTracksMenu.isEnabled()) {
       add(matchTracksMenu);
     }
-    
-    JMenu copyLocationsMenu = new CopyLocationMenu(backgroundTask, imagesTable, imageInfo);
+
+    JMenu copyLocationsMenu = new CopyLocationMenu(backgroundTask, imagesTable,
+        imageInfo);
     if (copyLocationsMenu.isEnabled()) {
       add(copyLocationsMenu);
     }
@@ -318,8 +318,6 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener, 
 
     addRemoveImagesMenu(backgroundTask);
   }
-
-
 
   /**
    * @param row
@@ -511,10 +509,10 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener, 
               itemLocation.getName()) {
             @Override
             public void actionPerformed(ActionEvent e) {
-              new SelectLocationNameTask(Messages
+              TaskExecutor.execute(new SelectLocationNameTask(Messages
                   .getString("ImagesTablePopupMenu.SelectLocationName"), //$NON-NLS-1$
                   getTableModel(), getImageInfo(), itemLocation, itemLocation
-                      .getName(), DATA_SOURCE.MANUAL).execute();
+                      .getName(), DATA_SOURCE.MANUAL));
             }
           });
           selectLocationMenu.add(selectLocationItem);
@@ -529,10 +527,12 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener, 
               itemLocation.getName()) {
             @Override
             public void actionPerformed(ActionEvent e) {
-              new SelectLocationNameTask(
-                  Messages.getString("ImagesTablePopupMenu.SelectLocationName"), //$NON-NLS-1$
-                  getTableModel(), getImageInfo(), itemLocation, getName(),
-                  DATA_SOURCE.MANUAL).execute();
+              TaskExecutor
+                  .execute(new SelectLocationNameTask(
+                      Messages
+                          .getString("ImagesTablePopupMenu.SelectLocationName"), //$NON-NLS-1$
+                      getTableModel(), getImageInfo(), itemLocation, getName(),
+                      DATA_SOURCE.MANUAL));
             }
           });
           selectLocationNameMenu.add(selectLocationItem);
@@ -543,11 +543,12 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener, 
                 .addActionListener(new LocationNameActionListener(alternateName) {
                   @Override
                   public void actionPerformed(ActionEvent e) {
-                    new SelectLocationNameTask(
-                        Messages
-                            .getString("ImagesTablePopupMenu.SelectLocationName"), //$NON-NLS-1$
-                        getTableModel(), getImageInfo(), itemLocation,
-                        getName(), DATA_SOURCE.MANUAL).execute();
+                    TaskExecutor
+                        .execute(new SelectLocationNameTask(
+                            Messages
+                                .getString("ImagesTablePopupMenu.SelectLocationName"), //$NON-NLS-1$
+                            getTableModel(), getImageInfo(), itemLocation,
+                            getName(), DATA_SOURCE.MANUAL));
                   }
                 });
             selectLocationNameMenu.add(selectLocationItem);
@@ -694,8 +695,6 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener, 
     }
   }
 
-
-
   /**
    * select the exact time the image was taken.
    */
@@ -729,13 +728,13 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener, 
             if (JOptionPane.showConfirmDialog(getParentFrame(), message,
                 ImageInfo.getOffsetString(offset), JOptionPane.YES_NO_OPTION,
                 JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
-              new CopyOffsetToAllAction(imageInfo,imagesTable).perform();
+              new CopyOffsetToAllAction(imageInfo, imagesTable).perform();
             }
             getTableModel().sortRows();
           }
 
         };
-        setOffsetTask.execute();
+        TaskExecutor.execute(setOffsetTask);
       }
     } catch (ParseException e) {
       e.printStackTrace();
@@ -748,7 +747,8 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener, 
   private void fillThisGap() {
     List<ImageInfo> images = new ArrayList<ImageInfo>();
     images.add(imageInfo);
-    new FillGapsTask(FILL_GAPS, FILL_THIS_GAP, tableModel, images).execute();
+    TaskExecutor.execute(new FillGapsTask(FILL_GAPS, FILL_THIS_GAP, tableModel,
+        images));
   }
 
   /**
@@ -762,8 +762,8 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener, 
         images.add(candidate);
       }
     }
-    new FillGapsTask(FILL_GAPS, FILL_SELECTED_GAPS, tableModel, images)
-        .execute();
+    TaskExecutor.execute(new FillGapsTask(FILL_GAPS, FILL_SELECTED_GAPS,
+        tableModel, images));
   }
 
   /**
@@ -779,7 +779,8 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener, 
         images.add(candidate);
       }
     }
-    new FillGapsTask(FILL_GAPS, FILL_ALL_GAPS, tableModel, images).execute();
+    TaskExecutor.execute(new FillGapsTask(FILL_GAPS, FILL_ALL_GAPS, tableModel,
+        images));
   }
 
   /**
@@ -788,8 +789,8 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener, 
   private void findOneLocationName() {
     List<ImageInfo> images = new ArrayList<ImageInfo>();
     images.add(imageInfo);
-    new LocationNamesTask(LOCATION_NAMES, LOCATION_NAME_THIS, tableModel,
-        images).execute();
+    TaskExecutor.execute(new LocationNamesTask(LOCATION_NAMES,
+        LOCATION_NAME_THIS, tableModel, images));
   }
 
   /**
@@ -803,8 +804,8 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener, 
         images.add(candidate);
       }
     }
-    new LocationNamesTask(LOCATION_NAMES, LOCATION_NAMES_SELECTED, tableModel,
-        images).execute();
+    TaskExecutor.execute(new LocationNamesTask(LOCATION_NAMES,
+        LOCATION_NAMES_SELECTED, tableModel, images));
   }
 
   /**
@@ -818,8 +819,8 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener, 
         images.add(candidate);
       }
     }
-    new LocationNamesTask(LOCATION_NAMES, LOCATION_NAMES_ALL, tableModel,
-        images).execute();
+    TaskExecutor.execute(new LocationNamesTask(LOCATION_NAMES,
+        LOCATION_NAMES_ALL, tableModel, images));
   }
 
   /**
@@ -828,8 +829,8 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener, 
   private void findThisAltitude() {
     List<ImageInfo> images = new ArrayList<ImageInfo>();
     images.add(imageInfo);
-    new FindAltitudeTask(FIND_ALTITUDE, FIND_THIS_ALTITUDE, tableModel, images)
-        .execute();
+    TaskExecutor.execute(new FindAltitudeTask(FIND_ALTITUDE,
+        FIND_THIS_ALTITUDE, tableModel, images));
   }
 
   /**
@@ -843,8 +844,8 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener, 
         images.add(candidate);
       }
     }
-    new FindAltitudeTask(FIND_ALTITUDE, FIND_SELECTED_ALTITUDES, tableModel,
-        images).execute();
+    TaskExecutor.execute(new FindAltitudeTask(FIND_ALTITUDE,
+        FIND_SELECTED_ALTITUDES, tableModel, images));
   }
 
   /**
@@ -858,8 +859,8 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener, 
         images.add(candidate);
       }
     }
-    new FindAltitudeTask(FIND_ALTITUDE, FIND_ALL_ALTITUDES, tableModel, images)
-        .execute();
+    TaskExecutor.execute(new FindAltitudeTask(FIND_ALTITUDE,
+        FIND_ALL_ALTITUDES, tableModel, images));
   }
 
   /**
@@ -870,9 +871,9 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener, 
     if (row > 0) {
       List<ImageInfo> imageList = new ArrayList<ImageInfo>();
       imageList.add(tableModel.getImageInfo(row - 1));
-      new CopyLocationNameTask(LOCATION_NAMES + " - " + COPY_LOCATION_NAME, //$NON-NLS-1$
-          COPY_LOCATION_NAME_PREVIOUS, tableModel, imageInfo, imageList)
-          .execute();
+      TaskExecutor.execute(new CopyLocationNameTask(LOCATION_NAMES
+          + " - " + COPY_LOCATION_NAME, //$NON-NLS-1$
+          COPY_LOCATION_NAME_PREVIOUS, tableModel, imageInfo, imageList));
     }
   }
 
@@ -884,8 +885,9 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener, 
     if (row < tableModel.getRowCount() - 1) {
       List<ImageInfo> imageList = new ArrayList<ImageInfo>();
       imageList.add(tableModel.getImageInfo(row + 1));
-      new CopyLocationNameTask(LOCATION_NAMES + " - " + COPY_LOCATION_NAME, //$NON-NLS-1$
-          COPY_LOCATION_NAME_NEXT, tableModel, imageInfo, imageList).execute();
+      TaskExecutor.execute(new CopyLocationNameTask(LOCATION_NAMES
+          + " - " + COPY_LOCATION_NAME, //$NON-NLS-1$
+          COPY_LOCATION_NAME_NEXT, tableModel, imageInfo, imageList));
     }
   }
 
@@ -897,9 +899,9 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener, 
     for (int index = 0; index < selectedRows.length; index++) {
       imageList.add(tableModel.getImageInfo(selectedRows[index]));
     }
-    new CopyLocationNameTask(LOCATION_NAMES + " - " + COPY_LOCATION_NAME, //$NON-NLS-1$
-        COPY_LOCATION_NAME_SELECTED, tableModel, imageInfo, imageList)
-        .execute();
+    TaskExecutor.execute(new CopyLocationNameTask(LOCATION_NAMES
+        + " - " + COPY_LOCATION_NAME, //$NON-NLS-1$
+        COPY_LOCATION_NAME_SELECTED, tableModel, imageInfo, imageList));
   }
 
   /**
@@ -910,8 +912,9 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener, 
     for (int index = 0; index < tableModel.getRowCount(); index++) {
       imageList.add(tableModel.getImageInfo(index));
     }
-    new CopyLocationNameTask(LOCATION_NAMES + " - " + COPY_LOCATION_NAME, //$NON-NLS-1$
-        COPY_LOCATION_NAME_ALL, tableModel, imageInfo, imageList).execute();
+    TaskExecutor.execute(new CopyLocationNameTask(LOCATION_NAMES
+        + " - " + COPY_LOCATION_NAME, //$NON-NLS-1$
+        COPY_LOCATION_NAME_ALL, tableModel, imageInfo, imageList));
   }
 
   /**
@@ -920,8 +923,8 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener, 
   private void removeOneImage() {
     List<ImageInfo> images = new ArrayList<ImageInfo>();
     images.add(imageInfo);
-    new RemoveImagesTask(REMOVE_IMAGES, REMOVE_THIS_IMAGE, tableModel, images)
-        .execute();
+    TaskExecutor.execute(new RemoveImagesTask(REMOVE_IMAGES, REMOVE_THIS_IMAGE,
+        tableModel, images));
   }
 
   /**
@@ -932,8 +935,8 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener, 
     for (int index = 0; index < selectedRows.length; index++) {
       images.add(tableModel.getImageInfo(selectedRows[index]));
     }
-    new RemoveImagesTask(REMOVE_IMAGES, REMOVE_SELECTED_IMAGES, tableModel,
-        images).execute();
+    TaskExecutor.execute(new RemoveImagesTask(REMOVE_IMAGES,
+        REMOVE_SELECTED_IMAGES, tableModel, images));
   }
 
   /**
@@ -944,8 +947,8 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener, 
     for (int index = 0; index < tableModel.getRowCount(); index++) {
       images.add(tableModel.getImageInfo(index));
     }
-    new RemoveImagesTask(REMOVE_IMAGES, REMOVE_ALL_IMAGES, tableModel, images)
-        .execute();
+    TaskExecutor.execute(new RemoveImagesTask(REMOVE_IMAGES, REMOVE_ALL_IMAGES,
+        tableModel, images));
 
   }
 

@@ -15,6 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package org.fibs.geotag.gui.menus;
 
 import java.awt.event.ActionEvent;
@@ -29,13 +30,15 @@ import org.fibs.geotag.data.ImageInfo;
 import org.fibs.geotag.table.ImagesTable;
 import org.fibs.geotag.table.ImagesTableModel;
 import org.fibs.geotag.tasks.CopyLocationTask;
+import org.fibs.geotag.tasks.TaskExecutor;
 
 /**
  * @author andreas
- *
+ * 
  */
 @SuppressWarnings("serial")
-public class CopyLocationMenu extends JMenu implements MenuConstants, ActionListener {
+public class CopyLocationMenu extends JMenu implements MenuConstants,
+    ActionListener {
 
   /** The menu item used to copy the location to the previous image. */
   private JMenuItem copyLocationToPreviousItem;
@@ -48,28 +51,28 @@ public class CopyLocationMenu extends JMenu implements MenuConstants, ActionList
 
   /** The menu item used to copy the location to all images. */
   private JMenuItem copyLocationToAllItem;
-  
-  /** The rows selected in the table*/
+
+  /** The rows selected in the table */
   private int[] selectedRows;
-  
-  /** The table'smodel*/
+
+  /** The table'smodel */
   private ImagesTableModel tableModel;
-  
+
   /** the image under the mouse cursor */
   private ImageInfo currentImage;
-  
-  
+
   /**
    * @param backgroundTask
    * @param imagesTable
    * @param currentImage
    */
-  public CopyLocationMenu(boolean backgroundTask, ImagesTable imagesTable, ImageInfo currentImage) {
+  public CopyLocationMenu(boolean backgroundTask, ImagesTable imagesTable,
+      ImageInfo currentImage) {
     super(COPY_LOCATION);
     this.tableModel = (ImagesTableModel) imagesTable.getModel();
     this.currentImage = currentImage;
     int row = tableModel.getRow(currentImage);
-    selectedRows =imagesTable.getSelectedRows();
+    selectedRows = imagesTable.getSelectedRows();
 
     boolean itemEnabled;
     boolean menuEnabled;
@@ -112,6 +115,7 @@ public class CopyLocationMenu extends JMenu implements MenuConstants, ActionList
     copyLocationToAllItem.addActionListener(this);
     this.add(copyLocationToAllItem);
   }
+
   /**
    * Copy the location to the previous image.
    */
@@ -120,8 +124,8 @@ public class CopyLocationMenu extends JMenu implements MenuConstants, ActionList
     if (row > 0) {
       List<ImageInfo> imageList = new ArrayList<ImageInfo>();
       imageList.add(tableModel.getImageInfo(row - 1));
-      new CopyLocationTask(COPY_LOCATION, COPY_LOCATION_PREVIOUS, tableModel,
-          currentImage, imageList).execute();
+      TaskExecutor.execute(new CopyLocationTask(COPY_LOCATION,
+          COPY_LOCATION_PREVIOUS, tableModel, currentImage, imageList));
     }
   }
 
@@ -133,8 +137,8 @@ public class CopyLocationMenu extends JMenu implements MenuConstants, ActionList
     if (row < tableModel.getRowCount() - 1) {
       List<ImageInfo> imageList = new ArrayList<ImageInfo>();
       imageList.add(tableModel.getImageInfo(row + 1));
-      new CopyLocationTask(COPY_LOCATION, COPY_LOCATION_NEXT, tableModel,
-          currentImage, imageList).execute();
+      TaskExecutor.execute(new CopyLocationTask(COPY_LOCATION,
+          COPY_LOCATION_NEXT, tableModel, currentImage, imageList));
     }
   }
 
@@ -146,8 +150,8 @@ public class CopyLocationMenu extends JMenu implements MenuConstants, ActionList
     for (int index = 0; index < selectedRows.length; index++) {
       imageList.add(tableModel.getImageInfo(selectedRows[index]));
     }
-    new CopyLocationTask(COPY_LOCATION, COPY_LOCATION_SELECTED, tableModel,
-        currentImage, imageList).execute();
+    TaskExecutor.execute(new CopyLocationTask(COPY_LOCATION,
+        COPY_LOCATION_SELECTED, tableModel, currentImage, imageList));
   }
 
   /**
@@ -158,10 +162,10 @@ public class CopyLocationMenu extends JMenu implements MenuConstants, ActionList
     for (int iindex = 0; iindex < tableModel.getRowCount(); iindex++) {
       imageList.add(tableModel.getImageInfo(iindex));
     }
-    new CopyLocationTask(COPY_LOCATION, COPY_LOCATION_ALL, tableModel,
-        currentImage, imageList).execute();
+    TaskExecutor.execute(new CopyLocationTask(COPY_LOCATION, COPY_LOCATION_ALL,
+        tableModel, currentImage, imageList));
   }
-  
+
   /**
    * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
    */
@@ -175,7 +179,7 @@ public class CopyLocationMenu extends JMenu implements MenuConstants, ActionList
       copyLocationToSelected();
     } else if (event.getSource() == copyLocationToAllItem) {
       copyLocationToAll();
-    } 
+    }
   }
 
 }

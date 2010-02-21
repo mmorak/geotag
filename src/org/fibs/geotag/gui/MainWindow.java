@@ -78,6 +78,7 @@ import org.fibs.geotag.tasks.BackgroundTaskListener;
 import org.fibs.geotag.tasks.ClipboardUpdateTask;
 import org.fibs.geotag.tasks.ExifReaderTask;
 import org.fibs.geotag.tasks.ExternalUpdateTask;
+import org.fibs.geotag.tasks.TaskExecutor;
 import org.fibs.geotag.tasks.UndoableBackgroundTask;
 import org.fibs.geotag.util.BrowserLauncher;
 import org.fibs.geotag.util.ImageUtil;
@@ -225,7 +226,7 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
       public void filesDropped(File[] files) {
         ExifReaderTask task = new ExifReaderTask(ADD_FILES, getTableModel(),
             files);
-        task.execute();
+        TaskExecutor.execute(task);
       }
     });
 
@@ -236,7 +237,7 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
         processClipboardUpdates(clipboardUpdates);
       }
     };
-    clipboardMonitor.execute();
+    TaskExecutor.execute(clipboardMonitor);
     // only add myself to background task listeners after the
     // clipboard monitor has started
     BackgroundTask.addBackgroundTaskListener(this);
@@ -387,7 +388,7 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
 
     JMenu helpMenu = setupHelpMenu();
     menuBar.add(helpMenu);
-    
+
   }
 
   /**
@@ -537,8 +538,6 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
     return editMenu;
   }
 
-
-
   /**
    * Put external updates in list of pending update and process them if
    * possible. This method should only called on the event thread
@@ -582,7 +581,7 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
             }
           }
         };
-        task.execute();
+        TaskExecutor.execute(task);
       }
     }
   }
@@ -607,7 +606,7 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
         }
       };
       pendingExternalUpdates.remove(0);
-      task.execute();
+      TaskExecutor.execute(task);
     }
   }
 
@@ -670,8 +669,8 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
   public void backgroundTaskProgress(BackgroundTask<?> task,
       String progressMessage) {
     // System.out.println(progressMessage);
-	int minProgress = task.getMinProgress();
-	int maxProgress = task.getMaxProgress();
+    int minProgress = task.getMinProgress();
+    int maxProgress = task.getMaxProgress();
     getProgressBar().setString(progressMessage);
     getProgressBar().setMinimum(minProgress);
     getProgressBar().setMaximum(maxProgress);
@@ -761,14 +760,16 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
   JMenuItem getCancelItem() {
     return cancelItem;
   }
-  
+
   /**
    * A utility method for finding the main window.
-   * @param component The component somewhere in the main window
+   * 
+   * @param component
+   *          The component somewhere in the main window
    * @return the JFrame this is ultimately in.
    */
   public static JFrame getMainWindow(Component component) {
     return (JFrame) SwingUtilities.getAncestorOfClass(JFrame.class, component);
   }
-  
+
 }

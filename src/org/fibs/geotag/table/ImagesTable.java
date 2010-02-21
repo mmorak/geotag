@@ -53,6 +53,7 @@ import org.fibs.geotag.data.ImageInfo.THUMBNAIL_STATUS;
 import org.fibs.geotag.image.ImageToolTip;
 import org.fibs.geotag.image.ThumbnailWorker;
 import org.fibs.geotag.table.ImagesTableColumns.COLUMN;
+import org.fibs.geotag.tasks.TaskExecutor;
 import org.fibs.geotag.util.FontUtil;
 import org.fibs.geotag.util.Util;
 
@@ -582,7 +583,7 @@ public class ImagesTable extends NavigableTable {
           }
         }
       };
-      worker.execute();
+      TaskExecutor.execute(worker);
     }
     return tooltip;
   }

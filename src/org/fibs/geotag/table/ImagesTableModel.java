@@ -37,6 +37,7 @@ import org.fibs.geotag.tasks.EditDirectionTask;
 import org.fibs.geotag.tasks.EditLatitudeTask;
 import org.fibs.geotag.tasks.EditLongitudeTask;
 import org.fibs.geotag.tasks.ManualEditTask;
+import org.fibs.geotag.tasks.TaskExecutor;
 import org.fibs.geotag.util.Coordinates;
 import org.fibs.geotag.util.Unicode;
 import org.fibs.geotag.util.Units;
@@ -453,19 +454,20 @@ public class ImagesTableModel extends AbstractTableModel {
       }
     }
     if (update) {
-      new EditDirectionTask(
-          Messages.getString("ImagesTableModel.EditDirection"), imageInfo, newString, DATA_SOURCE.MANUAL) { //$NON-NLS-1$
-        @Override
-        protected void process(List<ImageInfo> imageInfos) {
-          for (ImageInfo image : imageInfos) {
-            int row = getRow(image);
-            if (row >= 0) {
-              fireTableRowsUpdated(row, row);
-              fireTableDataChanged();
+      TaskExecutor
+          .execute(new EditDirectionTask(
+              Messages.getString("ImagesTableModel.EditDirection"), imageInfo, newString, DATA_SOURCE.MANUAL) { //$NON-NLS-1$
+            @Override
+            protected void process(List<ImageInfo> imageInfos) {
+              for (ImageInfo image : imageInfos) {
+                int row = getRow(image);
+                if (row >= 0) {
+                  fireTableRowsUpdated(row, row);
+                  fireTableDataChanged();
+                }
+              }
             }
-          }
-        }
-      }.execute();
+          });
     }
   }
 
@@ -496,19 +498,19 @@ public class ImagesTableModel extends AbstractTableModel {
       }
     }
     if (update) {
-      new EditAltitudeTask(
+      TaskExecutor.execute(new EditAltitudeTask(
           "Edit altitude", imageInfo, newString, DATA_SOURCE.MANUAL) { //$NON-NLS-1$
-        @Override
-        protected void process(List<ImageInfo> imageInfos) {
-          for (ImageInfo image : imageInfos) {
-            int row = getRow(image);
-            if (row >= 0) {
-              fireTableRowsUpdated(row, row);
-              fireTableDataChanged();
+            @Override
+            protected void process(List<ImageInfo> imageInfos) {
+              for (ImageInfo image : imageInfos) {
+                int row = getRow(image);
+                if (row >= 0) {
+                  fireTableRowsUpdated(row, row);
+                  fireTableDataChanged();
+                }
+              }
             }
-          }
-        }
-      }.execute();
+          });
     }
   }
 
@@ -541,19 +543,20 @@ public class ImagesTableModel extends AbstractTableModel {
         e.printStackTrace();
       }
       if (update) {
-        new EditLongitudeTask(
-            Messages.getString("ImagesTableModel.EditLongitude"), imageInfo, newString, DATA_SOURCE.MANUAL) { //$NON-NLS-1$
-          @Override
-          protected void process(List<ImageInfo> imageInfos) {
-            for (ImageInfo image : imageInfos) {
-              int row = getRow(image);
-              if (row >= 0) {
-                fireTableRowsUpdated(row, row);
-                fireTableDataChanged();
+        TaskExecutor
+            .execute(new EditLongitudeTask(
+                Messages.getString("ImagesTableModel.EditLongitude"), imageInfo, newString, DATA_SOURCE.MANUAL) { //$NON-NLS-1$
+              @Override
+              protected void process(List<ImageInfo> imageInfos) {
+                for (ImageInfo image : imageInfos) {
+                  int row = getRow(image);
+                  if (row >= 0) {
+                    fireTableRowsUpdated(row, row);
+                    fireTableDataChanged();
+                  }
+                }
               }
-            }
-          }
-        }.execute();
+            });
       }
     }
   }
@@ -587,19 +590,20 @@ public class ImagesTableModel extends AbstractTableModel {
         e.printStackTrace();
       }
       if (update) {
-        new EditLatitudeTask(
-            Messages.getString("ImagesTableModel.EditLatitude"), imageInfo, newString, DATA_SOURCE.MANUAL) { //$NON-NLS-1$
-          @Override
-          protected void process(List<ImageInfo> imageInfos) {
-            for (ImageInfo image : imageInfos) {
-              int row = getRow(image);
-              if (row >= 0) {
-                fireTableRowsUpdated(row, row);
-                fireTableDataChanged();
+        TaskExecutor
+            .execute(new EditLatitudeTask(
+                Messages.getString("ImagesTableModel.EditLatitude"), imageInfo, newString, DATA_SOURCE.MANUAL) { //$NON-NLS-1$
+              @Override
+              protected void process(List<ImageInfo> imageInfos) {
+                for (ImageInfo image : imageInfos) {
+                  int row = getRow(image);
+                  if (row >= 0) {
+                    fireTableRowsUpdated(row, row);
+                    fireTableDataChanged();
+                  }
+                }
               }
-            }
-          }
-        }.execute();
+            });
       }
     }
   }
@@ -612,7 +616,8 @@ public class ImagesTableModel extends AbstractTableModel {
    */
   private void commitManualEdit(ImageInfo imageInfo, COLUMN column,
       String columnName, String newString) {
-    new ManualEditTask(columnName, imageInfo, column, newString) {
+    TaskExecutor.execute(new ManualEditTask(columnName, imageInfo, column,
+        newString) {
       @Override
       protected void process(List<ImageInfo> imageInfos) {
         for (ImageInfo image : imageInfos) {
@@ -623,7 +628,7 @@ public class ImagesTableModel extends AbstractTableModel {
           }
         }
       }
-    }.execute();
+    });
   }
 
   /**

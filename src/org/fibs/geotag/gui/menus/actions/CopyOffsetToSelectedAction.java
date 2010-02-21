@@ -15,6 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package org.fibs.geotag.gui.menus.actions;
 
 import java.util.ArrayList;
@@ -25,28 +26,30 @@ import org.fibs.geotag.gui.menus.MenuConstants;
 import org.fibs.geotag.table.ImagesTable;
 import org.fibs.geotag.table.ImagesTableModel;
 import org.fibs.geotag.tasks.SetOffsetTask;
+import org.fibs.geotag.tasks.TaskExecutor;
 
 /**
  * @author andreas
- *
+ * 
  */
 public class CopyOffsetToSelectedAction implements MenuAction, MenuConstants {
 
   /** The image to copy from */
   private ImageInfo fromImage;
-  
+
   /** the table of images */
   private ImagesTable imagesTable;
-  
+
   /**
    * @param currentImage
    * @param imagesTable
    */
-  public CopyOffsetToSelectedAction(ImageInfo currentImage, ImagesTable imagesTable) {
+  public CopyOffsetToSelectedAction(ImageInfo currentImage,
+      ImagesTable imagesTable) {
     this.fromImage = currentImage;
     this.imagesTable = imagesTable;
   }
-  
+
   /**
    * @see org.fibs.geotag.gui.menus.actions.MenuAction#perform()
    */
@@ -60,8 +63,8 @@ public class CopyOffsetToSelectedAction implements MenuAction, MenuConstants {
       ImageInfo image = tableModel.getImageInfo(selectedRows[index]);
       imageList.add(image);
     }
-    new SetOffsetTask(COPY_TIME_OFFSET, COPY_TIME_OFFSET_SELECTED, tableModel,
-        offset, imageList).execute();
+    TaskExecutor.execute(new SetOffsetTask(COPY_TIME_OFFSET,
+        COPY_TIME_OFFSET_SELECTED, tableModel, offset, imageList));
   }
 
 }

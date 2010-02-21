@@ -15,6 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package org.fibs.geotag.gui.menus;
 
 import java.awt.event.ActionEvent;
@@ -29,14 +30,16 @@ import org.fibs.geotag.data.ImageInfo;
 import org.fibs.geotag.table.ImagesTable;
 import org.fibs.geotag.table.ImagesTableModel;
 import org.fibs.geotag.tasks.MatchImagesTask;
+import org.fibs.geotag.tasks.TaskExecutor;
 import org.fibs.geotag.track.TrackStore;
 
 /**
  * @author andreas
- *
+ * 
  */
 @SuppressWarnings("serial")
-public class MatchTracksMenu extends JMenu implements MenuConstants, ActionListener {
+public class MatchTracksMenu extends JMenu implements MenuConstants,
+    ActionListener {
 
   /** The menu item used to apply the track data to one image. */
   private JMenuItem matchTrackToOneImageItem;
@@ -46,32 +49,33 @@ public class MatchTracksMenu extends JMenu implements MenuConstants, ActionListe
 
   /** The menu item used to apply the track data to all images. */
   private JMenuItem matchTrackToAllImagesItem;
-  
+
   /** The table for the images */
   private ImagesTable imagesTable;
-  
+
   /** The model for that table */
   private ImagesTableModel tableModel;
-  
+
   /** The selected rows in the table */
   int[] selectedRows;
-  
+
   /** The image under the mouse cursor */
   ImageInfo currentImage;
-  
+
   /**
    * @param backgroundTask
    * @param imagesTable
    * @param currentImage
    * @param trackStore
    */
-  public MatchTracksMenu(boolean backgroundTask, ImagesTable imagesTable, ImageInfo currentImage, TrackStore trackStore) {
+  public MatchTracksMenu(boolean backgroundTask, ImagesTable imagesTable,
+      ImageInfo currentImage, TrackStore trackStore) {
     super(MATCH_TRACKS);
     boolean itemEnabled;
     boolean menuEnabled;
     this.imagesTable = imagesTable;
     this.tableModel = (ImagesTableModel) imagesTable.getModel();
-    selectedRows =imagesTable.getSelectedRows();
+    selectedRows = imagesTable.getSelectedRows();
     menuEnabled = false;
 
     matchTrackToOneImageItem = new JMenuItem(MATCH_TRACK_THIS);
@@ -100,15 +104,14 @@ public class MatchTracksMenu extends JMenu implements MenuConstants, ActionListe
     this.add(matchTrackToAllImagesItem);
   }
 
-
   /**
    * Use the TrackMatcher to find coordinates for one image.
    */
   private void matchTracksToOneImage() {
     List<ImageInfo> images = new ArrayList<ImageInfo>();
     images.add(currentImage);
-    new MatchImagesTask(MATCH_TRACKS, MATCH_TRACK_SELECTED, imagesTable, images)
-        .execute();
+    TaskExecutor.execute(new MatchImagesTask(MATCH_TRACKS,
+        MATCH_TRACK_SELECTED, imagesTable, images));
   }
 
   /**
@@ -119,8 +122,8 @@ public class MatchTracksMenu extends JMenu implements MenuConstants, ActionListe
     for (int index = 0; index < selectedRows.length; index++) {
       images.add(tableModel.getImageInfo(selectedRows[index]));
     }
-    new MatchImagesTask(MATCH_TRACKS, MATCH_TRACK_SELECTED, imagesTable, images)
-        .execute();
+    TaskExecutor.execute(new MatchImagesTask(MATCH_TRACKS,
+        MATCH_TRACK_SELECTED, imagesTable, images));
   }
 
   /**
@@ -131,10 +134,10 @@ public class MatchTracksMenu extends JMenu implements MenuConstants, ActionListe
     for (int index = 0; index < tableModel.getRowCount(); index++) {
       images.add(tableModel.getImageInfo(index));
     }
-    new MatchImagesTask(MATCH_TRACKS, MATCH_TRACK_ALL, imagesTable, images)
-        .execute();
+    TaskExecutor.execute(new MatchImagesTask(MATCH_TRACKS, MATCH_TRACK_ALL,
+        imagesTable, images));
   }
-  
+
   /**
    * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
    */

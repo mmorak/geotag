@@ -15,6 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package org.fibs.geotag.gui.menus;
 
 import java.awt.event.ActionEvent;
@@ -40,6 +41,7 @@ import org.fibs.geotag.image.ThumbnailWorker;
 import org.fibs.geotag.table.ImagesTable;
 import org.fibs.geotag.table.ImagesTableModel;
 import org.fibs.geotag.tasks.GoogleEarthExportTask;
+import org.fibs.geotag.tasks.TaskExecutor;
 import org.fibs.geotag.tasks.ThumbnailsTask;
 
 /**
@@ -47,222 +49,223 @@ import org.fibs.geotag.tasks.ThumbnailsTask;
  * 
  */
 @SuppressWarnings("serial")
-public class GoogleEarthMenu extends JMenu implements ActionListener , MenuConstants{
-	
-	/** The menu item used to show an image location in Google Earth. */
-	private JMenuItem showInGoogleEarthItem;
+public class GoogleEarthMenu extends JMenu implements ActionListener,
+    MenuConstants {
 
-	/** The menu item used to export a single image to a KML/KMZ file. */
-	private JMenuItem exportOneImageToKmlItem;
+  /** The menu item used to show an image location in Google Earth. */
+  private JMenuItem showInGoogleEarthItem;
 
-	/** The menu item used to export selected images to a KML/KMZ file. */
-	private JMenuItem exportSelectedToKmlItem;
+  /** The menu item used to export a single image to a KML/KMZ file. */
+  private JMenuItem exportOneImageToKmlItem;
 
-	/**
-	 * The menu item used to export all images with locations to a KML/KMZ file.
-	 */
-	private JMenuItem exportAllToKmlItem;
+  /** The menu item used to export selected images to a KML/KMZ file. */
+  private JMenuItem exportSelectedToKmlItem;
 
-	/** The image currently under the cursor */
-	ImageInfo currentImage;
+  /**
+   * The menu item used to export all images with locations to a KML/KMZ file.
+   */
+  private JMenuItem exportAllToKmlItem;
 
-	/** The model of the table containing the images */
-	private ImagesTableModel tableModel;
+  /** The image currently under the cursor */
+  ImageInfo currentImage;
 
-	/** the currently selected images */
-	private int[] selectedRows;
+  /** The model of the table containing the images */
+  private ImagesTableModel tableModel;
 
-	/**
-	 * @param backgroundTask
-	 * @param imagesTable
-	 * @param currentImage
-	 */
-	public GoogleEarthMenu(boolean backgroundTask, ImagesTable imagesTable,
-			ImageInfo currentImage) {
-		super(GOOGLEEARTH);
-		this.currentImage = currentImage;
-		this.tableModel = (ImagesTableModel) imagesTable.getModel();
-		this.selectedRows = imagesTable.getSelectedRows();
+  /** the currently selected images */
+  private int[] selectedRows;
 
-		showInGoogleEarthItem = new JMenuItem(SHOW_IN_GOOGLEEARTH);
-		boolean enabled = true; // we can always do this safely
-		showInGoogleEarthItem.setEnabled(enabled);
-		showInGoogleEarthItem.addActionListener(this);
-		this.add(showInGoogleEarthItem);
+  /**
+   * @param backgroundTask
+   * @param imagesTable
+   * @param currentImage
+   */
+  public GoogleEarthMenu(boolean backgroundTask, ImagesTable imagesTable,
+      ImageInfo currentImage) {
+    super(GOOGLEEARTH);
+    this.currentImage = currentImage;
+    this.tableModel = (ImagesTableModel) imagesTable.getModel();
+    this.selectedRows = imagesTable.getSelectedRows();
 
-		exportOneImageToKmlItem = new JMenuItem(EXPORT_THIS);
-		// enable if there is no background task this image has a location
-		enabled = !backgroundTask && currentImage.hasLocation();
-		exportOneImageToKmlItem.setEnabled(enabled);
-		exportOneImageToKmlItem.addActionListener(this);
-		this.add(exportOneImageToKmlItem);
+    showInGoogleEarthItem = new JMenuItem(SHOW_IN_GOOGLEEARTH);
+    boolean enabled = true; // we can always do this safely
+    showInGoogleEarthItem.setEnabled(enabled);
+    showInGoogleEarthItem.addActionListener(this);
+    this.add(showInGoogleEarthItem);
 
-		exportSelectedToKmlItem = new JMenuItem(EXPORT_SELECTED);
-		// enable if there is no background task and there is a
-		// selection containing at least on image with location.
-		enabled = false;
-		for (int index = 0; index < selectedRows.length; index++) {
-			if (tableModel.getImageInfo(selectedRows[index]).hasLocation()) {
-				enabled = !backgroundTask;
-				break;
-			}
-		}
-		exportSelectedToKmlItem.setEnabled(enabled);
-		exportSelectedToKmlItem.addActionListener(this);
-		this.add(exportSelectedToKmlItem);
+    exportOneImageToKmlItem = new JMenuItem(EXPORT_THIS);
+    // enable if there is no background task this image has a location
+    enabled = !backgroundTask && currentImage.hasLocation();
+    exportOneImageToKmlItem.setEnabled(enabled);
+    exportOneImageToKmlItem.addActionListener(this);
+    this.add(exportOneImageToKmlItem);
 
-		exportAllToKmlItem = new JMenuItem(EXPORT_ALL);
-		// enable if there is no background task and there is at least one image
-		// that has a location
-		enabled = false;
-		for (int index = 0; index < tableModel.getRowCount(); index++) {
-			if (tableModel.getImageInfo(index).hasLocation()) {
-				enabled = !backgroundTask;
-				break;
-			}
-		}
-		exportAllToKmlItem.setEnabled(enabled);
-		exportAllToKmlItem.addActionListener(this);
-		this.add(exportAllToKmlItem);
-	}
+    exportSelectedToKmlItem = new JMenuItem(EXPORT_SELECTED);
+    // enable if there is no background task and there is a
+    // selection containing at least on image with location.
+    enabled = false;
+    for (int index = 0; index < selectedRows.length; index++) {
+      if (tableModel.getImageInfo(selectedRows[index]).hasLocation()) {
+        enabled = !backgroundTask;
+        break;
+      }
+    }
+    exportSelectedToKmlItem.setEnabled(enabled);
+    exportSelectedToKmlItem.addActionListener(this);
+    this.add(exportSelectedToKmlItem);
 
-	/**
-	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-	 */
-	@Override
-	public void actionPerformed(ActionEvent event) {
-	    if (event.getSource() == showInGoogleEarthItem) {
-	        showInGoogleEarth();
-	      } else if (event.getSource() == exportOneImageToKmlItem) {
-	        exportOneToKml();
-	      } else if (event.getSource() == exportSelectedToKmlItem) {
-	        exportSelectedToKml();
-	      } else if (event.getSource() == exportAllToKmlItem) {
-	        exportAllToKml();
-	      }
-	}
-	
-	  /**
-	   * Launch Google Earth to show the location.
-	   */
-	  private void showInGoogleEarth() {
-	    // make sure there is a thumbnail - this won't create the
-	    // thumbnail again, if it already exists.
-	    ThumbnailWorker worker = new ThumbnailWorker(currentImage) {
-	      @Override
-	      protected void done() {
-	        GoogleEarthLauncher.launch(currentImage);
-	      }
-	    };
-	    worker.execute();
-	  }
+    exportAllToKmlItem = new JMenuItem(EXPORT_ALL);
+    // enable if there is no background task and there is at least one image
+    // that has a location
+    enabled = false;
+    for (int index = 0; index < tableModel.getRowCount(); index++) {
+      if (tableModel.getImageInfo(index).hasLocation()) {
+        enabled = !backgroundTask;
+        break;
+      }
+    }
+    exportAllToKmlItem.setEnabled(enabled);
+    exportAllToKmlItem.addActionListener(this);
+    this.add(exportAllToKmlItem);
+  }
 
-	  /**
-	   * Export a single image to a KML/KMZ file.
-	   */
-	  private void exportOneToKml() {
-	    List<ImageInfo> images = new ArrayList<ImageInfo>();
-	    images.add(currentImage);
-	    exportToKml(images);
-	  }
+  /**
+   * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+   */
+  @Override
+  public void actionPerformed(ActionEvent event) {
+    if (event.getSource() == showInGoogleEarthItem) {
+      showInGoogleEarth();
+    } else if (event.getSource() == exportOneImageToKmlItem) {
+      exportOneToKml();
+    } else if (event.getSource() == exportSelectedToKmlItem) {
+      exportSelectedToKml();
+    } else if (event.getSource() == exportAllToKmlItem) {
+      exportAllToKml();
+    }
+  }
 
-	  /**
-	   * Export images with locations from a selection to a KML/KMZ file.
-	   */
-	  private void exportSelectedToKml() {
-	    List<ImageInfo> images = new ArrayList<ImageInfo>();
-	    for (int index = 0; index < selectedRows.length; index++) {
-	      ImageInfo candidate = tableModel.getImageInfo(selectedRows[index]);
-	      if (candidate.hasLocation()) {
-	        images.add(candidate);
-	      }
-	    }
-	    exportToKml(images);
-	  }
+  /**
+   * Launch Google Earth to show the location.
+   */
+  private void showInGoogleEarth() {
+    // make sure there is a thumbnail - this won't create the
+    // thumbnail again, if it already exists.
+    ThumbnailWorker worker = new ThumbnailWorker(currentImage) {
+      @Override
+      protected void done() {
+        GoogleEarthLauncher.launch(currentImage);
+      }
+    };
+    TaskExecutor.execute(worker);
+  }
 
-	  /**
-	   * Export all images with a location to a KML/KMZ file.
-	   */
-	  private void exportAllToKml() {
-	    List<ImageInfo> images = new ArrayList<ImageInfo>();
-	    for (int index = 0; index < tableModel.getRowCount(); index++) {
-	      ImageInfo candidate = tableModel.getImageInfo(index);
-	      if (candidate.hasLocation()) {
-	        images.add(candidate);
-	      }
-	    }
-	    exportToKml(images);
-	  }
+  /**
+   * Export a single image to a KML/KMZ file.
+   */
+  private void exportOneToKml() {
+    List<ImageInfo> images = new ArrayList<ImageInfo>();
+    images.add(currentImage);
+    exportToKml(images);
+  }
 
-	  /**
-	   * Export a list of images to a KML/KMZ file.
-	   * 
-	   * @param images
-	   */
-	  private void exportToKml(final List<ImageInfo> images) {
-	    JFileChooser chooser = new JFileChooser();
-	    String lastFile = Settings.get(SETTING.GOOGLEEARTH_LAST_FILE_SAVED, null);
-	    if (lastFile != null) {
-	      File file = new File(lastFile);
-	      if (file.exists() && file.getParentFile() != null) {
-	        chooser.setCurrentDirectory(file.getParentFile());
-	      }
-	    }
-	    GoogleearthFileFilter fileFilter = new GoogleearthFileFilter();
-	    chooser.setFileFilter(fileFilter);
-	    chooser.setMultiSelectionEnabled(false);
+  /**
+   * Export images with locations from a selection to a KML/KMZ file.
+   */
+  private void exportSelectedToKml() {
+    List<ImageInfo> images = new ArrayList<ImageInfo>();
+    for (int index = 0; index < selectedRows.length; index++) {
+      ImageInfo candidate = tableModel.getImageInfo(selectedRows[index]);
+      if (candidate.hasLocation()) {
+        images.add(candidate);
+      }
+    }
+    exportToKml(images);
+  }
 
-	    JFrame parentFrame = MainWindow.getMainWindow(GoogleEarthMenu.this);
-	    if (chooser.showSaveDialog(parentFrame) == JFileChooser.APPROVE_OPTION) {
-	      try {
-	        File outputFile = chooser.getSelectedFile();
-	        if (!fileFilter.accept(outputFile)) {
-	          // not a kml/kmz file selected - add .kml suffix
-	          outputFile = new File(chooser.getSelectedFile().getPath() + ".kml"); //$NON-NLS-1$
-	        }
-	        if (outputFile.exists()) {
-	          // TODO decide if these messages should get their own class
-	          String title = Messages.getString("MainWindow.FileExists"); //$NON-NLS-1$
-	          String message = String
-	              .format(
-	                  Messages.getString("MainWindow.OverwriteFileFormat"), outputFile.getName()); //$NON-NLS-1$
-	          if (JOptionPane.showConfirmDialog(parentFrame, message, title,
-	              JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.NO_OPTION) {
-	            return;
-	          }
-	        }
-	        // do we need to create thumbnail images?
-	        if (GoogleearthFileFilter.isKmzFile(outputFile)
-	            && Settings.get(SETTING.KMZ_STORE_THUMBNAILS, false)) {
-	          // the output file is kmz and we need to store thumbnails
-	          // use a ThumbnailsTask and generate KML/KMZ when done
-	          final File file = outputFile;
-	          new ThumbnailsTask(Messages
-	              .getString("ImagesTablePopupMenu.GenerateThumbnails"), images) { //$NON-NLS-1$
-	            @Override
-	            public void done() {
-	              exportToKml(images, file);
-	            }
-	          }.execute();
+  /**
+   * Export all images with a location to a KML/KMZ file.
+   */
+  private void exportAllToKml() {
+    List<ImageInfo> images = new ArrayList<ImageInfo>();
+    for (int index = 0; index < tableModel.getRowCount(); index++) {
+      ImageInfo candidate = tableModel.getImageInfo(index);
+      if (candidate.hasLocation()) {
+        images.add(candidate);
+      }
+    }
+    exportToKml(images);
+  }
 
-	        } else {
-	          exportToKml(images, outputFile);
-	        }
-	      } catch (Exception e) {
-	        e.printStackTrace();
-	      }
-	    }
-	  }
+  /**
+   * Export a list of images to a KML/KMZ file.
+   * 
+   * @param images
+   */
+  private void exportToKml(final List<ImageInfo> images) {
+    JFileChooser chooser = new JFileChooser();
+    String lastFile = Settings.get(SETTING.GOOGLEEARTH_LAST_FILE_SAVED, null);
+    if (lastFile != null) {
+      File file = new File(lastFile);
+      if (file.exists() && file.getParentFile() != null) {
+        chooser.setCurrentDirectory(file.getParentFile());
+      }
+    }
+    GoogleearthFileFilter fileFilter = new GoogleearthFileFilter();
+    chooser.setFileFilter(fileFilter);
+    chooser.setMultiSelectionEnabled(false);
 
-	  /**
-	   * Finally - export images to a file.
-	   * 
-	   * @param images
-	   * @param file
-	   */
-	  void exportToKml(List<ImageInfo> images, File file) {
-	    new GoogleEarthExportTask(Messages
-	        .getString("ImagesTablePopupMenu.ExportForGoogleEarth"), images, file).execute(); //$NON-NLS-1$
-	    Settings.put(SETTING.GOOGLEEARTH_LAST_FILE_SAVED, file.getPath());
-	  }
+    JFrame parentFrame = MainWindow.getMainWindow(GoogleEarthMenu.this);
+    if (chooser.showSaveDialog(parentFrame) == JFileChooser.APPROVE_OPTION) {
+      try {
+        File outputFile = chooser.getSelectedFile();
+        if (!fileFilter.accept(outputFile)) {
+          // not a kml/kmz file selected - add .kml suffix
+          outputFile = new File(chooser.getSelectedFile().getPath() + ".kml"); //$NON-NLS-1$
+        }
+        if (outputFile.exists()) {
+          // TODO decide if these messages should get their own class
+          String title = Messages.getString("MainWindow.FileExists"); //$NON-NLS-1$
+          String message = String
+              .format(
+                  Messages.getString("MainWindow.OverwriteFileFormat"), outputFile.getName()); //$NON-NLS-1$
+          if (JOptionPane.showConfirmDialog(parentFrame, message, title,
+              JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.NO_OPTION) {
+            return;
+          }
+        }
+        // do we need to create thumbnail images?
+        if (GoogleearthFileFilter.isKmzFile(outputFile)
+            && Settings.get(SETTING.KMZ_STORE_THUMBNAILS, false)) {
+          // the output file is kmz and we need to store thumbnails
+          // use a ThumbnailsTask and generate KML/KMZ when done
+          final File file = outputFile;
+          TaskExecutor.execute(new ThumbnailsTask(Messages
+              .getString("ImagesTablePopupMenu.GenerateThumbnails"), images) { //$NON-NLS-1$
+                @Override
+                public void done() {
+                  exportToKml(images, file);
+                }
+              });
+
+        } else {
+          exportToKml(images, outputFile);
+        }
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    }
+  }
+
+  /**
+   * Finally - export images to a file.
+   * 
+   * @param images
+   * @param file
+   */
+  void exportToKml(List<ImageInfo> images, File file) {
+    TaskExecutor.execute(new GoogleEarthExportTask(Messages
+        .getString("ImagesTablePopupMenu.ExportForGoogleEarth"), images, file)); //$NON-NLS-1$
+    Settings.put(SETTING.GOOGLEEARTH_LAST_FILE_SAVED, file.getPath());
+  }
 }

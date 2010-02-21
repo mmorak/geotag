@@ -32,6 +32,7 @@ import org.fibs.geotag.i18n.Messages;
 import org.fibs.geotag.table.ImagesTable;
 import org.fibs.geotag.table.ImagesTableModel;
 import org.fibs.geotag.tasks.ExifWriterTask;
+import org.fibs.geotag.tasks.TaskExecutor;
 
 /**
  * @author andreas
@@ -127,10 +128,10 @@ public class SaveLocationsMenu extends JMenu implements ActionListener,
     saveAllLocationsItem = new JMenuItem(SAVE_ALL_LOCATIONS);
     // Using accelerators needs more work.
     // We need to use proper AbstractActions - a major change.
-//    if (currentImage == null) {
-//      saveAllLocationsItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,
-//          Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
-//    }
+    // if (currentImage == null) {
+    // saveAllLocationsItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,
+    // Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+    // }
     // enable if there is no background task and there is at least one image
     // that has a new location
     itemEnabled = false;
@@ -154,8 +155,9 @@ public class SaveLocationsMenu extends JMenu implements ActionListener,
    * @param images
    */
   private void saveLocations(List<ImageInfo> images) {
-    new ExifWriterTask(Messages
-        .getString("ImagesTablePopupMenu.SaveNewLocations"), tableModel, images).execute(); //$NON-NLS-1$
+    TaskExecutor
+        .execute(new ExifWriterTask(
+            Messages.getString("ImagesTablePopupMenu.SaveNewLocations"), tableModel, images)); //$NON-NLS-1$
   }
 
   /**
