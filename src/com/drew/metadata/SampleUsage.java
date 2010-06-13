@@ -98,19 +98,20 @@ public class SampleUsage {
     // This approach is the slowest, because it decodes the Jpeg image. Of
     // course you now have a decoded image to play with. In some instances
     // this will be most appropriate.
-    try {
-      JPEGImageDecoder jpegDecoder = JPEGCodec
-          .createJPEGDecoder(new FileInputStream(jpegFile));
-      BufferedImage image = jpegDecoder.decodeAsBufferedImage();
-      // now you can use the image
-      JPEGDecodeParam decodeParam = jpegDecoder.getJPEGDecodeParam();
-      Metadata metadata = JpegMetadataReader.readMetadata(decodeParam);
-      printImageTags(4, metadata);
-    } catch (FileNotFoundException e) {
-      System.err.println("error 4a");
-    } catch (IOException e) {
-      System.err.println("error 4b");
-    }
+    /* Unused and doesn't compile with openjdk - removed */
+//    try {
+//      JPEGImageDecoder jpegDecoder = JPEGCodec
+//          .createJPEGDecoder(new FileInputStream(jpegFile));
+//      BufferedImage image = jpegDecoder.decodeAsBufferedImage();
+//      // now you can use the image
+//      JPEGDecodeParam decodeParam = jpegDecoder.getJPEGDecodeParam();
+//      Metadata metadata = JpegMetadataReader.readMetadata(decodeParam);
+//      printImageTags(4, metadata);
+//    } catch (FileNotFoundException e) {
+//      System.err.println("error 4a");
+//    } catch (IOException e) {
+//      System.err.println("error 4b");
+//    }
   }
 
   private void printImageTags(int approachCount, Metadata metadata) {

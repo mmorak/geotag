@@ -1,4 +1,7 @@
-Release 0.63
+Release 0.064
+  Fixed compilation problem with OpenJDK
+  
+Release 0.063
   Workaround for bug 6880336 in Java 1.6.0_18
 
 Release 0.062
