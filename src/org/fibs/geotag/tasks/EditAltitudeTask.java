@@ -18,10 +18,14 @@
 
 package org.fibs.geotag.tasks;
 
+import org.fibs.geotag.Settings;
+import org.fibs.geotag.Settings.SETTING;
 import org.fibs.geotag.data.ImageInfo;
 import org.fibs.geotag.data.UpdateGPSAltitude;
 import org.fibs.geotag.data.ImageInfo.DATA_SOURCE;
 import org.fibs.geotag.i18n.Messages;
+import org.fibs.geotag.util.Units;
+import org.fibs.geotag.util.Units.ALTITUDE;
 
 /**
  * @author Andreas Schneider
@@ -82,11 +86,13 @@ public class EditAltitudeTask extends UndoableBackgroundTask<ImageInfo> {
   @Override
   protected String doInBackground() throws Exception {
     if (imageInfo != null) {
+      // edited altitudes respect the altitude unit setting and might not be in metres
+      ALTITUDE altitudeUnit = Units.ALTITUDE.values()[Settings.get(SETTING.ALTITUDE_UNIT, 0)];
       if (newAltitude.length() == 0) {
-        // empty string - no direction
-        new UpdateGPSAltitude(imageInfo, null, dataSource);
+        // empty string - no altitude
+        new UpdateGPSAltitude(imageInfo, null, dataSource, altitudeUnit);
       } else {
-        new UpdateGPSAltitude(imageInfo, newAltitude, dataSource);
+        new UpdateGPSAltitude(imageInfo, newAltitude, dataSource, altitudeUnit);
       }
       publish(imageInfo);
     }

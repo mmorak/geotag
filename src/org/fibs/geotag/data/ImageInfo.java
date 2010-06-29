@@ -525,11 +525,11 @@ public class ImageInfo implements Comparable<ImageInfo> {
    * This has package visibility to force the use of undo-able edits.
    * 
    * @param altitude
-   *          the gpsAltitude to set
+   *          the gpsAltitude to set - must be in metres
    * @param source
    *          Where the position data comes from
    */
-  void setGpsAltitude(String altitude, DATA_SOURCE source) {
+  void setGpsAltitudeInMetres(String altitude, DATA_SOURCE source) {
     gpsAltitude = altitude;
     this.source = source;
   }

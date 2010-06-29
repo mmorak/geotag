@@ -37,6 +37,7 @@ import org.fibs.geotag.data.UpdateLocationName;
 import org.fibs.geotag.data.UpdateProvinceName;
 import org.fibs.geotag.data.ImageInfo.DATA_SOURCE;
 import org.fibs.geotag.util.Constants;
+import org.fibs.geotag.util.Units.ALTITUDE;
 
 import com.drew.imaging.jpeg.JpegMetadataReader;
 import com.drew.imaging.jpeg.JpegProcessingException;
@@ -170,8 +171,9 @@ public class MetadataExtractorReader implements ExifReader {
           altitude = -altitude;
         }
         // and finally to string used to update the ImageInfo
+        // exif altitudes are always in metres
         new UpdateGPSAltitude(imageInfo, Double.toString(altitude),
-            ImageInfo.DATA_SOURCE.IMAGE);
+            ImageInfo.DATA_SOURCE.IMAGE, ALTITUDE.METRES);
       }
     } catch (Exception e) {
       // catch all Exceptions

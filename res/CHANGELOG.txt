@@ -1,3 +1,8 @@
+Release 0.065
+  Fixed problem with altitudes in feet
+  Now signing jar with new key - old one was
+  about to expire soon.
+  
 Release 0.064
   Fixed compilation problem with OpenJDK
   

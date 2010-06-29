@@ -21,8 +21,6 @@ package org.fibs.geotag.data;
 import javax.swing.undo.AbstractUndoableEdit;
 
 import org.fibs.geotag.GlobalUndoManager;
-import org.fibs.geotag.Settings;
-import org.fibs.geotag.Settings.SETTING;
 import org.fibs.geotag.util.Units;
 
 /**
@@ -52,17 +50,6 @@ public class UpdateGPSAltitude extends AbstractUndoableEdit {
    * @param imageInfo
    * @param newAltitude
    * @param newDataSource
-   */
-  public UpdateGPSAltitude(ImageInfo imageInfo, String newAltitude,
-      ImageInfo.DATA_SOURCE newDataSource) {
-    this(imageInfo, newAltitude, newDataSource,
-        Units.ALTITUDE.values()[Settings.get(SETTING.ALTITUDE_UNIT, 0)]);
-  }
-
-  /**
-   * @param imageInfo
-   * @param newAltitude
-   * @param newDataSource
    * @param unit
    */
   public UpdateGPSAltitude(ImageInfo imageInfo, String newAltitude,
@@ -83,7 +70,7 @@ public class UpdateGPSAltitude extends AbstractUndoableEdit {
     this.imageInfo = imageInfo;
     this.oldAltitude = imageInfo.getGpsAltitude();
     this.oldDataSource = imageInfo.getSource();
-    imageInfo.setGpsAltitude(altitudeMetres, newDataSource);
+    imageInfo.setGpsAltitudeInMetres(altitudeMetres, newDataSource);
     this.newAltitude = imageInfo.getGpsAltitude();
     this.newDataSource = imageInfo.getSource();
     GlobalUndoManager.getManager().addEdit(this);
@@ -104,7 +91,7 @@ public class UpdateGPSAltitude extends AbstractUndoableEdit {
   @Override
   public void redo() {
     super.redo();
-    imageInfo.setGpsAltitude(newAltitude, newDataSource);
+    imageInfo.setGpsAltitudeInMetres(newAltitude, newDataSource);
   }
 
   /**
@@ -113,6 +100,6 @@ public class UpdateGPSAltitude extends AbstractUndoableEdit {
   @Override
   public void undo() {
     super.undo();
-    imageInfo.setGpsAltitude(oldAltitude, oldDataSource);
+    imageInfo.setGpsAltitudeInMetres(oldAltitude, oldDataSource);
   }
 }

@@ -26,6 +26,7 @@ import org.fibs.geotag.data.UpdateGPSLatitude;
 import org.fibs.geotag.data.UpdateGPSLongitude;
 import org.fibs.geotag.data.ImageInfo.DATA_SOURCE;
 import org.fibs.geotag.external.ClipboardUpdate;
+import org.fibs.geotag.util.Units.ALTITUDE;
 
 /**
  * @author Andreas Schneider
@@ -94,7 +95,7 @@ public class ClipboardUpdateTask extends UndoableBackgroundTask<ImageInfo> {
       // in which case we set it to zero
       if (imageInfo.getGpsAltitude() == null) {
         new UpdateGPSAltitude(imageInfo, (new Double(0.0)).toString(),
-            DATA_SOURCE.CLIPBOARD);
+            DATA_SOURCE.CLIPBOARD, ALTITUDE.METRES);
       }
       publish(imageInfo);
     }

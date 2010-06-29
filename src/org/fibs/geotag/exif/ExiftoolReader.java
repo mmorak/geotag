@@ -42,6 +42,7 @@ import org.fibs.geotag.data.UpdateLocationName;
 import org.fibs.geotag.data.UpdateProvinceName;
 import org.fibs.geotag.data.ImageInfo.DATA_SOURCE;
 import org.fibs.geotag.image.FileTypes;
+import org.fibs.geotag.util.Units.ALTITUDE;
 
 /**
  * @author Andreas Schneider
@@ -282,8 +283,9 @@ public class ExiftoolReader implements ExifReader {
           new UpdateGPSLongitude(imageInfo, text.substring(GPS_LONGITUDE_TAG
               .length()), ImageInfo.DATA_SOURCE.IMAGE);
         } else if (text.startsWith(GPS_ALTITUDE_TAG)) {
+          // altitudes in exif data are in metres
           new UpdateGPSAltitude(imageInfo, text.substring(GPS_ALTITUDE_TAG
-              .length()), ImageInfo.DATA_SOURCE.IMAGE);
+              .length()), ImageInfo.DATA_SOURCE.IMAGE, ALTITUDE.METRES);
         } else if (text.startsWith(GPS_IMG_DIRECTION_TAG)) {
           new UpdateGPSImgDirection(imageInfo, text
               .substring(GPS_IMG_DIRECTION_TAG.length()), DATA_SOURCE.IMAGE);

@@ -36,6 +36,7 @@ import org.fibs.geotag.data.UpdateGPSLongitude;
 import org.fibs.geotag.data.ImageInfo.DATA_SOURCE;
 import org.fibs.geotag.util.Constants;
 import org.fibs.geotag.util.Util;
+import org.fibs.geotag.util.Units.ALTITUDE;
 
 import com.topografix.gpx._1._0.ObjectFactory;
 import com.topografix.gpx._1._0.Gpx.Trk.Trkseg;
@@ -239,8 +240,9 @@ public class TrackMatcher {
 					ImageInfo.DATA_SOURCE.TRACK);
 			new UpdateGPSLongitude(imageInfo, Double.toString(longitude),
 					ImageInfo.DATA_SOURCE.TRACK);
+			// altitudes are internally stored in metres
 			new UpdateGPSAltitude(imageInfo, Double.toString(altitude),
-					ImageInfo.DATA_SOURCE.TRACK);
+					ImageInfo.DATA_SOURCE.TRACK, ALTITUDE.METRES);
 		}
 	}
 

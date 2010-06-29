@@ -68,6 +68,19 @@ public final class Geotag {
   private static boolean redirectConsole = true;
 
   /**
+ * 
+ */
+private static void logJavaVersion() {
+  System.out.println("java version "+System.getProperty("java.version"));
+  System.out.print(System.getProperty("java.runtime.name")+" (");
+  System.out.println(System.getProperty("java.runtime.version")+")");
+  System.out.print(System.getProperty("java.vm.name")+" (");
+  System.out.print(System.getProperty("java.vm.version")+" , ");
+  System.out.println(System.getProperty("java.vm.info")+")");
+  
+}
+
+/**
    * Application entry point.
    * 
    * @param args
@@ -115,6 +128,8 @@ public final class Geotag {
         e.printStackTrace();
       }
     }
+    // log java version
+    logJavaVersion();
     try {
       UIManager.setLookAndFeel(new Plastic3DLookAndFeel());
     } catch (Exception e) {

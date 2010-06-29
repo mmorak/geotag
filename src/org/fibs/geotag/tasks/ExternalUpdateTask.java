@@ -27,6 +27,7 @@ import org.fibs.geotag.data.ImageInfo.DATA_SOURCE;
 import org.fibs.geotag.external.ExternalUpdate;
 import org.fibs.geotag.util.Airy;
 import org.fibs.geotag.util.Util;
+import org.fibs.geotag.util.Units.ALTITUDE;
 
 /**
  * @author Andreas Schneider
@@ -88,7 +89,7 @@ public class ExternalUpdateTask extends UndoableBackgroundTask<ImageInfo> {
           .getLongitude(), Airy.LATITUDE, Airy.LONGITUDE) < LOCATION_CLOSE) {
         new UpdateGPSLatitude(imageInfo, null, DATA_SOURCE.NONE);
         new UpdateGPSLongitude(imageInfo, null, DATA_SOURCE.NONE);
-        new UpdateGPSAltitude(imageInfo, null, DATA_SOURCE.NONE);
+        new UpdateGPSAltitude(imageInfo, null, DATA_SOURCE.NONE, ALTITUDE.METRES);
       } else {
         new UpdateGPSLatitude(imageInfo, (new Double(externalUpdate
             .getLatitude())).toString(), DATA_SOURCE.MAP);
@@ -98,7 +99,7 @@ public class ExternalUpdateTask extends UndoableBackgroundTask<ImageInfo> {
         // in which case we set it to zero
         if (imageInfo.getGpsAltitude() == null) {
           new UpdateGPSAltitude(imageInfo, (new Double(0.0)).toString(),
-              DATA_SOURCE.MAP);
+              DATA_SOURCE.MAP, ALTITUDE.METRES);
         }
         if (!Double.isNaN(externalUpdate.getDirection())) {
           new UpdateGPSImgDirection(imageInfo, (new Double(externalUpdate
