@@ -66,6 +66,7 @@ public class JpegMetadataReader {
           .readSegment(JpegSegmentReader.SEGMENT_APP1);
       new ExifReader(exifSegment).extract(metadata);
     } catch (JpegProcessingException e) {
+      e.printStackTrace();
       // in the interests of catching as much data as possible, continue
       // SEP lodge error message within exif directory?
     }
@@ -76,6 +77,7 @@ public class JpegMetadataReader {
       new IptcReader(iptcSegment).extract(metadata);
     } catch (JpegProcessingException e) {
       // SEP lodge error message within iptc directory?
+    	e.printStackTrace();
     }
 
     try {
@@ -84,6 +86,7 @@ public class JpegMetadataReader {
       new JpegReader(jpegSegment).extract(metadata);
     } catch (JpegProcessingException e) {
       // SEP lodge error message within jpeg directory?
+      e.printStackTrace();
     }
 
     try {
@@ -92,6 +95,7 @@ public class JpegMetadataReader {
       new JpegCommentReader(jpegCommentSegment).extract(metadata);
     } catch (JpegProcessingException e) {
       // SEP lodge error message within jpegcomment directory?
+    	e.printStackTrace();
     }
 
     return metadata;

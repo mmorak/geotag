@@ -232,24 +232,21 @@ public class ExifWriter {
       }
     }
     // Now for IPTC location data
+    
     String locationName = imageInfo.getLocationName();
-    if (locationName != null) {
-      arguments.add("-IPTC:ContentLocationName=" + locationName); //$NON-NLS-1$
-      // also write this to the Sub-Location 
-      arguments.add("-IPTC:Sub-Location=" + locationName); //$NON-NLS-1$
-    }
+    arguments.add("-IPTC:ContentLocationName=" + (locationName == null ? "" : locationName)); //$NON-NLS-1$
+    // also write this to the Sub-Location 
+    arguments.add("-IPTC:Sub-Location=" + (locationName == null ? "" : locationName)); //$NON-NLS-1$
+    
     String city = imageInfo.getCityName();
-    if (city != null) {
-      arguments.add("-IPTC:City=" + city); //$NON-NLS-1$
-    }
+    arguments.add("-IPTC:City=" + (city == null ? "" : city)); //$NON-NLS-1$
+
     String province = imageInfo.getProvinceName();
-    if (province != null) {
-      arguments.add("-IPTC:Province-State=" + province); //$NON-NLS-1$
-    }
+    arguments.add("-IPTC:Province-State=" + (province == null ? "" : province)); //$NON-NLS-1$
+
     String country = imageInfo.getCountryName();
-    if (country != null) {
-      arguments.add("-IPTC:Country-PrimaryLocationName=" + country); //$NON-NLS-1$
-    }
+    arguments.add("-IPTC:Country-PrimaryLocationName=" + (country == null ? "" : country)); //$NON-NLS-1$
+
     for (String string : arguments) {
       System.out.print(string + ' ');
     }
@@ -298,6 +295,12 @@ public class ExifWriter {
       // Strangely the AltitudeRef is still used in XMP
       arguments.add("-XMP:GPSAltitudeRef=" + (altitude >= 0.0 ? '0' : '1')); //$NON-NLS-1$
       arguments.add("-XMP:GPSAltitude=" + Math.abs(altitude)); //$NON-NLS-1$
+    }
+    // the direction if we have one
+    if (imageInfo.getGpsImgDirection() != null) {
+      double direction = Double.parseDouble(imageInfo.getGpsImgDirection());
+      arguments.add("-XMP:GPSImgDirection=" + direction); //$NON-NLS-1$
+      arguments.add("-XMP:GPSImgDirectionRef=T"); //$NON-NLS-1$
     }
     // the map datum is always set to WGS-84
     arguments.add("-XMP:GPSMapDatum=WGS-84"); //$NON-NLS-1$

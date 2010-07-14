@@ -27,9 +27,12 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.text.DateFormatSymbols;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -213,6 +216,19 @@ public class DateTimeChooser extends JDialog {
     }
     // add the buttonPanel at the bottom of the container
     add(buttonPanel, BorderLayout.SOUTH);
+    
+    // consider window closing as a cancel event.
+    // as the ok and cancel handlers just call dispose, no
+    // window closing event is fired and we can safely consider
+    // this a sign that the X on the menu bar was pressed. 
+    this.addWindowListener(new WindowAdapter() {
+        @Override
+        public void windowClosing(WindowEvent e) {
+            // set the date to null indicating no date was selected
+            setDisplayedDate(null);
+            super.windowClosing(e);
+        }
+    });
   }
 
   /**
@@ -278,7 +294,9 @@ public class DateTimeChooser extends JDialog {
       timeZoneNames.add(TimeZone.getTimeZone(name).getID());
     }
     // also add all known timezone ids
-    for (String timezoneId : TimeZone.getAvailableIDs()) {
+    String[] availableTimeZones = TimeZone.getAvailableIDs();
+    Arrays.sort(availableTimeZones);
+    for (String timezoneId : availableTimeZones) {
       timeZoneNames.add(timezoneId);
     }
     final JComboBox timezoneComboBox = new JComboBox(timeZoneNames.toArray()) {
@@ -306,8 +324,9 @@ public class DateTimeChooser extends JDialog {
         timeEditor.getTextField().setValue(getDisplayedDate().getTime());
       }
     };
-    timezoneComboBox.setSelectedIndex(0);
     timezoneComboBox.addActionListener(timezoneComboBox);
+    timezoneComboBox.setSelectedIndex(0);
+    
     // make sure that "America/Argentina/ComodRivadavia"
     // doesn't mess up the layout of the dialog
     Dimension preferredSize = timezoneComboBox.getPreferredSize();

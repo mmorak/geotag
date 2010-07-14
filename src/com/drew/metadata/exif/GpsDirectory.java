@@ -131,7 +131,7 @@ public class GpsDirectory extends Directory {
     tagNameMap.put(new Integer(TAG_GPS_TRACK), "GPS Track");
     tagNameMap.put(new Integer(TAG_GPS_IMG_DIRECTION_REF),
         "GPS Img Direction Ref");
-    tagNameMap.put(new Integer(TAG_GPS_IMG_DIRECTION_REF), "GPS Img Direction");
+    tagNameMap.put(new Integer(TAG_GPS_IMG_DIRECTION), "GPS Img Direction");
     tagNameMap.put(new Integer(TAG_GPS_MAP_DATUM), "GPS Map Datum");
     tagNameMap.put(new Integer(TAG_GPS_DEST_LATITUDE_REF),
         "GPS Dest Latitude Ref");

@@ -128,6 +128,9 @@ public class ExiftoolReader implements ExifReader {
     args.add("-GPSLongitude"); //$NON-NLS-1$
     // retrieve the altitude
     args.add("-GPSAltitude"); //$NON-NLS-1$
+    // retrieve the direction
+    args.add("-GPSImgDirection");
+    args.add("-GPSImgDirectionRef");
     // retrieve the GPS date/time
     args.add("-GPSDateTime"); //$NON-NLS-1$
     // retrieve the image orientation
@@ -172,6 +175,9 @@ public class ExiftoolReader implements ExifReader {
       // new argument since 7.04
       args.add("-XMP:GPSDateTime"); //$NON-NLS-1$
     }
+    // retrieve the direction
+    args.add("-XMP:GPSImgDirection");
+    args.add("-XMP:GPSImgDirectionRef");
     // retrieve the image orientation
     args.add("-XMP:Orientation"); //$NON-NLS-1$
     // retrieve the image location

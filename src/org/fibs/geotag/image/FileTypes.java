@@ -19,6 +19,8 @@
 package org.fibs.geotag.image;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.StringTokenizer;
 
 import org.fibs.geotag.Settings;
@@ -222,6 +224,23 @@ public enum FileTypes {
       return false;
     }
     String extension = FileUtil.getExtension(file);
+    List<String> fileTypes = getFileTypesSupportedByXmp();
+    for (String fileType : fileTypes) {
+      if (fileType.toLowerCase().equals(extension)) {
+        return true;
+      }
+    }
+    return false;
+  }
+  
+  /**
+   * Return a list of user specified custom file extensions.
+   * For the vast majority of users this should be an empty list
+   * @return The (possibly empty) list of file types supported by 
+   * XMP sidecars
+   */
+  public static  List<String> getFileTypesSupportedByXmp() {
+    List<String> fileTypesSupportedByXmp = new ArrayList<String>();
     // Get the user setting
     String fileTypesSetting = Settings.get(SETTING.FILE_TYPES_SUPPORTED_BY_XMP, ""); //$NON-NLS-1$
     // Tokenize the setting
@@ -230,11 +249,9 @@ public enum FileTypes {
     StringTokenizer tokenizer = new StringTokenizer(fileTypesSetting, " ,."); //$NON-NLS-1$
     while (tokenizer.hasMoreTokens()) {
       String token = tokenizer.nextToken();
-      if (token.toLowerCase().equals(extension)) {
-        return true;
-      }
+      fileTypesSupportedByXmp.add(token);
     }
-    return false;
+    return fileTypesSupportedByXmp;
   }
 
 }

@@ -198,8 +198,9 @@ public class ExifReader implements MetadataReader {
     }
 
     // check for the header preamble
+    
     if (!"Exif\0\0".equals(new String(_data, 0, 6))) {
-      directory.addError("Exif data segment doesn't begin with 'Exif'");
+      directory.addError("Exif data segment doesn't begin with 'Exif' "+new String(_data,0,6));
       return _metadata;
     }
 

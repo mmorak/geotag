@@ -41,7 +41,9 @@ import org.fibs.geotag.gpsbabel.GPSBabel;
 import org.fibs.geotag.gui.MainWindow;
 import org.fibs.geotag.gui.settings.SettingsDialog;
 import org.fibs.geotag.i18n.Messages;
+import org.fibs.geotag.image.FileTypes;
 import org.fibs.geotag.image.ImageFileFilter;
+import org.fibs.geotag.image.ImageFileFilter.Type;
 import org.fibs.geotag.table.ImagesTable;
 import org.fibs.geotag.table.ImagesTableModel;
 import org.fibs.geotag.tasks.ExifReaderTask;
@@ -231,13 +233,24 @@ public class FileMenu extends JMenu implements MenuConstants {
         chooser.setSelectedFile(file);
       }
     }
-    chooser.setFileFilter(new ImageFileFilter());
+    // we don't want the default AcceptAllFilter
+    chooser.removeChoosableFileFilter(chooser.getAcceptAllFileFilter());
+    chooser.addChoosableFileFilter(ImageFileFilter.getFilter(Type.ALL_IMAGES));
+    chooser.addChoosableFileFilter(ImageFileFilter.getFilter(Type.JPEG));
+    chooser.addChoosableFileFilter(ImageFileFilter.getFilter(Type.RAW));
+    chooser.addChoosableFileFilter(ImageFileFilter.getFilter(Type.TIFF));
+    if (FileTypes.getFileTypesSupportedByXmp().size() > 0) {
+      chooser.addChoosableFileFilter(ImageFileFilter.getFilter(Type.CUSTOM_FILE_WITH_XMP));
+    }
+    chooser.setFileFilter(ImageFileFilter.getLastFilterUsed());
     chooser.setMultiSelectionEnabled(true);
     if (chooser.showOpenDialog(MainWindow.getMainWindow(FileMenu.this)) == JFileChooser.APPROVE_OPTION) {
       File[] files = chooser.getSelectedFiles();
       // just save the first selected file
       Settings.put(SETTING.LAST_FILE_OPENED, files[0].getPath());
       Settings.flush();
+      ImageFileFilter filter = (ImageFileFilter) chooser.getFileFilter();
+      ImageFileFilter.storeLastFilterUsed(filter);
       ExifReaderTask task = new ExifReaderTask(ADD_FILE, getTableModel(), files);
       TaskExecutor.execute(task);
     }
@@ -255,13 +268,23 @@ public class FileMenu extends JMenu implements MenuConstants {
         chooser.setCurrentDirectory(directory);
       }
     }
-    ImageFileFilter filter = new ImageFileFilter();
-    chooser.setFileFilter(filter);
+    // we don't want the default AcceptAllFilter
+    chooser.removeChoosableFileFilter(chooser.getAcceptAllFileFilter());
+    chooser.addChoosableFileFilter(ImageFileFilter.getFilter(Type.ALL_IMAGES));
+    chooser.addChoosableFileFilter(ImageFileFilter.getFilter(Type.JPEG));
+    chooser.addChoosableFileFilter(ImageFileFilter.getFilter(Type.RAW));
+    chooser.addChoosableFileFilter(ImageFileFilter.getFilter(Type.TIFF));
+    if (FileTypes.getFileTypesSupportedByXmp().size() > 0) {
+      chooser.addChoosableFileFilter(ImageFileFilter.getFilter(Type.CUSTOM_FILE_WITH_XMP));
+    }
+    chooser.setFileFilter(ImageFileFilter.getLastFilterUsed());;
     chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
     if (chooser.showOpenDialog(MainWindow.getMainWindow(FileMenu.this)) == JFileChooser.APPROVE_OPTION) {
       File directory = chooser.getSelectedFile();
       Settings.put(SETTING.LAST_DIRECTORY_OPENED, directory.getPath());
       Settings.flush();
+      ImageFileFilter filter = (ImageFileFilter) chooser.getFileFilter();
+      ImageFileFilter.storeLastFilterUsed(filter);
       File[] files = directory.listFiles(filter);
       ExifReaderTask task = new ExifReaderTask(ADD_FILES, getTableModel(),
           files);

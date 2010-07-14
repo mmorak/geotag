@@ -1,3 +1,15 @@
+Release 0.066
+  Fixed problem with directions not being saved
+  in XMP files
+  Now remembers last file filter used.
+  Replaced "->" with proper Unicode right arrow
+  character where displayed.
+  Based on patched submitted by Dominic Battre:
+  Fixed problems with deleting location information.
+  Improved file chooser dialog.
+  Fixed timezone problems in the date/time chooser
+  dialog.
+  
 Release 0.065
   Fixed problem with altitudes in feet
   Now signing jar with new key - old one was

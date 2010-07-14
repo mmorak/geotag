@@ -51,6 +51,9 @@ public final class WhatNext {
 
   /** the maximum line length. */
   private static final int MAX_LINE_LENGTH = 60;
+  
+  /** Either "->" or the correct Unicode character */
+  private static final String RIGHT_ARROW = "\u2192";
 
   /**
    * This method tries to see where in the work flow we are and gives the use a
@@ -151,7 +154,7 @@ public final class WhatNext {
     if (!dcrawAvailable && rawImagesAvailable) {
       String text = String.format(Messages
           .getString("WhatNext.SuggestFindingDcrawFormat"), Messages //$NON-NLS-1$
-          .getString("MainWindow.File"), Messages //$NON-NLS-1$
+          .getString("MainWindow.File"), RIGHT_ARROW,Messages //$NON-NLS-1$
           .getString("MainWindow.Settings")); //$NON-NLS-1$
       suggestions.add(text);
     }
@@ -168,7 +171,7 @@ public final class WhatNext {
     if (!gpsbabelAvailable) {
       String text = String.format(Messages
           .getString("WhatNext.SuggestFindingGPSBabelFormat"), Messages //$NON-NLS-1$
-          .getString("MainWindow.File"), Messages //$NON-NLS-1$
+          .getString("MainWindow.File"), RIGHT_ARROW, Messages //$NON-NLS-1$
           .getString("MainWindow.Settings")); //$NON-NLS-1$
       suggestions.add(text);
     }
@@ -185,7 +188,7 @@ public final class WhatNext {
     if (!exiftoolAvailable) {
       String text = String.format(Messages
           .getString("WhatNext.SuggestFindingExiftoolFormat"), Messages //$NON-NLS-1$
-          .getString("MainWindow.File"), Messages //$NON-NLS-1$
+          .getString("MainWindow.File"), RIGHT_ARROW, Messages //$NON-NLS-1$
           .getString("MainWindow.Settings")); //$NON-NLS-1$
       suggestions.add(text);
     }
@@ -310,13 +313,13 @@ public final class WhatNext {
       String text = String
           .format(
               Messages.getString("WhatNext.SuggestOpeningTrackFormat"), //$NON-NLS-1$
-              Messages.getString("MainWindow.File"), Messages.getString("MainWindow.LoadTracksFromFile")); //$NON-NLS-1$ //$NON-NLS-2$
+              Messages.getString("MainWindow.File"), RIGHT_ARROW, Messages.getString("MainWindow.LoadTracksFromFile")); //$NON-NLS-1$ //$NON-NLS-2$
       suggestions.add(text);
 
       if (gpsbabelAvailable) {
         text = String.format(Messages
             .getString("WhatNext.SuggestLoadingFromGPSFormat"), //$NON-NLS-1$
-            Messages.getString("MainWindow.File"), Messages //$NON-NLS-1$
+            Messages.getString("MainWindow.File"), RIGHT_ARROW, Messages //$NON-NLS-1$
                 .getString("MainWindow.LoadTrackFromGPS")); //$NON-NLS-1$
         suggestions.add(text);
       }
@@ -336,7 +339,7 @@ public final class WhatNext {
       String text = String
           .format(
               Messages.getString("WhatNext.SuggestLoadingImagesFormat"), //$NON-NLS-1$
-              Messages.getString("MainWindow.File"), Messages.getString("MainWindow.AddDirectory")); //$NON-NLS-1$ //$NON-NLS-2$
+              Messages.getString("MainWindow.File"), RIGHT_ARROW, Messages.getString("MainWindow.AddDirectory")); //$NON-NLS-1$ //$NON-NLS-2$
       suggestions.add(text);
     }
   }

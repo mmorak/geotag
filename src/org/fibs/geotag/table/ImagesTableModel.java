@@ -346,7 +346,7 @@ public class ImagesTableModel extends AbstractTableModel {
         setLocationName(value, imageInfo, column, columnName);
         break;
       case CITY_NAME:
-        setLocationName(value, imageInfo, column, columnName);
+        setCityName(value, imageInfo, column, columnName);
         break;
       case PROVINCE_NAME:
         setProvinceName(value, imageInfo, column, columnName);
@@ -405,6 +405,23 @@ public class ImagesTableModel extends AbstractTableModel {
     String newString;
     newString = (String) value;
     oldString = imageInfo.getLocationName();
+    if (!Util.sameContent(oldString, newString)) {
+      commitManualEdit(imageInfo, column, columnName, newString);
+    }
+  }
+  
+  /**
+   * @param value
+   * @param imageInfo
+   * @param column
+   * @param columnName
+   */
+  private void setCityName(Object value, ImageInfo imageInfo,
+      COLUMN column, String columnName) {
+    String oldString;
+    String newString;
+    newString = (String) value;
+    oldString = imageInfo.getCityName();
     if (!Util.sameContent(oldString, newString)) {
       commitManualEdit(imageInfo, column, columnName, newString);
     }

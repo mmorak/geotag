@@ -60,6 +60,8 @@ public final class Settings {
     LAST_FILE_OPENED,
     /** Preference key for storing the last directory of images the user added. */
     LAST_DIRECTORY_OPENED,
+    /** Preference key for the last file filter used in the file chooser*/
+    LAST_FILE_FILTER_SELECTED,
     /** Preference key for storing the last gpx file the user opened. */
     LAST_GPX_FILE_OPENED,
     /** Preference key for storing the path to the exiftool executable. */
