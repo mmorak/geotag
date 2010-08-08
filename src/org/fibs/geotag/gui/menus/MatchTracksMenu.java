@@ -75,6 +75,7 @@ public class MatchTracksMenu extends JMenu implements MenuConstants,
     boolean menuEnabled;
     this.imagesTable = imagesTable;
     this.tableModel = (ImagesTableModel) imagesTable.getModel();
+    this.currentImage = currentImage;
     selectedRows = imagesTable.getSelectedRows();
     menuEnabled = false;
 

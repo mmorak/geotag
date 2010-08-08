@@ -1,3 +1,6 @@
+Release 0.067
+  Fixed a problem find locations for a single image
+  
 Release 0.066
   Fixed problem with directions not being saved
   in XMP files
