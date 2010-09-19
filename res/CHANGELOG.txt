@@ -1,3 +1,8 @@
+Release 0.069
+  Added option not to keep backups when writing
+  Exif data.
+  Fixed Javascript problems with French translation
+  
 Release 0.068
   New French translation by Frédéric Darboux added.
   

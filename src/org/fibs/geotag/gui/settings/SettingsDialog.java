@@ -311,6 +311,12 @@ public class SettingsDialog extends JDialog implements TreeSelectionListener {
         Messages.getString("SettingsDialog.AdditionalExiftoolArguments"), //$NON-NLS-1$
         SETTING.EXIFTOOL_ARGUMENTS, ""); //$NON-NLS-1$
     addPanel(exiftool, exiftoolArguments);
+    
+
+    BooleanSettingsPanel createBackups = new BooleanSettingsPanel(
+        parent,
+        Messages.getString("SettingsDialog.CreateBackups"), SETTING.CREATE_BACKUPS, true); //$NON-NLS-1$
+    addPanel(exiftool, createBackups);
 
     DefaultMutableTreeNode gpsbabel = new DefaultMutableTreeNode(Messages
         .getString("SettingsDialog.GPSBabel")); //$NON-NLS-1$

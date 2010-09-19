@@ -247,6 +247,12 @@ public class ExifWriter {
     String country = imageInfo.getCountryName();
     arguments.add("-IPTC:Country-PrimaryLocationName=" + (country == null ? "" : country)); //$NON-NLS-1$
 
+    // overwrite files directly instead of following default behavior to create backups
+    boolean createBackups = Settings.get(SETTING.CREATE_BACKUPS, true);
+    if (!createBackups) {
+      arguments.add("-overwrite_original");
+    }
+    
     for (String string : arguments) {
       System.out.print(string + ' ');
     }

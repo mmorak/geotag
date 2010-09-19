@@ -78,6 +78,8 @@ public final class Settings {
     DCRAW_PATH,
     /** Preference key for always writing locations to XMP files. */
     XMP_FILES_ONLY,
+    /** Preference key for creation of backup upon updating a file. */
+    CREATE_BACKUPS,
     /** Preferences key for the image name column width. */
     IMAGE_NAME_WIDTH,
     /** Preferences key for the GPS time column width. */

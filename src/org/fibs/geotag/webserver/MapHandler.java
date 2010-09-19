@@ -113,30 +113,37 @@ public class MapHandler implements ContextHandler {
     return new ByteArrayInputStream(page.toString().getBytes());
   }
 
+  private enum JavascriptVaraibles {
+    title("MapHandler.Geotag"), 
+    showMenuText("MapHandler.ShowMenu"),
+    hideMenuText("MapHandler.HideMenu"),
+    mouseZoomText("MapHandler.MouseZoom"),
+    showTracksText("MapHandler.DisplayTracks"),
+    showWikipediaText("MapHandler.ShowWikipedia"),
+    currentImageText("MapHandler.CurrentImage"),
+    nextImageText("MapHandler.NextImage"),
+    previousImageText("MapHandler.PreviousImage"),
+    showAllText("MapHandler.ShowAllImages"),
+    instructions("MapHandler.Instructions"),
+    instructionsWithDirection("MapHandler.InstructionsWithDirection");
+    // The key used to find the value of the variable 
+    private final String messagesKey;
+    private JavascriptVaraibles(String messagesKey) {
+      this.messagesKey = messagesKey;
+    }
+    public String getMessagesKey() {
+      return messagesKey;
+    }
+  }
   /**
    * Add the language dependent strings of the javascript file.
    * 
    * @param page
    */
   private void createJavascriptLanguageStrings(StringBuilder page) {
-    addText(page, "title", Messages.getString("MapHandler.Geotag")); //$NON-NLS-1$ //$NON-NLS-2$
-    addText(page, "showMenuText", Messages.getString("MapHandler.ShowMenu")); //$NON-NLS-1$ //$NON-NLS-2$
-    addText(page, "hideMenuText", Messages.getString("MapHandler.HideMenu")); //$NON-NLS-1$ //$NON-NLS-2$
-    addText(page, "mouseZoomText", Messages.getString("MapHandler.MouseZoom")); //$NON-NLS-1$ //$NON-NLS-2$
-    addText(page,
-        "showTracksText", Messages.getString("MapHandler.DisplayTracks")); //$NON-NLS-1$ //$NON-NLS-2$
-    addText(page,
-        "showWikipediaText", Messages.getString("MapHandler.ShowWikipedia")); //$NON-NLS-1$ //$NON-NLS-2$
-    addText(page,
-        "currentImageText", Messages.getString("MapHandler.CurrentImage")); //$NON-NLS-1$ //$NON-NLS-2$
-    addText(page, "nextImageText", Messages.getString("MapHandler.NextImage")); //$NON-NLS-1$ //$NON-NLS-2$
-    addText(page,
-        "previousImageText", Messages.getString("MapHandler.PreviousImage")); //$NON-NLS-1$ //$NON-NLS-2$
-    addText(page, "showAllText", Messages.getString("MapHandler.ShowAllImages")); //$NON-NLS-1$ //$NON-NLS-2$
-    addText(page, "instructions", Messages.getString("MapHandler.Instructions")); //$NON-NLS-1$ //$NON-NLS-2$
-    addText(
-        page,
-        "instructionsWithDirection", Messages.getString("MapHandler.InstructionsWithDirection")); //$NON-NLS-1$ //$NON-NLS-2$
+    for (JavascriptVaraibles variable : JavascriptVaraibles.values()) {
+      addVariable(page, variable);
+    }
   }
 
   /**
@@ -146,8 +153,74 @@ public class MapHandler implements ContextHandler {
    * @param name
    * @param value
    */
-  private void addText(StringBuilder page, String name, String value) {
+  private void addVariable(StringBuilder page, JavascriptVaraibles variable) {
+    String value = Messages.getString(variable.getMessagesKey());
+    for (int index = 0; index < value.length(); index++) {
+      char character = value.charAt(index);
+      if (character < ' ' || (character >= '\u0080' && character < '\u00a0') ||
+          (character >= '\u2000' && character < '\u2100')) {
+        System.out.println("Invalid character at posistion "+index+" in "+value);
+      }
+    }
     page
-        .append("  var ").append(name).append(" = '").append(value).append("'\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        .append("  var ").append(variable.toString()).append(" = '").append(value).append("'\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
   }
+  
+  public static String quote(String string) {
+    if (string == null || string.length() == 0) {
+        return "''";
+    }
+
+    char         b;
+    char         c = 0;
+    int          i;
+    int          len = string.length();
+    StringBuffer sb = new StringBuffer(len + 4);
+    String       t;
+
+    sb.append("'");
+    for (i = 0; i < len; i += 1) {
+        b = c;
+        c = string.charAt(i);
+        switch (c) {
+        case '\\':
+        case '"':
+            sb.append('\\');
+            sb.append(c);
+            break;
+        case '/':
+            if (b == '<') {
+                sb.append('\\');
+            }
+            sb.append(c);
+            break;
+        case '\b':
+            sb.append("\\b");
+            break;
+        case '\t':
+            sb.append("\\t");
+            break;
+        case '\n':
+            sb.append("\\n");
+            break;
+        case '\f':
+            sb.append("\\f");
+            break;
+        case '\r':
+            sb.append("\\r");
+            break;
+        default:
+            if (c < ' ' || (c >= '\u0080' && c < '\u00a0') ||
+                           (c >= '\u2000' && c < '\u2100')) {
+                t = "000" + Integer.toHexString(c);
+                sb.append("\\u" + t.substring(t.length() - 4));
+            } else {
+                sb.append(c);
+            }
+        }
+    }
+    sb.append('"');
+    return sb.toString();
+}
+  
 }
