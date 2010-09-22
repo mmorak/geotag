@@ -55,10 +55,17 @@ public class ImageRotator {
     /** Rotate image 90 degrees anti-clockwise. */
     ROTATE_90_ANTICLOCK;
     /**
+     * Translate the exif orientation into this enum.
+     * An exif value of 0 means unknown and we treat this
+     * as normal (i.e. display as is). Unfortunately Google's
+     * Picasa software sets the exif orientation to 0.
      * @param exifvalue The orientation as an integer as defined by EXIF
      * @return The Orientation enum constant representing it.
      */
     static Orientation getOrientation(int exifvalue) {
+      if (exifvalue < 1 || exifvalue > Orientation.values().length) {
+        return Orientation.NORMAL;
+      }
       return Orientation.values()[exifvalue - 1];
     }
   }

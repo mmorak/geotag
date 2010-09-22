@@ -1,3 +1,7 @@
+Release 0.070
+  Fixed image view problem for images damaged by
+  Google's Picasa.
+  
 Release 0.069
   Added option not to keep backups when writing
   Exif data.
