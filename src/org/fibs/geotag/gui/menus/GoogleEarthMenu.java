@@ -1,6 +1,6 @@
 /**
  * Geotag
- * Copyright (C) 2007-2009 Andreas Schneider
+ * Copyright (C) 2007-2010 Andreas Schneider
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -36,13 +36,14 @@ import org.fibs.geotag.data.ImageInfo;
 import org.fibs.geotag.googleearth.GoogleEarthLauncher;
 import org.fibs.geotag.googleearth.GoogleearthFileFilter;
 import org.fibs.geotag.gui.MainWindow;
-import org.fibs.geotag.i18n.Messages;
 import org.fibs.geotag.image.ThumbnailWorker;
 import org.fibs.geotag.table.ImagesTable;
 import org.fibs.geotag.table.ImagesTableModel;
 import org.fibs.geotag.tasks.GoogleEarthExportTask;
 import org.fibs.geotag.tasks.TaskExecutor;
 import org.fibs.geotag.tasks.ThumbnailsTask;
+import org.xnap.commons.i18n.I18n;
+import org.xnap.commons.i18n.I18nFactory;
 
 /**
  * @author andreas
@@ -51,6 +52,9 @@ import org.fibs.geotag.tasks.ThumbnailsTask;
 @SuppressWarnings("serial")
 public class GoogleEarthMenu extends JMenu implements ActionListener,
     MenuConstants {
+  
+  /** Create i18n support */
+  private static final I18n i18n = I18nFactory.getI18n(GoogleEarthMenu.class);
 
   /** The menu item used to show an image location in Google Earth. */
   private JMenuItem showInGoogleEarthItem;
@@ -225,10 +229,10 @@ public class GoogleEarthMenu extends JMenu implements ActionListener,
         }
         if (outputFile.exists()) {
           // TODO decide if these messages should get their own class
-          String title = Messages.getString("MainWindow.FileExists"); //$NON-NLS-1$
+          String title = i18n.tr("File exists"); //$NON-NLS-1$
           String message = String
               .format(
-                  Messages.getString("MainWindow.OverwriteFileFormat"), outputFile.getName()); //$NON-NLS-1$
+                  i18n.tr("Overwrite existing file %s?"), outputFile.getName()); //$NON-NLS-1$
           if (JOptionPane.showConfirmDialog(parentFrame, message, title,
               JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.NO_OPTION) {
             return;
@@ -240,8 +244,8 @@ public class GoogleEarthMenu extends JMenu implements ActionListener,
           // the output file is kmz and we need to store thumbnails
           // use a ThumbnailsTask and generate KML/KMZ when done
           final File file = outputFile;
-          TaskExecutor.execute(new ThumbnailsTask(Messages
-              .getString("ImagesTablePopupMenu.GenerateThumbnails"), images) { //$NON-NLS-1$
+          TaskExecutor.execute(new ThumbnailsTask(i18n
+              .tr("Generate thumbnails"), images) { //$NON-NLS-1$
                 @Override
                 public void done() {
                   exportToKml(images, file);
@@ -264,8 +268,8 @@ public class GoogleEarthMenu extends JMenu implements ActionListener,
    * @param file
    */
   void exportToKml(List<ImageInfo> images, File file) {
-    TaskExecutor.execute(new GoogleEarthExportTask(Messages
-        .getString("ImagesTablePopupMenu.ExportForGoogleEarth"), images, file)); //$NON-NLS-1$
+    TaskExecutor.execute(new GoogleEarthExportTask(i18n
+        .tr("Export for Google Earth"), images, file)); //$NON-NLS-1$
     Settings.put(SETTING.GOOGLEEARTH_LAST_FILE_SAVED, file.getPath());
   }
 }

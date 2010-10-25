@@ -1,6 +1,6 @@
 /**
  * Geotag
- * Copyright (C) 2007-2009 Andreas Schneider
+ * Copyright (C) 2007-2010 Andreas Schneider
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,8 +20,9 @@ package org.fibs.geotag.table;
 
 import org.fibs.geotag.Settings;
 import org.fibs.geotag.Settings.SETTING;
-import org.fibs.geotag.i18n.Messages;
 import org.fibs.geotag.util.Units;
+import org.xnap.commons.i18n.I18n;
+import org.xnap.commons.i18n.I18nFactory;
 
 /**
  * An enumeration of the columns in the table.
@@ -30,6 +31,9 @@ import org.fibs.geotag.util.Units;
  * 
  */
 public final class ImagesTableColumns {
+  
+  /** Create i18n support */
+  private static final I18n i18n = I18nFactory.getI18n(ImagesTableColumns.class);
   
   /**
    * hide constructor.
@@ -78,35 +82,35 @@ public final class ImagesTableColumns {
   public static String getDescription(COLUMN column) {
     switch (column) {
       case IMAGE_NAME:
-        return Messages.getString("ImagesTableColumns.TooltipImageName"); //$NON-NLS-1$
+        return i18n.tr("The name of the image file"); //$NON-NLS-1$
       case GPS_DATE:
-        return Messages.getString("ImagesTableColumns.TooltipGpsDate"); //$NON-NLS-1$
+        return i18n.tr("The GPS time in GMT for this image."); //$NON-NLS-1$
       case TIME_OFFSET:
-        return Messages.getString("ImagesTableColumns.TooltipTimeOffset"); //$NON-NLS-1$
+        return i18n.tr("The difference between camera time and GPS time"); //$NON-NLS-1$
       case CAMERA_DATE:
-        return Messages.getString("ImagesTableColumns.TooltipCameraDate"); //$NON-NLS-1$
+        return i18n.tr("The time recorded by the camera for this image"); //$NON-NLS-1$
       case LATITUDE:
-        return Messages.getString("ImagesTableColumns.TooltipLatitude"); //$NON-NLS-1$
+        return i18n.tr("The latitude (in degrees) associated with this image"); //$NON-NLS-1$
       case LONGITUDE:
-        return Messages.getString("ImagesTableColumns.TooltipLongitude"); //$NON-NLS-1$
+        return i18n.tr("The longitude (in degrees) associated with this image"); //$NON-NLS-1$
       case ALTITUDE:
         Units.ALTITUDE unit = Units.ALTITUDE.values()[Settings.get(
             SETTING.ALTITUDE_UNIT, 0)];
         String unitAbbreviation = Units.getAbbreviation(unit);
-        String description = String.format(Messages
-            .getString("ImagesTableColumns.TooltipAltitudeFormat"), //$NON-NLS-1$
+        String description = String.format(i18n
+            .tr("The altitude (in %1$s) associated with this image"), //$NON-NLS-1$
             unitAbbreviation);
         return description;
       case DIRECTION:
-        return Messages.getString("ImagesTableColumns.TooltipDirection"); //$NON-NLS-1$
+        return i18n.tr("Image direction in degrees"); //$NON-NLS-1$
       case LOCATION_NAME:
-        return Messages.getString("ImagesTableColumns.LocationName"); //$NON-NLS-1$
+        return i18n.tr("Location name"); //$NON-NLS-1$
       case CITY_NAME:
-        return Messages.getString("ImagesTableColumns.CityName"); //$NON-NLS-1$
+        return i18n.tr("The city name"); //$NON-NLS-1$
       case PROVINCE_NAME:
-        return Messages.getString("ImagesTableColumns.ProvinceStateName"); //$NON-NLS-1$
+        return i18n.tr("Province/State name"); //$NON-NLS-1$
       case COUNTRY_NAME:
-        return Messages.getString("ImagesTableColumns.CountryName"); //$NON-NLS-1$
+        return i18n.tr("Country name"); //$NON-NLS-1$
       default:
         return null;
     }

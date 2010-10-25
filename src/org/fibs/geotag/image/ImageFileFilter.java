@@ -1,6 +1,6 @@
 /**
  * Geotag
- * Copyright (C) 2007-2009 Andreas Schneider
+ * Copyright (C) 2007-2010 Andreas Schneider
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,7 +23,8 @@ import java.util.List;
 
 import org.fibs.geotag.Settings;
 import org.fibs.geotag.Settings.SETTING;
-import org.fibs.geotag.i18n.Messages;
+import org.xnap.commons.i18n.I18n;
+import org.xnap.commons.i18n.I18nFactory;
 
 /**
  * A class to determine if a file is an image or not.
@@ -34,6 +35,9 @@ import org.fibs.geotag.i18n.Messages;
  * 
  */
 public abstract class ImageFileFilter extends javax.swing.filechooser.FileFilter implements java.io.FileFilter{
+  
+  /** Create i18n support */
+  private static final I18n i18n = I18nFactory.getI18n(ImageFileFilter.class);
   
   public static enum Type {
     ALL_IMAGES, JPEG, RAW, TIFF, CUSTOM_FILE_WITH_XMP
@@ -78,7 +82,7 @@ public abstract class ImageFileFilter extends javax.swing.filechooser.FileFilter
      */
     @Override
     public String getDescription() {
-      return Messages.getString("ImageFileFilter.ImageFiles"); //$NON-NLS-1$
+      return i18n.tr("Image files"); //$NON-NLS-1$
     }
 
     @Override
@@ -106,7 +110,7 @@ public abstract class ImageFileFilter extends javax.swing.filechooser.FileFilter
      */
     @Override
     public String getDescription() {
-      return Messages.getString("ImageFileFilter.ImageFiles_JPEG"); //$NON-NLS-1$
+      return i18n.tr("JPEG files"); //$NON-NLS-1$
     }
 
     @Override
@@ -135,7 +139,7 @@ public abstract class ImageFileFilter extends javax.swing.filechooser.FileFilter
      */
     @Override
     public String getDescription() {
-      return Messages.getString("ImageFileFilter.ImageFiles_RAW"); //$NON-NLS-1$
+      return i18n.tr("RAW files"); //$NON-NLS-1$
     }
 
     @Override
@@ -164,7 +168,7 @@ public abstract class ImageFileFilter extends javax.swing.filechooser.FileFilter
      */
     @Override
     public String getDescription() {
-      return Messages.getString("ImageFileFilter.ImageFiles_TIFF"); //$NON-NLS-1$
+      return i18n.tr("TIFF files"); //$NON-NLS-1$
     }
     @Override
     public Type getType() {
@@ -201,8 +205,8 @@ public abstract class ImageFileFilter extends javax.swing.filechooser.FileFilter
         description.append(fileType.toUpperCase());
       }
       description.append(' ');
-      description.append(Messages
-          .getString("ImageFileFilter.ImageFiles_CUSTOM_FILE_WITH_XMP")); //$NON-NLS-1$
+      description.append(i18n
+          .tr("files with XMP sidecar")); //$NON-NLS-1$
       return description.toString();
     }
 

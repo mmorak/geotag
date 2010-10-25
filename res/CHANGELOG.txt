@@ -1,3 +1,9 @@
+Release 0.071
+  Geotag now uses GNU gettext po files for 
+  translations. Major change under the bonnet
+  that hopefully will go unnoticed.
+  Support for Nokon NRW files.
+
 Release 0.070
   Fixed image view problem for images damaged by
   Google's Picasa.

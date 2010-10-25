@@ -1,6 +1,6 @@
 /**
  * Geotag
- * Copyright (C) 2007-2009 Andreas Schneider
+ * Copyright (C) 2007-2010 Andreas Schneider
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,8 +24,9 @@ import java.util.List;
 import org.fibs.geotag.data.ImageInfo;
 import org.fibs.geotag.data.ImageInfo.DATA_SOURCE;
 import org.fibs.geotag.exif.ExifWriter;
-import org.fibs.geotag.i18n.Messages;
 import org.fibs.geotag.table.ImagesTableModel;
+import org.xnap.commons.i18n.I18n;
+import org.xnap.commons.i18n.I18nFactory;
 
 /**
  * A class writing the location information for an image to the EXIF data of the
@@ -35,6 +36,9 @@ import org.fibs.geotag.table.ImagesTableModel;
  * 
  */
 public class ExifWriterTask extends BackgroundTask<ImageInfo> {
+  
+  /** Create i18n support */
+  private static final I18n i18n = I18nFactory.getI18n(ExifWriterTask.class);
 
   /** the table model to be informed about changes. */
   private ImagesTableModel imagesTableModel;
@@ -111,11 +115,11 @@ public class ExifWriterTask extends BackgroundTask<ImageInfo> {
     }
     String result = null;
     if (imagesUpdated == 1) {
-      result = Messages.getString("ExifWriterTask.OneImageUpdated"); //$NON-NLS-1$
+      result = i18n.tr("One image updated."); //$NON-NLS-1$
     } else {
       try {
-        result = String.format(Messages
-            .getString("ExifWriterTask.ImagesUpdatedFormat"), imagesUpdated); //$NON-NLS-1$
+        result = String.format(i18n
+            .tr("%d images updated."), imagesUpdated); //$NON-NLS-1$
       } catch (IllegalFormatException e) {
         e.printStackTrace();
       }

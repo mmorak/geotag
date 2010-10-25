@@ -1,6 +1,6 @@
 /**
  * Geotag
- * Copyright (C) 2007-2009 Andreas Schneider
+ * Copyright (C) 2007-2010 Andreas Schneider
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,9 +21,10 @@ package org.fibs.geotag.tasks;
 import java.io.File;
 import java.util.List;
 
-import org.fibs.geotag.i18n.Messages;
 import org.fibs.geotag.track.GpxOneOneReader;
 import org.fibs.geotag.track.GpxReader;
+import org.xnap.commons.i18n.I18n;
+import org.xnap.commons.i18n.I18nFactory;
 
 import com.topografix.gpx._1._0.Gpx;
 import com.topografix.gpx._1._0.Gpx.Trk;
@@ -34,6 +35,9 @@ import com.topografix.gpx._1._0.Gpx.Trk.Trkseg;
  * 
  */
 public class GpxReadFileTask extends BackgroundTask<Gpx> {
+  
+  /** Create i18n support */
+  private static final I18n i18n = I18nFactory.getI18n(GpxReadFileTask.class);
 
   /** The files to be read. */
   private File[] files;
@@ -105,7 +109,7 @@ public class GpxReadFileTask extends BackgroundTask<Gpx> {
       }
     }
     String message = trackPointsFound
-        + " " + Messages.getString("GpxReadFileTask.LocationsLoaded"); //$NON-NLS-1$//$NON-NLS-2$
+        + " " + i18n.tr("locations loaded."); //$NON-NLS-1$//$NON-NLS-2$
     return message;
   }
 

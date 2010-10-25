@@ -1,6 +1,6 @@
 /**
  * Geotag
- * Copyright (C) 2007-2009 Andreas Schneider
+ * Copyright (C) 2007-2010 Andreas Schneider
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,15 +21,19 @@ package org.fibs.geotag.tasks;
 import org.fibs.geotag.data.ImageInfo;
 import org.fibs.geotag.data.UpdateGPSImgDirection;
 import org.fibs.geotag.data.ImageInfo.DATA_SOURCE;
-import org.fibs.geotag.i18n.Messages;
 import org.fibs.geotag.util.Constants;
 import org.fibs.geotag.util.Util;
+import org.xnap.commons.i18n.I18n;
+import org.xnap.commons.i18n.I18nFactory;
 
 /**
  * @author Andreas Schneider
  * 
  */
 public class EditDirectionTask extends UndoableBackgroundTask<ImageInfo> {
+  
+  /** Create i18n support */
+  private static final I18n i18n = I18nFactory.getI18n(EditDirectionTask.class);
 
   /** The image whose direction will be set. */
   private ImageInfo imageInfo;
@@ -109,7 +113,7 @@ public class EditDirectionTask extends UndoableBackgroundTask<ImageInfo> {
       }
       publish(imageInfo);
     }
-    return Messages.getString("ChangeDirectionTask.DirectionEdited"); //$NON-NLS-1$
+    return i18n.tr("Direction edited"); //$NON-NLS-1$
   }
 
 }

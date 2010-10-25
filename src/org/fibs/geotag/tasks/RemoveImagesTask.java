@@ -1,6 +1,6 @@
 /**
  * Geotag
- * Copyright (C) 2007-2009 Andreas Schneider
+ * Copyright (C) 2007-2010 Andreas Schneider
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,8 +22,9 @@ import java.util.IllegalFormatException;
 import java.util.List;
 
 import org.fibs.geotag.data.ImageInfo;
-import org.fibs.geotag.i18n.Messages;
 import org.fibs.geotag.table.ImagesTableModel;
+import org.xnap.commons.i18n.I18n;
+import org.xnap.commons.i18n.I18nFactory;
 
 /**
  * A background task for removing images from the table.
@@ -32,6 +33,9 @@ import org.fibs.geotag.table.ImagesTableModel;
  * 
  */
 public class RemoveImagesTask extends UndoableBackgroundTask<ImageInfo> {
+  
+  /** Create i18n support */
+  private static final I18n i18n = I18nFactory.getI18n(RemoveImagesTask.class);
 
   /** keep track of current progress. */
   private int currentProgress = 0;
@@ -102,12 +106,12 @@ public class RemoveImagesTask extends UndoableBackgroundTask<ImageInfo> {
     }
     String result = null;
     if (currentProgress == 1) {
-      result = Messages.getString("RemoveImagesTask.OneImageRemoved"); //$NON-NLS-1$
+      result = i18n.tr("One image removed"); //$NON-NLS-1$
     } else {
       try {
         result = String
             .format(
-                Messages.getString("RemoveImagesTask.ImagesRemovedFormat"), currentProgress); //$NON-NLS-1$
+                i18n.tr("%d images removed"), currentProgress); //$NON-NLS-1$
       } catch (IllegalFormatException e) {
         e.printStackTrace();
       }

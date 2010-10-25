@@ -1,6 +1,6 @@
 /**
  * Geotag
- * Copyright (C) 2007-2009 Andreas Schneider
+ * Copyright (C) 2007-2010 Andreas Schneider
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -33,9 +33,10 @@ import org.fibs.geotag.data.ImageInfo.DATA_SOURCE;
 import org.fibs.geotag.geonames.Location;
 import org.fibs.geotag.geonames.LocationHandler;
 import org.fibs.geotag.geonames.WikipediaHandler;
-import org.fibs.geotag.i18n.Messages;
 import org.fibs.geotag.table.ImagesTableModel;
 import org.fibs.geotag.util.Util;
+import org.xnap.commons.i18n.I18n;
+import org.xnap.commons.i18n.I18nFactory;
 
 /**
  * A class finding location names for images.
@@ -44,6 +45,9 @@ import org.fibs.geotag.util.Util;
  * 
  */
 public class LocationNamesTask extends UndoableBackgroundTask<ImageInfo> {
+  
+  /** Create i18n support */
+  private static final I18n i18n = I18nFactory.getI18n(LocationNamesTask.class);
 
   /** the table model to be informed about changes. */
   private ImagesTableModel imagesTableModel;
@@ -190,11 +194,11 @@ public class LocationNamesTask extends UndoableBackgroundTask<ImageInfo> {
     }
     String result = null;
     if (namesFound == 1) {
-      result = Messages.getString("LocationNamesTask.OneLocationNameFound"); //$NON-NLS-1$
+      result = i18n.tr("One location name found"); //$NON-NLS-1$
     } else {
       try {
-        result = String.format(Messages
-            .getString("LocationNamesTask.LocationNamesFoundFormat"), //$NON-NLS-1$
+        result = String.format(i18n
+            .tr("%d location names found"), //$NON-NLS-1$
             namesFound);
       } catch (IllegalFormatException e) {
         e.printStackTrace();

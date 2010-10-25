@@ -1,6 +1,6 @@
 /**
  * Geotag
- * Copyright (C) 2007-2009 Andreas Schneider
+ * Copyright (C) 2007-2010 Andreas Schneider
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -41,7 +41,8 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import org.fibs.geotag.i18n.Messages;
+import org.xnap.commons.i18n.I18n;
+import org.xnap.commons.i18n.I18nFactory;
 
 /**
  * A font chooser component.
@@ -51,6 +52,9 @@ import org.fibs.geotag.i18n.Messages;
  */
 @SuppressWarnings("serial")
 public class FontChooser extends JDialog {
+  
+  /** Create i18n support */
+  private static final I18n i18n = I18nFactory.getI18n(FontChooser.class);
 
   /** the smallest font size selectable. */
   private static final int SMALLEST_FONT_SIZE = 6;
@@ -68,7 +72,7 @@ public class FontChooser extends JDialog {
    * @param initialFont
    */
   public FontChooser(Frame parent, Font initialFont) {
-    super(parent, Messages.getString("FontChooser.SelectFont"), true); //$NON-NLS-1$
+    super(parent, i18n.tr("Select Font"), true); //$NON-NLS-1$
 
     // initially display the font specified in the constructor
     displayedFont = initialFont;
@@ -184,7 +188,7 @@ public class FontChooser extends JDialog {
     add(fontSelectionPanel, BorderLayout.NORTH);
 
     JPanel buttonPanel = new JPanel(new GridLayout(1, 2));
-    JButton okButton = new JButton(Messages.getString("FontChooser.OK")); //$NON-NLS-1$
+    JButton okButton = new JButton(i18n.tr("OK")); //$NON-NLS-1$
     okButton.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         dispose();
@@ -192,7 +196,7 @@ public class FontChooser extends JDialog {
     });
     buttonPanel.add(okButton);
 
-    JButton cancelButton = new JButton(Messages.getString("FontChooser.Cancel")); //$NON-NLS-1$
+    JButton cancelButton = new JButton(i18n.tr("Cancel")); //$NON-NLS-1$
     cancelButton.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         setDisplayedFont(null);

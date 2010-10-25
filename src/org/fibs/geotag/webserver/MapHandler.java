@@ -1,6 +1,6 @@
 /**
  * Geotag
- * Copyright (C) 2007-2009 Andreas Schneider
+ * Copyright (C) 2007-2010 Andreas Schneider
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -26,7 +26,8 @@ import java.io.InputStreamReader;
 import java.util.Properties;
 import java.util.StringTokenizer;
 
-import org.fibs.geotag.i18n.Messages;
+import org.xnap.commons.i18n.I18n;
+import org.xnap.commons.i18n.I18nFactory;
 
 import fi.iki.elonen.NanoHTTPD;
 import fi.iki.elonen.NanoHTTPD.Response;
@@ -40,6 +41,9 @@ import fi.iki.elonen.NanoHTTPD.Response;
  * 
  */
 public class MapHandler implements ContextHandler {
+  
+  /** Create i18n support */
+  private static final I18n i18n = I18nFactory.getI18n(MapHandler.class);
 
   /**
    * @see org.fibs.geotag.webserver.ContextHandler#serve(org.fibs.geotag.webserver.WebServer,
@@ -154,7 +158,7 @@ public class MapHandler implements ContextHandler {
    * @param value
    */
   private void addVariable(StringBuilder page, JavascriptVaraibles variable) {
-    String value = Messages.getString(variable.getMessagesKey());
+    String value = i18n.tr(variable.getMessagesKey());
     for (int index = 0; index < value.length(); index++) {
       char character = value.charAt(index);
       if (character < ' ' || (character >= '\u0080' && character < '\u00a0') ||

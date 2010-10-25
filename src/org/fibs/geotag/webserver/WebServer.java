@@ -1,6 +1,6 @@
 /**
  * Geotag
- * Copyright (C) 2007-2009 Andreas Schneider
+ * Copyright (C) 2007-2010 Andreas Schneider
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,8 +27,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import org.fibs.geotag.i18n.Messages;
 import org.fibs.geotag.table.ImagesTableModel;
+import org.xnap.commons.i18n.I18n;
+import org.xnap.commons.i18n.I18nFactory;
 
 import fi.iki.elonen.NanoHTTPD;
 
@@ -42,13 +43,16 @@ import fi.iki.elonen.NanoHTTPD;
  * 
  */
 public class WebServer extends NanoHTTPD {
+  
+  /** Create i18n support */
+  private static final I18n i18n = I18nFactory.getI18n(WebServer.class);
 
   /** The MIME type for XML files. */
   public static final String XML_MIME_TYPE = "application/xml"; //$NON-NLS-1$
 
   /** Message to send if file or resource not found. */
-  public static final String FILE_NOT_FOUND = Messages
-      .getString("WebServer.Error404"); //$NON-NLS-1$
+  public static final String FILE_NOT_FOUND = i18n
+      .tr("Error 404, file not found."); //$NON-NLS-1$
 
   /** A list of contexts known to the server. */
   private List<String> contexts = new ArrayList<String>();

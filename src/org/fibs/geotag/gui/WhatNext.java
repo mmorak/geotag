@@ -1,6 +1,6 @@
 /**
  * Geotag
- * Copyright (C) 2007-2009 Andreas Schneider
+ * Copyright (C) 2007-2010 Andreas Schneider
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -29,11 +29,12 @@ import org.fibs.geotag.Geotag;
 import org.fibs.geotag.dcraw.Dcraw;
 import org.fibs.geotag.exif.Exiftool;
 import org.fibs.geotag.gpsbabel.GPSBabel;
-import org.fibs.geotag.i18n.Messages;
 import org.fibs.geotag.image.FileTypes;
 import org.fibs.geotag.table.ImagesTableModel;
 import org.fibs.geotag.track.TrackStore;
 import org.fibs.geotag.util.Util;
+import org.xnap.commons.i18n.I18n;
+import org.xnap.commons.i18n.I18nFactory;
 
 /**
  * A class that tries to generate suggestions what to do next.
@@ -42,6 +43,10 @@ import org.fibs.geotag.util.Util;
  * 
  */
 public final class WhatNext {
+  
+  /** Create i18n support */
+  private static final I18n i18n = I18nFactory.getI18n(WhatNext.class);
+  
   /**
    * hide constructor.
    */
@@ -137,8 +142,8 @@ public final class WhatNext {
       message.append("<br>"); //$NON-NLS-1$
     }
     message.append("</html"); //$NON-NLS-1$
-    JOptionPane.showMessageDialog(parentComponent, message.toString(), Messages
-        .getString("MainWindow.WhatNext"), //$NON-NLS-1$
+    JOptionPane.showMessageDialog(parentComponent, message.toString(), i18n
+        .tr("What next?"), //$NON-NLS-1$
         JOptionPane.INFORMATION_MESSAGE);
   }
 
@@ -152,10 +157,10 @@ public final class WhatNext {
   private static void suggestFindingDcraw(boolean dcrawAvailable,
       boolean rawImagesAvailable, List<String> suggestions) {
     if (!dcrawAvailable && rawImagesAvailable) {
-      String text = String.format(Messages
-          .getString("WhatNext.SuggestFindingDcrawFormat"), Messages //$NON-NLS-1$
-          .getString("MainWindow.File"), RIGHT_ARROW,Messages //$NON-NLS-1$
-          .getString("MainWindow.Settings")); //$NON-NLS-1$
+      String text = String.format(i18n
+          .tr("The 'dcraw' program can't be found. It is needed to display previews of your RAW images. Select <b>%s %s %s</b> to find it."), i18n //$NON-NLS-1$
+          .tr("File"), RIGHT_ARROW,i18n //$NON-NLS-1$
+          .tr("Settings")); //$NON-NLS-1$
       suggestions.add(text);
     }
   }
@@ -169,10 +174,10 @@ public final class WhatNext {
   private static void suggestFindingGPSBabel(boolean gpsbabelAvailable,
       List<String> suggestions) {
     if (!gpsbabelAvailable) {
-      String text = String.format(Messages
-          .getString("WhatNext.SuggestFindingGPSBabelFormat"), Messages //$NON-NLS-1$
-          .getString("MainWindow.File"), RIGHT_ARROW, Messages //$NON-NLS-1$
-          .getString("MainWindow.Settings")); //$NON-NLS-1$
+      String text = String.format(i18n
+          .tr("The 'GPSBabel' program can't be found. It is only needed if you want to load tracks directly from your GPS. Select <b>%s %s %s</b> to find it."), i18n //$NON-NLS-1$
+          .tr("File"), RIGHT_ARROW, i18n //$NON-NLS-1$
+          .tr("Settings")); //$NON-NLS-1$
       suggestions.add(text);
     }
   }
@@ -186,10 +191,10 @@ public final class WhatNext {
   private static void suggestFindingExiftool(boolean exiftoolAvailable,
       List<String> suggestions) {
     if (!exiftoolAvailable) {
-      String text = String.format(Messages
-          .getString("WhatNext.SuggestFindingExiftoolFormat"), Messages //$NON-NLS-1$
-          .getString("MainWindow.File"), RIGHT_ARROW, Messages //$NON-NLS-1$
-          .getString("MainWindow.Settings")); //$NON-NLS-1$
+      String text = String.format(i18n
+          .tr("The 'exiftool' program can't be found. It is needed to save coordinates  to your images. Select <b>%s %s %s</b> to find it."), i18n //$NON-NLS-1$
+          .tr("File"), RIGHT_ARROW, i18n //$NON-NLS-1$
+          .tr("Settings")); //$NON-NLS-1$
       suggestions.add(text);
     }
   }
@@ -204,9 +209,9 @@ public final class WhatNext {
   private static void suggestLocationNames(boolean imagesWithLocationAvailable,
       boolean locationNamesFound, List<String> suggestions) {
     if (imagesWithLocationAvailable && !locationNamesFound) {
-      String text = String.format(Messages
-          .getString("WhatNext.SuggestLocationNamesFormat"), //$NON-NLS-1$
-          Messages.getString("ImagesTablePopupMenu.LocationNames")); //$NON-NLS-1$
+      String text = String.format(i18n
+          .tr("Geotag can search for nearby place names for images that already have coordinates by using the <b>%1$s</b> menu."), //$NON-NLS-1$
+          i18n.tr("Location names")); //$NON-NLS-1$
       suggestions.add(text);
     }
   }
@@ -220,9 +225,9 @@ public final class WhatNext {
   private static void suggestSaving(boolean imagesWithNewLocationAvailable,
       List<String> suggestions) {
     if (imagesWithNewLocationAvailable) {
-      String text = String.format(Messages
-          .getString("WhatNext.SuggestSavingFormat"), //$NON-NLS-1$
-          Messages.getString("ImagesTablePopupMenu.SaveNewLocations")); //$NON-NLS-1$
+      String text = String.format(i18n
+          .tr("You can save the locations of images listed in <b>bold</b> by using the <b>%1$s</b> menu. Note that this operation <b>cannot be un-done</b>!"), //$NON-NLS-1$
+          i18n.tr("Save new locations")); //$NON-NLS-1$
       suggestions.add(text);
     }
   }
@@ -236,9 +241,9 @@ public final class WhatNext {
   private static void suggestFillingGaps(boolean gapsAvailable,
       List<String> suggestions) {
     if (gapsAvailable) {
-      String text = String.format(Messages
-          .getString("WhatNext.SuggestFillingGapsFormat"), //$NON-NLS-1$
-          Messages.getString("ImagesTablePopupMenu.FillGaps"), //$NON-NLS-1$
+      String text = String.format(i18n
+          .tr("Some images have coordinates and some don't. You can use the <b>%1$s</b> menu to make %2$s guess where images were taken."), //$NON-NLS-1$
+          i18n.tr("Fill gaps"), //$NON-NLS-1$
           Geotag.NAME);
       suggestions.add(text);
     }
@@ -255,10 +260,10 @@ public final class WhatNext {
   private static void suggestMatchingTracks(boolean imagesAvailable,
       boolean tracksAvailable, List<String> suggestions) {
     if (imagesAvailable && tracksAvailable) {
-      String text = String.format(Messages
-          .getString("WhatNext.SuggestMatchTracksFormat"), //$NON-NLS-1$
-          Messages.getString("ImagesTableModel.Offset"), //$NON-NLS-1$
-          Messages.getString("ImagesTablePopupMenu.MatchTracks")); //$NON-NLS-1$
+      String text = String.format(i18n
+          .tr("If your happy with the time <b>%1$s</b> values, right click on any image and use the <b>%2$s</b> menu to match the GPS data to images."), //$NON-NLS-1$
+          i18n.tr("Offset"), //$NON-NLS-1$
+          i18n.tr("Find locations")); //$NON-NLS-1$
       suggestions.add(text);
     }
   }
@@ -273,9 +278,9 @@ public final class WhatNext {
   private static void suggestShowOnMap(boolean imagesAvailable,
       List<String> suggestions) {
     if (imagesAvailable) {
-      String text = String.format(Messages
-          .getString("WhatNext.SuggestShowOnMapFormat"), //$NON-NLS-1$
-          Messages.getString("ImagesTablePopupMenu.ShowOnMap")); //$NON-NLS-1$
+      String text = String.format(i18n
+          .tr("You can right click on an image and select <b>%1$s</b> to show the image location on a map in your browser and move the marker on the map to adjust the location."), //$NON-NLS-1$
+          i18n.tr("Show on map")); //$NON-NLS-1$
       suggestions.add(text);
     }
   }
@@ -291,10 +296,10 @@ public final class WhatNext {
       List<String> suggestions) {
     if (imagesAvailable) {
       // now for some interesting suggestions
-      String text = String.format(Messages
-          .getString("WhatNext.SuggestCheckingTimesFormat"), //$NON-NLS-1$
-          Messages.getString("ImagesTableModel.Offset"), //$NON-NLS-1$
-          Messages.getString("ImagesTablePopupMenu.SelectCorrectTimeForImage")); //$NON-NLS-1$
+      String text = String.format(i18n
+          .tr("Make sure the time <b>%1$s</b> values are correct. It's best to right click on an image you are sure about (say an image of your GPS display) and choose <b>%2$s</b> from the menu bar, then select the exact time (and time zone) the image was taken."), //$NON-NLS-1$
+          i18n.tr("Offset"), //$NON-NLS-1$
+          i18n.tr("Set time of image")); //$NON-NLS-1$
       suggestions.add(text);
     }
   }
@@ -312,15 +317,15 @@ public final class WhatNext {
       // no tracks loaded yet - suggest to do so
       String text = String
           .format(
-              Messages.getString("WhatNext.SuggestOpeningTrackFormat"), //$NON-NLS-1$
-              Messages.getString("MainWindow.File"), RIGHT_ARROW, Messages.getString("MainWindow.LoadTracksFromFile")); //$NON-NLS-1$ //$NON-NLS-2$
+              i18n.tr("Load a GPS track file. Select <b>%s %s %s</b> from the menu bar."), //$NON-NLS-1$
+              i18n.tr("File"), RIGHT_ARROW, i18n.tr("Load tracks from file")); //$NON-NLS-1$ //$NON-NLS-2$
       suggestions.add(text);
 
       if (gpsbabelAvailable) {
-        text = String.format(Messages
-            .getString("WhatNext.SuggestLoadingFromGPSFormat"), //$NON-NLS-1$
-            Messages.getString("MainWindow.File"), RIGHT_ARROW, Messages //$NON-NLS-1$
-                .getString("MainWindow.LoadTrackFromGPS")); //$NON-NLS-1$
+        text = String.format(i18n
+            .tr("You can also load tracks directly from your GPS. Select <b>%s %s %s</b>."), //$NON-NLS-1$
+            i18n.tr("File"), RIGHT_ARROW, i18n //$NON-NLS-1$
+                .tr("Load tracks from GPS")); //$NON-NLS-1$
         suggestions.add(text);
       }
     }
@@ -338,8 +343,8 @@ public final class WhatNext {
       // no images loaded yet - suggest doing so
       String text = String
           .format(
-              Messages.getString("WhatNext.SuggestLoadingImagesFormat"), //$NON-NLS-1$
-              Messages.getString("MainWindow.File"), RIGHT_ARROW, Messages.getString("MainWindow.AddDirectory")); //$NON-NLS-1$ //$NON-NLS-2$
+              i18n.tr("Load some image files. Select <b>%s %s %s</b> from the menu or add them by using drag-and-drop."), //$NON-NLS-1$
+              i18n.tr("File"), RIGHT_ARROW, i18n.tr("Add images from directory")); //$NON-NLS-1$ //$NON-NLS-2$
       suggestions.add(text);
     }
   }
@@ -354,9 +359,9 @@ public final class WhatNext {
       List<String> suggestions) {
     if (imagesAvailable) {
       // images are available - suggest removing some of them
-      String text = String.format(Messages
-          .getString("WhatNext.SuggestRemovingImagesFormat"), //$NON-NLS-1$
-          Messages.getString("ImagesTablePopupMenu.RemoveImages")); //$NON-NLS-1$
+      String text = String.format(i18n
+          .tr("If there are too many images displayed, you can remove some of them using the  <b>%1$s</b> menu. They will be removed from the display, but not deleted."), //$NON-NLS-1$
+          i18n.tr("Remove images")); //$NON-NLS-1$
       suggestions.add(text);
     }
   }

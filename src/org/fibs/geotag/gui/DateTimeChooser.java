@@ -1,6 +1,6 @@
 /**
  * Geotag
- * Copyright (C) 2007-2009 Andreas Schneider
+ * Copyright (C) 2007-2010 Andreas Schneider
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -54,7 +54,8 @@ import javax.swing.event.ChangeListener;
 
 import org.fibs.geotag.Settings;
 import org.fibs.geotag.Settings.SETTING;
-import org.fibs.geotag.i18n.Messages;
+import org.xnap.commons.i18n.I18n;
+import org.xnap.commons.i18n.I18nFactory;
 
 /**
  * A dialog that lets the user select a date and a time.
@@ -64,6 +65,9 @@ import org.fibs.geotag.i18n.Messages;
  */
 @SuppressWarnings("serial")
 public class DateTimeChooser extends JDialog {
+  
+  /** Create i18n support */
+  private static final I18n i18n = I18nFactory.getI18n(DateTimeChooser.class);
 
   /** The number of months in a year. */
   private static final int MONTHS_IN_YEAR = 12;
@@ -170,7 +174,7 @@ public class DateTimeChooser extends JDialog {
     buttonPanel.setLayout(new GridLayout(1, hasNowButton ? 3 : 2));
     buttonPanel.setBorder(new EtchedBorder(EtchedBorder.RAISED));
     // A button to confirm the selected date/time
-    JButton okButton = new JButton(Messages.getString("DateTimeChooser.OK")); //$NON-NLS-1$
+    JButton okButton = new JButton(i18n.tr("OK")); //$NON-NLS-1$
     okButton.addMouseListener(new MouseAdapter() {
       @Override
       public void mouseClicked(MouseEvent e) {
@@ -189,8 +193,8 @@ public class DateTimeChooser extends JDialog {
       }
     });
     buttonPanel.add(okButton);
-    JButton cancelButton = new JButton(Messages
-        .getString("DateTimeChooser.Cancel")); //$NON-NLS-1$
+    JButton cancelButton = new JButton(i18n
+        .tr("Cancel")); //$NON-NLS-1$
     cancelButton.addMouseListener(new MouseAdapter() {
       @Override
       public void mouseClicked(MouseEvent e) {
@@ -201,7 +205,7 @@ public class DateTimeChooser extends JDialog {
       }
     });
     buttonPanel.add(cancelButton);
-    JButton nowButton = new JButton(Messages.getString("DateTimeChooser.Now")); //$NON-NLS-1$
+    JButton nowButton = new JButton(i18n.tr("Now")); //$NON-NLS-1$
     nowButton.addMouseListener(new MouseAdapter() {
       @Override
       public void mouseClicked(MouseEvent e) {

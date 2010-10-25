@@ -1,0 +1,14 @@
+#!/bin/bash
+function compile {
+	echo Compiling $1
+	msgfmt --statistics --java2 -d ../bin -r org.fibs.geotag.i18n.Messages -l $1 ../i18n/$1.po
+	echo
+}  
+
+cd ../src
+pwd
+compile de
+compile da
+compile fr
+compile en_GB
+cd ../i18n

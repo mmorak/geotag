@@ -1,6 +1,6 @@
 /**
  * Geotag
- * Copyright (C) 2007-2009 Andreas Schneider
+ * Copyright (C) 2007-2010 Andreas Schneider
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,19 +20,24 @@ package org.fibs.geotag.util;
 
 import java.awt.Desktop;
 import java.net.URI;
+
 import javax.swing.JOptionPane;
 
-import org.fibs.geotag.i18n.Messages;
+import org.xnap.commons.i18n.I18n;
+import org.xnap.commons.i18n.I18nFactory;
 
 /**
  * @author Felipe
  * @author andreas
  */
 public class BrowserLauncher {
+  
+  /** Create i18n support */
+  private static final I18n i18n = I18nFactory.getI18n(BrowserLauncher.class);
 
   /** Error message */
-  private static final String errorMessage = Messages
-      .getString("BrowserLauncher.ErrorLauchingBrowser"); //$NON-NLS-1$
+  private static final String errorMessage = i18n
+      .tr("Error attempting to launch web browser."); //$NON-NLS-1$
 
   /**
    * Open the url either with the browser specified or with the system default

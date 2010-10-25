@@ -1,6 +1,6 @@
 /**
  * Geotag
- * Copyright (C) 2007-2009 Andreas Schneider
+ * Copyright (C) 2007-2010 Andreas Schneider
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -34,10 +34,11 @@ import javax.xml.bind.Marshaller;
 import org.fibs.geotag.data.ImageInfo;
 import org.fibs.geotag.external.ExternalUpdate;
 import org.fibs.geotag.external.ExternalUpdateConsumer;
-import org.fibs.geotag.i18n.Messages;
 import org.fibs.geotag.util.Airy;
 import org.fibs.geotag.webserver.ContextHandler;
 import org.fibs.geotag.webserver.WebServer;
+import org.xnap.commons.i18n.I18n;
+import org.xnap.commons.i18n.I18nFactory;
 
 import com.google.earth.kml._2.BalloonStyleType;
 import com.google.earth.kml._2.DocumentType;
@@ -59,6 +60,9 @@ import fi.iki.elonen.NanoHTTPD.Response;
  * 
  */
 public class KmlRequestHandler implements ContextHandler {
+  
+  /** Create i18n support */
+  private static final I18n i18n = I18nFactory.getI18n(KmlRequestHandler.class);
 
   /** Who to inform about external updates. */
   private ExternalUpdateConsumer parent;
@@ -160,7 +164,7 @@ public class KmlRequestHandler implements ContextHandler {
       styleSelectors.add(factory.createStyle(style));
       // The place mark
       PlacemarkType placemark = factory.createPlacemarkType();
-      placemark.setName(Messages.getString("KmlRequestHandler.Position")); //$NON-NLS-1$
+      placemark.setName(i18n.tr("Position")); //$NON-NLS-1$
       placemark.setStyleUrl('#' + BALLOON_STYLE);
 
       PointType point = factory.createPointType();

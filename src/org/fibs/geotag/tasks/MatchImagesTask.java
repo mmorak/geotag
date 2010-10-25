@@ -1,6 +1,6 @@
 /**
  * Geotag
- * Copyright (C) 2007-2009 Andreas Schneider
+ * Copyright (C) 2007-2010 Andreas Schneider
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,11 +22,12 @@ import java.util.IllegalFormatException;
 import java.util.List;
 
 import org.fibs.geotag.data.ImageInfo;
-import org.fibs.geotag.i18n.Messages;
 import org.fibs.geotag.table.ImagesTable;
 import org.fibs.geotag.table.ImagesTableModel;
 import org.fibs.geotag.track.TrackMatcher;
 import org.fibs.geotag.track.TrackMatcher.Match;
+import org.xnap.commons.i18n.I18n;
+import org.xnap.commons.i18n.I18nFactory;
 
 /**
  * A background task for matching a list of images to positions.
@@ -35,6 +36,9 @@ import org.fibs.geotag.track.TrackMatcher.Match;
  * 
  */
 public class MatchImagesTask extends UndoableBackgroundTask<ImageInfo> {
+  
+  /** Create i18n support */
+  private static final I18n i18n = I18nFactory.getI18n(MatchImagesTask.class);
 
   /***/
   private ImagesTable imagesTable;
@@ -88,13 +92,13 @@ public class MatchImagesTask extends UndoableBackgroundTask<ImageInfo> {
     }
     String result = null;
     if (imagesMatched == 0) {
-      result = Messages.getString("MatchImagesTask.NoLocationsFound"); //$NON-NLS-1$
+      result = i18n.tr("No locations found."); //$NON-NLS-1$
     } else if (imagesMatched == 1) {
-      result = Messages.getString("MatchImagesTask.OneLocationFound"); //$NON-NLS-1$
+      result = i18n.tr("Found location for one image."); //$NON-NLS-1$
     } else {
       try {
-        result = String.format(Messages
-            .getString("MatchImagesTask.LocationsFoundFormat"), imagesMatched); //$NON-NLS-1$
+        result = String.format(i18n
+            .tr("Found location for %d images."), imagesMatched); //$NON-NLS-1$
       } catch (IllegalFormatException e) {
         e.printStackTrace();
       }

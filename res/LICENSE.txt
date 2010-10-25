@@ -30,6 +30,10 @@ net.iharder.dnd:
 FileDrop by Robert Harder
 Released as public domain software
 
+org.xnap.commons
+gettext-commons by the Gettext Commons project
+Released under Apache License 2.0
+
 HtmlControl.js:
 An HTML GControl by Martin Pearman.
 Released as Freeware.

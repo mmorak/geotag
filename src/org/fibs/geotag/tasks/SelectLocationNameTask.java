@@ -1,6 +1,6 @@
 /**
  * Geotag
- * Copyright (C) 2007-2009 Andreas Schneider
+ * Copyright (C) 2007-2010 Andreas Schneider
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -28,9 +28,10 @@ import org.fibs.geotag.data.UpdateProvinceName;
 import org.fibs.geotag.data.ImageInfo.DATA_SOURCE;
 import org.fibs.geotag.geonames.Location;
 import org.fibs.geotag.geonames.WikipediaLocation;
-import org.fibs.geotag.i18n.Messages;
 import org.fibs.geotag.table.ImagesTableModel;
 import org.fibs.geotag.util.Util;
+import org.xnap.commons.i18n.I18n;
+import org.xnap.commons.i18n.I18nFactory;
 
 /**
  * @author Andreas Schneider
@@ -38,6 +39,9 @@ import org.fibs.geotag.util.Util;
  */
 public class SelectLocationNameTask extends UndoableBackgroundTask<ImageInfo> {
 
+  /** Create i18n support */
+  private static final I18n i18n = I18nFactory.getI18n(SelectLocationNameTask.class);
+  
   /** The image whose location names will be set. */
   private ImageInfo imageInfo;
 
@@ -142,7 +146,7 @@ public class SelectLocationNameTask extends UndoableBackgroundTask<ImageInfo> {
         }
       }
     }
-    return Messages.getString("SelectLocationNameTask.NewLocationNameSelected"); //$NON-NLS-1$
+    return i18n.tr("New location name selected."); //$NON-NLS-1$
   }
 
   /**

@@ -1,6 +1,6 @@
 /**
  * Geotag
- * Copyright (C) 2007-2009 Andreas Schneider
+ * Copyright (C) 2007-2010 Andreas Schneider
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,7 +21,8 @@ package org.fibs.geotag.util;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.fibs.geotag.i18n.Messages;
+import org.xnap.commons.i18n.I18n;
+import org.xnap.commons.i18n.I18nFactory;
 
 /**
  * A class for small convenience methods that are used in several places.
@@ -30,6 +31,10 @@ import org.fibs.geotag.i18n.Messages;
  * 
  */
 public final class Util {
+  
+  /** Create i18n support */
+  private static final I18n i18n = I18nFactory.getI18n(Util.class);
+  
   /**
    * hide constructor.
    */
@@ -168,22 +173,22 @@ public final class Util {
    * @return The direction in degrees or Double.NaN
    */
   public static double degreesFromCardinalDirection(String direction) {
-    String[] cardinalDirections = { Messages.getString("Util.N"), //$NON-NLS-1$
-        Messages.getString("Util.NNE"), //$NON-NLS-1$
-        Messages.getString("Util.NE"), //$NON-NLS-1$
-        Messages.getString("Util.ENE"), //$NON-NLS-1$
-        Messages.getString("Util.E"), //$NON-NLS-1$
-        Messages.getString("Util.ESE"), //$NON-NLS-1$
-        Messages.getString("Util.SE"), //$NON-NLS-1$
-        Messages.getString("Util.SSE"), //$NON-NLS-1$
-        Messages.getString("Util.S"), //$NON-NLS-1$
-        Messages.getString("Util.SSW"), //$NON-NLS-1$
-        Messages.getString("Util.SW"), //$NON-NLS-1$
-        Messages.getString("Util.WSW"), //$NON-NLS-1$
-        Messages.getString("Util.W"), //$NON-NLS-1$
-        Messages.getString("Util.WNW"), //$NON-NLS-1$
-        Messages.getString("Util.NW"), //$NON-NLS-1$
-        Messages.getString("Util.NNW") //$NON-NLS-1$
+    String[] cardinalDirections = { i18n.tr("N"), //$NON-NLS-1$
+        i18n.tr("NNE"), //$NON-NLS-1$
+        i18n.tr("NE"), //$NON-NLS-1$
+        i18n.tr("ENE"), //$NON-NLS-1$
+        i18n.tr("E"), //$NON-NLS-1$
+        i18n.tr("ESE"), //$NON-NLS-1$
+        i18n.tr("SE"), //$NON-NLS-1$
+        i18n.tr("SSE"), //$NON-NLS-1$
+        i18n.tr("S"), //$NON-NLS-1$
+        i18n.tr("SSW"), //$NON-NLS-1$
+        i18n.tr("SW"), //$NON-NLS-1$
+        i18n.tr("WSW"), //$NON-NLS-1$
+        i18n.tr("W"), //$NON-NLS-1$
+        i18n.tr("WNW"), //$NON-NLS-1$
+        i18n.tr("NW"), //$NON-NLS-1$
+        i18n.tr("NNW") //$NON-NLS-1$
     };
     for (int i = 0; i < cardinalDirections.length; i++) {
       if (direction.equalsIgnoreCase(cardinalDirections[i])) {

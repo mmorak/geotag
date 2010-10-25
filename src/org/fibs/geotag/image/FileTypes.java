@@ -1,6 +1,6 @@
 /**
  * Geotag
- * Copyright (C) 2007-2009 Andreas Schneider
+ * Copyright (C) 2007-2010 Andreas Schneider
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -156,6 +156,12 @@ public enum FileTypes {
       if (extension.equals("rw2")) { //$NON-NLS-1$
         // Panasonic RW2 files are read/write supported since Exiftool 7.73
         if (Exiftool.getVersion() != null && Exiftool.getVersion().compareTo("7.73") >=0) { //$NON-NLS-1$
+          return true;
+        }
+      }
+      if (extension.equals("nrw")) { //$NON-NLS-1$
+        // Nikon NRW files are read/write supported since Exiftool 7.90 (or thereabouts)
+        if (Exiftool.getVersion() != null && Exiftool.getVersion().compareTo("7.90") >=0) { //$NON-NLS-1$
           return true;
         }
       }

@@ -1,0 +1,14 @@
+#!/bin/bash
+cd ../src
+pwd
+xgettext --keyword=translate -o ../i18n/keys.pot $(find org/fibs -name *.java)
+cd ../i18n
+touch de.po
+msgmerge -U de.po keys.pot
+touch da.po
+msgmerge -U da.po keys.pot
+touch fr.po
+msgmerge -U fr.po keys.pot
+touch en_GB.po
+msgmerge -U en_GB.po keys.pot
+echo po files updated

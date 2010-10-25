@@ -1,6 +1,6 @@
 /**
  * Geotag
- * Copyright (C) 2007-2009 Andreas Schneider
+ * Copyright (C) 2007-2010 Andreas Schneider
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -30,7 +30,6 @@ import org.fibs.geotag.Settings;
 import org.fibs.geotag.Settings.SETTING;
 import org.fibs.geotag.data.ImageInfo;
 import org.fibs.geotag.data.ImageInfo.DATA_SOURCE;
-import org.fibs.geotag.i18n.Messages;
 import org.fibs.geotag.table.ImagesTableColumns.COLUMN;
 import org.fibs.geotag.tasks.EditAltitudeTask;
 import org.fibs.geotag.tasks.EditDirectionTask;
@@ -42,6 +41,8 @@ import org.fibs.geotag.util.Coordinates;
 import org.fibs.geotag.util.Unicode;
 import org.fibs.geotag.util.Units;
 import org.fibs.geotag.util.Util;
+import org.xnap.commons.i18n.I18n;
+import org.xnap.commons.i18n.I18nFactory;
 
 /**
  * A representation of the data displayed by the main Window.
@@ -51,6 +52,9 @@ import org.fibs.geotag.util.Util;
  */
 @SuppressWarnings("serial")
 public class ImagesTableModel extends AbstractTableModel {
+  
+  /** Create i18n support */
+  private static final I18n i18n = I18nFactory.getI18n(ImagesTableModel.class);
 
   /** Use an impossible value as default value for latitudes/longitudes. */
   private static final double INVALID_LAT_LON = 999.9;
@@ -69,18 +73,18 @@ public class ImagesTableModel extends AbstractTableModel {
 
   /** The columns we can display. */
   private static final String[] COLUMN_NAMES = {
-      Messages.getString("ImagesTableModel.Name"), //$NON-NLS-1$
-      Messages.getString("ImagesTableModel.GPSTime"), //$NON-NLS-1$
-      Messages.getString("ImagesTableModel.Offset"), //$NON-NLS-1$
-      Messages.getString("ImagesTableModel.CameraTime"), //$NON-NLS-1$
-      Messages.getString("ImagesTableModel.Latitude"), //$NON-NLS-1$
-      Messages.getString("ImagesTableModel.Longitude"), //$NON-NLS-1$
-      Messages.getString("ImagesTableModel.Altitude"), //$NON-NLS-1$
-      Messages.getString("ImagesTableModel.Direction"), //$NON-NLS-1$
-      Messages.getString("ImagesTableModel.Location"), //$NON-NLS-1$
-      Messages.getString("ImagesTableModel.City"), //$NON-NLS-1$
-      Messages.getString("ImagesTableModel.Province"), //$NON-NLS-1$
-      Messages.getString("ImagesTableModel.Country") }; //$NON-NLS-1$
+      i18n.tr("Name"), //$NON-NLS-1$
+      i18n.tr("GPS Time"), //$NON-NLS-1$
+      i18n.tr("Offset"), //$NON-NLS-1$
+      i18n.tr("Camera Time"), //$NON-NLS-1$
+      i18n.tr("Latitude"), //$NON-NLS-1$
+      i18n.tr("Longitude"), //$NON-NLS-1$
+      i18n.tr("Altitude"), //$NON-NLS-1$
+      i18n.tr("Direction"), //$NON-NLS-1$
+      i18n.tr("Location"), //$NON-NLS-1$
+      i18n.tr("City"), //$NON-NLS-1$
+      i18n.tr("Province"), //$NON-NLS-1$
+      i18n.tr("Country") }; //$NON-NLS-1$
 
   /** How many decimals of the latitude to display. */
   public static final int LATITUDE_DECIMALS = 7;
@@ -473,7 +477,7 @@ public class ImagesTableModel extends AbstractTableModel {
     if (update) {
       TaskExecutor
           .execute(new EditDirectionTask(
-              Messages.getString("ImagesTableModel.EditDirection"), imageInfo, newString, DATA_SOURCE.MANUAL) { //$NON-NLS-1$
+              i18n.tr("Edit direction"), imageInfo, newString, DATA_SOURCE.MANUAL) { //$NON-NLS-1$
             @Override
             protected void process(List<ImageInfo> imageInfos) {
               for (ImageInfo image : imageInfos) {
@@ -562,7 +566,7 @@ public class ImagesTableModel extends AbstractTableModel {
       if (update) {
         TaskExecutor
             .execute(new EditLongitudeTask(
-                Messages.getString("ImagesTableModel.EditLongitude"), imageInfo, newString, DATA_SOURCE.MANUAL) { //$NON-NLS-1$
+                i18n.tr("Edit longitude"), imageInfo, newString, DATA_SOURCE.MANUAL) { //$NON-NLS-1$
               @Override
               protected void process(List<ImageInfo> imageInfos) {
                 for (ImageInfo image : imageInfos) {
@@ -609,7 +613,7 @@ public class ImagesTableModel extends AbstractTableModel {
       if (update) {
         TaskExecutor
             .execute(new EditLatitudeTask(
-                Messages.getString("ImagesTableModel.EditLatitude"), imageInfo, newString, DATA_SOURCE.MANUAL) { //$NON-NLS-1$
+                i18n.tr("Edit latitude"), imageInfo, newString, DATA_SOURCE.MANUAL) { //$NON-NLS-1$
               @Override
               protected void process(List<ImageInfo> imageInfos) {
                 for (ImageInfo image : imageInfos) {

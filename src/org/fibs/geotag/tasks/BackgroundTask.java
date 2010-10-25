@@ -1,6 +1,6 @@
 /**
  * Geotag
- * Copyright (C) 2007-2009 Andreas Schneider
+ * Copyright (C) 2007-2010 Andreas Schneider
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,7 +25,8 @@ import java.util.List;
 
 import javax.swing.SwingWorker;
 
-import org.fibs.geotag.i18n.Messages;
+import org.xnap.commons.i18n.I18n;
+import org.xnap.commons.i18n.I18nFactory;
 
 /**
  * A wrapper for SwingWorker with some additional functionality.
@@ -38,6 +39,9 @@ import org.fibs.geotag.i18n.Messages;
  */
 public abstract class BackgroundTask<V> extends InterruptibleTask<String, V>
     implements PropertyChangeListener {
+  
+  /** Create i18n support */
+  private static final I18n i18n = I18nFactory.getI18n(BackgroundTask.class);
 
   /** The name of the task. */
   private String name;
@@ -92,7 +96,7 @@ public abstract class BackgroundTask<V> extends InterruptibleTask<String, V>
    * message will be something like 'Image 1 of 42'
    */
   public void setProgressMessage() {
-    setProgressMessage(Messages.getString("BackgroundTask.Image")); //$NON-NLS-1$
+    setProgressMessage(i18n.tr("Image")); //$NON-NLS-1$
   }
 
   /**
@@ -103,7 +107,7 @@ public abstract class BackgroundTask<V> extends InterruptibleTask<String, V>
    */
   public void setProgressMessage(String prefix) {
     String progressMessage = prefix + ' ' + getCurrentProgress() + ' '
-        + Messages.getString("BackgroundTask.Of") + ' ' //$NON-NLS-1$
+        + i18n.tr("of") + ' ' //$NON-NLS-1$
         + getMaxProgress();
     firePropertyChange(
         "progress", oldProgressMessage, progressMessage.toString()); //$NON-NLS-1$

@@ -1,6 +1,6 @@
 /**
  * Geotag
- * Copyright (C) 2007-2009 Andreas Schneider
+ * Copyright (C) 2007-2010 Andreas Schneider
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -18,7 +18,8 @@
 
 package org.fibs.geotag.util;
 
-import org.fibs.geotag.i18n.Messages;
+import org.xnap.commons.i18n.I18n;
+import org.xnap.commons.i18n.I18nFactory;
 
 /**
  * A class encapsulation distance units. Nautical miles left out on purpose
@@ -28,6 +29,10 @@ import org.fibs.geotag.i18n.Messages;
  * 
  */
 public final class Units {
+  
+  /** Create i18n support */
+  private static final I18n i18n = I18nFactory.getI18n(Units.class);
+  
   /**
    * hide constructor.
    */
@@ -56,26 +61,26 @@ public final class Units {
 
   /** the long names of the distance units. */
   private static final String[] DISTANCE_DISPLAY_NAMES = {
-      Messages.getString("Units.Kilometers"), //$NON-NLS-1$
-      Messages.getString("Units.Miles") //$NON-NLS-1$
+      i18n.tr("Kilometres"), //$NON-NLS-1$
+      i18n.tr("Miles") //$NON-NLS-1$
   };
 
   /** Abbreviations for the distance units. */
   private static final String[] DISTANCE_ABBREVIATIONS = {
-      Messages.getString("Units.km"), //$NON-NLS-1$
-      Messages.getString("Units.mi") //$NON-NLS-1$
+      i18n.tr("km"), //$NON-NLS-1$
+      i18n.tr("mi") //$NON-NLS-1$
   };
 
   /** the long names of the altitude units. */
   private static final String[] ALTITUDE_DISPLAY_NAMES = {
-      Messages.getString("Units.Metres"), //$NON-NLS-1$
-      Messages.getString("Units.Feet") //$NON-NLS-1$
+      i18n.tr("Metres"), //$NON-NLS-1$
+      i18n.tr("Feet") //$NON-NLS-1$
   };
 
   /** Abbreviations for the distance units. */
   private static final String[] ALTITUDE_ABBREVIATIONS = {
-      Messages.getString("Units.m"), //$NON-NLS-1$
-      Messages.getString("Units.ft") //$NON-NLS-1$
+      i18n.tr("m"), //$NON-NLS-1$
+      i18n.tr("ft") //$NON-NLS-1$
   };
 
   /** An imperial mile in kilometres. */

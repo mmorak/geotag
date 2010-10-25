@@ -1,6 +1,6 @@
 /**
  * Geotag
- * Copyright (C) 2007-2009 Andreas Schneider
+ * Copyright (C) 2007-2010 Andreas Schneider
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -40,7 +40,6 @@ import org.fibs.geotag.exif.Exiftool;
 import org.fibs.geotag.gpsbabel.GPSBabel;
 import org.fibs.geotag.gui.MainWindow;
 import org.fibs.geotag.gui.settings.SettingsDialog;
-import org.fibs.geotag.i18n.Messages;
 import org.fibs.geotag.image.FileTypes;
 import org.fibs.geotag.image.ImageFileFilter;
 import org.fibs.geotag.image.ImageFileFilter.Type;
@@ -53,6 +52,8 @@ import org.fibs.geotag.tasks.TaskExecutor;
 import org.fibs.geotag.track.GpxFileFilter;
 import org.fibs.geotag.track.GpxWriter;
 import org.fibs.geotag.track.TrackStore;
+import org.xnap.commons.i18n.I18n;
+import org.xnap.commons.i18n.I18nFactory;
 
 import com.topografix.gpx._1._0.Gpx;
 import com.topografix.gpx._1._0.Gpx.Trk;
@@ -64,6 +65,9 @@ import com.topografix.gpx._1._0.Gpx.Trk.Trkseg;
  */
 @SuppressWarnings("serial")
 public class FileMenu extends JMenu implements MenuConstants {
+  
+  /** Create i18n support */
+  private static final I18n i18n = I18nFactory.getI18n(FileMenu.class);
 
   /** Menu item to add one file. */
   private JMenuItem addFileItem;
@@ -322,8 +326,8 @@ public class FileMenu extends JMenu implements MenuConstants {
               JOptionPane
                   .showMessageDialog(
                       MainWindow.getMainWindow(FileMenu.this),
-                      Messages.getString("MainWindow.CouldNotReadGpxFile"), //$NON-NLS-1$
-                      Messages.getString("MainWindow.Error"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                      i18n.tr("Could not read GPX file"), //$NON-NLS-1$
+                      i18n.tr("Error"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
             }
           }
         }
@@ -361,10 +365,10 @@ public class FileMenu extends JMenu implements MenuConstants {
           outputFile = new File(chooser.getSelectedFile().getPath() + ".gpx"); //$NON-NLS-1$
         }
         if (outputFile.exists()) {
-          String title = Messages.getString("MainWindow.FileExists"); //$NON-NLS-1$
+          String title = i18n.tr("File exists"); //$NON-NLS-1$
           String message = String
               .format(
-                  Messages.getString("MainWindow.OverwriteFileFormat"), outputFile.getName()); //$NON-NLS-1$
+                  i18n.tr("Overwrite existing file %s?"), outputFile.getName()); //$NON-NLS-1$
           if (JOptionPane.showConfirmDialog(MainWindow
               .getMainWindow(FileMenu.this), message, title,
               JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.NO_OPTION) {
@@ -372,8 +376,8 @@ public class FileMenu extends JMenu implements MenuConstants {
           }
         }
         new GpxWriter().write(TrackStore.getTrackStore().getGpx(), outputFile);
-        String message = String.format(Messages
-            .getString("MainWindow.TracksSavedFormat"), outputFile.getPath()); //$NON-NLS-1$
+        String message = String.format(i18n
+            .tr("Tracks saved to %s."), outputFile.getPath()); //$NON-NLS-1$
         progressBar.setString(message);
       } catch (Exception e) {
         e.printStackTrace();
@@ -400,7 +404,7 @@ public class FileMenu extends JMenu implements MenuConstants {
             }
           }
         }
-        String message = "" + numTrackpoints + ' ' + Messages.getString("MainWindow.LocationsLoaded"); //$NON-NLS-1$ //$NON-NLS-2$
+        String message = "" + numTrackpoints + ' ' + i18n.tr("locations loaded"); //$NON-NLS-1$ //$NON-NLS-2$
         getProgressBar().setString(message);
         // now that we have a track, we are allowed to save it
         saveTrackItem.setEnabled(true);
@@ -419,7 +423,7 @@ public class FileMenu extends JMenu implements MenuConstants {
               .showMessageDialog(
                   MainWindow.getMainWindow(FileMenu.this),
                   message,
-                  Messages.getString("MainWindow.GPSBabelError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                  i18n.tr("GPSBabel error"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
         }
       }
     };

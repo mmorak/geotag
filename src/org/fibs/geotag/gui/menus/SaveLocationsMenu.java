@@ -1,6 +1,6 @@
 /**
  * Geotag
- * Copyright (C) 2007-2009 Andreas Schneider
+ * Copyright (C) 2007-2010 Andreas Schneider
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -28,11 +28,12 @@ import javax.swing.JMenuItem;
 
 import org.fibs.geotag.data.ImageInfo;
 import org.fibs.geotag.exif.Exiftool;
-import org.fibs.geotag.i18n.Messages;
 import org.fibs.geotag.table.ImagesTable;
 import org.fibs.geotag.table.ImagesTableModel;
 import org.fibs.geotag.tasks.ExifWriterTask;
 import org.fibs.geotag.tasks.TaskExecutor;
+import org.xnap.commons.i18n.I18n;
+import org.xnap.commons.i18n.I18nFactory;
 
 /**
  * @author andreas
@@ -41,6 +42,9 @@ import org.fibs.geotag.tasks.TaskExecutor;
 @SuppressWarnings("serial")
 public class SaveLocationsMenu extends JMenu implements ActionListener,
     MenuConstants {
+  
+  /** Create i18n support */
+  private static final I18n i18n = I18nFactory.getI18n(SaveLocationsMenu.class);
 
   /** The menu item used to save the location of an image. */
   private JMenuItem saveOneLocationItem;
@@ -157,7 +161,7 @@ public class SaveLocationsMenu extends JMenu implements ActionListener,
   private void saveLocations(List<ImageInfo> images) {
     TaskExecutor
         .execute(new ExifWriterTask(
-            Messages.getString("ImagesTablePopupMenu.SaveNewLocations"), tableModel, images)); //$NON-NLS-1$
+            i18n.tr("Save new locations"), tableModel, images)); //$NON-NLS-1$
   }
 
   /**

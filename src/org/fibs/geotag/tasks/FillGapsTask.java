@@ -1,6 +1,6 @@
 /**
  * Geotag
- * Copyright (C) 2007-2009 Andreas Schneider
+ * Copyright (C) 2007-2010 Andreas Schneider
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,9 +22,10 @@ import java.util.IllegalFormatException;
 import java.util.List;
 
 import org.fibs.geotag.data.ImageInfo;
-import org.fibs.geotag.i18n.Messages;
 import org.fibs.geotag.table.ImagesTableModel;
 import org.fibs.geotag.track.TrackMatcher;
+import org.xnap.commons.i18n.I18n;
+import org.xnap.commons.i18n.I18nFactory;
 
 /**
  * A background task for filling gaps between image locations.
@@ -33,6 +34,9 @@ import org.fibs.geotag.track.TrackMatcher;
  * 
  */
 public class FillGapsTask extends UndoableBackgroundTask<ImageInfo> {
+  
+  /** Create i18n support */
+  private static final I18n i18n = I18nFactory.getI18n(FillGapsTask.class);
 
   /** The table. */
   private ImagesTableModel imagesTableModel;
@@ -94,13 +98,13 @@ public class FillGapsTask extends UndoableBackgroundTask<ImageInfo> {
     }
     String result = null;
     if (gapsFilled == 0) {
-      result = Messages.getString("FillGapsTask.FilledNoGaps"); //$NON-NLS-1$
+      result = i18n.tr("No gaps filled."); //$NON-NLS-1$
     } else if (gapsFilled == 1) {
-      result = Messages.getString("FillGapsTask.FilledOneGap"); //$NON-NLS-1$
+      result = i18n.tr("Filled one gap."); //$NON-NLS-1$
     } else {
       try {
-        result = String.format(Messages
-            .getString("FillGapsTask.FilledGapsFormat"), gapsFilled); //$NON-NLS-1$
+        result = String.format(i18n
+            .tr("Filled %d gaps."), gapsFilled); //$NON-NLS-1$
       } catch (IllegalFormatException e) {
         e.printStackTrace();
       }

@@ -1,6 +1,6 @@
 /**
  * Geotag
- * Copyright (C) 2007-2009 Andreas Schneider
+ * Copyright (C) 2007-2010 Andreas Schneider
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,13 +21,17 @@ package org.fibs.geotag.tasks;
 import org.fibs.geotag.data.ImageInfo;
 import org.fibs.geotag.data.UpdateGPSLatitude;
 import org.fibs.geotag.data.ImageInfo.DATA_SOURCE;
-import org.fibs.geotag.i18n.Messages;
+import org.xnap.commons.i18n.I18n;
+import org.xnap.commons.i18n.I18nFactory;
 
 /**
  * @author Andreas Schneider
  * 
  */
 public class EditLatitudeTask extends UndoableBackgroundTask<ImageInfo> {
+  
+  /** Create i18n support */
+  private static final I18n i18n = I18nFactory.getI18n(EditLatitudeTask.class);
 
   /** The image whose latitude will be set. */
   private ImageInfo imageInfo;
@@ -90,7 +94,7 @@ public class EditLatitudeTask extends UndoableBackgroundTask<ImageInfo> {
       }
       publish(imageInfo);
     }
-    return Messages.getString("EditLatitudeTask.LatitudeEdited"); //$NON-NLS-1$
+    return i18n.tr("Latitude edited"); //$NON-NLS-1$
   }
 
 }

@@ -1,6 +1,6 @@
 /**
  * Geotag
- * Copyright (C) 2007-2009 Andreas Schneider
+ * Copyright (C) 2007-2010 Andreas Schneider
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -45,9 +45,10 @@ import org.fibs.geotag.License;
 import org.fibs.geotag.Settings;
 import org.fibs.geotag.Version;
 import org.fibs.geotag.Settings.SETTING;
-import org.fibs.geotag.i18n.Messages;
 import org.fibs.geotag.util.BrowserLauncher;
 import org.fibs.geotag.util.ImageUtil;
+import org.xnap.commons.i18n.I18n;
+import org.xnap.commons.i18n.I18nFactory;
 
 /**
  * The about dialog (with working hyperlinks).
@@ -56,6 +57,9 @@ import org.fibs.geotag.util.ImageUtil;
  */
 @SuppressWarnings("serial")
 public class AboutDialog extends JDialog implements HyperlinkListener {
+
+  /** Create i18n support */
+  private static final I18n i18n = I18nFactory.getI18n(AboutDialog.class);
 
   /** The path to the icon displayed in the dialog */
   private static final String ICON_NAME = "images/geotag-48.png"; //$NON-NLS-1$
@@ -101,7 +105,7 @@ public class AboutDialog extends JDialog implements HyperlinkListener {
         Geotag.WEBSITE).append("</a>"); //$NON-NLS-1$
     message.append("<br>"); //$NON-NLS-1$
     // show a copyright notice
-    message.append(Messages.getString("MainWindow.Copyright")).append(' ') //$NON-NLS-1$
+    message.append(i18n.tr("Copyright")).append(' ') //$NON-NLS-1$
         .append('\u00a9').append(' '); // \u00a9 is the copyright symbol
     message.append("2007-2009").append(' '); //$NON-NLS-1$
     message.append("Andreas Schneider"); //$NON-NLS-1$
@@ -144,7 +148,7 @@ public class AboutDialog extends JDialog implements HyperlinkListener {
     add(panel, BorderLayout.CENTER);
     // Now a panel for the OK button to dismiss the dialog
     JPanel buttonPanel = new JPanel(new FlowLayout());
-    String ok = Messages.getString("AboutDialog.OK"); //$NON-NLS-1$
+    String ok = i18n.tr("OK"); //$NON-NLS-1$
     JButton okButton = new JButton(ok);
     // give the button a more pleasing preferred size
     FontMetrics fontMetrics = okButton.getFontMetrics(okButton.getFont());

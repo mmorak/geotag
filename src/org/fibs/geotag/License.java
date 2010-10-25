@@ -1,6 +1,6 @@
 /**
  * Geotag
- * Copyright (C) 2007-2009 Andreas Schneider
+ * Copyright (C) 2007-2010 Andreas Schneider
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,8 +21,9 @@ package org.fibs.geotag;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.fibs.geotag.i18n.Messages;
 import org.fibs.geotag.util.Util;
+import org.xnap.commons.i18n.I18n;
+import org.xnap.commons.i18n.I18nFactory;
 
 /**
  * A class retrieving the localised text for the about dialog.
@@ -31,6 +32,9 @@ import org.fibs.geotag.util.Util;
  * 
  */
 public final class License {
+  
+  /** Create i18n support */
+  private static final I18n i18n = I18nFactory.getI18n(License.class);
 
   /**
    * hide constructor.
@@ -47,9 +51,9 @@ public final class License {
    */
   public static List<String> licenseInfo() {
     List<String> lines = new ArrayList<String>();
-    String paragraph1 = Messages.getString("License.Paragraph1"); //$NON-NLS-1$
-    String paragraph2 = Messages.getString("License.Paragraph2"); //$NON-NLS-1$
-    String paragraph3 = Messages.getString("License.Paragraph3"); //$NON-NLS-1$
+    String paragraph1 = i18n.tr("This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version."); //$NON-NLS-1$
+    String paragraph2 = i18n.tr("This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details."); //$NON-NLS-1$
+    String paragraph3 = i18n.tr("You should have received a copy of the GNU General Public License along with this program; if not, see"); //$NON-NLS-1$
     lines.addAll(Util.splitString(paragraph1, MAX_LINE_LENGTH));
     lines.add(""); //$NON-NLS-1$
     lines.addAll(Util.splitString(paragraph2, MAX_LINE_LENGTH));

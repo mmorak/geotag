@@ -1,6 +1,6 @@
 /**
  * Geotag
- * Copyright (C) 2007-2009 Andreas Schneider
+ * Copyright (C) 2007-2010 Andreas Schneider
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -30,7 +30,6 @@ import javax.swing.JMenuItem;
 import org.fibs.geotag.Settings;
 import org.fibs.geotag.Settings.SETTING;
 import org.fibs.geotag.data.ImageInfo;
-import org.fibs.geotag.i18n.Messages;
 import org.fibs.geotag.image.ThumbnailWorker;
 import org.fibs.geotag.table.ImagesTable;
 import org.fibs.geotag.table.ImagesTableModel;
@@ -38,6 +37,8 @@ import org.fibs.geotag.tasks.TaskExecutor;
 import org.fibs.geotag.tasks.ThumbnailsTask;
 import org.fibs.geotag.util.Airy;
 import org.fibs.geotag.util.BrowserLauncher;
+import org.xnap.commons.i18n.I18n;
+import org.xnap.commons.i18n.I18nFactory;
 
 /**
  * @author andreas
@@ -46,17 +47,20 @@ import org.fibs.geotag.util.BrowserLauncher;
 @SuppressWarnings("serial")
 public class ShowOnMapMenu extends JMenu implements ActionListener,
     MenuConstants {
+  
+  /** Create i18n support */
+  private static final I18n i18n = I18nFactory.getI18n(ShowOnMapMenu.class);
 
   /** the default Google zoom level. */
   private static final int DEFAULT_GOOGLE_ZOOM_LEVEL = 15;
 
   /** Text for menu. */
-  private static final String SHOW_ON_MAP = Messages
-      .getString("ImagesTablePopupMenu.ShowOnMap"); //$NON-NLS-1$
+  private static final String SHOW_ON_MAP = i18n
+      .tr("Show on map"); //$NON-NLS-1$
 
   /** Text for menu. */
-  private static final String SHOW_ON_MAP_WITH_DIRECTION = Messages
-      .getString("ImagesTablePopupMenu.ShowOnMapWithDirection"); //$NON-NLS-1$
+  private static final String SHOW_ON_MAP_WITH_DIRECTION = i18n
+      .tr("Show on map (with direction)"); //$NON-NLS-1$
 
   /** The menu item used to show an image location on a map. */
   private JMenuItem showOneOnMapItem;
@@ -187,8 +191,8 @@ public class ShowOnMapMenu extends JMenu implements ActionListener,
     } else {
       // more than one thumbnail to be generated. This could take a while
       // and we use a BackgroundTask to give visual feedback via progress bar.
-      TaskExecutor.execute(new ThumbnailsTask(Messages
-          .getString("ImagesTablePopupMenu.GenerateThumbnails"), images) { //$NON-NLS-1$
+      TaskExecutor.execute(new ThumbnailsTask(i18n
+          .tr("Generate thumbnails"), images) { //$NON-NLS-1$
             @Override
             public void done() {
               showOnMap(images, showDirection);

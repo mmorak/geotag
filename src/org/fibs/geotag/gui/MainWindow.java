@@ -1,6 +1,6 @@
 /**
  * Geotag
- * Copyright (C) 2007-2009 Andreas Schneider
+ * Copyright (C) 2007-2010 Andreas Schneider
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -44,7 +44,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
-import javax.swing.JSeparator;
 import javax.swing.JSplitPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
@@ -69,8 +68,6 @@ import org.fibs.geotag.googleearth.KmlRequestHandler;
 import org.fibs.geotag.gpsbabel.GPSBabel;
 import org.fibs.geotag.gui.menus.FileMenu;
 import org.fibs.geotag.gui.menus.MenuConstants;
-import org.fibs.geotag.i18n.Messages;
-import org.fibs.geotag.i18n.Translations;
 import org.fibs.geotag.table.ImagesTable;
 import org.fibs.geotag.table.ImagesTableModel;
 import org.fibs.geotag.tasks.BackgroundTask;
@@ -91,6 +88,8 @@ import org.fibs.geotag.webserver.ThumbnailHandler;
 import org.fibs.geotag.webserver.TracksHandler;
 import org.fibs.geotag.webserver.UpdateHandler;
 import org.fibs.geotag.webserver.WebServer;
+import org.xnap.commons.i18n.I18n;
+import org.xnap.commons.i18n.I18nFactory;
 
 /**
  * A class representing the main Window of the application.
@@ -101,6 +100,9 @@ import org.fibs.geotag.webserver.WebServer;
 @SuppressWarnings("serial")
 public class MainWindow extends JFrame implements BackgroundTaskListener,
     ExternalUpdateConsumer, MenuConstants {
+  
+  /** Create i18n support */
+  private static final I18n i18n = I18nFactory.getI18n(MainWindow.class);
 
   /** The default aspect ratio of the preview component. The width */
   private static final int PREVIEW_ASPECT_RATIO_X = 4;
@@ -204,9 +206,9 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
 
       @Override
       public void windowClosing(WindowEvent we) {
-        if (JOptionPane.showConfirmDialog(MainWindow.this, Messages
-            .getString("MainWindow.DoYouReallyWantToExit"), //$NON-NLS-1$
-            Messages.getString("MainWindow.ExitProgram"), //$NON-NLS-1$
+        if (JOptionPane.showConfirmDialog(MainWindow.this, i18n
+            .tr("Do you really want to exit Geotag?"), //$NON-NLS-1$
+            i18n.tr("Exit Program"), //$NON-NLS-1$
             JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
           Settings.put(SETTING.MAIN_WINDOW_X, getLocation().x);
           Settings.put(SETTING.MAIN_WINDOW_Y, getLocation().y);
@@ -270,8 +272,8 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
    * 
    */
   private void setupPreviewComponent() {
-    previewComponent = new PreviewComponent(Messages
-        .getString("MainWindow.Preview")); //$NON-NLS-1$
+    previewComponent = new PreviewComponent(i18n
+        .tr("Image viewer")); //$NON-NLS-1$
     previewComponent.addMouseListener(new MouseAdapter() {
       private void popupMenu(MouseEvent event) {
         ImageInfo imageInfo = getPreviewComponent().getImageInfo();
@@ -395,10 +397,10 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
    * @return the help menu
    */
   private JMenu setupHelpMenu() {
-    JMenu helpMenu = new JMenu(Messages.getString("MainWindow.Help")); //$NON-NLS-1$
+    JMenu helpMenu = new JMenu(i18n.tr("Help")); //$NON-NLS-1$
 
-    JMenuItem whatNextItem = new JMenuItem(Messages
-        .getString("MainWindow.WhatNext")); //$NON-NLS-1$
+    JMenuItem whatNextItem = new JMenuItem(i18n
+        .tr("What next?")); //$NON-NLS-1$
     whatNextItem.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         WhatNext.helpWhatNext(MainWindow.this, getTableModel());
@@ -407,7 +409,7 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
 
     helpMenu.add(whatNextItem);
 
-    final String about = Messages.getString("MainWindow.About") + ' ' + Geotag.NAME; //$NON-NLS-1$
+    final String about = i18n.tr("About") + ' ' + Geotag.NAME; //$NON-NLS-1$
     JMenuItem aboutItem = new JMenuItem(about + ELLIPSIS);
     aboutItem.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -417,8 +419,8 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
 
     helpMenu.add(aboutItem);
 
-    JMenuItem websiteItem = new JMenuItem(String.format(Messages
-        .getString("MainWindow.WebSiteFormat") + ELLIPSIS, Geotag.NAME)); //$NON-NLS-1$
+    JMenuItem websiteItem = new JMenuItem(String.format(i18n
+        .tr("%s web site") + ELLIPSIS, Geotag.NAME)); //$NON-NLS-1$
     websiteItem.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         BrowserLauncher.openURL(Settings.get(SETTING.BROWSER, null),
@@ -434,7 +436,7 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
    * @return the edit menu
    */
   private JMenu setupEditMenu() {
-    JMenu editMenu = new JMenu(Messages.getString("MainWindow.Edit")); //$NON-NLS-1$
+    JMenu editMenu = new JMenu(i18n.tr("Edit")); //$NON-NLS-1$
 
     undoItem = new JMenuItem();
     undoItem.addActionListener(new ActionListener() {
@@ -446,7 +448,7 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
         // this will call tableModel.fireTableDataChanged() for us
         getTableModel().sortRows();
         getProgressBar().setString(
-            Messages.getString("MainWindow.Done") + ": " + action); //$NON-NLS-1$ //$NON-NLS-2$
+            i18n.tr("Done") + ": " + action); //$NON-NLS-1$ //$NON-NLS-2$
       }
     });
     editMenu.add(undoItem);
@@ -460,12 +462,12 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
         updateUndoMenuItems();
         getTableModel().sortRows();
         getProgressBar().setString(
-            Messages.getString("MainWindow.Done") + ": " + action); //$NON-NLS-1$ //$NON-NLS-2$
+            i18n.tr("Done") + ": " + action); //$NON-NLS-1$ //$NON-NLS-2$
       }
     });
     editMenu.add(redoItem);
 
-    cancelItem = new JMenuItem(Messages.getString("MainWindow.Cancel")); //$NON-NLS-1$
+    cancelItem = new JMenuItem(i18n.tr("Cancel")); //$NON-NLS-1$
     cancelItem.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         if (getBackgroundTask() != null) {
@@ -479,10 +481,10 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
 
     updateUndoMenuItems();
 
-    JMenu selectMenu = new JMenu(Messages.getString("MainWindow.Select")); //$NON-NLS-1$
+    JMenu selectMenu = new JMenu(i18n.tr("Select")); //$NON-NLS-1$
 
-    JMenuItem selectAllItem = new JMenuItem(Messages
-        .getString("MainWindow.SelectAll")); //$NON-NLS-1$
+    JMenuItem selectAllItem = new JMenuItem(i18n
+        .tr("All images")); //$NON-NLS-1$
     selectAllItem.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -491,8 +493,8 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
     });
     selectMenu.add(selectAllItem);
 
-    JMenuItem selectWithLocationItem = new JMenuItem(Messages
-        .getString("MainWindow.SelectWithLocations")); //$NON-NLS-1$
+    JMenuItem selectWithLocationItem = new JMenuItem(i18n
+        .tr("Images with locations")); //$NON-NLS-1$
     selectWithLocationItem.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -502,8 +504,8 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
     });
     selectMenu.add(selectWithLocationItem);
 
-    JMenuItem selectWithNewLocationItem = new JMenuItem(Messages
-        .getString("MainWindow.SelectWithNewLocations")); //$NON-NLS-1$
+    JMenuItem selectWithNewLocationItem = new JMenuItem(i18n
+        .tr("Images with new locations")); //$NON-NLS-1$
     selectWithNewLocationItem.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -513,8 +515,8 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
     });
     selectMenu.add(selectWithNewLocationItem);
 
-    JMenuItem selectNoneItem = new JMenuItem(Messages
-        .getString("MainWindow.SelectNoImages")); //$NON-NLS-1$
+    JMenuItem selectNoneItem = new JMenuItem(i18n
+        .tr("No images")); //$NON-NLS-1$
     selectNoneItem.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -522,19 +524,7 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
       }
     });
     selectMenu.add(selectNoneItem);
-
     editMenu.add(selectMenu);
-    if (new Translations().getTranslationLocale() != null) {
-      editMenu.add(new JSeparator());
-      JMenuItem translateItem = new JMenuItem(Messages
-          .getString("MainWindow.Translate") + ELLIPSIS); //$NON-NLS-1$
-      editMenu.add(translateItem);
-      translateItem.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          TranslationWindow.showWindow();
-        }
-      });
-    }
     return editMenu;
   }
 
@@ -570,7 +560,7 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
         }
         // Now we can apply the new coordinates to the selected images
         ClipboardUpdateTask task = new ClipboardUpdateTask(
-            Messages.getString("MainWindow.CoordinatesFromClipboard"), clipboardUpdates, selectedImages) { //$NON-NLS-1$
+            i18n.tr("Coordinates from clipboard"), clipboardUpdates, selectedImages) { //$NON-NLS-1$
           @Override
           protected void process(List<ImageInfo> imageInfo) {
             for (ImageInfo image : imageInfo) {
@@ -593,8 +583,8 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
   void processExternalUpdates() {
     if (pendingExternalUpdates.size() > 0) {
       ExternalUpdate externalUpdate = pendingExternalUpdates.firstElement();
-      ExternalUpdateTask task = new ExternalUpdateTask(Messages
-          .getString("MainWindow.ExternalCoordinates"), externalUpdate) { //$NON-NLS-1$
+      ExternalUpdateTask task = new ExternalUpdateTask(i18n
+          .tr("External coordinates"), externalUpdate) { //$NON-NLS-1$
         @Override
         protected void process(List<ImageInfo> imageInfo) {
           for (ImageInfo image : imageInfo) {
@@ -656,7 +646,7 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
     if (task instanceof UndoableBackgroundTask<?>) {
       name = ((UndoableBackgroundTask<?>) task).getPresentationName();
     }
-    cancelItem.setText(Messages.getString("MainWindow.Cancel") + ' ' + name); //$NON-NLS-1$
+    cancelItem.setText(i18n.tr("Cancel") + ' ' + name); //$NON-NLS-1$
     cancelItem.setVisible(true);
 
     tableModel.setEditingForbidden(true);

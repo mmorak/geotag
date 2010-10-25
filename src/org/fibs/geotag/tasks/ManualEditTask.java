@@ -1,6 +1,6 @@
 /**
  * Geotag
- * Copyright (C) 2007-2009 Andreas Schneider
+ * Copyright (C) 2007-2010 Andreas Schneider
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,14 +24,18 @@ import org.fibs.geotag.data.UpdateCountryName;
 import org.fibs.geotag.data.UpdateLocationName;
 import org.fibs.geotag.data.UpdateProvinceName;
 import org.fibs.geotag.data.ImageInfo.DATA_SOURCE;
-import org.fibs.geotag.i18n.Messages;
 import org.fibs.geotag.table.ImagesTableColumns.COLUMN;
+import org.xnap.commons.i18n.I18n;
+import org.xnap.commons.i18n.I18nFactory;
 
 /**
  * @author Andreas Schneider
  * 
  */
 public class ManualEditTask extends UndoableBackgroundTask<ImageInfo> {
+  
+  /** Create i18n support */
+  private static final I18n i18n = I18nFactory.getI18n(ManualEditTask.class);
 
   /** The image whose data will be set. */
   private ImageInfo imageInfo;
@@ -50,7 +54,7 @@ public class ManualEditTask extends UndoableBackgroundTask<ImageInfo> {
    */
   public ManualEditTask(String name, ImageInfo imageInfo, COLUMN column,
       String newValue) {
-    super(Messages.getString("ManualEditTask.ManualEdit"), name); //$NON-NLS-1$
+    super(i18n.tr("Manual edit"), name); //$NON-NLS-1$
     this.imageInfo = imageInfo;
     this.column = column;
     this.newValue = newValue;
@@ -118,7 +122,7 @@ public class ManualEditTask extends UndoableBackgroundTask<ImageInfo> {
       publish(imageInfo);
     }
     return String.format(
-        Messages.getString("ManualEditTask.EditedFormat"), getName()); //$NON-NLS-1$
+        i18n.tr("%1$s edited."), getName()); //$NON-NLS-1$
   }
 
 }

@@ -1,6 +1,6 @@
 /**
  * Geotag
- * Copyright (C) 2007-2009 Andreas Schneider
+ * Copyright (C) 2007-2010 Andreas Schneider
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -44,8 +44,9 @@ import org.fibs.geotag.Geotag;
 import org.fibs.geotag.Settings;
 import org.fibs.geotag.Settings.SETTING;
 import org.fibs.geotag.data.ImageInfo;
-import org.fibs.geotag.i18n.Messages;
 import org.fibs.geotag.util.Airy;
+import org.xnap.commons.i18n.I18n;
+import org.xnap.commons.i18n.I18nFactory;
 
 import com.google.earth.kml._2.DocumentType;
 import com.google.earth.kml._2.FeatureType;
@@ -67,13 +68,16 @@ import com.google.earth.kml._2.TimeStampType;
  * 
  */
 public class KmlExporter {
+  
+  /** Create i18n support */
+  private static final I18n i18n = I18nFactory.getI18n(KmlExporter.class);
 
   /** We need the style name more than once. */
   private static final String STYLE = "Photo"; //$NON-NLS-1$
 
   /** The name of the images folder displayed in Google Earth. */
-  private static final String KML_FOLDER = Messages
-      .getString("KmlExporter.Images"); //$NON-NLS-1$
+  private static final String KML_FOLDER = i18n
+      .tr("Images"); //$NON-NLS-1$
 
   /** The name of the images folder within KMZ (zip) files. */
   private static final String KMZ_IMAGE_FOLDER = "images"; //$NON-NLS-1$

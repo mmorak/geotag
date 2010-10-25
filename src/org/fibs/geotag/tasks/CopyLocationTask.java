@@ -1,6 +1,6 @@
 /**
  * Geotag
- * Copyright (C) 2007-2009 Andreas Schneider
+ * Copyright (C) 2007-2010 Andreas Schneider
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,9 +25,10 @@ import org.fibs.geotag.data.ImageInfo;
 import org.fibs.geotag.data.UpdateGPSAltitude;
 import org.fibs.geotag.data.UpdateGPSLatitude;
 import org.fibs.geotag.data.UpdateGPSLongitude;
-import org.fibs.geotag.i18n.Messages;
 import org.fibs.geotag.table.ImagesTableModel;
 import org.fibs.geotag.util.Units.ALTITUDE;
+import org.xnap.commons.i18n.I18n;
+import org.xnap.commons.i18n.I18nFactory;
 
 /**
  * a background task for copying the location from one image to others.
@@ -36,6 +37,9 @@ import org.fibs.geotag.util.Units.ALTITUDE;
  * 
  */
 public class CopyLocationTask extends UndoableBackgroundTask<ImageInfo> {
+  
+  /** Create i18n support */
+  private static final I18n i18n = I18nFactory.getI18n(CopyLocationTask.class);
 
   /** keep track of current progress. */
   private int currentProgress = 0;
@@ -119,12 +123,12 @@ public class CopyLocationTask extends UndoableBackgroundTask<ImageInfo> {
     }
     String result = null;
     if (currentProgress == 1) {
-      result = Messages.getString("CopyLocationTask.LocationCopiedToOne"); //$NON-NLS-1$
+      result = i18n.tr("Location copied to one image."); //$NON-NLS-1$
     } else {
       try {
         result = String
             .format(
-                Messages.getString("CopyLocationTask.LocationsCopiedFormat"), currentProgress); //$NON-NLS-1$
+                i18n.tr("Location copied to %d images."), currentProgress); //$NON-NLS-1$
       } catch (IllegalFormatException e) {
         e.printStackTrace();
       }

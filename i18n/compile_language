@@ -1,0 +1,7 @@
+#!/bin/bash
+if [ "$#" -ne "1" ]; then
+  echo "Usage: $0  <languagecode>"
+  exit 0
+fi
+
+msgfmt --java2 -d . -r org.fibs.geotag.i18n.Messages -l $1 $1.po

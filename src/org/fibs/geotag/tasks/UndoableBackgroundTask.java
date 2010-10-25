@@ -1,6 +1,6 @@
 /**
  * Geotag
- * Copyright (C) 2007-2009 Andreas Schneider
+ * Copyright (C) 2007-2010 Andreas Schneider
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -40,6 +40,10 @@ import org.fibs.geotag.GlobalUndoManager;
  */
 public abstract class UndoableBackgroundTask<V> extends BackgroundTask<V>
     implements UndoableEdit {
+
+  private static final String UNDO_TEXT_KEY = "AbstractUndoableEdit.undoText";
+
+  private static final String REDO_TEXT_KEY = "AbstractUndoableEdit.redoText";
 
   /** Indicates if this has been done or undone. */
   private boolean hasBeenDone = true;
@@ -124,7 +128,7 @@ public abstract class UndoableBackgroundTask<V> extends BackgroundTask<V>
    */
   public String getRedoPresentationName() {
     String presentationName = UIManager
-        .getString("AbstractUndoableEdit.redoText") //$NON-NLS-1$
+        .getString(REDO_TEXT_KEY) //$NON-NLS-1$
         + ' ' + getPresentationName();
     return presentationName;
   }
@@ -134,7 +138,7 @@ public abstract class UndoableBackgroundTask<V> extends BackgroundTask<V>
    */
   public String getUndoPresentationName() {
     String presentationName = UIManager
-        .getString("AbstractUndoableEdit.undoText") //$NON-NLS-1$
+        .getString(UNDO_TEXT_KEY) //$NON-NLS-1$
         + ' ' + getPresentationName();
     return presentationName;
   }

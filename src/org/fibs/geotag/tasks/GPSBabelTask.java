@@ -1,6 +1,6 @@
 /**
  * Geotag
- * Copyright (C) 2007-2009 Andreas Schneider
+ * Copyright (C) 2007-2010 Andreas Schneider
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,10 +25,11 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 import org.fibs.geotag.gpsbabel.GPSBabel;
-import org.fibs.geotag.i18n.Messages;
 import org.fibs.geotag.track.GpxReader;
 import org.fibs.geotag.util.Constants;
 import org.fibs.geotag.util.InputStreamGobbler;
+import org.xnap.commons.i18n.I18n;
+import org.xnap.commons.i18n.I18nFactory;
 
 import com.topografix.gpx._1._0.Gpx;
 import com.topografix.gpx._1._0.Gpx.Trk;
@@ -41,6 +42,9 @@ import com.topografix.gpx._1._0.Gpx.Trk.Trkseg;
  * 
  */
 public class GPSBabelTask extends BackgroundTask<Gpx> {
+  
+  /** Create i18n support */
+  private static final I18n i18n = I18nFactory.getI18n(GPSBabelTask.class);
 
   /** Number of track points received from GPS. */
   private int trackPointsReceived = 0;
@@ -159,7 +163,7 @@ public class GPSBabelTask extends BackgroundTask<Gpx> {
         }
       }
     }.start();
-    firePropertyChange("progress", null, Messages.getString("GPSBabelTask.ConnectingToGPS")); //$NON-NLS-1$ //$NON-NLS-2$
+    firePropertyChange("progress", null, i18n.tr("Connecting to GPS")); //$NON-NLS-1$ //$NON-NLS-2$
     // read the file using GPSBabel - use our own Gobbler to handle the output
     File file = GPSBabel.readTracks(new Gobbler());
     // now we have to read that file
@@ -179,10 +183,10 @@ public class GPSBabelTask extends BackgroundTask<Gpx> {
     // make the termination-check thread terminate
     interruptRequest();
     StringBuilder message = new StringBuilder();
-    message.append(Messages.getString("GPSBabelTask.FinishedGpsTransfer")); //$NON-NLS-1$
+    message.append(i18n.tr("Finished GPS transfer")); //$NON-NLS-1$
     message.append(' ').append(trackPointsReceived).append(' ');
     // Message reused from GpxReadFileTask
-    message.append(Messages.getString("GpxReadFileTask.LocationsLoaded")); //$NON-NLS-1$
+    message.append(i18n.tr("locations loaded.")); //$NON-NLS-1$
     return message.toString();
   }
 
@@ -266,8 +270,8 @@ public class GPSBabelTask extends BackgroundTask<Gpx> {
           setMinProgress(1);
           setMaxProgress(expected);
           setCurrentProgress(read);
-          String message = Messages.getString("GPSBabelTask.Waypoint") + ' ' //$NON-NLS-1$
-              + getCurrentProgress() + ' ' + Messages.getString("GPSBabelTask.Of") //$NON-NLS-1$
+          String message = i18n.tr("Waypoint") + ' ' //$NON-NLS-1$
+              + getCurrentProgress() + ' ' + i18n.tr("of") //$NON-NLS-1$
               + ' ' + getMaxProgress();
           firePropertyChange("progress", progressMessage, message); //$NON-NLS-1$
           progressMessage = message;

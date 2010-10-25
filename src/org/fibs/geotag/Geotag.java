@@ -1,6 +1,6 @@
 /**
  * Geotag
- * Copyright (C) 2007-2009 Andreas Schneider
+ * Copyright (C) 2007-2010 Andreas Schneider
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,6 +21,8 @@ package org.fibs.geotag;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.Locale;
 
 import javax.swing.JOptionPane;
@@ -30,11 +32,12 @@ import javax.swing.UIManager;
 import org.fibs.geotag.exif.Exiftool;
 import org.fibs.geotag.gui.MainWindow;
 import org.fibs.geotag.gui.WhatNext;
-import org.fibs.geotag.i18n.Messages;
-import org.fibs.geotag.i18n.Translations;
+import org.fibs.geotag.i18n.Messages_po;
 import org.fibs.geotag.util.Constants;
 import org.fibs.geotag.util.LocaleUtil;
 import org.fibs.geotag.util.Util;
+import org.xnap.commons.i18n.I18n;
+import org.xnap.commons.i18n.I18nFactory;
 
 import com.jgoodies.looks.plastic.Plastic3DLookAndFeel;
 
@@ -44,6 +47,9 @@ import com.jgoodies.looks.plastic.Plastic3DLookAndFeel;
  * @author Andreas Schneider
  */
 public final class Geotag {
+
+  /** Create i18n support */
+  private static I18n i18n;
 
   /**
    * hide constructor.
@@ -68,19 +74,48 @@ public final class Geotag {
   private static boolean redirectConsole = true;
 
   /**
- * 
- */
-private static void logJavaVersion() {
-  System.out.println("java version "+System.getProperty("java.version"));
-  System.out.print(System.getProperty("java.runtime.name")+" (");
-  System.out.println(System.getProperty("java.runtime.version")+")");
-  System.out.print(System.getProperty("java.vm.name")+" (");
-  System.out.print(System.getProperty("java.vm.version")+" , ");
-  System.out.println(System.getProperty("java.vm.info")+")");
-  
-}
+   * 
+   */
+  private static void logJavaVersion() {
+    System.out.println("java version " + System.getProperty("java.version"));
+    System.out.print(System.getProperty("java.runtime.name") + " (");
+    System.out.println(System.getProperty("java.runtime.version") + ")");
+    System.out.print(System.getProperty("java.vm.name") + " (");
+    System.out.print(System.getProperty("java.vm.version") + " , ");
+    System.out.println(System.getProperty("java.vm.info") + ")");
+  }
 
-/**
+  /**
+   * 
+   */
+  private static void logLocale() {
+    Locale defaultLocale = Locale.getDefault();
+    String displayName = defaultLocale.getDisplayName();
+    String language = defaultLocale.getLanguage();
+    String country = defaultLocale.getCountry();
+    String variant = defaultLocale.getVariant();
+    StringBuilder builder = new StringBuilder(displayName).append(": ");
+    builder.append(language);
+    if (country != null && country.length() > 0) {
+      builder.append('_').append(country);
+    }
+    if (variant != null && variant.length() > 0) {
+      builder.append('_').append(variant);
+    }
+    System.out.println(builder.toString());
+    //Get the System Classloader
+    ClassLoader sysClassLoader = ClassLoader.getSystemClassLoader();
+
+    //Get the URLs
+    URL[] urls = ((URLClassLoader)sysClassLoader).getURLs();
+
+    for(int i=0; i< urls.length; i++)
+    {
+        System.out.println(urls[i].getFile());
+    }
+  }
+
+  /**
    * Application entry point.
    * 
    * @param args
@@ -104,18 +139,19 @@ private static void logJavaVersion() {
         // start just after the equals sign
         String value = arg.substring(equalsPos + 1);
         // now see what to do with them
-        if (key.equals("language") && value.length() > 0) { //$NON-NLS-1$
+        if (key.equals("po") && value.length() > 0) {
+          Messages_po.setPoFileName(value);
+          Locale locale = LocaleUtil.localeFromString("po");
+          Locale.setDefault(locale);
+        } else if (key.equals("language") && value.length() > 0) { //$NON-NLS-1$
           Locale locale = LocaleUtil.localeFromString(value);
           Locale.setDefault(locale);
-        } else if (key.equals("translate") && value.length() > 0) { //$NON-NLS-1$
-          Locale locale = LocaleUtil.localeFromString(value);
-          Locale.setDefault(locale);
-          Translations.setTranslationLocale(locale);
         } else if (key.equals("console") && value.equals("yes")) { //$NON-NLS-1$ //$NON-NLS-2$
           redirectConsole = false;
         }
       }
     }
+    i18n = I18nFactory.getI18n(Geotag.class);
     // first of all we redirect the console output to a file
     if (redirectConsole) {
       File logFile = new File(System.getProperty("java.io.tmpdir") //$NON-NLS-1$
@@ -130,6 +166,7 @@ private static void logJavaVersion() {
     }
     // log java version
     logJavaVersion();
+    logLocale();
     try {
       UIManager.setLookAndFeel(new Plastic3DLookAndFeel());
     } catch (Exception e) {
@@ -140,21 +177,25 @@ private static void logJavaVersion() {
         / Util.square(Constants.ONE_K));
     if (maxMemory < MIN_MEMORY) {
       String message = "<html><center>" //$NON-NLS-1$
-          + String.format(Messages.getString("Geotag.MemoryWarningFormat") //$NON-NLS-1$
-              + "<br><b><code>java -Xmx256M -jar geotag.jar</code></b>", //$NON-NLS-1$
-              NAME, Integer.valueOf(maxMemory), WEBSITE) + "</center></html>"; //$NON-NLS-1$
-      JOptionPane.showMessageDialog(null, message, Messages
-          .getString("Geotag.NotEnoughMemory"), //$NON-NLS-1$
+          + String
+              .format(
+                  i18n
+                      .tr("%1$s has only detected %2$d MB of memory.<br> Please run it with 'Java Web Start' from <b>%3$s</b><br>or run %1$s like this:") //$NON-NLS-1$
+                      + "<br><b><code>java -Xmx256M -jar geotag.jar</code></b>", //$NON-NLS-1$
+                  NAME, Integer.valueOf(maxMemory), WEBSITE)
+          + "</center></html>"; //$NON-NLS-1$
+      JOptionPane.showMessageDialog(null, message,
+          i18n.tr("Not enough memory"), //$NON-NLS-1$
           JOptionPane.WARNING_MESSAGE);
     }
     // check for new version
     String latestVersion = Version.updateAvaiable();
     String message = "<html><center>" //$NON-NLS-1$
-        + String.format(Messages.getString("Geotag.NewVersionFormat"), //$NON-NLS-1$
+        + String.format(i18n
+            .tr("A new version %1$s of <b>%2$s</b><br>is available at %3$s"), //$NON-NLS-1$
             latestVersion, NAME, WEBSITE) + "</center></html>"; //$NON-NLS-1$
     if (latestVersion != null) {
-      JOptionPane.showMessageDialog(null, message, Messages
-          .getString("Geotag.NewVersion"), //$NON-NLS-1$
+      JOptionPane.showMessageDialog(null, message, i18n.tr("New version"), //$NON-NLS-1$
           JOptionPane.INFORMATION_MESSAGE);
     }
     SwingUtilities.invokeLater(new Runnable() {

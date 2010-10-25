@@ -1,6 +1,6 @@
 /**
  * Geotag
- * Copyright (C) 2007-2009 Andreas Schneider
+ * Copyright (C) 2007-2010 Andreas Schneider
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -50,7 +50,6 @@ import org.fibs.geotag.gui.menus.MenuConstants;
 import org.fibs.geotag.gui.menus.SaveLocationsMenu;
 import org.fibs.geotag.gui.menus.ShowOnMapMenu;
 import org.fibs.geotag.gui.menus.actions.CopyOffsetToAllAction;
-import org.fibs.geotag.i18n.Messages;
 import org.fibs.geotag.table.ImagesTable;
 import org.fibs.geotag.table.ImagesTableModel;
 import org.fibs.geotag.tasks.CopyLocationNameTask;
@@ -64,6 +63,8 @@ import org.fibs.geotag.tasks.TaskExecutor;
 import org.fibs.geotag.track.TrackStore;
 import org.fibs.geotag.util.Units;
 import org.fibs.geotag.util.Units.DISTANCE;
+import org.xnap.commons.i18n.I18n;
+import org.xnap.commons.i18n.I18nFactory;
 
 /**
  * A context menu for a image table row. All actions that can be undone should
@@ -75,98 +76,101 @@ import org.fibs.geotag.util.Units.DISTANCE;
 @SuppressWarnings("serial")
 public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener,
     MenuConstants {
+  
+  /** Create i18n support */
+  private static final I18n i18n = I18nFactory.getI18n(ImagesTablePopupMenu.class);
 
   /** Text for menu item. */
-  private static final String SELECT_CORRECT_TIME = Messages
-      .getString("ImagesTablePopupMenu.SelectCorrectTimeForImage"); //$NON-NLS-1$
+  private static final String SELECT_CORRECT_TIME = i18n
+      .tr("Set time of image"); //$NON-NLS-1$
 
   /** Text for sub menu. */
-  private static final String FILL_GAPS = Messages
-      .getString("ImagesTablePopupMenu.FillGaps"); //$NON-NLS-1$
+  private static final String FILL_GAPS = i18n
+      .tr("Fill gaps"); //$NON-NLS-1$
 
   /** Text for menu item. */
-  private static final String FILL_THIS_GAP = Messages
-      .getString("ImagesTablePopupMenu.FillThisGap"); //$NON-NLS-1$
+  private static final String FILL_THIS_GAP = i18n
+      .tr("for this image"); //$NON-NLS-1$
 
   /** Text for menu item. */
-  private static final String FILL_SELECTED_GAPS = Messages
-      .getString("ImagesTablePopupMenu.FillSelectedGaps"); //$NON-NLS-1$
+  private static final String FILL_SELECTED_GAPS = i18n
+      .tr("between selected images"); //$NON-NLS-1$
 
   /** Text for menu item. */
-  private static final String FILL_ALL_GAPS = Messages
-      .getString("ImagesTablePopupMenu.FillAllGaps"); //$NON-NLS-1$
+  private static final String FILL_ALL_GAPS = i18n
+      .tr("all gaps between images"); //$NON-NLS-1$
 
   /** Text fir sub menu. */
-  private static final String LOCATION_NAMES = Messages
-      .getString("ImagesTablePopupMenu.LocationNames"); //$NON-NLS-1$
+  private static final String LOCATION_NAMES = i18n
+      .tr("Location names"); //$NON-NLS-1$
 
   /** Text for menu item. */
-  private static final String LOCATION_NAME_THIS = Messages
-      .getString("ImagesTablePopupMenu.LocationForThisImage"); //$NON-NLS-1$
+  private static final String LOCATION_NAME_THIS = i18n
+      .tr("find for this image"); //$NON-NLS-1$
 
   /** Text for menu item. */
-  private static final String LOCATION_NAMES_SELECTED = Messages
-      .getString("ImagesTablePopupMenu.LocationForSelectedImages"); //$NON-NLS-1$
+  private static final String LOCATION_NAMES_SELECTED = i18n
+      .tr("find for selected images"); //$NON-NLS-1$
 
   /** Text for menu item. */
-  private static final String LOCATION_NAMES_ALL = Messages
-      .getString("ImagesTablePopupMenu.LocationForAllImages"); //$NON-NLS-1$
+  private static final String LOCATION_NAMES_ALL = i18n
+      .tr("find for all images"); //$NON-NLS-1$
 
   /** Text for sub menu. */
-  private static final String LOCATION_NAMES_SELECT = Messages
-      .getString("ImagesTablePopupMenu.SelectLocation"); //$NON-NLS-1$
+  private static final String LOCATION_NAMES_SELECT = i18n
+      .tr("Select"); //$NON-NLS-1$
 
   /** Text for sun menu. */
-  private static final String COPY_LOCATION_NAME = Messages
-      .getString("ImagesTablePopupMenu.CopyName"); //$NON-NLS-1$
+  private static final String COPY_LOCATION_NAME = i18n
+      .tr("Copy"); //$NON-NLS-1$
 
   /** Text for menu item. */
-  private static final String COPY_LOCATION_NAME_PREVIOUS = Messages
-      .getString("ImagesTablePopupMenu.CopyNamePrevious"); //$NON-NLS-1$
+  private static final String COPY_LOCATION_NAME_PREVIOUS = i18n
+      .tr("to previous image"); //$NON-NLS-1$
 
   /** Text for menu item. */
-  private static final String COPY_LOCATION_NAME_NEXT = Messages
-      .getString("ImagesTablePopupMenu.CopyNameNext"); //$NON-NLS-1$
+  private static final String COPY_LOCATION_NAME_NEXT = i18n
+      .tr("to next image"); //$NON-NLS-1$
 
   /** Text for menu item. */
-  private static final String COPY_LOCATION_NAME_SELECTED = Messages
-      .getString("ImagesTablePopupMenu.CopyNameSelected"); //$NON-NLS-1$
+  private static final String COPY_LOCATION_NAME_SELECTED = i18n
+      .tr("to selected images"); //$NON-NLS-1$
 
   /** Text for menu item. */
-  private static final String COPY_LOCATION_NAME_ALL = Messages
-      .getString("ImagesTablePopupMenu.CopyNameAll"); //$NON-NLS-1$
+  private static final String COPY_LOCATION_NAME_ALL = i18n
+      .tr("to all images"); //$NON-NLS-1$
 
   /** Text for sub menu */
-  private static final String REMOVE_IMAGES = Messages
-      .getString("ImagesTablePopupMenu.RemoveImages"); //$NON-NLS-1$
+  private static final String REMOVE_IMAGES = i18n
+      .tr("Remove images"); //$NON-NLS-1$
 
   /** Text for sub menu */
-  private static final String FIND_ALTITUDE = Messages
-      .getString("ImagesTablePopupMenu.FIndAltitude"); //$NON-NLS-1$
+  private static final String FIND_ALTITUDE = i18n
+      .tr("Find altitude"); //$NON-NLS-1$
 
   /** Text for menu item */
-  private static final String FIND_THIS_ALTITUDE = Messages
-      .getString("ImagesTablePopupMenu.FindThisAltitude"); //$NON-NLS-1$
+  private static final String FIND_THIS_ALTITUDE = i18n
+      .tr("for this image"); //$NON-NLS-1$
 
   /** Text for menu item */
-  private static final String FIND_SELECTED_ALTITUDES = Messages
-      .getString("ImagesTablePopupMenu.FindSelectedAltitudes"); //$NON-NLS-1$
+  private static final String FIND_SELECTED_ALTITUDES = i18n
+      .tr("for selected images"); //$NON-NLS-1$
 
   /** Text for menu item */
-  private static final String FIND_ALL_ALTITUDES = Messages
-      .getString("ImagesTablePopupMenu.FindAllAltitudes"); //$NON-NLS-1$
+  private static final String FIND_ALL_ALTITUDES = i18n
+      .tr("for all images"); //$NON-NLS-1$
 
   /** Text for menu item */
-  private static final String REMOVE_THIS_IMAGE = Messages
-      .getString("ImagesTablePopupMenu.RemoveThisImage"); //$NON-NLS-1$
+  private static final String REMOVE_THIS_IMAGE = i18n
+      .tr("This image"); //$NON-NLS-1$
 
   /** Text for menu item */
-  private static final String REMOVE_SELECTED_IMAGES = Messages
-      .getString("ImagesTablePopupMenu.RemoveSelectedImages"); //$NON-NLS-1$
+  private static final String REMOVE_SELECTED_IMAGES = i18n
+      .tr("Selected images"); //$NON-NLS-1$
 
   /** Text for menu item */
-  private static final String REMOVE_ALL_IMAGES = Messages
-      .getString("ImagesTablePopupMenu.RemoveAllImages"); //$NON-NLS-1$
+  private static final String REMOVE_ALL_IMAGES = i18n
+      .tr("All images"); //$NON-NLS-1$
 
   /** The parent JFrame. */
   private JFrame parentFrame;
@@ -509,8 +513,8 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener,
               itemLocation.getName()) {
             @Override
             public void actionPerformed(ActionEvent e) {
-              TaskExecutor.execute(new SelectLocationNameTask(Messages
-                  .getString("ImagesTablePopupMenu.SelectLocationName"), //$NON-NLS-1$
+              TaskExecutor.execute(new SelectLocationNameTask(i18n
+                  .tr("Select location name"), //$NON-NLS-1$
                   getTableModel(), getImageInfo(), itemLocation, itemLocation
                       .getName(), DATA_SOURCE.MANUAL));
             }
@@ -529,8 +533,8 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener,
             public void actionPerformed(ActionEvent e) {
               TaskExecutor
                   .execute(new SelectLocationNameTask(
-                      Messages
-                          .getString("ImagesTablePopupMenu.SelectLocationName"), //$NON-NLS-1$
+                      i18n
+                          .tr("Select location name"), //$NON-NLS-1$
                       getTableModel(), getImageInfo(), itemLocation, getName(),
                       DATA_SOURCE.MANUAL));
             }
@@ -545,8 +549,8 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener,
                   public void actionPerformed(ActionEvent e) {
                     TaskExecutor
                         .execute(new SelectLocationNameTask(
-                            Messages
-                                .getString("ImagesTablePopupMenu.SelectLocationName"), //$NON-NLS-1$
+                            i18n
+                                .tr("Select location name"), //$NON-NLS-1$
                             getTableModel(), getImageInfo(), itemLocation,
                             getName(), DATA_SOURCE.MANUAL));
                   }
@@ -708,7 +712,7 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener,
       createCalendar.setTime(cameraDate);
       DateTimeChooser chooser = new DateTimeChooser(
           parentFrame,
-          Messages.getString("ImagesTablePopupMenu.SelectDateAndTime"), createCalendar, false); //$NON-NLS-1$
+          i18n.tr("Select Date and Time"), createCalendar, false); //$NON-NLS-1$
       Calendar chosenDate = chooser.openChooser();
       if (chosenDate != null) {
         // user has picked a date for this picture
@@ -723,8 +727,8 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener,
           @Override
           protected void done() {
             super.done();
-            String message = Messages
-                .getString("ImagesTablePopupMenu.UseTimeDifferenceforAll"); //$NON-NLS-1$
+            String message = i18n
+                .tr("Do you want to use this time difference for all images?"); //$NON-NLS-1$
             if (JOptionPane.showConfirmDialog(getParentFrame(), message,
                 ImageInfo.getOffsetString(offset), JOptionPane.YES_NO_OPTION,
                 JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {

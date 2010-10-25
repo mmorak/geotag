@@ -1,6 +1,6 @@
 /**
  * Geotag
- * Copyright (C) 2007-2009 Andreas Schneider
+ * Copyright (C) 2007-2010 Andreas Schneider
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,10 +21,11 @@ package org.fibs.geotag.tasks;
 import java.util.IllegalFormatException;
 import java.util.List;
 
-import org.fibs.geotag.data.UpdateGPSDateTime;
 import org.fibs.geotag.data.ImageInfo;
-import org.fibs.geotag.i18n.Messages;
+import org.fibs.geotag.data.UpdateGPSDateTime;
 import org.fibs.geotag.table.ImagesTableModel;
+import org.xnap.commons.i18n.I18n;
+import org.xnap.commons.i18n.I18nFactory;
 
 /**
  * a background task for changing the time offset for a list of images.
@@ -33,6 +34,9 @@ import org.fibs.geotag.table.ImagesTableModel;
  * 
  */
 public class SetOffsetTask extends UndoableBackgroundTask<ImageInfo> {
+  
+  /** Create i18n support */
+  private static final I18n i18n = I18nFactory.getI18n(SetOffsetTask.class);
 
   /** The offset to give the images. */
   private int offset;
@@ -111,11 +115,11 @@ public class SetOffsetTask extends UndoableBackgroundTask<ImageInfo> {
     }
     String result = null;
     if (currentProgress == 1) {
-      result = Messages.getString("SetOffsetTask.CopiedTimeToOne"); //$NON-NLS-1$
+      result = i18n.tr("Copied time offset to one image."); //$NON-NLS-1$
     } else {
       try {
-        result = String.format(Messages
-            .getString("SetOffsetTask.ImagesCopiedFormat"), currentProgress); //$NON-NLS-1$
+        result = String.format(i18n
+            .tr("Copied time offset to %d images."), currentProgress); //$NON-NLS-1$
       } catch (IllegalFormatException e) {
         e.printStackTrace();
       }

@@ -1,6 +1,6 @@
 /**
  * Geotag
- * Copyright (C) 2007-2009 Andreas Schneider
+ * Copyright (C) 2007-2010 Andreas Schneider
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -28,10 +28,11 @@ import org.fibs.geotag.exif.ExifReader;
 import org.fibs.geotag.exif.Exiftool;
 import org.fibs.geotag.exif.ExiftoolReader;
 import org.fibs.geotag.exif.MetadataExtractorReader;
-import org.fibs.geotag.i18n.Messages;
 import org.fibs.geotag.image.FileTypes;
 import org.fibs.geotag.table.ImagesTableModel;
 import org.fibs.geotag.util.FileUtil;
+import org.xnap.commons.i18n.I18n;
+import org.xnap.commons.i18n.I18nFactory;
 
 /**
  * This class handles reading EXIF data from image files. We call exiftool for
@@ -41,6 +42,9 @@ import org.fibs.geotag.util.FileUtil;
  * 
  */
 public class ExifReaderTask extends UndoableBackgroundTask<ImageInfo> {
+  
+  /** Create i18n support */
+  private static final I18n i18n = I18nFactory.getI18n(ExifReaderTask.class);
 
   /**
    * The <code>ImagesTableModel</code> that needs to be told about new EXIF
@@ -176,17 +180,17 @@ public class ExifReaderTask extends UndoableBackgroundTask<ImageInfo> {
     }
     StringBuilder result = new StringBuilder();
     if (imagesPublished == 1) {
-      result.append(Messages.getString("ExifReaderTask.OneImageLoaded")); //$NON-NLS-1$
+      result.append(i18n.tr("One image loaded.")); //$NON-NLS-1$
     } else {
       try {
-        result.append(String.format(Messages
-            .getString("ExifReaderTask.ImagesLoadedFormat"), imagesPublished)); //$NON-NLS-1$
+        result.append(String.format(i18n
+            .tr("%d images loaded."), imagesPublished)); //$NON-NLS-1$
       } catch (IllegalFormatException e) {
         e.printStackTrace();
       }
     }
     if (imagesFailed > 0 && !Exiftool.isAvailable()) {
-      result.append(Messages.getString("ExifReaderTask.ExiftoolNotFound")); //$NON-NLS-1$
+      result.append(i18n.tr("Exiftool not found")); //$NON-NLS-1$
     }
     // long end = System.currentTimeMillis();
     // System.out.println("Read files: "+(end-start)/1000.0);

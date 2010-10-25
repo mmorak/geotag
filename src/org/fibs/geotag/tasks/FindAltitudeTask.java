@@ -1,6 +1,6 @@
 /**
  * Geotag
- * Copyright (C) 2007-2009 Andreas Schneider
+ * Copyright (C) 2007-2010 Andreas Schneider
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,9 +25,10 @@ import org.fibs.geotag.data.ImageInfo;
 import org.fibs.geotag.data.UpdateGPSAltitude;
 import org.fibs.geotag.data.ImageInfo.DATA_SOURCE;
 import org.fibs.geotag.geonames.AltitudeHandler;
-import org.fibs.geotag.i18n.Messages;
 import org.fibs.geotag.table.ImagesTableModel;
 import org.fibs.geotag.util.Units;
+import org.xnap.commons.i18n.I18n;
+import org.xnap.commons.i18n.I18nFactory;
 
 /**
  * A class finding altitudes for images.
@@ -36,6 +37,9 @@ import org.fibs.geotag.util.Units;
  * 
  */
 public class FindAltitudeTask extends UndoableBackgroundTask<ImageInfo> {
+  
+  /** Create i18n support */
+  private static final I18n i18n = I18nFactory.getI18n(FindAltitudeTask.class);
 
   /** the table model to be informed about changes. */
   private ImagesTableModel imagesTableModel;
@@ -118,11 +122,11 @@ public class FindAltitudeTask extends UndoableBackgroundTask<ImageInfo> {
     }
     String result = null;
     if (altitudesFound == 1) {
-      result = Messages.getString("FindAltitudeTask.OneAltitudeFound"); //$NON-NLS-1$
+      result = i18n.tr("One altitude found"); //$NON-NLS-1$
     } else {
       try {
-        result = String.format(Messages
-            .getString("FindAltitudeTask.AltitudesFoundFormat"), //$NON-NLS-1$
+        result = String.format(i18n
+            .tr("%d altitudes found"), //$NON-NLS-1$
             altitudesFound);
       } catch (IllegalFormatException e) {
         e.printStackTrace();

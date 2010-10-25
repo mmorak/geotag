@@ -1,6 +1,6 @@
 /**
  * Geotag
- * Copyright (C) 2007-2009 Andreas Schneider
+ * Copyright (C) 2007-2010 Andreas Schneider
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -31,7 +31,8 @@ import javax.swing.border.TitledBorder;
 
 import org.fibs.geotag.Settings;
 import org.fibs.geotag.Settings.SETTING;
-import org.fibs.geotag.i18n.Messages;
+import org.xnap.commons.i18n.I18n;
+import org.xnap.commons.i18n.I18nFactory;
 
 /**
  * A panel to display and edit settings.
@@ -41,12 +42,15 @@ import org.fibs.geotag.i18n.Messages;
  */
 @SuppressWarnings("serial")
 public abstract class SettingsPanel extends JPanel {
+  
+  /** Create i18n support */
+  private static final I18n i18n = I18nFactory.getI18n(SettingsPanel.class);
 
   /** Text for checkbox if selected. */
-  static final String YES = Messages.getString("SettingsPanel.Yes"); //$NON-NLS-1$
+  static final String YES = i18n.tr("Yes"); //$NON-NLS-1$
 
   /** text for checkbox if not selected. */
-  static final String NO = Messages.getString("SettingsPanel.No"); //$NON-NLS-1$
+  static final String NO = i18n.tr("No"); //$NON-NLS-1$
 
   /** A panel containg the (optional) checkbox and the editor component. */
   private JPanel panel;

@@ -1,6 +1,6 @@
 /**
  * Geotag
- * Copyright (C) 2007-2009 Andreas Schneider
+ * Copyright (C) 2007-2010 Andreas Schneider
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,13 +24,17 @@ import java.util.List;
 
 import org.fibs.geotag.data.ImageInfo;
 import org.fibs.geotag.googleearth.KmlExporter;
-import org.fibs.geotag.i18n.Messages;
+import org.xnap.commons.i18n.I18n;
+import org.xnap.commons.i18n.I18nFactory;
 
 /**
  * @author Andreas Schneider
  * 
  */
 public class GoogleEarthExportTask extends BackgroundTask<Void> {
+  
+  /** Create i18n support */
+  private static final I18n i18n = I18nFactory.getI18n(GoogleEarthExportTask.class);
 
   /** The images to be exported. */
   private List<ImageInfo> images;
@@ -84,8 +88,8 @@ public class GoogleEarthExportTask extends BackgroundTask<Void> {
     } catch (IOException e) {
       e.printStackTrace();
     }
-    String message = String.format(Messages
-        .getString("GoogleEarthExportTask.FinishedFormat"), file.getPath()); //$NON-NLS-1$
+    String message = String.format(i18n
+        .tr("Finished exporting to %s."), file.getPath()); //$NON-NLS-1$
     return message;
   }
 

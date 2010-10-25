@@ -1,6 +1,6 @@
 /**
  * Geotag
- * Copyright (C) 2007-2009 Andreas Schneider
+ * Copyright (C) 2007-2010 Andreas Schneider
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,8 +22,9 @@ import java.util.List;
 
 import org.fibs.geotag.data.ImageInfo;
 import org.fibs.geotag.data.ImageInfo.THUMBNAIL_STATUS;
-import org.fibs.geotag.i18n.Messages;
 import org.fibs.geotag.image.ThumbnailGenerator;
+import org.xnap.commons.i18n.I18n;
+import org.xnap.commons.i18n.I18nFactory;
 
 /**
  * A class loading a number of thumbnail images and giving feedback.
@@ -32,6 +33,9 @@ import org.fibs.geotag.image.ThumbnailGenerator;
  * 
  */
 public class ThumbnailsTask extends BackgroundTask<ImageInfo> {
+  
+  /** Create i18n support */
+  private static final I18n i18n = I18nFactory.getI18n(ThumbnailsTask.class);
 
   /** the list of images to be updated. */
   private List<ImageInfo> imageInfos;
@@ -82,8 +86,8 @@ public class ThumbnailsTask extends BackgroundTask<ImageInfo> {
         break;
       }
       currentProgress++;
-      setProgressMessage(Messages
-          .getString("ThumbnailsTask.GeneratingThumbnails")); //$NON-NLS-1$
+      setProgressMessage(i18n
+          .tr("Generating thumbnails:")); //$NON-NLS-1$
       // only start loading it once.. no need to do it again
       // if status is loading, failed or available
       if (imageInfo.getThumbNailStatus() == THUMBNAIL_STATUS.UNKNOWN) {
@@ -92,7 +96,7 @@ public class ThumbnailsTask extends BackgroundTask<ImageInfo> {
         }
       }
     }
-    String result = Messages.getString("ThumbnailsTask.ThumbnailsGenerated"); //$NON-NLS-1$
+    String result = i18n.tr("Thumbnails generated."); //$NON-NLS-1$
     return result;
   }
 

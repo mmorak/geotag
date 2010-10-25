@@ -1,6 +1,6 @@
 /**
  * Geotag
- * Copyright (C) 2007-2009 Andreas Schneider
+ * Copyright (C) 2007-2010 Andreas Schneider
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,7 +24,8 @@ import java.util.StringTokenizer;
 
 import org.fibs.geotag.Settings;
 import org.fibs.geotag.Settings.SETTING;
-import org.fibs.geotag.i18n.Messages;
+import org.xnap.commons.i18n.I18n;
+import org.xnap.commons.i18n.I18nFactory;
 
 /**
  * A class allowing formatting of coordinates.
@@ -33,6 +34,10 @@ import org.fibs.geotag.i18n.Messages;
  * 
  */
 public final class Coordinates {
+  
+  /** Create i18n support */
+  private static final I18n i18n = I18nFactory.getI18n(Coordinates.class);
+  
   /**
    * hide constructor.
    */
@@ -73,16 +78,16 @@ public final class Coordinates {
           + Unicode.DOUBLE_PRIME_MARK };
 
   /** Prefix for east. */
-  public static final String EAST = Messages.getString("Coordinates.East"); //$NON-NLS-1$
+  public static final String EAST = i18n.tr("E"); //$NON-NLS-1$
 
   /** Prefix for west. */
-  public static final String WEST = Messages.getString("Coordinates.West"); //$NON-NLS-1$
+  public static final String WEST = i18n.tr("W"); //$NON-NLS-1$
 
   /** Prefix for north. */
-  public static final String NORTH = Messages.getString("Coordinates.North"); //$NON-NLS-1$
+  public static final String NORTH = i18n.tr("N"); //$NON-NLS-1$
 
   /** Prefix for south. */
-  public static final String SOUTH = Messages.getString("Coordinates.South"); //$NON-NLS-1$
+  public static final String SOUTH = i18n.tr("S"); //$NON-NLS-1$
 
   /**
    * @param value

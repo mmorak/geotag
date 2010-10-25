@@ -1,6 +1,6 @@
 /**
  * Geotag
- * Copyright (C) 2007-2009 Andreas Schneider
+ * Copyright (C) 2007-2010 Andreas Schneider
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -42,11 +42,12 @@ import javax.swing.tree.TreeSelectionModel;
 import org.fibs.geotag.Settings;
 import org.fibs.geotag.Settings.SETTING;
 import org.fibs.geotag.gpsbabel.GPSBabel;
-import org.fibs.geotag.i18n.Messages;
 import org.fibs.geotag.util.Coordinates;
 import org.fibs.geotag.util.FontUtil;
 import org.fibs.geotag.util.Proxies;
 import org.fibs.geotag.util.Units;
+import org.xnap.commons.i18n.I18n;
+import org.xnap.commons.i18n.I18nFactory;
 
 /**
  * Second version of the SettingsDialog. This time using a JTree
@@ -56,6 +57,9 @@ import org.fibs.geotag.util.Units;
  */
 @SuppressWarnings("serial")
 public class SettingsDialog extends JDialog implements TreeSelectionListener {
+  
+  /** Create i18n support */
+  private static final I18n i18n = I18nFactory.getI18n(SettingsDialog.class);
 
   /** The parent component, use to position this dialog. */
   private JFrame parent;
@@ -77,13 +81,13 @@ public class SettingsDialog extends JDialog implements TreeSelectionListener {
    */
   public SettingsDialog(JFrame parent) {
     // true == modal
-    super(parent, Messages.getString("SettingsDialog.Settings"), true); //$NON-NLS-1$
+    super(parent, i18n.tr("Settings"), true); //$NON-NLS-1$
     this.parent = parent;
     setLayout(new BorderLayout());
     treeAndSettingsPanel = new JPanel();
     treeAndSettingsPanel.setLayout(new BorderLayout());
-    DefaultMutableTreeNode top = new DefaultMutableTreeNode(Messages
-        .getString("SettingsDialog.Settings")); //$NON-NLS-1$
+    DefaultMutableTreeNode top = new DefaultMutableTreeNode(i18n
+        .tr("Settings")); //$NON-NLS-1$
     createTreeNodes(top);
     tree = new JTree(top);
     tree.getSelectionModel().setSelectionMode(
@@ -132,8 +136,8 @@ public class SettingsDialog extends JDialog implements TreeSelectionListener {
     // Finally a Panel with OK and Cancel buttons
     // The flow layout looks very ugly, have to find something else
     JPanel buttonPanel = new JPanel(new FlowLayout());
-    String ok = Messages.getString("SettingsDialog.OK"); //$NON-NLS-1$
-    String cancel = Messages.getString("SettingsDialog.Cancel"); //$NON-NLS-1$
+    String ok = i18n.tr("OK"); //$NON-NLS-1$
+    String cancel = i18n.tr("Cancel"); //$NON-NLS-1$
     JButton okButton = new JButton(ok);
     okButton.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -187,68 +191,68 @@ public class SettingsDialog extends JDialog implements TreeSelectionListener {
    *          The top node of the tree
    */
   private void createTreeNodes(DefaultMutableTreeNode top) {
-    DefaultMutableTreeNode general = new DefaultMutableTreeNode(Messages
-        .getString("SettingsDialog.GeneralSettings")); //$NON-NLS-1$
+    DefaultMutableTreeNode general = new DefaultMutableTreeNode(i18n
+        .tr("General settings")); //$NON-NLS-1$
 
     IntegerSettingsPanel mouseClicks = new IntegerSettingsPanel(
         parent,
-        Messages.getString("SettingsDialog.MouseClicksToEdit"), SETTING.CLICKS_TO_EDIT, //$NON-NLS-1$
+        i18n.tr("Mouse click count to edit"), SETTING.CLICKS_TO_EDIT, //$NON-NLS-1$
         Settings.DEFAULT_CLICKS_TO_EDIT, 1, 2, 1);
     addPanel(general, mouseClicks);
 
-    FontSettingsPanel font = new FontSettingsPanel(parent, Messages
-        .getString("SettingsDialog.Font"), SETTING.FONT, FontUtil //$NON-NLS-1$
+    FontSettingsPanel font = new FontSettingsPanel(parent, i18n
+        .tr("Font"), SETTING.FONT, FontUtil //$NON-NLS-1$
         .fontToID(UIManager.getLookAndFeel().getDefaults()
             .getFont("Table.font"))); //$NON-NLS-1$
     addPanel(general, font);
 
     BooleanSettingsPanel tooltipThumbnails = new BooleanSettingsPanel(
         parent,
-        Messages.getString("SettingsDialog.ThumbnailsInTooltips"), SETTING.TUMBNAILS_IN_TOOLTIPS, true); //$NON-NLS-1$
+        i18n.tr("Show thumbnail images in tooltips"), SETTING.TUMBNAILS_IN_TOOLTIPS, true); //$NON-NLS-1$
     addPanel(general, tooltipThumbnails);
 
     IntegerSettingsPanel thumbnailsSize = new IntegerSettingsPanel(
         parent,
-        Messages.getString("SettingsDialog.ThumbnailsSize"), SETTING.THUMBNAIL_SIZE, //$NON-NLS-1$
+        i18n.tr("Thumbnail size"), SETTING.THUMBNAIL_SIZE, //$NON-NLS-1$
         Settings.DEFAULT_THUMBNAIL_SIZE, 100, 800, 10);
     addPanel(general, thumbnailsSize);
 
     BooleanSettingsPanel xmpOnly = new BooleanSettingsPanel(
         parent,
-        Messages.getString("SettingsDialog.XmpFilesOnly"), SETTING.XMP_FILES_ONLY, false); //$NON-NLS-1$
+        i18n.tr("Always write to XMP files"), SETTING.XMP_FILES_ONLY, false); //$NON-NLS-1$
     addPanel(general, xmpOnly);
 
     BooleanSettingsPanel updates = new BooleanSettingsPanel(
         parent,
-        Messages.getString("SettingsDialog.CheckForUpdates"), SETTING.CHECK_FOR_NEW_VERSION, true); //$NON-NLS-1$
+        i18n.tr("Check for updates"), SETTING.CHECK_FOR_NEW_VERSION, true); //$NON-NLS-1$
     addPanel(general, updates);
 
     ChoiceSettingsPanel distances = new ChoiceSettingsPanel(
         parent,
-        Messages.getString("SettingsDialog.DistanceUnit"), SETTING.DISTANCE_UNIT, Units.getDistanceUnitNames(), 0); //$NON-NLS-1$
+        i18n.tr("Distance unit"), SETTING.DISTANCE_UNIT, Units.getDistanceUnitNames(), 0); //$NON-NLS-1$
     addPanel(general, distances);
 
     ChoiceSettingsPanel altitudes = new ChoiceSettingsPanel(
         parent,
-        Messages.getString("SettingsDialog.AltitudeUnit"), SETTING.ALTITUDE_UNIT, Units.getAltitudeUnitNames(), 0); //$NON-NLS-1$
+        i18n.tr("Altitude unit"), SETTING.ALTITUDE_UNIT, Units.getAltitudeUnitNames(), 0); //$NON-NLS-1$
     addPanel(general, altitudes);
 
     ChoiceSettingsPanel coordinates = new ChoiceSettingsPanel(
         parent,
-        Messages.getString("SettingsDialog.Coordinates"), SETTING.COORDINATES_FORMAT, Coordinates.FORMAT_NAMES, 0); //$NON-NLS-1$
+        i18n.tr("Coordinate format"), SETTING.COORDINATES_FORMAT, Coordinates.FORMAT_NAMES, 0); //$NON-NLS-1$
     addPanel(general, coordinates);
 
     ChoiceSettingsPanel proxyType = new ChoiceSettingsPanel(
         parent,
-        Messages.getString("SettingsDialog.ProxyType"), SETTING.PROXY_TYPE, Proxies.PROXY_TYPES, 0); //$NON-NLS-1$
+        i18n.tr("Proxy type"), SETTING.PROXY_TYPE, Proxies.PROXY_TYPES, 0); //$NON-NLS-1$
     addPanel(general, proxyType);
 
-    StringSettingsPanel proxyAddress = new StringSettingsPanel(parent, Messages
-        .getString("SettingsDialog.ProxyAddress"), SETTING.PROXY_ADDRESS, ""); //$NON-NLS-1$//$NON-NLS-2$
+    StringSettingsPanel proxyAddress = new StringSettingsPanel(parent, i18n
+        .tr("Proxy address (host:port)"), SETTING.PROXY_ADDRESS, ""); //$NON-NLS-1$//$NON-NLS-2$
     addPanel(general, proxyAddress);
     
     StringSettingsPanel xmpFileTypes = new StringSettingsPanel(parent,
-        Messages.getString("SettingsDialog.AdditionalFileTypesWithXmp"), //$NON-NLS-1$
+        i18n.tr("Additional image file types with XMP"), //$NON-NLS-1$
         SETTING.FILE_TYPES_SUPPORTED_BY_XMP, ""); //$NON-NLS-1$
     addPanel(general, xmpFileTypes);
 
@@ -257,25 +261,25 @@ public class SettingsDialog extends JDialog implements TreeSelectionListener {
     DefaultMutableTreeNode external = createExternalTreeNodes();
     top.add(external);
 
-    DefaultMutableTreeNode export = new DefaultMutableTreeNode(Messages
-        .getString("SettingsDialog.Export")); //$NON-NLS-1$
-    DefaultMutableTreeNode googleearth = new DefaultMutableTreeNode(Messages
-        .getString("SettingsDialog.GoogleEarth")); //$NON-NLS-1$
+    DefaultMutableTreeNode export = new DefaultMutableTreeNode(i18n
+        .tr("Export")); //$NON-NLS-1$
+    DefaultMutableTreeNode googleearth = new DefaultMutableTreeNode(i18n
+        .tr("Google Earth")); //$NON-NLS-1$
     BooleanSettingsPanel imagesInKmz = new BooleanSettingsPanel(
         parent,
-        Messages.getString("SettingsDialog.ThumbsInKMZ"), SETTING.KMZ_STORE_THUMBNAILS, false); //$NON-NLS-1$
+        i18n.tr("Store thumbnails in KMZ files"), SETTING.KMZ_STORE_THUMBNAILS, false); //$NON-NLS-1$
     addPanel(googleearth, imagesInKmz);
 
-    StringSettingsPanel kmlImagePath = new StringSettingsPanel(parent, Messages
-        .getString("SettingsDialog.KmlImagePath"), SETTING.KML_IMAGE_PATH, ""); //$NON-NLS-1$ //$NON-NLS-2$
+    StringSettingsPanel kmlImagePath = new StringSettingsPanel(parent, i18n
+        .tr("KML image path"), SETTING.KML_IMAGE_PATH, ""); //$NON-NLS-1$ //$NON-NLS-2$
     addPanel(googleearth, kmlImagePath);
 
     export.add(googleearth);
 
     top.add(export);
 
-    DefaultMutableTreeNode location = new DefaultMutableTreeNode(Messages
-        .getString("SettingsDialog.LookUp")); //$NON-NLS-1$
+    DefaultMutableTreeNode location = new DefaultMutableTreeNode(i18n
+        .tr("Place name look up")); //$NON-NLS-1$
     DefaultMutableTreeNode geonames = createGeonamesTreeNodes();
 
     location.add(geonames);
@@ -287,96 +291,96 @@ public class SettingsDialog extends JDialog implements TreeSelectionListener {
    * @return The tree nodes for external program settings
    */
   private DefaultMutableTreeNode createExternalTreeNodes() {
-    DefaultMutableTreeNode external = new DefaultMutableTreeNode(Messages
-        .getString("SettingsDialog.ExternalPrograms")); //$NON-NLS-1$
+    DefaultMutableTreeNode external = new DefaultMutableTreeNode(i18n
+        .tr("External programs")); //$NON-NLS-1$
 
-    DefaultMutableTreeNode browser = new DefaultMutableTreeNode(Messages
-        .getString("SettingsDialog.Browser")); //$NON-NLS-1$
+    DefaultMutableTreeNode browser = new DefaultMutableTreeNode(i18n
+        .tr("Browser")); //$NON-NLS-1$
     external.add(browser);
 
-    FileSettingsPanel browserPath = new FileSettingsPanel(parent, Messages
-        .getString("SettingsDialog.BrowserPath"), SETTING.BROWSER, ""); //$NON-NLS-1$//$NON-NLS-2$
+    FileSettingsPanel browserPath = new FileSettingsPanel(parent, i18n
+        .tr("Browser path"), SETTING.BROWSER, ""); //$NON-NLS-1$//$NON-NLS-2$
     addPanel(browser, browserPath);
 
-    DefaultMutableTreeNode exiftool = new DefaultMutableTreeNode(Messages
-        .getString("SettingsDialog.Exiftool")); //$NON-NLS-1$
+    DefaultMutableTreeNode exiftool = new DefaultMutableTreeNode(i18n
+        .tr("Exiftool")); //$NON-NLS-1$
     external.add(exiftool);
 
     FileSettingsPanel exiftoolPath = new FileSettingsPanel(
         parent,
-        Messages.getString("SettingsDialog.ExiftoolPath"), SETTING.EXIFTOOL_PATH, "exiftool"); //$NON-NLS-1$ //$NON-NLS-2$
+        i18n.tr("Exiftool path"), SETTING.EXIFTOOL_PATH, "exiftool"); //$NON-NLS-1$ //$NON-NLS-2$
     addPanel(exiftool, exiftoolPath);
 
     StringSettingsPanel exiftoolArguments = new StringSettingsPanel(parent,
-        Messages.getString("SettingsDialog.AdditionalExiftoolArguments"), //$NON-NLS-1$
+        i18n.tr("Additional Exiftool arguments"), //$NON-NLS-1$
         SETTING.EXIFTOOL_ARGUMENTS, ""); //$NON-NLS-1$
     addPanel(exiftool, exiftoolArguments);
     
 
     BooleanSettingsPanel createBackups = new BooleanSettingsPanel(
         parent,
-        Messages.getString("SettingsDialog.CreateBackups"), SETTING.CREATE_BACKUPS, true); //$NON-NLS-1$
+        i18n.tr("Keep backups of images when writing to files"), SETTING.CREATE_BACKUPS, true); //$NON-NLS-1$
     addPanel(exiftool, createBackups);
 
-    DefaultMutableTreeNode gpsbabel = new DefaultMutableTreeNode(Messages
-        .getString("SettingsDialog.GPSBabel")); //$NON-NLS-1$
+    DefaultMutableTreeNode gpsbabel = new DefaultMutableTreeNode(i18n
+        .tr("GPSBabel")); //$NON-NLS-1$
     external.add(gpsbabel);
 
     FileSettingsPanel gpsbabelPath = new FileSettingsPanel(
         parent,
-        Messages.getString("SettingsDialog.GPSBabelPath"), SETTING.GPSBABEL_PATH, "gpsbabel"); //$NON-NLS-1$//$NON-NLS-2$
+        i18n.tr("GPSBabel path"), SETTING.GPSBABEL_PATH, "gpsbabel"); //$NON-NLS-1$//$NON-NLS-2$
     addPanel(gpsbabel, gpsbabelPath);
 
     StringSettingsPanel gpsbabelProtocol = new StringSettingsPanel(
         parent,
-        Messages.getString("SettingsDialog.GPSBabelProtocol"), SETTING.GPSBABEL_PROTOCOL, "garmin"); //$NON-NLS-1$//$NON-NLS-2$
+        i18n.tr("GPSBabel protocol"), SETTING.GPSBABEL_PROTOCOL, "garmin"); //$NON-NLS-1$//$NON-NLS-2$
     addPanel(gpsbabel, gpsbabelProtocol);
 
     StringSettingsPanel gpsbabelDevice = new StringSettingsPanel(
         parent,
-        Messages.getString("SettingsDialog.GPSBabelDevice"), SETTING.GPSBABEL_DEVICE, GPSBabel.getDefaultDevice()); //$NON-NLS-1$
+        i18n.tr("GPSBabel device"), SETTING.GPSBABEL_DEVICE, GPSBabel.getDefaultDevice()); //$NON-NLS-1$
     addPanel(gpsbabel, gpsbabelDevice);
 
-    DefaultMutableTreeNode dcraw = new DefaultMutableTreeNode(Messages
-        .getString("SettingsDialog.Dcraw")); //$NON-NLS-1$
+    DefaultMutableTreeNode dcraw = new DefaultMutableTreeNode(i18n
+        .tr("Dcraw")); //$NON-NLS-1$
 
-    FileSettingsPanel dcrawPath = new FileSettingsPanel(parent, Messages
-        .getString("SettingsDialog.DcrawPath"), SETTING.DCRAW_PATH, "dcraw"); //$NON-NLS-1$ //$NON-NLS-2$
+    FileSettingsPanel dcrawPath = new FileSettingsPanel(parent, i18n
+        .tr("Dcraw path"), SETTING.DCRAW_PATH, "dcraw"); //$NON-NLS-1$ //$NON-NLS-2$
     addPanel(dcraw, dcrawPath);
 
     external.add(dcraw);
 
-    DefaultMutableTreeNode clipboard = new DefaultMutableTreeNode(Messages
-        .getString("SettingsDialog.Clipboard")); //$NON-NLS-1$
+    DefaultMutableTreeNode clipboard = new DefaultMutableTreeNode(i18n
+        .tr("Clipboard")); //$NON-NLS-1$
 
     BooleanSettingsPanel enableClipboard = new BooleanSettingsPanel(
         parent,
-        Messages.getString("SettingsDialog.EnableClipboard"), SETTING.CLIPBOARD_ENABLED, false); //$NON-NLS-1$
+        i18n.tr("Monitor clipboard"), SETTING.CLIPBOARD_ENABLED, false); //$NON-NLS-1$
     addPanel(clipboard, enableClipboard);
 
     BooleanSettingsPanel latitudeFirst = new BooleanSettingsPanel(
         parent,
-        Messages.getString("SettingsDialog.LatitudeFirst"), SETTING.CLIPBOARD_LATITUDE_FIRST, true); //$NON-NLS-1$
+        i18n.tr("Latitude first"), SETTING.CLIPBOARD_LATITUDE_FIRST, true); //$NON-NLS-1$
     addPanel(clipboard, latitudeFirst);
 
     StringSettingsPanel north = new StringSettingsPanel(
         parent,
-        Messages.getString("SettingsDialog.North"), SETTING.CLIPBOARD_NORTH, Coordinates.NORTH); //$NON-NLS-1$
+        i18n.tr("Letters for 'North'"), SETTING.CLIPBOARD_NORTH, Coordinates.NORTH); //$NON-NLS-1$
     addPanel(clipboard, north);
 
     StringSettingsPanel south = new StringSettingsPanel(
         parent,
-        Messages.getString("SettingsDialog.South"), SETTING.CLIPBOARD_SOUTH, Coordinates.SOUTH); //$NON-NLS-1$
+        i18n.tr("Letters for 'South'"), SETTING.CLIPBOARD_SOUTH, Coordinates.SOUTH); //$NON-NLS-1$
     addPanel(clipboard, south);
 
     StringSettingsPanel east = new StringSettingsPanel(
         parent,
-        Messages.getString("SettingsDialog.East"), SETTING.CLIPBOARD_EAST, Coordinates.EAST); //$NON-NLS-1$
+        i18n.tr("Letters for 'East'"), SETTING.CLIPBOARD_EAST, Coordinates.EAST); //$NON-NLS-1$
     addPanel(clipboard, east);
 
     StringSettingsPanel west = new StringSettingsPanel(
         parent,
-        Messages.getString("SettingsDialog.West"), SETTING.CLIPBOARD_WEST, Coordinates.WEST); //$NON-NLS-1$
+        i18n.tr("Letters for 'West'"), SETTING.CLIPBOARD_WEST, Coordinates.WEST); //$NON-NLS-1$
     addPanel(clipboard, west);
 
     external.add(clipboard);
@@ -388,29 +392,29 @@ public class SettingsDialog extends JDialog implements TreeSelectionListener {
    * @return The TreeNodes for geonames settings
    */
   private DefaultMutableTreeNode createGeonamesTreeNodes() {
-    DefaultMutableTreeNode geonames = new DefaultMutableTreeNode(Messages
-        .getString("SettingsDialog.Geonames")); //$NON-NLS-1$
+    DefaultMutableTreeNode geonames = new DefaultMutableTreeNode(i18n
+        .tr("geonames.org")); //$NON-NLS-1$
 
-    StringSettingsPanel url = new StringSettingsPanel(parent, Messages
-        .getString("SettingsDialog.GeonamesURL"), SETTING.GEONAMES_URL, //$NON-NLS-1$
+    StringSettingsPanel url = new StringSettingsPanel(parent, i18n
+        .tr("Geonames URL"), SETTING.GEONAMES_URL, //$NON-NLS-1$
         Settings.GEONAMES_DEFAULT_URL);
     addPanel(geonames, url);
     
-    IntegerSettingsPanel radius = new IntegerSettingsPanel(parent, Messages
-        .getString("SettingsDialog.Radius"), SETTING.GEONAMES_USE_RADIUS, //$NON-NLS-1$
+    IntegerSettingsPanel radius = new IntegerSettingsPanel(parent, i18n
+        .tr("Search radius"), SETTING.GEONAMES_USE_RADIUS, //$NON-NLS-1$
         false, SETTING.GEONAMES_RADIUS, Settings.GEONAMES_DEFAULT_RADIUS, 0,
         Integer.MAX_VALUE, 1);
     addPanel(geonames, radius);
 
     IntegerSettingsPanel maxRows = new IntegerSettingsPanel(parent,
-        Messages.getString("SettingsDialog.NumberResults"), //$NON-NLS-1$
+        i18n.tr("Number of results"), //$NON-NLS-1$
         SETTING.GEONAMES_MAX_ROWS, Settings.GEONAMES_DEFAULT_MAX_ROWS, 1,
         Settings.GEONAMES_MAX_MAX_ROWS, 1);
     addPanel(geonames, maxRows);
 
     IntegerSettingsPanel wikipedia = new IntegerSettingsPanel(
         parent,
-        Messages.getString("SettingsDialog.RetrieveWikipedia"), SETTING.GEONAMES_USE_WIKIPEDIA, //$NON-NLS-1$
+        i18n.tr("Retrieve Wikipedia place names"), SETTING.GEONAMES_USE_WIKIPEDIA, //$NON-NLS-1$
         false, SETTING.GEONAMES_WIKIPEDIA_ENTRIES,
         Settings.GEONAMES_DEFAULT_WIKIPEDIA_ENTRIES, 0,
         Settings.GEONAMES_MAX_WIKIPEDIA_ENTRIES, 1);
@@ -418,7 +422,7 @@ public class SettingsDialog extends JDialog implements TreeSelectionListener {
 
     StringSettingsPanel language = new StringSettingsPanel(
         parent,
-        Messages.getString("SettingsDialog.OverrideQueryLanguage"), SETTING.GEONAMES_OVERRIDE_LANGUAGE, false, //$NON-NLS-1$
+        i18n.tr("Override query language"), SETTING.GEONAMES_OVERRIDE_LANGUAGE, false, //$NON-NLS-1$
         SETTING.GEONAMES_LANGUAGE, ""); //$NON-NLS-1$
     addPanel(geonames, language);
 

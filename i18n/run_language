@@ -1,0 +1,8 @@
+#!/bin/bash
+
+if [ "$#" -ne "2" ]; then
+  echo "Usage: $0  <pathto_geotag_jar> <languagecode>"
+  exit 0
+fi
+
+java -Xmx512m -cp .:$1 org.fibs.geotag.Geotag -language=$2 -console=yes

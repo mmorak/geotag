@@ -1,6 +1,6 @@
 /**
  * Geotag
- * Copyright (C) 2007-2009 Andreas Schneider
+ * Copyright (C) 2007-2010 Andreas Schneider
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -32,8 +32,9 @@ import javax.xml.bind.Marshaller;
 
 import org.fibs.geotag.Geotag;
 import org.fibs.geotag.data.ImageInfo;
-import org.fibs.geotag.i18n.Messages;
 import org.fibs.geotag.util.Airy;
+import org.xnap.commons.i18n.I18n;
+import org.xnap.commons.i18n.I18nFactory;
 
 import com.google.earth.kml._2.AltitudeModeEnum;
 import com.google.earth.kml._2.FolderType;
@@ -54,6 +55,9 @@ import com.google.earth.kml._2.ViewRefreshModeEnum;
  * @version 1.5, December 10, 2005
  */
 public final class GoogleEarthLauncher {
+  
+  /** Create i18n support */
+  private static final I18n i18n = I18nFactory.getI18n(GoogleEarthLauncher.class);
 
   /**
    * hide constructor.
@@ -63,8 +67,8 @@ public final class GoogleEarthLauncher {
   }
 
   /** Error message to display. */
-  private static final String ERROR_MESSAGE = Messages
-      .getString("Launcher.ErrorAttemptingToLaunch"); //$NON-NLS-1$
+  private static final String ERROR_MESSAGE = i18n
+      .tr("Error attempting to launch Google Earth"); //$NON-NLS-1$
 
   /** The last image launched into Google Earth will receive updates. */
   private static ImageInfo lastImageLauched;
@@ -101,7 +105,7 @@ public final class GoogleEarthLauncher {
       // it contains one Folder
       FolderType folder = factory.createFolderType();
       folder.setName(Geotag.NAME + ' '
-          + Messages.getString("GoogleEarthLauncher.Folder")); //$NON-NLS-1$
+          + i18n.tr("Folder")); //$NON-NLS-1$
       folder.setOpen(Boolean.valueOf(true));
       LookAtType lookAt = factory.createLookAtType();
       lookAt.setLatitude(new Double(latitude));
@@ -140,7 +144,7 @@ public final class GoogleEarthLauncher {
       // The folder also contains a network link
       NetworkLinkType networkLink = factory.createNetworkLinkType();
       networkLink.setName(Geotag.NAME + ' '
-          + Messages.getString("GoogleEarthLauncher.Link")); //$NON-NLS-1$
+          + i18n.tr("Link")); //$NON-NLS-1$
       networkLink.setOpen(Boolean.valueOf(true));
       networkLink.setVisibility(Boolean.valueOf(true));
       LinkType link = factory.createLinkType();
@@ -198,7 +202,7 @@ public final class GoogleEarthLauncher {
         String executable = "googleearth"; //$NON-NLS-1$
         if (Runtime.getRuntime().exec(new String[] { "which", executable }) //$NON-NLS-1$
             .waitFor() != 0) {
-          throw new Exception(Messages.getString("Launcher.CouldNotFind")); //$NON-NLS-1$
+          throw new Exception(i18n.tr("Could not find 'googleearth' on $PATH")); //$NON-NLS-1$
         }
         Runtime.getRuntime().exec(new String[] { executable, file.getPath() });
       }

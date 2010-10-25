@@ -1,6 +1,6 @@
 /**
  * Geotag
- * Copyright (C) 2007-2009 Andreas Schneider
+ * Copyright (C) 2007-2010 Andreas Schneider
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,8 +22,9 @@ import java.io.File;
 
 import javax.swing.filechooser.FileFilter;
 
-import org.fibs.geotag.i18n.Messages;
 import org.fibs.geotag.util.FileUtil;
+import org.xnap.commons.i18n.I18n;
+import org.xnap.commons.i18n.I18nFactory;
 
 /**
  * A class to determine if a file is a GPX file or not.
@@ -32,6 +33,9 @@ import org.fibs.geotag.util.FileUtil;
  * 
  */
 public class GpxFileFilter extends FileFilter implements java.io.FileFilter {
+  
+  /** Create i18n support */
+  private static final I18n i18n = I18nFactory.getI18n(GpxFileFilter.class);
 
   /**
    * Accept directories and GPX files.
@@ -72,6 +76,6 @@ public class GpxFileFilter extends FileFilter implements java.io.FileFilter {
    */
   @Override
   public String getDescription() {
-    return Messages.getString("GpxFileFilter.GpxFiles"); //$NON-NLS-1$
+    return i18n.tr("GPX files"); //$NON-NLS-1$
   }
 }

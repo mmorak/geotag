@@ -1,6 +1,6 @@
 /**
  * Geotag
- * Copyright (C) 2007-2009 Andreas Schneider
+ * Copyright (C) 2007-2010 Andreas Schneider
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,15 +23,19 @@ import org.fibs.geotag.Settings.SETTING;
 import org.fibs.geotag.data.ImageInfo;
 import org.fibs.geotag.data.UpdateGPSAltitude;
 import org.fibs.geotag.data.ImageInfo.DATA_SOURCE;
-import org.fibs.geotag.i18n.Messages;
 import org.fibs.geotag.util.Units;
 import org.fibs.geotag.util.Units.ALTITUDE;
+import org.xnap.commons.i18n.I18n;
+import org.xnap.commons.i18n.I18nFactory;
 
 /**
  * @author Andreas Schneider
  * 
  */
 public class EditAltitudeTask extends UndoableBackgroundTask<ImageInfo> {
+  
+  /** Create i18n support */
+  private static final I18n i18n = I18nFactory.getI18n(EditAltitudeTask.class);
 
   /** The image whose altitude will be set. */
   private ImageInfo imageInfo;
@@ -96,7 +100,7 @@ public class EditAltitudeTask extends UndoableBackgroundTask<ImageInfo> {
       }
       publish(imageInfo);
     }
-    return Messages.getString("EditAltitudeTask.AltitudeEdited"); //$NON-NLS-1$
+    return i18n.tr("Altitude edited"); //$NON-NLS-1$
   }
 
 }

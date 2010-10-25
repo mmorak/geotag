@@ -1,6 +1,6 @@
 /**
  * Geotag
- * Copyright (C) 2007-2009 Andreas Schneider
+ * Copyright (C) 2007-2010 Andreas Schneider
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -26,7 +26,8 @@ import java.util.StringTokenizer;
 
 import org.fibs.geotag.Settings;
 import org.fibs.geotag.Settings.SETTING;
-import org.fibs.geotag.i18n.Messages;
+import org.xnap.commons.i18n.I18n;
+import org.xnap.commons.i18n.I18nFactory;
 
 /**
  * A class to help with proxy connections.
@@ -35,6 +36,10 @@ import org.fibs.geotag.i18n.Messages;
  * 
  */
 public final class Proxies {
+  
+  /** Create i18n support */
+  private static final I18n i18n = I18nFactory.getI18n(Proxies.class);
+  
   /**
    * hide constructor.
    */
@@ -44,9 +49,9 @@ public final class Proxies {
 
   /** The names of the proxy types available. */
   public static final String[] PROXY_TYPES = {
-      Messages.getString("Proxies.NoProxy"), //$NON-NLS-1$
-      Messages.getString("Proxies.HttpProxy"), //$NON-NLS-1$
-      Messages.getString("Proxies.SocksProxy") //$NON-NLS-1$
+      i18n.tr("No proxy"), //$NON-NLS-1$
+      i18n.tr("HTTP proxy"), //$NON-NLS-1$
+      i18n.tr("Socks proxy") //$NON-NLS-1$
   };
 
   /**
