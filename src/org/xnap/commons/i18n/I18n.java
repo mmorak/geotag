@@ -39,6 +39,7 @@ import java.util.ResourceBundle;
  * @author Tammo van Lessen
  * @since 0.9
  */
+@SuppressWarnings("all")
 public class I18n {
 
 	private static final String CONTEXT_GLUE = "\u0004";

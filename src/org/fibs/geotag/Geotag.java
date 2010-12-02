@@ -140,7 +140,7 @@ public final class Geotag {
         String value = arg.substring(equalsPos + 1);
         // now see what to do with them
         if (key.equals("po") && value.length() > 0) {
-          Messages_po.setPoFileName(value);
+          Messages_po.processPoFile(value);
           Locale locale = LocaleUtil.localeFromString("po");
           Locale.setDefault(locale);
         } else if (key.equals("language") && value.length() > 0) { //$NON-NLS-1$

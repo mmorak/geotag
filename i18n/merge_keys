@@ -1,0 +1,5 @@
+#!/bin/bash
+msgmerge --update da.po keys.pot
+msgmerge --update de.po keys.pot
+msgmerge --update en_GB.po keys.pot
+msgmerge --update fr.po keys.pot

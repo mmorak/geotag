@@ -117,19 +117,20 @@ public class MapHandler implements ContextHandler {
     return new ByteArrayInputStream(page.toString().getBytes());
   }
 
+  @SuppressWarnings("all")
   private enum JavascriptVaraibles {
-    title("MapHandler.Geotag"), 
-    showMenuText("MapHandler.ShowMenu"),
-    hideMenuText("MapHandler.HideMenu"),
-    mouseZoomText("MapHandler.MouseZoom"),
-    showTracksText("MapHandler.DisplayTracks"),
-    showWikipediaText("MapHandler.ShowWikipedia"),
-    currentImageText("MapHandler.CurrentImage"),
-    nextImageText("MapHandler.NextImage"),
-    previousImageText("MapHandler.PreviousImage"),
-    showAllText("MapHandler.ShowAllImages"),
-    instructions("MapHandler.Instructions"),
-    instructionsWithDirection("MapHandler.InstructionsWithDirection");
+    title(i18n.tr("Geotag")), 
+    showMenuText(i18n.tr("Show <u>m</u>enu")),
+    hideMenuText(i18n.tr("Hide <u>m</u>enu")),
+    mouseZoomText(i18n.tr("Enable scroll wheel <u>z</u>oom")),
+    showTracksText(i18n.tr("Display <u>t</u>racks")),
+    showWikipediaText(i18n.tr("Show <u>W</u>ikipedia entries")),
+    currentImageText(i18n.tr("Center on <u>c</u>urrent image")),
+    nextImageText(i18n.tr("<u>N</u>ext image")),
+    previousImageText(i18n.tr("<u>P</u>revious image")),
+    showAllText(i18n.tr("Show <u>a</u>ll images")),
+    instructions(i18n.tr("Move the marker to<br>select a different location.")),
+    instructionsWithDirection(i18n.tr("Move camera marker to<br>select a different location.<br>Move other marker to<br>change image direction."));
     // The key used to find the value of the variable 
     private final String messagesKey;
     private JavascriptVaraibles(String messagesKey) {
@@ -169,62 +170,5 @@ public class MapHandler implements ContextHandler {
     page
         .append("  var ").append(variable.toString()).append(" = '").append(value).append("'\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
   }
-  
-  public static String quote(String string) {
-    if (string == null || string.length() == 0) {
-        return "''";
-    }
-
-    char         b;
-    char         c = 0;
-    int          i;
-    int          len = string.length();
-    StringBuffer sb = new StringBuffer(len + 4);
-    String       t;
-
-    sb.append("'");
-    for (i = 0; i < len; i += 1) {
-        b = c;
-        c = string.charAt(i);
-        switch (c) {
-        case '\\':
-        case '"':
-            sb.append('\\');
-            sb.append(c);
-            break;
-        case '/':
-            if (b == '<') {
-                sb.append('\\');
-            }
-            sb.append(c);
-            break;
-        case '\b':
-            sb.append("\\b");
-            break;
-        case '\t':
-            sb.append("\\t");
-            break;
-        case '\n':
-            sb.append("\\n");
-            break;
-        case '\f':
-            sb.append("\\f");
-            break;
-        case '\r':
-            sb.append("\\r");
-            break;
-        default:
-            if (c < ' ' || (c >= '\u0080' && c < '\u00a0') ||
-                           (c >= '\u2000' && c < '\u2100')) {
-                t = "000" + Integer.toHexString(c);
-                sb.append("\\u" + t.substring(t.length() - 4));
-            } else {
-                sb.append(c);
-            }
-        }
-    }
-    sb.append('"');
-    return sb.toString();
-}
   
 }

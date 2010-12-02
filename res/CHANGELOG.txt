@@ -1,3 +1,7 @@
+Release 0.072
+  Fixed missing translation of Javascript text.
+  Google Earth path is now configurable for Linux
+  
 Release 0.071
   Geotag now uses GNU gettext po files for 
   translations. Major change under the bonnet

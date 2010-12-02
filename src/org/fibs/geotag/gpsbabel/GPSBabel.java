@@ -28,6 +28,7 @@ import org.fibs.geotag.Geotag;
 import org.fibs.geotag.Settings;
 import org.fibs.geotag.Settings.SETTING;
 import org.fibs.geotag.util.InputStreamGobbler;
+import org.fibs.geotag.util.OperatingSystem;
 
 /**
  * A class dealing with the GPSBabel program.
@@ -94,14 +95,13 @@ public final class GPSBabel {
    * @return a sensible guess of where the serial port is.
    */
   public static String getDefaultDevice() {
-    String os = System.getProperty("os.name"); //$NON-NLS-1$
-    if (os.equals("Linux")) { //$NON-NLS-1$
+    if (OperatingSystem.isLinux()) { //$NON-NLS-1$
       String file = "/dev/ttyUSB0"; // my personal preference :-) //$NON-NLS-1$
       if ((new File(file)).exists()) {
         return file;
       }
       return "/dev/ttyS0"; // sensible default //$NON-NLS-1$
-    } else if (os.startsWith("Windows")) { //$NON-NLS-1$
+    } else if (OperatingSystem.isWindows()) { //$NON-NLS-1$
       return "COM1:"; //$NON-NLS-1$
     }
     return "serial"; // user should change this //$NON-NLS-1$

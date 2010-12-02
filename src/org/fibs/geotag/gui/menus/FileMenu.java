@@ -281,7 +281,7 @@ public class FileMenu extends JMenu implements MenuConstants {
     if (FileTypes.getFileTypesSupportedByXmp().size() > 0) {
       chooser.addChoosableFileFilter(ImageFileFilter.getFilter(Type.CUSTOM_FILE_WITH_XMP));
     }
-    chooser.setFileFilter(ImageFileFilter.getLastFilterUsed());;
+    chooser.setFileFilter(ImageFileFilter.getLastFilterUsed());
     chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
     if (chooser.showOpenDialog(MainWindow.getMainWindow(FileMenu.this)) == JFileChooser.APPROVE_OPTION) {
       File directory = chooser.getSelectedFile();

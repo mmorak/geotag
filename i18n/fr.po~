@@ -1,152 +1,136 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
-#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: Geotag\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-12-02 12:39+0000\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
-"MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=CHARSET\n"
+"POT-Creation-Date: 2010-12-02 12:02+0000\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-Language: French\n"
+"X-Poedit-Country: FRANCE\n"
+"X-Poedit-SourceCharset: utf-8\n"
+"PO-Revision-Date: \n"
+"Last-Translator: Andreas Schneider <geotag@fibs.me.uk>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
 
 #: ../src/org/fibs/geotag/webserver/WebServer.java:55
 msgid "Error 404, file not found."
-msgstr ""
+msgstr "Erreur 404, fichier non trouvé."
 
 #: ../src/org/fibs/geotag/webserver/MapHandler.java:122
 msgid "Geotag"
-msgstr ""
+msgstr "Geotag"
 
 #: ../src/org/fibs/geotag/webserver/MapHandler.java:123
 msgid "Show <u>m</u>enu"
-msgstr ""
+msgstr "Montrer le <u>m</u>enu"
 
 #: ../src/org/fibs/geotag/webserver/MapHandler.java:124
 msgid "Hide <u>m</u>enu"
-msgstr ""
+msgstr "Cacher les <u>m</u>enus"
 
 #: ../src/org/fibs/geotag/webserver/MapHandler.java:125
 msgid "Enable scroll wheel <u>z</u>oom"
-msgstr ""
+msgstr "Autoriser le <u>z</u>oom avec  roulette de la souris"
 
 #: ../src/org/fibs/geotag/webserver/MapHandler.java:126
 msgid "Display <u>t</u>racks"
-msgstr ""
+msgstr "Afficher les <u>t</u>rajectoires"
 
 #: ../src/org/fibs/geotag/webserver/MapHandler.java:127
 msgid "Show <u>W</u>ikipedia entries"
-msgstr ""
+msgstr "Montrer les entr&eacute;es <u>W</u>ikipedia"
 
 #: ../src/org/fibs/geotag/webserver/MapHandler.java:128
 msgid "Center on <u>c</u>urrent image"
-msgstr ""
+msgstr "Centr&eacute; sur l&rsquo;image <u>a</u>ctuelle"
 
 #: ../src/org/fibs/geotag/webserver/MapHandler.java:129
 msgid "<u>N</u>ext image"
-msgstr ""
+msgstr "Image <u>S</u>uivante"
 
 #: ../src/org/fibs/geotag/webserver/MapHandler.java:130
 msgid "<u>P</u>revious image"
-msgstr ""
+msgstr "Image <u>P</u>r&eacute;c&eacute;dente"
 
 #: ../src/org/fibs/geotag/webserver/MapHandler.java:131
 msgid "Show <u>a</u>ll images"
-msgstr ""
+msgstr "Montrer <u>t</u>outes les images"
 
 #: ../src/org/fibs/geotag/webserver/MapHandler.java:132
 msgid "Move the marker to<br>select a different location."
-msgstr ""
+msgstr "D&eacute;placer le marqueur vers<br>s&eacute;lectionner un autre lieu."
 
 #: ../src/org/fibs/geotag/webserver/MapHandler.java:133
-msgid ""
-"Move camera marker to<br>select a different location.<br>Move other marker "
-"to<br>change image direction."
-msgstr ""
+msgid "Move camera marker to<br>select a different location.<br>Move other marker to<br>change image direction."
+msgstr "D&eacute;placer le marqueur de l&rsquo;appareil photo<br>s&eacute;lectionner un autre lieu.<br>D&eacute;placer l&rsquo;autre marqueur pour<br>changer la direction de l&rsquo;image."
 
 #: ../src/org/fibs/geotag/track/GpxFileFilter.java:79
 msgid "GPX files"
-msgstr ""
+msgstr "Fichiers GPX"
 
 #: ../src/org/fibs/geotag/License.java:54
-msgid ""
-"This program is free software; you can redistribute it and/or modify it "
-"under the terms of the GNU General Public License as published by the Free "
-"Software Foundation; either version 2 of the License, or (at your option) "
-"any later version."
-msgstr ""
+msgid "This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version."
+msgstr "Ce programme est un logiciel libre ; vous pouvez le redistribuer ou le modifier selon les termes de la Licence publique générale GNU telle que publiée par la Free Software Foundation ; selon la version 2 de la Licence, ou (à votre choix) toute version postérieure."
 
 #: ../src/org/fibs/geotag/License.java:55
-msgid ""
-"This program is distributed in the hope that it will be useful, but WITHOUT "
-"ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or "
-"FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for "
-"more details."
-msgstr ""
+msgid "This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details."
+msgstr "Ce programme est distribué en espérant qu'il sera utile, mais SANS AUCUNE GARANTIE ; sans même la garantie implicite de COMMERCIALISABILITÉ ou  d’ADÉQUATION À UN OBJECTIF PARTICULIER. Voir la Licence publique générale GNU pour plus de détails."
 
 #: ../src/org/fibs/geotag/License.java:56
-msgid ""
-"You should have received a copy of the GNU General Public License along with "
-"this program; if not, see"
-msgstr ""
+msgid "You should have received a copy of the GNU General Public License along with this program; if not, see"
+msgstr "Vous devriez avoir reçu une copie de la Licence publique générale GNU  avec ce programme ; sinon, allez à"
 
 #: ../src/org/fibs/geotag/image/ImageFileFilter.java:101
 msgid "Image files"
-msgstr ""
+msgstr "Fichiers d'images"
 
 #: ../src/org/fibs/geotag/image/ImageFileFilter.java:129
 msgid "JPEG files"
-msgstr ""
+msgstr "Fichiers JPEG"
 
 #: ../src/org/fibs/geotag/image/ImageFileFilter.java:158
 msgid "RAW files"
-msgstr ""
+msgstr "Fichiers RAW"
 
 #: ../src/org/fibs/geotag/image/ImageFileFilter.java:187
 msgid "TIFF files"
-msgstr ""
+msgstr "Fichiers TIFF"
 
 #: ../src/org/fibs/geotag/image/ImageFileFilter.java:225
 msgid "files with XMP sidecar"
-msgstr ""
+msgstr "Fichiers avec annexe XMP"
 
 #: ../src/org/fibs/geotag/googleearth/GoogleEarthLauncher.java:74
 msgid "Error attempting to launch Google Earth"
-msgstr ""
+msgstr "Erreur lors du lancement de Google Earth"
 
 #: ../src/org/fibs/geotag/googleearth/GoogleEarthLauncher.java:111
 msgid "Folder"
-msgstr ""
+msgstr "Répertoire"
 
 #: ../src/org/fibs/geotag/googleearth/GoogleEarthLauncher.java:150
 msgid "Link"
-msgstr ""
+msgstr "Lien"
 
 #: ../src/org/fibs/geotag/googleearth/GoogleEarthLauncher.java:207
-msgid "Could not find '%1$s' on $PATH"
-msgstr ""
+msgid "Could not find '{0}' on $PATH"
+msgstr "'{0}' n'a pas été trouvé dans le $PATH"
 
 #: ../src/org/fibs/geotag/googleearth/KmlRequestHandler.java:167
 msgid "Position"
-msgstr ""
+msgstr "Localisation"
 
 #: ../src/org/fibs/geotag/googleearth/KmlExporter.java:80
 msgid "Images"
-msgstr ""
+msgstr "Images"
 
 #: ../src/org/fibs/geotag/gui/DateTimeChooser.java:177
 #: ../src/org/fibs/geotag/gui/AboutDialog.java:151
 #: ../src/org/fibs/geotag/gui/settings/SettingsDialog.java:140
 #: ../src/org/fibs/geotag/gui/FontChooser.java:191
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 #: ../src/org/fibs/geotag/gui/DateTimeChooser.java:197
 #: ../src/org/fibs/geotag/gui/settings/SettingsDialog.java:141
@@ -154,22 +138,20 @@ msgstr ""
 #: ../src/org/fibs/geotag/gui/MainWindow.java:649
 #: ../src/org/fibs/geotag/gui/FontChooser.java:199
 msgid "Cancel"
-msgstr ""
+msgstr "Annuler"
 
 #: ../src/org/fibs/geotag/gui/DateTimeChooser.java:208
 msgid "Now"
-msgstr ""
+msgstr "Maintenant"
 
 #: ../src/org/fibs/geotag/gui/WhatNext.java:146
 #: ../src/org/fibs/geotag/gui/MainWindow.java:403
 msgid "What next?"
-msgstr ""
+msgstr "Que faire à présent ?"
 
 #: ../src/org/fibs/geotag/gui/WhatNext.java:161
-msgid ""
-"The 'dcraw' program can't be found. It is needed to display previews of your "
-"RAW images. Select <b>%s %s %s</b> to find it."
-msgstr ""
+msgid "The 'dcraw' program can't be found. It is needed to display previews of your RAW images. Select <b>%s %s %s</b> to find it."
+msgstr "Le program 'Dcraw' n'a pas été trouvé. Il est nécessaire pour prévisualiser vos images RAW. Sélectionnez <b>%s %s %s</b> pour le trouver."
 
 #: ../src/org/fibs/geotag/gui/WhatNext.java:162
 #: ../src/org/fibs/geotag/gui/WhatNext.java:179
@@ -179,7 +161,7 @@ msgstr ""
 #: ../src/org/fibs/geotag/gui/WhatNext.java:347
 #: ../src/org/fibs/geotag/gui/menus/MenuConstants.java:55
 msgid "File"
-msgstr ""
+msgstr "Fichier"
 
 #: ../src/org/fibs/geotag/gui/WhatNext.java:163
 #: ../src/org/fibs/geotag/gui/WhatNext.java:180
@@ -188,960 +170,934 @@ msgstr ""
 #: ../src/org/fibs/geotag/gui/settings/SettingsDialog.java:91
 #: ../src/org/fibs/geotag/gui/menus/MenuConstants.java:75
 msgid "Settings"
-msgstr ""
+msgstr "Configuration"
 
 #: ../src/org/fibs/geotag/gui/WhatNext.java:178
-msgid ""
-"The 'GPSBabel' program can't be found. It is only needed if you want to load "
-"tracks directly from your GPS. Select <b>%s %s %s</b> to find it."
-msgstr ""
+msgid "The 'GPSBabel' program can't be found. It is only needed if you want to load tracks directly from your GPS. Select <b>%s %s %s</b> to find it."
+msgstr "Le programme 'GPSBabel' n'a pas été trouvé. Il est nécessaire pour charger les itinéraires directement depuis votre GPS. Sélectionnez <b>%s %s %s</b> pour le trouver."
 
 #: ../src/org/fibs/geotag/gui/WhatNext.java:195
-msgid ""
-"The 'exiftool' program can't be found. It is needed to save coordinates  to "
-"your images. Select <b>%s %s %s</b> to find it."
-msgstr ""
+msgid "The 'exiftool' program can't be found. It is needed to save coordinates  to your images. Select <b>%s %s %s</b> to find it."
+msgstr "Le programme 'exiftool'  n'a pas été trouvé. Il est nécessaire pour enregistrer les coordonnées dans vos images. Sélectionnez <b>%s %s %s</b> pour le trouver."
 
 #: ../src/org/fibs/geotag/gui/WhatNext.java:213
-msgid ""
-"Geotag can search for nearby place names for images that already have "
-"coordinates by using the <b>%1$s</b> menu."
-msgstr ""
+msgid "Geotag can search for nearby place names for images that already have coordinates by using the <b>%1$s</b> menu."
+msgstr "En utilisant le menu <b>%1$s</b>, Geotag peut rechercher des noms de lieux pour les images qui ont déjà des coordonnées."
 
 #: ../src/org/fibs/geotag/gui/WhatNext.java:214
 #: ../src/org/fibs/geotag/gui/ImagesTablePopupMenu.java:105
 msgid "Location names"
-msgstr ""
+msgstr "Noms de lieux"
 
 #: ../src/org/fibs/geotag/gui/WhatNext.java:229
-msgid ""
-"You can save the locations of images listed in <b>bold</b> by using the <b>"
-"%1$s</b> menu. Note that this operation <b>cannot be un-done</b>!"
-msgstr ""
+msgid "You can save the locations of images listed in <b>bold</b> by using the <b>%1$s</b> menu. Note that this operation <b>cannot be un-done</b>!"
+msgstr "Vous pouvez enregistrer les lieux des images listés en <b>gras</b> en utilisant le menu <b>%1$s</b>. Notez que cette opération <b>ne peut pas être annulée</b> !"
 
 #: ../src/org/fibs/geotag/gui/WhatNext.java:230
 #: ../src/org/fibs/geotag/gui/menus/MenuConstants.java:107
 #: ../src/org/fibs/geotag/gui/menus/SaveLocationsMenu.java:164
 msgid "Save new locations"
-msgstr ""
+msgstr "Enregistrer les nouvelles positions"
 
 #: ../src/org/fibs/geotag/gui/WhatNext.java:245
-msgid ""
-"Some images have coordinates and some don't. You can use the <b>%1$s</b> "
-"menu to make %2$s guess where images were taken."
-msgstr ""
+msgid "Some images have coordinates and some don't. You can use the <b>%1$s</b> menu to make %2$s guess where images were taken."
+msgstr "Certaines images ont des coordonnées et d'autres pas. Vous pouvez utiliser le menu <b>%1$s</b> pour demander à %2$s d'estimer où les images ont été prises."
 
 #: ../src/org/fibs/geotag/gui/WhatNext.java:246
 #: ../src/org/fibs/geotag/gui/ImagesTablePopupMenu.java:89
 msgid "Fill gaps"
-msgstr ""
+msgstr "Remplir les trous"
 
 #: ../src/org/fibs/geotag/gui/WhatNext.java:264
-msgid ""
-"If your happy with the time <b>%1$s</b> values, right click on any image and "
-"use the <b>%2$s</b> menu to match the GPS data to images."
-msgstr ""
+msgid "If your happy with the time <b>%1$s</b> values, right click on any image and use the <b>%2$s</b> menu to match the GPS data to images."
+msgstr "Si vous êtes satisfait des valeurs de temps <b>%1$s</b>, faites un clic droit sur n'importe quelle image et utilisez le menu <b>%2$s</b> pour faire correspondre les données GPS aux images."
 
 #: ../src/org/fibs/geotag/gui/WhatNext.java:265
 #: ../src/org/fibs/geotag/gui/WhatNext.java:301
 #: ../src/org/fibs/geotag/table/ImagesTableModel.java:78
 msgid "Offset"
-msgstr ""
+msgstr "Décalage"
 
 #: ../src/org/fibs/geotag/gui/WhatNext.java:266
 #: ../src/org/fibs/geotag/gui/menus/MenuConstants.java:123
 msgid "Find locations"
-msgstr ""
+msgstr "Trouver les coordonnées"
 
 #: ../src/org/fibs/geotag/gui/WhatNext.java:282
-msgid ""
-"You can right click on an image and select <b>%1$s</b> to show the image "
-"location on a map in your browser and move the marker on the map to adjust "
-"the location."
-msgstr ""
+msgid "You can right click on an image and select <b>%1$s</b> to show the image location on a map in your browser and move the marker on the map to adjust the location."
+msgstr "Vous pouvez faire un clic droit sur une image et sélectionner le menu <b>%1$s</b> pour afficher la localisation de l'image sur une carte dans votre navigateur et déplacer le marqueur sur la carte pour ajuster sa localisation."
 
 #: ../src/org/fibs/geotag/gui/WhatNext.java:283
 #: ../src/org/fibs/geotag/gui/menus/ShowOnMapMenu.java:59
 msgid "Show on map"
-msgstr ""
+msgstr "Montrer sur la carte"
 
 #: ../src/org/fibs/geotag/gui/WhatNext.java:300
-msgid ""
-"Make sure the time <b>%1$s</b> values are correct. It's best to right click "
-"on an image you are sure about (say an image of your GPS display) and choose "
-"<b>%2$s</b> from the menu bar, then select the exact time (and time zone) "
-"the image was taken."
-msgstr ""
+msgid "Make sure the time <b>%1$s</b> values are correct. It's best to right click on an image you are sure about (say an image of your GPS display) and choose <b>%2$s</b> from the menu bar, then select the exact time (and time zone) the image was taken."
+msgstr "Assurez-vous que les valeurs de temps <b>%1$s</b> soient correctes. Le mieux est de faire un clic droit sur une image dont vous êtes sûr (par exemple la photo de l'écran de votre GPS) et de choisir <b>%2$s</b> à partir de la barre de menu, puis de sélectionner le temps exact (et le fuseau horaire) à laquelle l'image a été prise."
 
 #: ../src/org/fibs/geotag/gui/WhatNext.java:302
 #: ../src/org/fibs/geotag/gui/ImagesTablePopupMenu.java:85
 msgid "Set time of image"
-msgstr ""
+msgstr "Définir le temps de l'image"
 
 #: ../src/org/fibs/geotag/gui/WhatNext.java:320
 msgid "Load a GPS track file. Select <b>%s %s %s</b> from the menu bar."
-msgstr ""
+msgstr "Charger un fichier d'itinéraire GPS. Sélectionnez <b>%s %s %s</b> à partir de la barre de menu."
 
 #: ../src/org/fibs/geotag/gui/WhatNext.java:321
 #: ../src/org/fibs/geotag/gui/menus/MenuConstants.java:67
 msgid "Load tracks from file"
-msgstr ""
+msgstr "Charger les itinéraires à partir d'un fichier"
 
 #: ../src/org/fibs/geotag/gui/WhatNext.java:326
-msgid ""
-"You can also load tracks directly from your GPS. Select <b>%s %s %s</b>."
-msgstr ""
+msgid "You can also load tracks directly from your GPS. Select <b>%s %s %s</b>."
+msgstr "Vous pouvez aussi charger les itinéraires directement depuis votre GPS. Sélectionnez <b>%s %s %s</b>."
 
 #: ../src/org/fibs/geotag/gui/WhatNext.java:328
 #: ../src/org/fibs/geotag/gui/menus/MenuConstants.java:63
 msgid "Load tracks from GPS"
-msgstr ""
+msgstr "Charger les itinéraires à partir du GPS"
 
 #: ../src/org/fibs/geotag/gui/WhatNext.java:346
-msgid ""
-"Load some image files. Select <b>%s %s %s</b> from the menu or add them by "
-"using drag-and-drop."
-msgstr ""
+msgid "Load some image files. Select <b>%s %s %s</b> from the menu or add them by using drag-and-drop."
+msgstr "Charger des images.  Sélectionnez <b>%s %s %s</b> à partir du menu ou ajoutez-les à l'aide d'un glisser-déposer."
 
 #: ../src/org/fibs/geotag/gui/WhatNext.java:347
 #: ../src/org/fibs/geotag/gui/menus/MenuConstants.java:35
 msgid "Add images from directory"
-msgstr ""
+msgstr "Ajouter les images d'un répertoire"
 
 #: ../src/org/fibs/geotag/gui/WhatNext.java:363
-msgid ""
-"If there are too many images displayed, you can remove some of them using "
-"the  <b>%1$s</b> menu. They will be removed from the display, but not "
-"deleted."
-msgstr ""
+msgid "If there are too many images displayed, you can remove some of them using the  <b>%1$s</b> menu. They will be removed from the display, but not deleted."
+msgstr "S'il y a trop d'images affichées, vous pouvez en enlever certaines en utilisant le menu <b>%1$s</b>. Elles seront enlevées de l'affichage, mais ne seront pas effacées du disque."
 
 #: ../src/org/fibs/geotag/gui/WhatNext.java:364
 #: ../src/org/fibs/geotag/gui/ImagesTablePopupMenu.java:145
 msgid "Remove images"
-msgstr ""
+msgstr "Enlever des images"
 
 #: ../src/org/fibs/geotag/gui/AboutDialog.java:108
 msgid "Copyright"
-msgstr ""
+msgstr "Copyright"
 
 #: ../src/org/fibs/geotag/gui/settings/SettingsDialog.java:196
 msgid "General settings"
-msgstr ""
+msgstr "Paramètres généraux"
 
 #: ../src/org/fibs/geotag/gui/settings/SettingsDialog.java:200
 msgid "Mouse click count to edit"
-msgstr ""
+msgstr "Nombre de clics de souris pour l'édition"
 
 #: ../src/org/fibs/geotag/gui/settings/SettingsDialog.java:205
 msgid "Font"
-msgstr ""
+msgstr "Police"
 
 #: ../src/org/fibs/geotag/gui/settings/SettingsDialog.java:212
 msgid "Show thumbnail images in tooltips"
-msgstr ""
+msgstr "Montrer les vignettes d'image dans les info-bulles"
 
 #: ../src/org/fibs/geotag/gui/settings/SettingsDialog.java:217
 msgid "Thumbnail size"
-msgstr ""
+msgstr "Taille des vignettes"
 
 #: ../src/org/fibs/geotag/gui/settings/SettingsDialog.java:223
 msgid "Always write to XMP files"
-msgstr ""
+msgstr "Toujours écrire dans des fichiers XMP"
 
 #: ../src/org/fibs/geotag/gui/settings/SettingsDialog.java:228
 msgid "Check for updates"
-msgstr ""
+msgstr "Vérifier les mises à jour"
 
 #: ../src/org/fibs/geotag/gui/settings/SettingsDialog.java:233
 msgid "Distance unit"
-msgstr ""
+msgstr "Unité de distance"
 
 #: ../src/org/fibs/geotag/gui/settings/SettingsDialog.java:238
 msgid "Altitude unit"
-msgstr ""
+msgstr "Unité d'altitude"
 
 #: ../src/org/fibs/geotag/gui/settings/SettingsDialog.java:243
 msgid "Coordinate format"
-msgstr ""
+msgstr "Format des coordonnées"
 
 #: ../src/org/fibs/geotag/gui/settings/SettingsDialog.java:248
 msgid "Proxy type"
-msgstr ""
+msgstr "Type de proxy"
 
 #: ../src/org/fibs/geotag/gui/settings/SettingsDialog.java:252
 msgid "Proxy address (host:port)"
-msgstr ""
+msgstr "Adresse du proxy (host:port)"
 
 #: ../src/org/fibs/geotag/gui/settings/SettingsDialog.java:256
 msgid "Additional image file types with XMP"
-msgstr ""
+msgstr "Types supplémentaires de fichiers d'images avec XMP"
 
 #: ../src/org/fibs/geotag/gui/settings/SettingsDialog.java:266
 msgid "Export"
-msgstr ""
+msgstr "Exporter"
 
 #: ../src/org/fibs/geotag/gui/settings/SettingsDialog.java:268
 #: ../src/org/fibs/geotag/gui/settings/SettingsDialog.java:357
 #: ../src/org/fibs/geotag/gui/menus/MenuConstants.java:87
 msgid "Google Earth"
-msgstr ""
+msgstr "Google Earth"
 
 #: ../src/org/fibs/geotag/gui/settings/SettingsDialog.java:271
 msgid "Store thumbnails in KMZ files"
-msgstr ""
+msgstr "Stocker les vignettes dans les fichiers KMZ"
 
 #: ../src/org/fibs/geotag/gui/settings/SettingsDialog.java:275
 msgid "KML image path"
-msgstr ""
+msgstr "Chemin de l'image KML"
 
 #: ../src/org/fibs/geotag/gui/settings/SettingsDialog.java:283
 msgid "Place name look up"
-msgstr ""
+msgstr "Recherche de noms de lieux"
 
 #: ../src/org/fibs/geotag/gui/settings/SettingsDialog.java:296
 msgid "External programs"
-msgstr ""
+msgstr "Programmes externes"
 
 #: ../src/org/fibs/geotag/gui/settings/SettingsDialog.java:299
 msgid "Browser"
-msgstr ""
+msgstr "Navigateur"
 
 #: ../src/org/fibs/geotag/gui/settings/SettingsDialog.java:303
 msgid "Browser path"
-msgstr ""
+msgstr "Chemin du navigateur"
 
 #: ../src/org/fibs/geotag/gui/settings/SettingsDialog.java:307
 msgid "Exiftool"
-msgstr ""
+msgstr "Exiftool"
 
 #: ../src/org/fibs/geotag/gui/settings/SettingsDialog.java:312
 msgid "Exiftool path"
-msgstr ""
+msgstr "Chemin d'Exiftool"
 
 #: ../src/org/fibs/geotag/gui/settings/SettingsDialog.java:316
 msgid "Additional Exiftool arguments"
-msgstr ""
+msgstr "Arguments Exiftools supplémentaires"
 
 #: ../src/org/fibs/geotag/gui/settings/SettingsDialog.java:323
 msgid "Keep backups of images when writing to files"
-msgstr ""
+msgstr "Garder des sauvegardes des images lors de l'écriture des fichiers"
 
 #: ../src/org/fibs/geotag/gui/settings/SettingsDialog.java:327
 msgid "GPSBabel"
-msgstr ""
+msgstr "GPSBabel"
 
 #: ../src/org/fibs/geotag/gui/settings/SettingsDialog.java:332
 msgid "GPSBabel path"
-msgstr ""
+msgstr "Chemin de GPSBabel"
 
 #: ../src/org/fibs/geotag/gui/settings/SettingsDialog.java:337
 msgid "GPSBabel protocol"
-msgstr ""
+msgstr "Protocole de GPSBabel"
 
 #: ../src/org/fibs/geotag/gui/settings/SettingsDialog.java:342
 msgid "GPSBabel device"
-msgstr ""
+msgstr "Périphérique GPSBabel"
 
 #: ../src/org/fibs/geotag/gui/settings/SettingsDialog.java:346
 msgid "Dcraw"
-msgstr ""
+msgstr "Dcraw"
 
 #: ../src/org/fibs/geotag/gui/settings/SettingsDialog.java:349
 msgid "Dcraw path"
-msgstr ""
+msgstr "Chemin de Dcraw"
 
 #: ../src/org/fibs/geotag/gui/settings/SettingsDialog.java:359
 msgid "Google Earth path"
-msgstr ""
+msgstr "Chemin de Google Earth"
 
 #: ../src/org/fibs/geotag/gui/settings/SettingsDialog.java:366
 msgid "Clipboard"
-msgstr ""
+msgstr "Presse-papiers"
 
 #: ../src/org/fibs/geotag/gui/settings/SettingsDialog.java:370
 msgid "Monitor clipboard"
-msgstr ""
+msgstr "Surveiller le presse-papiers"
 
 #: ../src/org/fibs/geotag/gui/settings/SettingsDialog.java:375
 msgid "Latitude first"
-msgstr ""
+msgstr "Latitude en premier"
 
 #: ../src/org/fibs/geotag/gui/settings/SettingsDialog.java:380
 msgid "Letters for 'North'"
-msgstr ""
+msgstr "Lettres pour 'Nord'"
 
 #: ../src/org/fibs/geotag/gui/settings/SettingsDialog.java:385
 msgid "Letters for 'South'"
-msgstr ""
+msgstr "Lettres pour 'Sud'"
 
 #: ../src/org/fibs/geotag/gui/settings/SettingsDialog.java:390
 msgid "Letters for 'East'"
-msgstr ""
+msgstr "Lettres pour 'Est'"
 
 #: ../src/org/fibs/geotag/gui/settings/SettingsDialog.java:395
 msgid "Letters for 'West'"
-msgstr ""
+msgstr "Lettres pour 'Ouest'"
 
 #: ../src/org/fibs/geotag/gui/settings/SettingsDialog.java:408
 msgid "geonames.org"
-msgstr ""
+msgstr "geonames.org"
 
 #: ../src/org/fibs/geotag/gui/settings/SettingsDialog.java:411
 msgid "Geonames URL"
-msgstr ""
+msgstr "URL de Geonames"
 
 #: ../src/org/fibs/geotag/gui/settings/SettingsDialog.java:416
 msgid "Search radius"
-msgstr ""
+msgstr "Rayon de recherche"
 
 #: ../src/org/fibs/geotag/gui/settings/SettingsDialog.java:422
 msgid "Number of results"
-msgstr ""
+msgstr "Nombre de résultats"
 
 #: ../src/org/fibs/geotag/gui/settings/SettingsDialog.java:429
 msgid "Retrieve Wikipedia place names"
-msgstr ""
+msgstr "Extraire les noms de lieux de Wikipedia"
 
 #: ../src/org/fibs/geotag/gui/settings/SettingsDialog.java:437
 msgid "Override query language"
-msgstr ""
+msgstr "Passer outre le langage de requête"
 
 #: ../src/org/fibs/geotag/gui/settings/SettingsPanel.java:50
 msgid "Yes"
-msgstr ""
+msgstr "Oui"
 
 #: ../src/org/fibs/geotag/gui/settings/SettingsPanel.java:53
 msgid "No"
-msgstr ""
+msgstr "Non"
 
 #: ../src/org/fibs/geotag/gui/menus/GoogleEarthMenu.java:232
 #: ../src/org/fibs/geotag/gui/menus/FileMenu.java:368
 msgid "File exists"
-msgstr ""
+msgstr "Le fichier existe"
 
 #: ../src/org/fibs/geotag/gui/menus/GoogleEarthMenu.java:235
 #: ../src/org/fibs/geotag/gui/menus/FileMenu.java:371
 msgid "Overwrite existing file %s?"
-msgstr ""
+msgstr "Ecraser le fichier existant %s ?"
 
 #: ../src/org/fibs/geotag/gui/menus/GoogleEarthMenu.java:248
 #: ../src/org/fibs/geotag/gui/menus/ShowOnMapMenu.java:195
 msgid "Generate thumbnails"
-msgstr ""
+msgstr "Générer les vignettes"
 
 #: ../src/org/fibs/geotag/gui/menus/GoogleEarthMenu.java:272
 msgid "Export for Google Earth"
-msgstr ""
+msgstr "Exporter pour Google Earth"
 
 #: ../src/org/fibs/geotag/gui/menus/MenuConstants.java:39
 #: ../src/org/fibs/geotag/gui/menus/MenuConstants.java:111
 #: ../src/org/fibs/geotag/gui/ImagesTablePopupMenu.java:165
 msgid "This image"
-msgstr ""
+msgstr "Cette image"
 
 #: ../src/org/fibs/geotag/gui/menus/MenuConstants.java:43
 #: ../src/org/fibs/geotag/gui/menus/MenuConstants.java:115
 #: ../src/org/fibs/geotag/gui/ImagesTablePopupMenu.java:169
 msgid "Selected images"
-msgstr ""
+msgstr "Les images sélectionnées"
 
 #: ../src/org/fibs/geotag/gui/menus/MenuConstants.java:47
 #: ../src/org/fibs/geotag/gui/menus/MenuConstants.java:119
 #: ../src/org/fibs/geotag/gui/MainWindow.java:487
 #: ../src/org/fibs/geotag/gui/ImagesTablePopupMenu.java:173
 msgid "All images"
-msgstr ""
+msgstr "Toutes les images"
 
 #: ../src/org/fibs/geotag/gui/menus/MenuConstants.java:51
 msgid "Copy time offset"
-msgstr ""
+msgstr "Copier le décalage temporel"
 
 #: ../src/org/fibs/geotag/gui/menus/MenuConstants.java:59
 msgid "Add image"
-msgstr ""
+msgstr "Ajouter des images"
 
 #: ../src/org/fibs/geotag/gui/menus/MenuConstants.java:71
 msgid "Save track"
-msgstr ""
+msgstr "Sauver l'itinéraire"
 
 #: ../src/org/fibs/geotag/gui/menus/MenuConstants.java:79
 #: ../src/org/fibs/geotag/gui/menus/MenuConstants.java:151
 #: ../src/org/fibs/geotag/gui/ImagesTablePopupMenu.java:137
 msgid "to selected images"
-msgstr ""
+msgstr "vers les images sélectionnées"
 
 #: ../src/org/fibs/geotag/gui/menus/MenuConstants.java:83
 #: ../src/org/fibs/geotag/gui/menus/MenuConstants.java:155
 #: ../src/org/fibs/geotag/gui/ImagesTablePopupMenu.java:141
 msgid "to all images"
-msgstr ""
+msgstr "vers toutes les images"
 
 #: ../src/org/fibs/geotag/gui/menus/MenuConstants.java:91
 msgid "Show in Google Earth"
-msgstr ""
+msgstr "Montrer dans Google Earth"
 
 #: ../src/org/fibs/geotag/gui/menus/MenuConstants.java:95
 msgid "Export this image"
-msgstr ""
+msgstr "Exporter cette image"
 
 #: ../src/org/fibs/geotag/gui/menus/MenuConstants.java:99
 msgid "Export selected images"
-msgstr ""
+msgstr "Exporter les images selectionnées"
 
 #: ../src/org/fibs/geotag/gui/menus/MenuConstants.java:103
 msgid "Export all images"
-msgstr ""
+msgstr "Exporter toutes les images"
 
 #: ../src/org/fibs/geotag/gui/menus/MenuConstants.java:127
 #: ../src/org/fibs/geotag/gui/ImagesTablePopupMenu.java:93
 #: ../src/org/fibs/geotag/gui/ImagesTablePopupMenu.java:153
 msgid "for this image"
-msgstr ""
+msgstr "pour cette image"
 
 #: ../src/org/fibs/geotag/gui/menus/MenuConstants.java:131
 #: ../src/org/fibs/geotag/gui/ImagesTablePopupMenu.java:157
 msgid "for selected images"
-msgstr ""
+msgstr "pour les images sélectionnées"
 
 #: ../src/org/fibs/geotag/gui/menus/MenuConstants.java:135
 #: ../src/org/fibs/geotag/gui/ImagesTablePopupMenu.java:161
 msgid "for all images"
-msgstr ""
+msgstr "pour toutes les images"
 
 #: ../src/org/fibs/geotag/gui/menus/MenuConstants.java:139
 msgid "Copy location"
-msgstr ""
+msgstr "Copier les coordonnées"
 
 #: ../src/org/fibs/geotag/gui/menus/MenuConstants.java:143
 #: ../src/org/fibs/geotag/gui/ImagesTablePopupMenu.java:129
 msgid "to previous image"
-msgstr ""
+msgstr "vers l'image précédente"
 
 #: ../src/org/fibs/geotag/gui/menus/MenuConstants.java:147
 #: ../src/org/fibs/geotag/gui/ImagesTablePopupMenu.java:133
 msgid "to next image"
-msgstr ""
+msgstr "vers l'image suivante"
 
 #: ../src/org/fibs/geotag/gui/menus/FileMenu.java:329
 msgid "Could not read GPX file"
-msgstr ""
+msgstr "Le fichier GPX n'a pas pu être lu"
 
 #: ../src/org/fibs/geotag/gui/menus/FileMenu.java:330
 msgid "Error"
-msgstr ""
+msgstr "Erreur"
 
 #: ../src/org/fibs/geotag/gui/menus/FileMenu.java:380
 msgid "Tracks saved to %s."
-msgstr ""
+msgstr "Itinéraires sauvés dans %s."
 
 #: ../src/org/fibs/geotag/gui/menus/FileMenu.java:407
 msgid "locations loaded"
-msgstr ""
+msgstr "positions chargées"
 
 #: ../src/org/fibs/geotag/gui/menus/FileMenu.java:426
 msgid "GPSBabel error"
-msgstr ""
+msgstr "Erreur de GPSBabel"
 
 #: ../src/org/fibs/geotag/gui/menus/ShowOnMapMenu.java:63
 msgid "Show on map (with direction)"
-msgstr ""
+msgstr "Montrer sur la carte (avec direction)"
 
 #: ../src/org/fibs/geotag/gui/MainWindow.java:210
 msgid "Do you really want to exit Geotag?"
-msgstr ""
+msgstr "Voulez-vous vraiment quitter Geotag ?"
 
 #: ../src/org/fibs/geotag/gui/MainWindow.java:211
 msgid "Exit Program"
-msgstr ""
+msgstr "Quitter le programme"
 
 #: ../src/org/fibs/geotag/gui/MainWindow.java:276
 msgid "Image viewer"
-msgstr ""
+msgstr "Visionneur d'images"
 
 #: ../src/org/fibs/geotag/gui/MainWindow.java:400
 msgid "Help"
-msgstr ""
+msgstr "Aide"
 
 #: ../src/org/fibs/geotag/gui/MainWindow.java:412
 msgid "About"
-msgstr ""
+msgstr "À propos de"
 
 #: ../src/org/fibs/geotag/gui/MainWindow.java:423
 msgid "%s web site"
-msgstr ""
+msgstr "Site internet de %s"
 
 #: ../src/org/fibs/geotag/gui/MainWindow.java:439
 msgid "Edit"
-msgstr ""
+msgstr "Éditer"
 
 #: ../src/org/fibs/geotag/gui/MainWindow.java:451
 #: ../src/org/fibs/geotag/gui/MainWindow.java:465
 msgid "Done"
-msgstr ""
+msgstr "Terminé"
 
 #: ../src/org/fibs/geotag/gui/MainWindow.java:484
 #: ../src/org/fibs/geotag/gui/ImagesTablePopupMenu.java:121
 msgid "Select"
-msgstr ""
+msgstr "Sélectionner"
 
 #: ../src/org/fibs/geotag/gui/MainWindow.java:497
 msgid "Images with locations"
-msgstr ""
+msgstr "Images avec des positions"
 
 #: ../src/org/fibs/geotag/gui/MainWindow.java:508
 msgid "Images with new locations"
-msgstr ""
+msgstr "Images avec de nouvelles positions"
 
 #: ../src/org/fibs/geotag/gui/MainWindow.java:519
 msgid "No images"
-msgstr ""
+msgstr "Aucune image"
 
 #: ../src/org/fibs/geotag/gui/MainWindow.java:563
 msgid "Coordinates from clipboard"
-msgstr ""
+msgstr "Coordonnées à partir du presse-papier"
 
 #: ../src/org/fibs/geotag/gui/MainWindow.java:587
 msgid "External coordinates"
-msgstr ""
+msgstr "Coordonnées externes"
 
 #: ../src/org/fibs/geotag/gui/ImagesTablePopupMenu.java:97
 msgid "between selected images"
-msgstr ""
+msgstr "entre les images sélectionnées"
 
 #: ../src/org/fibs/geotag/gui/ImagesTablePopupMenu.java:101
 msgid "all gaps between images"
-msgstr ""
+msgstr "tous les trous entre les images"
 
 #: ../src/org/fibs/geotag/gui/ImagesTablePopupMenu.java:109
 msgid "find for this image"
-msgstr ""
+msgstr "Trouver pour cette image"
 
 #: ../src/org/fibs/geotag/gui/ImagesTablePopupMenu.java:113
 msgid "find for selected images"
-msgstr ""
+msgstr "Trouver pour les images sélectionnées"
 
 #: ../src/org/fibs/geotag/gui/ImagesTablePopupMenu.java:117
 msgid "find for all images"
-msgstr ""
+msgstr "Trouver pour toutes les images"
 
 #: ../src/org/fibs/geotag/gui/ImagesTablePopupMenu.java:125
 msgid "Copy"
-msgstr ""
+msgstr "Copier"
 
 #: ../src/org/fibs/geotag/gui/ImagesTablePopupMenu.java:149
 msgid "Find altitude"
-msgstr ""
+msgstr "Trouver l'altitude"
 
 #: ../src/org/fibs/geotag/gui/ImagesTablePopupMenu.java:517
 #: ../src/org/fibs/geotag/gui/ImagesTablePopupMenu.java:537
 #: ../src/org/fibs/geotag/gui/ImagesTablePopupMenu.java:553
 msgid "Select location name"
-msgstr ""
+msgstr "Sélectionner le nom de lieu"
 
 #: ../src/org/fibs/geotag/gui/ImagesTablePopupMenu.java:715
 msgid "Select Date and Time"
-msgstr ""
+msgstr "Sélectionner date et temps"
 
 #: ../src/org/fibs/geotag/gui/ImagesTablePopupMenu.java:731
 msgid "Do you want to use this time difference for all images?"
-msgstr ""
+msgstr "Voulez-vous utiliser cette différence de temps pour toutes les images ?"
 
 #: ../src/org/fibs/geotag/gui/FontChooser.java:75
 msgid "Select Font"
-msgstr ""
+msgstr "Sélectionner une police"
 
 #: ../src/org/fibs/geotag/tasks/SetOffsetTask.java:118
 msgid "Copied time offset to one image."
-msgstr ""
+msgstr "Décalage temporel copié vers une image."
 
 #: ../src/org/fibs/geotag/tasks/SetOffsetTask.java:122
 msgid "Copied time offset to %d images."
-msgstr ""
+msgstr "Décalage temporel copié vers %d images."
 
 #: ../src/org/fibs/geotag/tasks/MatchImagesTask.java:95
 msgid "No locations found."
-msgstr ""
+msgstr "Aucune position trouvée."
 
 #: ../src/org/fibs/geotag/tasks/MatchImagesTask.java:97
 msgid "Found location for one image."
-msgstr ""
+msgstr "Position trouvée pour une image."
 
 #: ../src/org/fibs/geotag/tasks/MatchImagesTask.java:101
 msgid "Found location for %d images."
-msgstr ""
+msgstr "Position trouvé pour %d images."
 
 #: ../src/org/fibs/geotag/tasks/ManualEditTask.java:57
 msgid "Manual edit"
-msgstr ""
+msgstr "Édition manuelle"
 
 #: ../src/org/fibs/geotag/tasks/ManualEditTask.java:125
 msgid "%1$s edited."
-msgstr ""
+msgstr "%1$s modifié."
 
 #: ../src/org/fibs/geotag/tasks/EditLatitudeTask.java:97
 msgid "Latitude edited"
-msgstr ""
+msgstr "Latitude éditée"
 
 #: ../src/org/fibs/geotag/tasks/CopyLocationTask.java:126
 msgid "Location copied to one image."
-msgstr ""
+msgstr "Position copiée vers une image."
 
 #: ../src/org/fibs/geotag/tasks/CopyLocationTask.java:131
 msgid "Location copied to %d images."
-msgstr ""
+msgstr "Position copiée vers %d images."
 
 #: ../src/org/fibs/geotag/tasks/EditLongitudeTask.java:97
 msgid "Longitude edited"
-msgstr ""
+msgstr "Longitude éditée"
 
 #: ../src/org/fibs/geotag/tasks/SelectLocationNameTask.java:149
 msgid "New location name selected."
-msgstr ""
+msgstr "Nouveau nom de lieu sélectionné."
 
 #: ../src/org/fibs/geotag/tasks/GPSBabelTask.java:166
 msgid "Connecting to GPS"
-msgstr ""
+msgstr "Connexion au GPS"
 
 #: ../src/org/fibs/geotag/tasks/GPSBabelTask.java:186
 msgid "Finished GPS transfer"
-msgstr ""
+msgstr "Transfert GPS terminé"
 
 #: ../src/org/fibs/geotag/tasks/GPSBabelTask.java:189
 #: ../src/org/fibs/geotag/tasks/GpxReadFileTask.java:112
 msgid "locations loaded."
-msgstr ""
+msgstr "positions chargées."
 
 #: ../src/org/fibs/geotag/tasks/GPSBabelTask.java:273
 msgid "Waypoint"
-msgstr ""
+msgstr "Point de cheminement"
 
 #: ../src/org/fibs/geotag/tasks/GPSBabelTask.java:274
 #: ../src/org/fibs/geotag/tasks/BackgroundTask.java:110
 msgid "of"
-msgstr ""
+msgstr "de"
 
 #: ../src/org/fibs/geotag/tasks/CopyLocationNameTask.java:128
 msgid "Location name copied to one image."
-msgstr ""
+msgstr "Nom de lieu copié vers une image."
 
 #: ../src/org/fibs/geotag/tasks/CopyLocationNameTask.java:134
 msgid "Location name copied to %d images."
-msgstr ""
+msgstr "Nom de lieu copié vers %d images."
 
 #: ../src/org/fibs/geotag/tasks/FindAltitudeTask.java:125
 msgid "One altitude found"
-msgstr ""
+msgstr "Une altitude trouvée"
 
 #: ../src/org/fibs/geotag/tasks/FindAltitudeTask.java:129
 msgid "%d altitudes found"
-msgstr ""
+msgstr "%d altitudes trouvées"
 
 #: ../src/org/fibs/geotag/tasks/RemoveImagesTask.java:109
 msgid "One image removed"
-msgstr ""
+msgstr "Une image supprimée"
 
 #: ../src/org/fibs/geotag/tasks/RemoveImagesTask.java:114
 msgid "%d images removed"
-msgstr ""
+msgstr "%d images supprimées"
 
 #: ../src/org/fibs/geotag/tasks/ExifWriterTask.java:118
 msgid "One image updated."
-msgstr ""
+msgstr "Une image mise à jour."
 
 #: ../src/org/fibs/geotag/tasks/ExifWriterTask.java:122
 msgid "%d images updated."
-msgstr ""
+msgstr "%d images mises à jour."
 
 #: ../src/org/fibs/geotag/tasks/ExifReaderTask.java:183
 msgid "One image loaded."
-msgstr ""
+msgstr "Une image chargée."
 
 #: ../src/org/fibs/geotag/tasks/ExifReaderTask.java:187
 msgid "%d images loaded."
-msgstr ""
+msgstr "%d images chargées."
 
 #: ../src/org/fibs/geotag/tasks/ExifReaderTask.java:193
 msgid "Exiftool not found"
-msgstr ""
+msgstr "Exiftool non trouvé"
 
 #: ../src/org/fibs/geotag/tasks/ThumbnailsTask.java:90
 msgid "Generating thumbnails:"
-msgstr ""
+msgstr "Génération des vignettes :"
 
 #: ../src/org/fibs/geotag/tasks/ThumbnailsTask.java:99
 msgid "Thumbnails generated."
-msgstr ""
+msgstr "Vignettes générées."
 
 #: ../src/org/fibs/geotag/tasks/LocationNamesTask.java:197
 msgid "One location name found"
-msgstr ""
+msgstr "Un nom de lieu trouvé"
 
 #: ../src/org/fibs/geotag/tasks/LocationNamesTask.java:201
 msgid "%d location names found"
-msgstr ""
+msgstr "%d noms de lieux trouvés"
 
 #: ../src/org/fibs/geotag/tasks/BackgroundTask.java:99
 msgid "Image"
-msgstr ""
+msgstr "Image"
 
 #: ../src/org/fibs/geotag/tasks/EditDirectionTask.java:116
 msgid "Direction edited"
-msgstr ""
+msgstr "Direction éditée"
 
 #: ../src/org/fibs/geotag/tasks/GoogleEarthExportTask.java:92
 msgid "Finished exporting to %s."
-msgstr ""
+msgstr "Exportation vers %s terminée."
 
 #: ../src/org/fibs/geotag/tasks/FillGapsTask.java:101
 msgid "No gaps filled."
-msgstr ""
+msgstr "Aucun hiatus rempli."
 
 #: ../src/org/fibs/geotag/tasks/FillGapsTask.java:103
 msgid "Filled one gap."
-msgstr ""
+msgstr "Un hiatus rempli."
 
 #: ../src/org/fibs/geotag/tasks/FillGapsTask.java:107
 msgid "Filled %d gaps."
-msgstr ""
+msgstr "%d hiatus remplis."
 
 #: ../src/org/fibs/geotag/tasks/EditAltitudeTask.java:103
 msgid "Altitude edited"
-msgstr ""
+msgstr "Altitude éditée"
 
 #: ../src/org/fibs/geotag/table/ImagesTableModel.java:76
 msgid "Name"
-msgstr ""
+msgstr "Nom"
 
 #: ../src/org/fibs/geotag/table/ImagesTableModel.java:77
 msgid "GPS Time"
-msgstr ""
+msgstr "Temps GPS"
 
 #: ../src/org/fibs/geotag/table/ImagesTableModel.java:79
 msgid "Camera Time"
-msgstr ""
+msgstr "Temps appareil photo"
 
 #: ../src/org/fibs/geotag/table/ImagesTableModel.java:80
 msgid "Latitude"
-msgstr ""
+msgstr "Latitude"
 
 #: ../src/org/fibs/geotag/table/ImagesTableModel.java:81
 msgid "Longitude"
-msgstr ""
+msgstr "Longitude"
 
 #: ../src/org/fibs/geotag/table/ImagesTableModel.java:82
 msgid "Altitude"
-msgstr ""
+msgstr "Altitude"
 
 #: ../src/org/fibs/geotag/table/ImagesTableModel.java:83
 msgid "Direction"
-msgstr ""
+msgstr "Direction"
 
 #: ../src/org/fibs/geotag/table/ImagesTableModel.java:84
 msgid "Location"
-msgstr ""
+msgstr "Lieu"
 
 #: ../src/org/fibs/geotag/table/ImagesTableModel.java:85
 msgid "City"
-msgstr ""
+msgstr "Ville"
 
 #: ../src/org/fibs/geotag/table/ImagesTableModel.java:86
 msgid "Province"
-msgstr ""
+msgstr "Région"
 
 #: ../src/org/fibs/geotag/table/ImagesTableModel.java:87
 msgid "Country"
-msgstr ""
+msgstr "Pays"
 
 #: ../src/org/fibs/geotag/table/ImagesTableModel.java:480
 msgid "Edit direction"
-msgstr ""
+msgstr "Modifier la direction"
 
 #: ../src/org/fibs/geotag/table/ImagesTableModel.java:569
 msgid "Edit longitude"
-msgstr ""
+msgstr "Modifier la longitude"
 
 #: ../src/org/fibs/geotag/table/ImagesTableModel.java:616
 msgid "Edit latitude"
-msgstr ""
+msgstr "Modifier la latitude"
 
 #: ../src/org/fibs/geotag/table/ImagesTableColumns.java:85
 msgid "The name of the image file"
-msgstr ""
+msgstr "Nom du fichier de l'image"
 
 #: ../src/org/fibs/geotag/table/ImagesTableColumns.java:87
 msgid "The GPS time in GMT for this image."
-msgstr ""
+msgstr "Temps GPS en GMT de cette image."
 
 #: ../src/org/fibs/geotag/table/ImagesTableColumns.java:89
 msgid "The difference between camera time and GPS time"
-msgstr ""
+msgstr "Différence entre le temps de la prise de vue et le temps du GPS"
 
 #: ../src/org/fibs/geotag/table/ImagesTableColumns.java:91
 msgid "The time recorded by the camera for this image"
-msgstr ""
+msgstr "Temps enregistré par l'appareil photo lors de la prise de vue de cette image"
 
 #: ../src/org/fibs/geotag/table/ImagesTableColumns.java:93
 msgid "The latitude (in degrees) associated with this image"
-msgstr ""
+msgstr "Latitude (en degrés) associée à cette image"
 
 #: ../src/org/fibs/geotag/table/ImagesTableColumns.java:95
 msgid "The longitude (in degrees) associated with this image"
-msgstr ""
+msgstr "Longitude (en degrés) associée à cette image"
 
 #: ../src/org/fibs/geotag/table/ImagesTableColumns.java:101
 msgid "The altitude (in %1$s) associated with this image"
-msgstr ""
+msgstr "Altitude (en %1$s) associée à cette image"
 
 #: ../src/org/fibs/geotag/table/ImagesTableColumns.java:105
 msgid "Image direction in degrees"
-msgstr ""
+msgstr "Direction de la prise de vue en degrés"
 
 #: ../src/org/fibs/geotag/table/ImagesTableColumns.java:107
 msgid "Location name"
-msgstr ""
+msgstr "Nom du lieu"
 
 #: ../src/org/fibs/geotag/table/ImagesTableColumns.java:109
 msgid "The city name"
-msgstr ""
+msgstr "Nom de la ville"
 
 #: ../src/org/fibs/geotag/table/ImagesTableColumns.java:111
 msgid "Province/State name"
-msgstr ""
+msgstr "Nom de la Région/État/Province"
 
 #: ../src/org/fibs/geotag/table/ImagesTableColumns.java:113
 msgid "Country name"
-msgstr ""
+msgstr "Nom du pays"
 
 #: ../src/org/fibs/geotag/util/Util.java:176
 #: ../src/org/fibs/geotag/util/Coordinates.java:87
 msgid "N"
-msgstr ""
+msgstr "N"
 
 #: ../src/org/fibs/geotag/util/Util.java:177
 msgid "NNE"
-msgstr ""
+msgstr "NNE"
 
 #: ../src/org/fibs/geotag/util/Util.java:178
 msgid "NE"
-msgstr ""
+msgstr "NE"
 
 #: ../src/org/fibs/geotag/util/Util.java:179
 msgid "ENE"
-msgstr ""
+msgstr "ENE"
 
 #: ../src/org/fibs/geotag/util/Util.java:180
 #: ../src/org/fibs/geotag/util/Coordinates.java:81
 msgid "E"
-msgstr ""
+msgstr "E"
 
 #: ../src/org/fibs/geotag/util/Util.java:181
 msgid "ESE"
-msgstr ""
+msgstr "ESE"
 
 #: ../src/org/fibs/geotag/util/Util.java:182
 msgid "SE"
-msgstr ""
+msgstr "SE"
 
 #: ../src/org/fibs/geotag/util/Util.java:183
 msgid "SSE"
-msgstr ""
+msgstr "SSE"
 
 #: ../src/org/fibs/geotag/util/Util.java:184
 #: ../src/org/fibs/geotag/util/Coordinates.java:90
 msgid "S"
-msgstr ""
+msgstr "S"
 
 #: ../src/org/fibs/geotag/util/Util.java:185
 msgid "SSW"
-msgstr ""
+msgstr "SSW"
 
 #: ../src/org/fibs/geotag/util/Util.java:186
 msgid "SW"
-msgstr ""
+msgstr "SW"
 
 #: ../src/org/fibs/geotag/util/Util.java:187
 msgid "WSW"
-msgstr ""
+msgstr "WSW"
 
 #: ../src/org/fibs/geotag/util/Util.java:188
 #: ../src/org/fibs/geotag/util/Coordinates.java:84
 msgid "W"
-msgstr ""
+msgstr "W"
 
 #: ../src/org/fibs/geotag/util/Util.java:189
 msgid "WNW"
-msgstr ""
+msgstr "WNW"
 
 #: ../src/org/fibs/geotag/util/Util.java:190
 msgid "NW"
-msgstr ""
+msgstr "NW"
 
 #: ../src/org/fibs/geotag/util/Util.java:191
 msgid "NNW"
-msgstr ""
+msgstr "NNW"
 
 #: ../src/org/fibs/geotag/util/Proxies.java:52
 msgid "No proxy"
-msgstr ""
+msgstr "Pas de proxy"
 
 #: ../src/org/fibs/geotag/util/Proxies.java:53
 msgid "HTTP proxy"
-msgstr ""
+msgstr "Proxy HTTP"
 
 #: ../src/org/fibs/geotag/util/Proxies.java:54
 msgid "Socks proxy"
-msgstr ""
+msgstr "Proxy SOCKS"
 
 #: ../src/org/fibs/geotag/util/BrowserLauncher.java:40
 msgid "Error attempting to launch web browser."
-msgstr ""
+msgstr "Erreur lors du lancement du navigateur internet"
 
 #: ../src/org/fibs/geotag/util/Units.java:64
 msgid "Kilometers"
-msgstr ""
+msgstr "Kilomètres"
 
 #: ../src/org/fibs/geotag/util/Units.java:65
 msgid "Miles"
-msgstr ""
+msgstr "Milles"
 
 #: ../src/org/fibs/geotag/util/Units.java:70
 msgid "km"
-msgstr ""
+msgstr "km"
 
 #: ../src/org/fibs/geotag/util/Units.java:71
 msgid "mi"
-msgstr ""
+msgstr "mi"
 
 #: ../src/org/fibs/geotag/util/Units.java:76
 msgid "Meters"
-msgstr ""
+msgstr "Mètres"
 
 #: ../src/org/fibs/geotag/util/Units.java:77
 msgid "Feet"
-msgstr ""
+msgstr "Pieds"
 
 #: ../src/org/fibs/geotag/util/Units.java:82
 msgid "m"
-msgstr ""
+msgstr "m"
 
 #: ../src/org/fibs/geotag/util/Units.java:83
 msgid "ft"
-msgstr ""
+msgstr "ft"
 
 #: ../src/org/fibs/geotag/Geotag.java:183
-msgid ""
-"%1$s has only detected %2$d MB of memory.<br> Please run it with 'Java Web "
-"Start' from <b>%3$s</b><br>or run %1$s like this:"
-msgstr ""
+msgid "%1$s has only detected %2$d MB of memory.<br> Please run it with 'Java Web Start' from <b>%3$s</b><br>or run %1$s like this:"
+msgstr "%1$s a détecté seulement %2$d MB de mémoire.<br> S'il vous plaît, lancez-le avec  'Java Web Start' à partir de <b>%3$s</b><br>ou lancez %1$s de cette façon :"
 
 #: ../src/org/fibs/geotag/Geotag.java:188
 msgid "Not enough memory"
-msgstr ""
+msgstr "Mémoire insuffisante"
 
 #: ../src/org/fibs/geotag/Geotag.java:195
 msgid "A new version %1$s of <b>%2$s</b><br>is available at %3$s"
-msgstr ""
+msgstr "Une nouvelle version %1$s de <b>%2$s</b><br>est disponible depuis %3$s"
 
 #: ../src/org/fibs/geotag/Geotag.java:198
 msgid "New version"
-msgstr ""
+msgstr "Nouvelle version"
+

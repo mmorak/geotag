@@ -44,6 +44,7 @@ import org.fibs.geotag.Settings.SETTING;
 import org.fibs.geotag.gpsbabel.GPSBabel;
 import org.fibs.geotag.util.Coordinates;
 import org.fibs.geotag.util.FontUtil;
+import org.fibs.geotag.util.OperatingSystem;
 import org.fibs.geotag.util.Proxies;
 import org.fibs.geotag.util.Units;
 import org.xnap.commons.i18n.I18n;
@@ -349,6 +350,17 @@ public class SettingsDialog extends JDialog implements TreeSelectionListener {
     addPanel(dcraw, dcrawPath);
 
     external.add(dcraw);
+    
+    if (OperatingSystem.isLinux()) {
+      // only Linux needs to know the path to googleeath
+      // Windows and MacOS launch the kml files
+      DefaultMutableTreeNode googleEarth = new DefaultMutableTreeNode(i18n.tr("Google Earth"));
+      FileSettingsPanel googleEarthPath = new FileSettingsPanel(parent, i18n
+          .tr("Google Earth path"), SETTING.GOOGLE_EARTH_PATH, "googleearth"); //$NON-NLS-1$ //$NON-NLS-2$
+      addPanel(googleEarth, googleEarthPath);
+      
+      external.add(googleEarth);
+    }
 
     DefaultMutableTreeNode clipboard = new DefaultMutableTreeNode(i18n
         .tr("Clipboard")); //$NON-NLS-1$

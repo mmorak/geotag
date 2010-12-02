@@ -39,12 +39,28 @@ public abstract class ImageFileFilter extends javax.swing.filechooser.FileFilter
   /** Create i18n support */
   private static final I18n i18n = I18nFactory.getI18n(ImageFileFilter.class);
   
+  /**
+   * An enumeration for image file types
+   */
   public static enum Type {
-    ALL_IMAGES, JPEG, RAW, TIFF, CUSTOM_FILE_WITH_XMP
+    /** File type for all image files*/
+    ALL_IMAGES, 
+    /** File type for JPEG files */
+    JPEG,
+    /** File type for raw images */
+    RAW,
+    /** File type for TIFF files */
+    TIFF,
+    /** File type for custom files with XMP sidecar */
+    CUSTOM_FILE_WITH_XMP
   }
 
+  /**
+   * @return The file type for this image file filter
+   */
   public abstract Type getType();
 
+  /** Image file filter for all images */
   private final static ImageFileFilter ALL_IMAGES_FILTER = new ImageFileFilter() {
     /*
      * Accept directories and image files.
@@ -216,6 +232,10 @@ public abstract class ImageFileFilter extends javax.swing.filechooser.FileFilter
     }
   };
   
+  /**
+   * @param type The file type
+   * @return The image file filter for that file type
+   */
   public static ImageFileFilter getFilter(Type type) {
     switch(type) {
       case ALL_IMAGES:
@@ -232,11 +252,18 @@ public abstract class ImageFileFilter extends javax.swing.filechooser.FileFilter
     return ALL_IMAGES_FILTER;
   }
   
+  /**
+   * Store the last file filter used in the settings
+   * @param filter The filter to be remembered
+   */
   public static void storeLastFilterUsed(ImageFileFilter filter) {
     Settings.put(SETTING.LAST_FILE_FILTER_SELECTED, filter.getType().toString());
     Settings.flush();
   }
  
+  /**
+   * @return The last filter stored in the preferences or the filter for all images if not found
+   */
   public static ImageFileFilter getLastFilterUsed() {
     String filterId = Settings.get(SETTING.LAST_FILE_FILTER_SELECTED, Type.ALL_IMAGES.toString());
     try {

@@ -28,6 +28,7 @@ import java.util.Locale;
  * @author Steffen Pingel
  * @since 0.9
  */
+@SuppressWarnings("all")
 public class LocaleChangeEvent extends EventObject {
 
 	private static final long serialVersionUID = 7640942181212009222L;

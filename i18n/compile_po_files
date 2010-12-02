@@ -12,3 +12,4 @@ compile da
 compile fr
 compile en_GB
 cd ../i18n
+echo Refresh bin folder in Eclipse

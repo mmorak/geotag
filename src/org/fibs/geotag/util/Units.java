@@ -61,7 +61,7 @@ public final class Units {
 
   /** the long names of the distance units. */
   private static final String[] DISTANCE_DISPLAY_NAMES = {
-      i18n.tr("Kilometres"), //$NON-NLS-1$
+      i18n.tr("Kilometers"), //$NON-NLS-1$
       i18n.tr("Miles") //$NON-NLS-1$
   };
 
@@ -73,7 +73,7 @@ public final class Units {
 
   /** the long names of the altitude units. */
   private static final String[] ALTITUDE_DISPLAY_NAMES = {
-      i18n.tr("Metres"), //$NON-NLS-1$
+      i18n.tr("Meters"), //$NON-NLS-1$
       i18n.tr("Feet") //$NON-NLS-1$
   };
 

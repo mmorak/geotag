@@ -36,14 +36,15 @@ import java.util.Set;
  * @author andreas
  *
  */
+@SuppressWarnings("all")
 public class MigrateTranslation {
 
   public static void main(String[] args) {
     try {
-      migrateLocale("de");
-      migrateLocale("da");
-      migrateLocale("fr");
-      migrateLocale("en_GB");
+      migrateLocale("de", "German", "Germany");
+      migrateLocale("da", "Danish", "Denmark");
+      migrateLocale("fr", "French", "France");
+      migrateLocale("en_GB", "English" , "United Kingdom");
     } catch (Exception e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
@@ -53,7 +54,7 @@ public class MigrateTranslation {
   /**
    * @param locale
    */
-  private static void migrateLocale(String locale) throws Exception {
+  private static void migrateLocale(String locale, String language, String country) throws Exception {
     System.out.println("Migrating locale "+locale);
     String rootDirectoryName = System.getProperty("user.dir"); //$NON-NLS-1$
     String poFileName = rootDirectoryName+"/i18n/"+locale+".po"; //$NON-NLS-1$
@@ -66,17 +67,18 @@ public class MigrateTranslation {
     propertiesFileName = rootDirectoryName+"/res/org/fibs/geotag/geotag_"+locale+".properties";
     Map<String,String> localeMap = storeProperties(propertiesFileName);
     Map<String, String> translationMap = buildTranslation(originalMap, localeMap);
-    applyTranslation(translationMap, poFile);
+    applyTranslation(language, country, translationMap, poFile);
   }
   
   private static String MSGID = "msgid \"";
   private static String MSGSTR = "msgstr \"";
   
-  private static void applyTranslation(Map<String,String> translation, File poFile) throws Exception {
+  private static void applyTranslation(String language, String country,Map<String,String> translation, File poFile) throws Exception {
     File tempFile = File.createTempFile(poFile.getName(), null);
     tempFile.deleteOnExit();
     System.out.println(tempFile);
     BufferedWriter tempFileWriter = new BufferedWriter(new FileWriter(tempFile));
+    writeHeader(tempFileWriter, language, country);
     BufferedReader bufferedReader = new BufferedReader(new FileReader(poFile));
     String lineFromFile = null;
     StringBuilder msgId = null;
@@ -89,11 +91,11 @@ public class MigrateTranslation {
         msgId.append(lineFromFile.substring(MSGID.length(), lineFromFile.length()-1));
         tempFileWriter.write(lineFromFile);
         tempFileWriter.newLine();
-      } else if (lineFromFile.startsWith("\"")) {
+      } else if (msgId != null && lineFromFile.startsWith("\"")) {
         msgId.append(lineFromFile.substring(1, lineFromFile.length() -1));
         tempFileWriter.write(lineFromFile);
         tempFileWriter.newLine();
-      } else if (lineFromFile.startsWith(MSGSTR)) {
+      } else if (msgId != null && lineFromFile.startsWith(MSGSTR)) {
         String msgstr = translation.get(msgId.toString());
         if (msgstr != null) {
           writeMsgstr(tempFileWriter, msgstr);
@@ -112,9 +114,43 @@ public class MigrateTranslation {
     overwrite(tempFile, poFile);
   }
   
+  private static void writeHeader(BufferedWriter tempFileWriter,
+      String language, String country) {
+    try {
+      tempFileWriter.write("msgid \"\"");
+      tempFileWriter.newLine();
+      tempFileWriter.write("msgstr \"\"");
+      tempFileWriter.newLine();
+      tempFileWriter.write("\"Project-Id-Version: Geotag\\n\"");
+      tempFileWriter.newLine();
+      tempFileWriter.write("\"Content-Type: text/plain; charset=utf-8\\n\"");
+      tempFileWriter.newLine();
+      tempFileWriter.write("\"Content-Transfer-Encoding: 8bit\\n\"");
+      tempFileWriter.newLine();
+      tempFileWriter.write("\"X-Poedit-Language: "+language+"\\n\"");
+      tempFileWriter.newLine();
+      tempFileWriter.write("\"X-Poedit-Country: "+country+"\\n\"");
+      tempFileWriter.newLine();
+      tempFileWriter.write("\"X-Poedit-SourceCharset: utf-8\\n\"");
+      tempFileWriter.newLine();
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+   
+  }
+
   private static void writeMsgstr(BufferedWriter tempFileWriter, String msgstr) throws IOException {
      if (msgstr.length() < 800 - MSGSTR.length() - 1) {
-       tempFileWriter.write(MSGSTR+msgstr+"\"");
+       tempFileWriter.write(MSGSTR);
+       for (int index = 0; index < msgstr.length(); index++) {
+         char character = msgstr.charAt(index);
+         if (character == '"') {
+           tempFileWriter.write('\\');
+         }
+         tempFileWriter.write(character);
+       }
+       tempFileWriter.write("\"");
        tempFileWriter.newLine();
      }
   }

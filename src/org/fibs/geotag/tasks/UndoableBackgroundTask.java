@@ -41,8 +41,10 @@ import org.fibs.geotag.GlobalUndoManager;
 public abstract class UndoableBackgroundTask<V> extends BackgroundTask<V>
     implements UndoableEdit {
 
+  /** Key to get undo text from UIManager */
   private static final String UNDO_TEXT_KEY = "AbstractUndoableEdit.undoText";
 
+  /** Key to get redo text from UIManager */
   private static final String REDO_TEXT_KEY = "AbstractUndoableEdit.redoText";
 
   /** Indicates if this has been done or undone. */

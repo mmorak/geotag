@@ -31,8 +31,11 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
 import org.fibs.geotag.Geotag;
+import org.fibs.geotag.Settings;
+import org.fibs.geotag.Settings.SETTING;
 import org.fibs.geotag.data.ImageInfo;
 import org.fibs.geotag.util.Airy;
+import org.fibs.geotag.util.OperatingSystem;
 import org.xnap.commons.i18n.I18n;
 import org.xnap.commons.i18n.I18nFactory;
 
@@ -188,21 +191,20 @@ public final class GoogleEarthLauncher {
    *          The KML file
    */
   public static void openKmlFile(File file) {
-    String osName = System.getProperty("os.name"); //$NON-NLS-1$
     try {
-      if (osName.startsWith("Mac OS")) { //$NON-NLS-1$
+      if (OperatingSystem.isMacOS()) {
         Class<?> fileMgr = Class.forName("com.apple.eio.FileManager"); //$NON-NLS-1$
         Method openURL = fileMgr.getDeclaredMethod("openURL", //$NON-NLS-1$
             new Class[] { String.class });
         openURL.invoke(null, new Object[] { file.getPath() });
-      } else if (osName.startsWith("Windows")) { //$NON-NLS-1$
+      } else if (OperatingSystem.isWindows()) {
         Runtime.getRuntime().exec(
             "rundll32 url.dll,FileProtocolHandler " + file.getPath()); //$NON-NLS-1$
       } else { // assume Unix or Linux
-        String executable = "googleearth"; //$NON-NLS-1$
+        String executable = Settings.get(SETTING.GOOGLE_EARTH_PATH, "googleearth");
         if (Runtime.getRuntime().exec(new String[] { "which", executable }) //$NON-NLS-1$
             .waitFor() != 0) {
-          throw new Exception(i18n.tr("Could not find 'googleearth' on $PATH")); //$NON-NLS-1$
+          throw new Exception(String.format(i18n.tr("Could not find '%1$s' on $PATH"), executable)); //$NON-NLS-1$
         }
         Runtime.getRuntime().exec(new String[] { executable, file.getPath() });
       }

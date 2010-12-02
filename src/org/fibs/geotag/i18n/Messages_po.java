@@ -41,13 +41,20 @@ import java.util.ResourceBundle;
  */
 public class Messages_po extends ResourceBundle {
 
+  /** The resources by id */
   static Map<String, String> resourceMap = new HashMap<String, String>();
 
+  /** Constant to recognise msgid from po file */
   private static String MSGID = "msgid \"";
 
+  /** Constant to recognise msgstr from po file*/
   private static String MSGSTR = "msgstr \"";
 
-  public static void setPoFileName(String fileName) {
+  /**
+    Process po file with that name
+   * @param fileName The PO file name
+   */
+  public static void processPoFile(String fileName) {
     File poFile = new File(fileName);
     if (!poFile.exists()) {
       System.out.println("Can't find file " + fileName);
@@ -89,14 +96,19 @@ public class Messages_po extends ResourceBundle {
     }
   }
 
+  /**
+   * Constructor
+   */
   public Messages_po() {
   }
 
+  @Override
   public Object handleGetObject(String key) throws MissingResourceException {
     String value = resourceMap.get(key);
     return value;
   }
 
+  @Override
   public Enumeration<String> getKeys() {
     final Iterator<String> iterator = resourceMap.keySet().iterator();
     return new Enumeration<String>() {
@@ -112,6 +124,9 @@ public class Messages_po extends ResourceBundle {
     };
   }
 
+  /**
+   * @return the parent ResourceBundle
+   */
   public ResourceBundle getParent() {
     return super.parent;
   }

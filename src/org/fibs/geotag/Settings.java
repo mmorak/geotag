@@ -152,6 +152,8 @@ public final class Settings {
     BROWSER,
     /** Preferences key for the last KML/KMZ file saved. */
     GOOGLEEARTH_LAST_FILE_SAVED,
+    /** Preferences key for the path to the Googleearth binary */
+    GOOGLE_EARTH_PATH,
     /** Preferences key for storing thumbnail images in KMZ files or not. */
     KMZ_STORE_THUMBNAILS,
     /**
