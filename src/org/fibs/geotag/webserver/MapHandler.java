@@ -119,17 +119,29 @@ public class MapHandler implements ContextHandler {
 
   @SuppressWarnings("all")
   private enum JavascriptVaraibles {
-    title(i18n.tr("Geotag")), 
+    // This string doesn't need translating
+    title("Geotag"),
+    // Translators: Don't use any non ASCII characters when translating this text
     showMenuText(i18n.tr("Show <u>m</u>enu")),
+    // Translators: Don't use any non ASCII characters when translating this text
     hideMenuText(i18n.tr("Hide <u>m</u>enu")),
+    // Translators: Don't use any non ASCII characters when translating this text
     mouseZoomText(i18n.tr("Enable scroll wheel <u>z</u>oom")),
+    // Translators: Don't use any non ASCII characters when translating this text
     showTracksText(i18n.tr("Display <u>t</u>racks")),
+    // Translators: Don't use any non ASCII characters when translating this text
     showWikipediaText(i18n.tr("Show <u>W</u>ikipedia entries")),
+    // Translators: Don't use any non ASCII characters when translating this text
     currentImageText(i18n.tr("Center on <u>c</u>urrent image")),
+    // Translators: Don't use any non ASCII characters when translating this text
     nextImageText(i18n.tr("<u>N</u>ext image")),
+    // Translators: Don't use any non ASCII characters when translating this text
     previousImageText(i18n.tr("<u>P</u>revious image")),
+    // Translators: Don't use any non ASCII characters when translating this text
     showAllText(i18n.tr("Show <u>a</u>ll images")),
+    // Translators: Don't use any non ASCII characters when translating this text
     instructions(i18n.tr("Move the marker to<br>select a different location.")),
+    // Translators: Don't use any non ASCII characters when translating this text
     instructionsWithDirection(i18n.tr("Move camera marker to<br>select a different location.<br>Move other marker to<br>change image direction."));
     // The key used to find the value of the variable 
     private final String messagesKey;

@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Geotag\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-12-02 12:39+0000\n"
+"POT-Creation-Date: 2010-12-03 17:10+0000\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Andreas Schneider <geotag@fibs.me.uk>\n"
 "Language-Team: \n"
@@ -18,51 +18,58 @@ msgstr ""
 msgid "Error 404, file not found."
 msgstr ""
 
-#: ../src/org/fibs/geotag/webserver/MapHandler.java:122
-msgid "Geotag"
-msgstr ""
-
-#: ../src/org/fibs/geotag/webserver/MapHandler.java:123
+#. Translators: Don't use any non ASCII characters when translating this text
+#: ../src/org/fibs/geotag/webserver/MapHandler.java:125
 msgid "Show <u>m</u>enu"
 msgstr ""
 
-#: ../src/org/fibs/geotag/webserver/MapHandler.java:124
+#. Translators: Don't use any non ASCII characters when translating this text
+#: ../src/org/fibs/geotag/webserver/MapHandler.java:127
 msgid "Hide <u>m</u>enu"
 msgstr ""
 
-#: ../src/org/fibs/geotag/webserver/MapHandler.java:125
+#. Translators: Don't use any non ASCII characters when translating this text
+#: ../src/org/fibs/geotag/webserver/MapHandler.java:129
 msgid "Enable scroll wheel <u>z</u>oom"
 msgstr ""
 
-#: ../src/org/fibs/geotag/webserver/MapHandler.java:126
+#. Translators: Don't use any non ASCII characters when translating this text
+#: ../src/org/fibs/geotag/webserver/MapHandler.java:131
 msgid "Display <u>t</u>racks"
 msgstr ""
 
-#: ../src/org/fibs/geotag/webserver/MapHandler.java:127
+#. Translators: Don't use any non ASCII characters when translating this text
+#: ../src/org/fibs/geotag/webserver/MapHandler.java:133
 msgid "Show <u>W</u>ikipedia entries"
 msgstr ""
 
-#: ../src/org/fibs/geotag/webserver/MapHandler.java:128
+#. Translators: Don't use any non ASCII characters when translating this text
+#: ../src/org/fibs/geotag/webserver/MapHandler.java:135
 msgid "Center on <u>c</u>urrent image"
 msgstr "Centre on <u>c</u>urrent image"
 
-#: ../src/org/fibs/geotag/webserver/MapHandler.java:129
+#. Translators: Don't use any non ASCII characters when translating this text
+#: ../src/org/fibs/geotag/webserver/MapHandler.java:137
 msgid "<u>N</u>ext image"
 msgstr ""
 
-#: ../src/org/fibs/geotag/webserver/MapHandler.java:130
+#. Translators: Don't use any non ASCII characters when translating this text
+#: ../src/org/fibs/geotag/webserver/MapHandler.java:139
 msgid "<u>P</u>revious image"
 msgstr ""
 
-#: ../src/org/fibs/geotag/webserver/MapHandler.java:131
+#. Translators: Don't use any non ASCII characters when translating this text
+#: ../src/org/fibs/geotag/webserver/MapHandler.java:141
 msgid "Show <u>a</u>ll images"
 msgstr ""
 
-#: ../src/org/fibs/geotag/webserver/MapHandler.java:132
+#. Translators: Don't use any non ASCII characters when translating this text
+#: ../src/org/fibs/geotag/webserver/MapHandler.java:143
 msgid "Move the marker to<br>select a different location."
 msgstr ""
 
-#: ../src/org/fibs/geotag/webserver/MapHandler.java:133
+#. Translators: Don't use any non ASCII characters when translating this text
+#: ../src/org/fibs/geotag/webserver/MapHandler.java:145
 msgid ""
 "Move camera marker to<br>select a different location.<br>Move other marker "
 "to<br>change image direction."

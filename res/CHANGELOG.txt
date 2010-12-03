@@ -1,3 +1,9 @@
+Release 0.073
+  Fixed a problem with .po files being opened with
+  the wrong charset on Windows.
+  Added automatic generation of comments in .po files
+  to help translators.
+  
 Release 0.072
   Fixed missing translation of Javascript text.
   Google Earth path is now configurable for Linux

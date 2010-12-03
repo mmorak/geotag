@@ -1,3 +1,4 @@
 #!/bin/bash
 find ../src/org/fibs -name *.java > filelist
-xgettext -ktr -language=java -o keys.pot -f filelist
+xgettext -cTranslators -ktr -language=java -o keys.pot -f filelist
+rm filelist

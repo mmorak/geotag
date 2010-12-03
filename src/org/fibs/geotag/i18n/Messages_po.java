@@ -20,7 +20,8 @@ package org.fibs.geotag.i18n;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -64,7 +65,7 @@ public class Messages_po extends ResourceBundle {
     StringBuilder msgId = null;
     StringBuilder msgStr = null;
     try {
-      BufferedReader bufferedReader = new BufferedReader(new FileReader(poFile));
+      BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(poFile),"UTF-8"));
       while ((lineFromFile = bufferedReader.readLine()) != null) {
         if (lineFromFile.startsWith(MSGID)) {
           msgId = new StringBuilder();
