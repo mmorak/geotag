@@ -164,6 +164,62 @@ public final class Util {
     lines.add(text);
     return lines;
   }
+  
+  /**
+   * Split a line of text in lines no longer than maxLength characters. this
+   * routine assumes that there are no words longer than maxLength.
+   * 
+   * @param stringToSplit
+   *          the line of text to split
+   * @param maxLength
+   *          the maximum length of each resulting line of text
+   * @return A List of strings representing the split text
+   */
+  public static List<String> splitHtmlString(String stringToSplit, int maxLength) {
+    List<String> lines = new ArrayList<String>();
+    boolean processingHtmlTag = false;
+    StringBuilder word = new StringBuilder();
+    StringBuilder line = new StringBuilder();
+    for (int index=0; index < stringToSplit.length(); index++) {
+      char character = stringToSplit.charAt(index);
+      if (processingHtmlTag) {
+        // always append - doesn't add to length
+        word.append(character);
+        switch (character) {
+          case '>':
+            processingHtmlTag = false;
+            break;
+          default:
+        }
+      } else {
+        switch (character) {
+          case '<':
+            word.append(character);
+            processingHtmlTag = true;
+            break;
+          case ' ':
+            if (line.length() + word.length() + 1 < maxLength) {
+              line.append(word.toString()).append(' ');
+              word = new StringBuilder();
+            } else {
+              lines.add(line.toString());
+              line = new StringBuilder();
+              word.append(' ');
+            }
+            break;
+          default:
+            word.append(character);
+        }
+      }
+    }
+    if (word.length() > 0) {
+      line.append(word.toString());
+    }
+    if (line.length() > 0) {
+      lines.add(line.toString());
+    }
+    return lines;
+  }
 
   /**
    * Given a cardinal direction (e.g. NNW) calculate the angle in degress

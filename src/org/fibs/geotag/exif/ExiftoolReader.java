@@ -283,18 +283,28 @@ public class ExiftoolReader implements ExifReader {
           // set yet.
           imageInfo.setGpsDateTime();
         } else if (text.startsWith(GPS_LATITUDE_TAG)) {
-          new UpdateGPSLatitude(imageInfo, text.substring(GPS_LATITUDE_TAG
-              .length()), ImageInfo.DATA_SOURCE.IMAGE);
+          String latitude = text.substring(GPS_LATITUDE_TAG.length());
+          // Exiftool translates undef() as "0" in numeric mode
+          if (! "0".equals(latitude)) {
+            new UpdateGPSLatitude(imageInfo, latitude, ImageInfo.DATA_SOURCE.IMAGE);
+          }
         } else if (text.startsWith(GPS_LONGITUDE_TAG)) {
-          new UpdateGPSLongitude(imageInfo, text.substring(GPS_LONGITUDE_TAG
-              .length()), ImageInfo.DATA_SOURCE.IMAGE);
+          String longitude = text.substring(GPS_LONGITUDE_TAG.length());
+          // Exiftool translates undef() as "0" in numeric mode
+          if (! "0".equals(longitude)) {
+            new UpdateGPSLongitude(imageInfo, longitude, ImageInfo.DATA_SOURCE.IMAGE);
+          }
         } else if (text.startsWith(GPS_ALTITUDE_TAG)) {
-          // altitudes in exif data are in metres
-          new UpdateGPSAltitude(imageInfo, text.substring(GPS_ALTITUDE_TAG
-              .length()), ImageInfo.DATA_SOURCE.IMAGE, ALTITUDE.METRES);
+          String altitude = text.substring(GPS_ALTITUDE_TAG.length());
+          if (! "undef".equals(altitude)) {
+            // altitudes in exif data are in metres
+            new UpdateGPSAltitude(imageInfo, altitude, ImageInfo.DATA_SOURCE.IMAGE, ALTITUDE.METRES);
+          }
         } else if (text.startsWith(GPS_IMG_DIRECTION_TAG)) {
-          new UpdateGPSImgDirection(imageInfo, text
-              .substring(GPS_IMG_DIRECTION_TAG.length()), DATA_SOURCE.IMAGE);
+          String direction = text.substring(GPS_IMG_DIRECTION_TAG.length());
+          if (! "undef".equals(direction)) {
+            new UpdateGPSImgDirection(imageInfo, direction, DATA_SOURCE.IMAGE);
+          }
         } else if (text.startsWith(GPS_DATE_TIME_TAG)) {
           new UpdateGPSDateTime(imageInfo, text.substring(GPS_DATE_TIME_TAG
               .length()));

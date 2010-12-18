@@ -1,3 +1,9 @@
+Release 0.074
+  No longer changing default Locale when explicitly
+  using a .po file specified on the command line.
+  Fixed problem with undefined tags (Nikon P6000)
+  Updated Danish translation
+  
 Release 0.073
   Fixed a problem with .po files being opened with
   the wrong charset on Windows.

@@ -22,16 +22,25 @@ import java.awt.Component;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
+import javax.swing.JEditorPane;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
 
 import org.fibs.geotag.Geotag;
+import org.fibs.geotag.Settings;
+import org.fibs.geotag.Settings.SETTING;
 import org.fibs.geotag.dcraw.Dcraw;
 import org.fibs.geotag.exif.Exiftool;
 import org.fibs.geotag.gpsbabel.GPSBabel;
 import org.fibs.geotag.image.FileTypes;
 import org.fibs.geotag.table.ImagesTableModel;
 import org.fibs.geotag.track.TrackStore;
+import org.fibs.geotag.util.BrowserLauncher;
+import org.fibs.geotag.util.LocaleUtil;
 import org.fibs.geotag.util.Util;
 import org.xnap.commons.i18n.I18n;
 import org.xnap.commons.i18n.I18nFactory;
@@ -71,6 +80,7 @@ public final class WhatNext {
    */
   public static void helpWhatNext(Component parentComponent,
       ImagesTableModel tableModel) {
+    
     boolean exiftoolAvailable = Exiftool.isAvailable();
     boolean gpsbabelAvailable = GPSBabel.isAvailable();
     boolean dcrawAvailable = Dcraw.isAvailable();
@@ -116,6 +126,7 @@ public final class WhatNext {
         break;
       }
     }
+    boolean translationAvailable = LocaleUtil.translationAvailable(Locale.getDefault());
     List<String> suggestions = new ArrayList<String>();
     suggestFindingExiftool(exiftoolAvailable, suggestions);
     suggestLoadingImages(imagesAvailable, suggestions);
@@ -130,19 +141,35 @@ public final class WhatNext {
     suggestFindingGPSBabel(gpsbabelAvailable, suggestions);
     suggestFindingDcraw(dcrawAvailable, rawImagesAvailable, suggestions);
     suggestRemovingImages(imagesAvailable, suggestions);
+    suggestTranslation(translationAvailable, suggestions);
 
     // build the final message
     StringBuilder message = new StringBuilder("<html>"); //$NON-NLS-1$
     List<String> lines;
     for (String suggestion : suggestions) {
-      lines = Util.splitString(suggestion, MAX_LINE_LENGTH);
+      lines = Util.splitHtmlString(suggestion, MAX_LINE_LENGTH);
       for (String line : lines) {
         message.append(line).append("<br>"); //$NON-NLS-1$
       }
       message.append("<br>"); //$NON-NLS-1$
     }
     message.append("</html"); //$NON-NLS-1$
-    JOptionPane.showMessageDialog(parentComponent, message.toString(), i18n
+    JEditorPane editorPane = new JEditorPane();
+    editorPane.setEditable(false);
+    editorPane.setContentType("text/html");
+    editorPane.setText(message.toString());
+    editorPane.setOpaque(false);
+    editorPane.setFont(new JLabel().getFont());
+    editorPane.addHyperlinkListener(new HyperlinkListener() {
+      @Override
+      public void hyperlinkUpdate(HyperlinkEvent event) {
+        if (event.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+          BrowserLauncher.openURL(Settings.get(SETTING.BROWSER, null), event
+              .getURL().toString());
+        }
+      }
+    });
+    JOptionPane.showMessageDialog(parentComponent, editorPane, i18n
         .tr("What next?"), //$NON-NLS-1$
         JOptionPane.INFORMATION_MESSAGE);
   }
@@ -364,6 +391,24 @@ public final class WhatNext {
           i18n.tr("Remove images")); //$NON-NLS-1$
       suggestions.add(text);
     }
+  }
+  
+  /**
+   * Suggest helping out by translating Geotag
+   * @param translationAvailable
+   * @param suggestions
+   */
+  private static void suggestTranslation(boolean translationAvailable, List<String> suggestions) {
+    if (translationAvailable) {
+      return;
+    }
+    StringBuilder builder =new StringBuilder();
+    builder.append("Your language seems to be <b>");
+    builder.append(Locale.getDefault().getDisplayName());
+    builder.append("</b> and we don't have a translation for it. ");
+    builder.append("To find out how to help");
+    builder.append( " <a href=\"http://geotag.sourceforge.net/?q=node/24\">click&nbsp;here</a>.");
+    suggestions.add(builder.toString());
   }
 
 }

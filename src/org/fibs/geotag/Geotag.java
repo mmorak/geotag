@@ -90,19 +90,9 @@ public final class Geotag {
    */
   private static void logLocale() {
     Locale defaultLocale = Locale.getDefault();
-    String displayName = defaultLocale.getDisplayName();
-    String language = defaultLocale.getLanguage();
-    String country = defaultLocale.getCountry();
-    String variant = defaultLocale.getVariant();
-    StringBuilder builder = new StringBuilder(displayName).append(": ");
-    builder.append(language);
-    if (country != null && country.length() > 0) {
-      builder.append('_').append(country);
-    }
-    if (variant != null && variant.length() > 0) {
-      builder.append('_').append(variant);
-    }
-    System.out.println(builder.toString());
+    System.out.println(defaultLocale.getDisplayName());
+    System.out.println(LocaleUtil.localeToString(defaultLocale));
+    LocaleUtil.translationAvailable(defaultLocale);
     //Get the System Classloader
     ClassLoader sysClassLoader = ClassLoader.getSystemClassLoader();
 
@@ -141,8 +131,7 @@ public final class Geotag {
         // now see what to do with them
         if (key.equals("po") && value.length() > 0) {
           Messages_po.processPoFile(value);
-          Locale locale = LocaleUtil.localeFromString("po");
-          Locale.setDefault(locale);
+          I18n.setOverrideBundle(new Messages_po());
         } else if (key.equals("language") && value.length() > 0) { //$NON-NLS-1$
           Locale locale = LocaleUtil.localeFromString(value);
           Locale.setDefault(locale);
@@ -204,7 +193,6 @@ public final class Geotag {
         mainWindow.setVisible(true);
         if (!Exiftool.isAvailable()) {
           WhatNext.helpWhatNext(mainWindow, mainWindow.getTableModel());
-
         }
       }
     });

@@ -569,13 +569,17 @@ public class ImageInfo implements Comparable<ImageInfo> {
    *          the gpsDateTime to set
    */
   void setGpsDateTime(String dateTime) {
-    this.gpsDateTime = dateTime;
     if (dateTime != null) {
       try {
-        exactTimeGMT.setTime(dateFormat.parse(dateTime));
+        Date parsedDate = dateFormat.parse(dateTime);
+        exactTimeGMT.setTime(parsedDate);
+        // only set the gpsDateTime if parsing doesn't fail
+        this.gpsDateTime = dateTime;
       } catch (ParseException e) {
         e.printStackTrace();
       }
+    } else {
+      this.gpsDateTime = null;
     }
   }
 

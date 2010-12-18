@@ -48,5 +48,42 @@ public class LocaleUtil {
     }
     return new Locale(language);
   }
+  
+  /**
+   * @param locale
+   * @return Information about the locale as a string
+   */
+  public static String localeToString(Locale locale) {
+    String language = locale.getLanguage();
+    String country = locale.getCountry();
+    String variant = locale.getVariant();
+    StringBuilder builder = new StringBuilder(language);
+    if (country != null && country.length() > 0) {
+      builder.append('_').append(country);
+    }
+    if (variant != null && variant.length() > 0) {
+      builder.append('_').append(variant);
+    }
+    return builder.toString();
+  }
+  
+  /**
+   * @param locale A locale
+   * @return A good guess if a translation is available
+   */
+  public static final boolean translationAvailable(Locale locale) {
+    String localeName = localeToString(locale);
+    if ("en".equals(localeName)) {
+      return true;
+    }
+    // Now try to locate the Messages_xy class
+    ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+    try {
+      classLoader.loadClass("org.fibs.geotag.i18n.Messages_"+localeName);
+    } catch (ClassNotFoundException e) {
+      return false;
+    }
+    return true;
+  }
 
 }

@@ -47,7 +47,13 @@ public class I18n {
 	/**
 	 * Reference to the current localization bundles.
 	 */
-	private volatile ResourceBundle bundle;
+	private volatile ResourceBundle theBundle;
+	
+	private static ResourceBundle overrideBundle;
+	
+	public static void setOverrideBundle(ResourceBundle bundle) {
+	  overrideBundle = bundle;
+	}
 
 	/**
 	 * The locale of the strings used in the source code.
@@ -98,7 +104,7 @@ public class I18n {
 	 */
 	public ResourceBundle getResources()
 	{
-		return bundle;
+		return overrideBundle != null ? overrideBundle : theBundle;
 	}
 
 	/**
@@ -130,7 +136,7 @@ public class I18n {
 		if (bundle == null) {
 			throw new NullPointerException();
 		}
-		this.bundle = bundle;
+		this.theBundle = bundle;
 		this.baseName = null;
 		this.locale = bundle.getLocale();
 		this.loader = null;
@@ -149,7 +155,7 @@ public class I18n {
 	 */
 	public synchronized void setResources(String baseName, Locale locale, ClassLoader loader)
 	{
-		this.bundle = ResourceBundle.getBundle(baseName, locale, loader);
+		this.theBundle = ResourceBundle.getBundle(baseName, locale, loader);
 		this.baseName = baseName;
 		this.locale = locale;
 		this.loader = loader;
@@ -230,7 +236,7 @@ public class I18n {
 	public final String tr(String text)
 	{
 		try {
-			return bundle.getString(text);
+			return overrideBundle != null ? overrideBundle.getString(text) : theBundle.getString(text);
 		}
 		catch (MissingResourceException e) {
 			return text;
@@ -315,7 +321,7 @@ public class I18n {
 	public final String trn(String text, String pluralText, long n)
 	{
 		try {
-			return trnInternal(bundle, text, pluralText, n);
+			return trnInternal(overrideBundle != null ? overrideBundle : theBundle, text, pluralText, n);
 		}
 		catch (MissingResourceException e) {
 			return (n == 1) ? text : pluralText;
@@ -515,7 +521,7 @@ public class I18n {
 	 */
 	public final String trnc(String context, String singularText, String pluralText, long n) {
 		try {
-			return trnInternal(bundle, context + CONTEXT_GLUE + singularText, pluralText, n);
+			return trnInternal(overrideBundle != null ? overrideBundle : theBundle, context + CONTEXT_GLUE + singularText, pluralText, n);
 		}
 		catch (MissingResourceException e) {
 			return (n == 1) ? singularText : pluralText;
