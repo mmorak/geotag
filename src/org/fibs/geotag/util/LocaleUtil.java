@@ -78,11 +78,15 @@ public class LocaleUtil {
     }
     // Now try to locate the Messages_xy class
     ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+    String className = "org.fibs.geotag.i18n.Messages_"+localeName;
+    System.out.println("Checking for class "+className);
     try {
-      classLoader.loadClass("org.fibs.geotag.i18n.Messages_"+localeName);
+      classLoader.loadClass(className);
     } catch (ClassNotFoundException e) {
+      System.out.println("Class "+className+" not found");
       return false;
     }
+    System.out.println("Class "+className+" found");
     return true;
   }
 

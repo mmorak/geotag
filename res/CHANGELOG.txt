@@ -1,3 +1,6 @@
+Release 0.075
+  New Dutch translation by T Verhoef
+  
 Release 0.074
   No longer changing default Locale when explicitly
   using a .po file specified on the command line.

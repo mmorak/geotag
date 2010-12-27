@@ -141,7 +141,7 @@ public final class WhatNext {
     suggestFindingGPSBabel(gpsbabelAvailable, suggestions);
     suggestFindingDcraw(dcrawAvailable, rawImagesAvailable, suggestions);
     suggestRemovingImages(imagesAvailable, suggestions);
-    suggestTranslation(translationAvailable, suggestions);
+    //suggestTranslation(translationAvailable, suggestions);
 
     // build the final message
     StringBuilder message = new StringBuilder("<html>"); //$NON-NLS-1$

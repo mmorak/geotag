@@ -11,5 +11,6 @@ compile de
 compile da
 compile fr
 compile en_GB
+compile nl
 cd ../i18n
 echo Refresh bin folder in Eclipse
