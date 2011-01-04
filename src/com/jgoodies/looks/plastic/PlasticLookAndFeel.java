@@ -55,6 +55,8 @@ import javax.swing.plaf.basic.BasicBorders;
 import javax.swing.plaf.metal.MetalLookAndFeel;
 import javax.swing.plaf.metal.MetalTheme;
 
+import org.fibs.geotag.util.ClassLoaderUtil;
+
 import com.jgoodies.looks.FontPolicies;
 import com.jgoodies.looks.FontPolicy;
 import com.jgoodies.looks.LookUtils;
@@ -73,7 +75,7 @@ import com.jgoodies.looks.plastic.theme.SkyBluer;
  * optional features for the Plastic family.
  * 
  * @author Karsten Lentzsch
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 @SuppressWarnings("all")
 public class PlasticLookAndFeel extends MetalLookAndFeel {
@@ -932,7 +934,7 @@ public class PlasticLookAndFeel extends MetalLookAndFeel {
   protected static PlasticTheme createTheme(String themeName) {
     String className = THEME_CLASSNAME_PREFIX + themeName;
     try {
-      Class cl = Class.forName(className);
+      Class cl = ClassLoaderUtil.getClassForName(className);
       return (PlasticTheme) (cl.newInstance());
     } catch (ClassNotFoundException e) {
       // Ignore the exception here and log below.

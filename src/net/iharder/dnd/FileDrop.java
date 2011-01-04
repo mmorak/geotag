@@ -10,6 +10,8 @@ import java.io.Reader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.fibs.geotag.util.ClassLoaderUtil;
+
 /**
  * This class makes it easy to drag and drop files from the operating system to
  * a Java program. Any <tt>java.awt.Component</tt> can be dropped onto, but
@@ -417,7 +419,7 @@ public class FileDrop {
     if (supportsDnD == null) {
       boolean support = false;
       try {
-        Class arbitraryDndClass = Class.forName("java.awt.dnd.DnDConstants");
+        Class arbitraryDndClass = ClassLoaderUtil.getClassForName("java.awt.dnd.DnDConstants");
         support = true;
       } // end try
       catch (Exception e) {

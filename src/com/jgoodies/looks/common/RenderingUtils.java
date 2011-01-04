@@ -46,6 +46,8 @@ import java.util.Map;
 import javax.swing.JComponent;
 import javax.swing.plaf.basic.BasicGraphicsUtils;
 
+import org.fibs.geotag.util.ClassLoaderUtil;
+
 import com.jgoodies.looks.LookUtils;
 
 /**
@@ -58,7 +60,7 @@ import com.jgoodies.looks.LookUtils;
  * 
  * @author Karsten Lentzsch
  * @author Andrej Golovnin
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  * 
  * @since 2.0
  */
@@ -138,7 +140,7 @@ public final class RenderingUtils {
 
   private static Method getMethodDrawStringUnderlineCharAt() {
     try {
-      Class clazz = Class.forName(SWING_UTILITIES2_NAME);
+      Class clazz = ClassLoaderUtil.getClassForName(SWING_UTILITIES2_NAME);
       return clazz.getMethod("drawStringUnderlineCharAt", new Class[] {
           JComponent.class, Graphics.class, String.class, Integer.TYPE,
           Integer.TYPE, Integer.TYPE });

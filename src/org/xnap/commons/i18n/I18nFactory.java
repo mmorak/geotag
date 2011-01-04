@@ -26,6 +26,8 @@ import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.Properties;
 
+import org.fibs.geotag.util.ClassLoaderUtil;
+
 /**
  * Factory class that creates and caches I18n instances.
  * <p>
@@ -260,7 +262,7 @@ public class I18nFactory {
 	}
 
 	static ClassLoader getClassLoader(ClassLoader classLoader) {
-		return (classLoader != null) ? classLoader : ClassLoader.getSystemClassLoader();
+		return (classLoader != null) ? classLoader : ClassLoaderUtil.getClassLoader();
 	}
 	
 	/**

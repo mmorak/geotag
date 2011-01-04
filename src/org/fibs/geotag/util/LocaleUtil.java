@@ -77,7 +77,10 @@ public class LocaleUtil {
       return true;
     }
     // Now try to locate the Messages_xy class
-    ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+    // Can't use ClassLoader.getSystemClassLoader() here
+    // (see http://java.sun.com/javase/technologies/desktop/javawebstart/faq.html#54 )
+    // We need to find the actual class loader used to load this class
+    ClassLoader classLoader = LocaleUtil.class.getClassLoader();
     String className = "org.fibs.geotag.i18n.Messages_"+localeName;
     System.out.println("Checking for class "+className);
     try {

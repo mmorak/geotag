@@ -35,6 +35,7 @@ import org.fibs.geotag.Settings;
 import org.fibs.geotag.Settings.SETTING;
 import org.fibs.geotag.data.ImageInfo;
 import org.fibs.geotag.util.Airy;
+import org.fibs.geotag.util.ClassLoaderUtil;
 import org.fibs.geotag.util.OperatingSystem;
 import org.xnap.commons.i18n.I18n;
 import org.xnap.commons.i18n.I18nFactory;
@@ -193,7 +194,7 @@ public final class GoogleEarthLauncher {
   public static void openKmlFile(File file) {
     try {
       if (OperatingSystem.isMacOS()) {
-        Class<?> fileMgr = Class.forName("com.apple.eio.FileManager"); //$NON-NLS-1$
+        Class<?> fileMgr = ClassLoaderUtil.getClassForName("com.apple.eio.FileManager"); //$NON-NLS-1$
         Method openURL = fileMgr.getDeclaredMethod("openURL", //$NON-NLS-1$
             new Class[] { String.class });
         openURL.invoke(null, new Object[] { file.getPath() });

@@ -1,3 +1,6 @@
+Release 0.076
+  Fixed ClassLoader problems with Java Web Start
+  
 Release 0.075
   New Dutch translation by T Verhoef
   

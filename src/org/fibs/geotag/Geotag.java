@@ -93,15 +93,19 @@ public final class Geotag {
     System.out.println(defaultLocale.getDisplayName());
     System.out.println(LocaleUtil.localeToString(defaultLocale));
     LocaleUtil.translationAvailable(defaultLocale);
-    //Get the System Classloader
-    ClassLoader sysClassLoader = ClassLoader.getSystemClassLoader();
+    //Don't use  the System Classloader
+    ClassLoader classLoader = Geotag.class.getClassLoader();
 
-    //Get the URLs
-    URL[] urls = ((URLClassLoader)sysClassLoader).getURLs();
+    try {
+      //Get the URLs
+      URL[] urls = ((URLClassLoader)classLoader).getURLs();
 
-    for(int i=0; i< urls.length; i++)
-    {
-        System.out.println(urls[i].getFile());
+      for(int i=0; i< urls.length; i++)
+      {
+          System.out.println("URL: "+urls[i].getFile());
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
     }
   }
 
