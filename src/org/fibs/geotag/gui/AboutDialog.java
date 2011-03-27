@@ -29,6 +29,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 
+import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -45,6 +46,7 @@ import org.fibs.geotag.License;
 import org.fibs.geotag.Settings;
 import org.fibs.geotag.Version;
 import org.fibs.geotag.Settings.SETTING;
+import org.fibs.geotag.gui.flattr.FlattrButton;
 import org.fibs.geotag.util.BrowserLauncher;
 import org.fibs.geotag.util.ImageUtil;
 import org.xnap.commons.i18n.I18n;
@@ -164,6 +166,8 @@ public class AboutDialog extends JDialog implements HyperlinkListener {
       }
     });
     buttonPanel.add(okButton);
+    AbstractButton flattrButton = new FlattrButton();
+    buttonPanel.add(flattrButton);
     // add button at the bottom of the dialog
     add(buttonPanel, BorderLayout.SOUTH);
     // set the dialog size snugly fit everything

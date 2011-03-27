@@ -1,3 +1,7 @@
+Release 0.077
+  New Brazilian Portuguese translation by 
+  Alexandre C. Leite
+   
 Release 0.076
   Fixed ClassLoader problems with Java Web Start
   

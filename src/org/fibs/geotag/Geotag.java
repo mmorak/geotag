@@ -32,6 +32,7 @@ import javax.swing.UIManager;
 import org.fibs.geotag.exif.Exiftool;
 import org.fibs.geotag.gui.MainWindow;
 import org.fibs.geotag.gui.WhatNext;
+import org.fibs.geotag.gui.flattr.FlattrImageLoader;
 import org.fibs.geotag.i18n.Messages_po;
 import org.fibs.geotag.util.Constants;
 import org.fibs.geotag.util.LocaleUtil;
@@ -193,6 +194,8 @@ public final class Geotag {
     }
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
+        // Kick off the image loading process (will return null, so ignore);
+        FlattrImageLoader.getImageIcon();
         MainWindow mainWindow = new MainWindow();
         mainWindow.setVisible(true);
         if (!Exiftool.isAvailable()) {

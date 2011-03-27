@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Vector;
 import java.util.concurrent.ExecutionException;
 
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -66,6 +67,7 @@ import org.fibs.geotag.external.ExternalUpdate;
 import org.fibs.geotag.external.ExternalUpdateConsumer;
 import org.fibs.geotag.googleearth.KmlRequestHandler;
 import org.fibs.geotag.gpsbabel.GPSBabel;
+import org.fibs.geotag.gui.flattr.FlattrMenuItem;
 import org.fibs.geotag.gui.menus.FileMenu;
 import org.fibs.geotag.gui.menus.MenuConstants;
 import org.fibs.geotag.table.ImagesTable;
@@ -429,6 +431,9 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
     });
 
     helpMenu.add(websiteItem);
+    
+    JMenuItem flattrItem = new FlattrMenuItem();
+    helpMenu.add((JComponent)flattrItem);
     return helpMenu;
   }
 
