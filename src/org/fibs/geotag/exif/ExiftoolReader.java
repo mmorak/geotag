@@ -162,11 +162,11 @@ public class ExiftoolReader implements ExifReader {
     // date time information in XMP file overrides data from image Exif
     //args.add("-XMP:DateTimeOriginal"); //$NON-NLS-1$
     // retrieve the latitude
-    args.add("-XMP:GPSLatitude"); //$NON-NLS-1$
+    args.add("-GPSLatitude"); //$NON-NLS-1$
     // retrieve the longitude
-    args.add("-XMP:GPSLongitude"); //$NON-NLS-1$
+    args.add("-GPSLongitude"); //$NON-NLS-1$
     // retrieve the altitude
-    args.add("-XMP:GPSAltitude"); //$NON-NLS-1$
+    args.add("-GPSAltitude"); //$NON-NLS-1$
     // retrieve the GPS date/time - this changed in version 7.04 of exiftool
     if ("7.04".compareTo(Exiftool.getVersion()) > 0) { //$NON-NLS-1$
       // old behaviour

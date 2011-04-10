@@ -1,3 +1,11 @@
+Release 0.079
+  Fixed bug 3241411:
+  Negative altitude got saved as positive
+  
+Release 0.078
+  Added Flattr button. Maybe I can finance my 
+  Flattr habit
+  
 Release 0.077
   New Brazilian Portuguese translation by 
   Alexandre C. Leite
