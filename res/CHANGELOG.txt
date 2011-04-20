@@ -1,3 +1,8 @@
+Release 0.080
+  Fixed problem reading images tagged by
+  Adobe Lightroom (Apparently they save
+  latitude/longitude as zero divided by zero.)
+
 Release 0.079
   Fixed bug 3241411:
   Negative altitude got saved as positive

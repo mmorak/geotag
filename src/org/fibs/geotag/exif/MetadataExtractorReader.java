@@ -63,9 +63,18 @@ public class MetadataExtractorReader implements ExifReader {
    * @return The value in degrees
    */
   private double rationalsToDegrees(Rational[] rationals) {
-    return rationals[0].doubleValue() + rationals[1].doubleValue()
-        / Constants.MINUTES_PER_DEGREE + rationals[2].doubleValue()
-        / Constants.SECONDS_PER_DEGREE;
+    double degrees = 0.0;
+    // very elaborate, but apparently Adobe Lightroom saves 0 denominators 
+    if (rationals[0].getDenominator() != 0) {
+      degrees += rationals[0].doubleValue();
+    }
+    if (rationals[1].getDenominator() != 0) {
+      degrees += rationals[1].doubleValue() / Constants.MINUTES_PER_DEGREE;
+    }
+    if (rationals[2].getDenominator() != 0) {
+      degrees += rationals[2].doubleValue() / Constants.SECONDS_PER_DEGREE;
+    }
+    return degrees;
   }
 
   /**
