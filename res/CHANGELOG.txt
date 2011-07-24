@@ -1,3 +1,7 @@
+Release 0.082
+  Release 0.081 failed due to unsigned
+  jar. Re-releasing
+  
 Release 0.081
   Added support for Samsung SRW files
   New Czech translation by Ales Zeleny
