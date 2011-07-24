@@ -165,6 +165,12 @@ public enum FileTypes {
           return true;
         }
       }
+      if (extension.equals("srw")) { //$NON-NLS-1$
+        // Samsung SRW files are read/write supported since Exiftool 8.13
+        if (Exiftool.getVersion() != null && Exiftool.getVersion().compareTo("8.13") >=0) { //$NON-NLS-1$
+          return true;
+        }
+      }
     }
     return false;
   }
