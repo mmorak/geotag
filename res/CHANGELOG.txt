@@ -1,3 +1,12 @@
+Release 0.084
+  Release 0.083 failed due to unsigned jar.
+  Re-releasing. Added jar signature verification
+  to release process. 
+  
+Release 0.083
+  New Spanish translation by Carlos Pomares Quintero.
+  New Polish translation by Pawel Krafczyk
+  
 Release 0.082
   Release 0.081 failed due to unsigned
   jar. Re-releasing

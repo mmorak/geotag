@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?xml version="1.0" encoding="MacRoman" standalone="no"?>
 <jardesc>
-    <jar path="/home/andreas/workspace/Geotag/geotag.jar"/>
+    <jar path="/Users/andreas/Documents/workspace/Geotag/geotag.jar"/>
     <options buildIfNeeded="true" compress="true" descriptionLocation="/Geotag/geotag.jardesc" exportErrors="true" exportWarnings="true" includeDirectoryEntries="true" overwrite="false" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
     <storedRefactorings deprecationInfo="true" structuralOnly="false"/>
     <selectedProjects/>
