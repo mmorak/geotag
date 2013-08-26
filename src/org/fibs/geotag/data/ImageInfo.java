@@ -239,6 +239,7 @@ public class ImageInfo implements Comparable<ImageInfo> {
    * @return the comparison result
    * @see java.lang.Comparable#compareTo(java.lang.Object)
    */
+  @Override
   public int compareTo(ImageInfo imageInfo) {
     // the GPSDateTime shouldn't be null, but we check anyway
     if (getGpsDateTime() != null && imageInfo.getGpsDateTime() != null) {

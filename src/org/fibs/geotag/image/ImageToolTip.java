@@ -38,7 +38,7 @@ public class ImageToolTip extends JToolTip {
   private ImageIcon imageIcon;
 
   /** The custom UI used by this tooltip. */
-  private ImageToolTipUI ui;
+  private ImageToolTipUI toolTipUi;
 
   /**
    * Construct an ImageToolTip.
@@ -51,8 +51,8 @@ public class ImageToolTip extends JToolTip {
   public ImageToolTip(ImageIcon imageIcon, String alternativeText) {
     setTipText(alternativeText);
     this.imageIcon = imageIcon;
-    this.ui = new ImageToolTipUI(imageIcon, getTipText());
-    this.setUI(ui);
+    this.toolTipUi = new ImageToolTipUI(imageIcon, getTipText());
+    this.setUI(toolTipUi);
   }
 
   /**
@@ -69,7 +69,7 @@ public class ImageToolTip extends JToolTip {
   public void setImageIcon(ImageIcon imageIcon) {
     this.imageIcon = imageIcon;
     // Also tell the UI about the change
-    ui.setImageIcon(imageIcon);
+    toolTipUi.setImageIcon(imageIcon);
     invalidate();
   }
 }

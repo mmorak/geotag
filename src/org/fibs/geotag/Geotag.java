@@ -193,6 +193,7 @@ public final class Geotag {
           JOptionPane.INFORMATION_MESSAGE);
     }
     SwingUtilities.invokeLater(new Runnable() {
+      @Override
       public void run() {
         // Kick off the image loading process (will return null, so ignore);
         FlattrImageLoader.getImageIcon();

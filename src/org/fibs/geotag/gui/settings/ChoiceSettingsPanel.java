@@ -31,7 +31,7 @@ import org.fibs.geotag.Settings.SETTING;
 public class ChoiceSettingsPanel extends SettingsPanel {
 
   /** The combo box to display them in. */
-  private JComboBox comboBox;
+  private JComboBox<?> comboBox;
 
   /**
    * @param parent
@@ -59,7 +59,7 @@ public class ChoiceSettingsPanel extends SettingsPanel {
       String[] choices, int defaultIndex) {
     super(parent, title, enablingSetting, defaultEnabled, setting, Integer
         .toString(defaultIndex));
-    comboBox = new JComboBox(choices);
+    comboBox = new JComboBox<Object>(choices);
     int selectIndex = Settings.get(setting, defaultIndex);
     comboBox.setSelectedIndex(selectIndex);
     addEditor(comboBox);

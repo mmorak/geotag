@@ -659,6 +659,7 @@ public class ImagesTablePopupMenu extends JPopupMenu implements ActionListener,
   /**
    * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
    */
+  @Override
   public void actionPerformed(ActionEvent event) {
     // determine which menu item was selected
     if (event.getSource() == chooseTimeItem) {

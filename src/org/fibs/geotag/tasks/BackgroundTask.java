@@ -117,6 +117,7 @@ public abstract class BackgroundTask<V> extends InterruptibleTask<String, V>
   /**
    * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
    */
+  @Override
   public void propertyChange(PropertyChangeEvent event) {
     if ("state".equals(event.getPropertyName())) { //$NON-NLS-1$
       SwingWorker.StateValue state = (StateValue) event.getNewValue();

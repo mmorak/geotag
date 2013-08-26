@@ -75,6 +75,7 @@ public class CopyLocationMenu extends JMenu implements MenuConstants,
     selectedRows = imagesTable.getSelectedRows();
 
     boolean itemEnabled;
+    @SuppressWarnings("unused")
     boolean menuEnabled;
     menuEnabled = false;
 

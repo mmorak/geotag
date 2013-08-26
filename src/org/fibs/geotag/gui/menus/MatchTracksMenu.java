@@ -72,6 +72,7 @@ public class MatchTracksMenu extends JMenu implements MenuConstants,
       ImageInfo currentImage, TrackStore trackStore) {
     super(MATCH_TRACKS);
     boolean itemEnabled;
+    @SuppressWarnings("unused")
     boolean menuEnabled;
     this.imagesTable = imagesTable;
     this.tableModel = (ImagesTableModel) imagesTable.getModel();

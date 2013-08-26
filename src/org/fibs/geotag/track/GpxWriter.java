@@ -44,12 +44,14 @@ public class GpxWriter implements TrackWriter {
   /**
    * @see org.fibs.geotag.track.TrackWriter#write(com.topografix.gpx._1._0.Gpx, java.io.File)
    */
+  @Override
   public void write(Gpx gpx, File file) throws Exception {
     write(gpx, new FileOutputStream(file));
   }
   /**
    * @see org.fibs.geotag.track.TrackWriter#write(com.topografix.gpx._1._0.Gpx, java.io.OutputStream)
    */
+  @Override
   public void write(Gpx gpx, OutputStream outputStream) throws Exception {
     JAXBContext jaxbContext = JAXBContext.newInstance(Gpx.class.getPackage()
         .getName());

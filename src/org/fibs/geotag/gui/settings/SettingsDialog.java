@@ -141,6 +141,7 @@ public class SettingsDialog extends JDialog implements TreeSelectionListener {
     String cancel = i18n.tr("Cancel"); //$NON-NLS-1$
     JButton okButton = new JButton(ok);
     okButton.addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(ActionEvent e) {
         for (SettingsPanel settingsPanel : getPanelList()) {
           settingsPanel.save();
@@ -152,6 +153,7 @@ public class SettingsDialog extends JDialog implements TreeSelectionListener {
     buttonPanel.add(okButton);
     JButton cancelButton = new JButton(cancel);
     cancelButton.addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(ActionEvent e) {
         // just close the dialog
         dispose();

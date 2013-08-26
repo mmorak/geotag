@@ -17,6 +17,11 @@
 
 package com.drew.imaging.jpeg;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Iterator;
+
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.MetadataException;
@@ -26,12 +31,6 @@ import com.drew.metadata.exif.ExifReader;
 import com.drew.metadata.iptc.IptcReader;
 import com.drew.metadata.jpeg.JpegCommentReader;
 import com.drew.metadata.jpeg.JpegReader;
-import com.sun.image.codec.jpeg.JPEGDecodeParam;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Iterator;
 
 /**
  * 

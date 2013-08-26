@@ -78,6 +78,7 @@ public abstract class UndoableBackgroundTask<V> extends BackgroundTask<V>
    * 
    * @see javax.swing.undo.UndoableEdit#addEdit(javax.swing.undo.UndoableEdit)
    */
+  @Override
   public boolean addEdit(UndoableEdit anEdit) {
     if (anEdit.isSignificant()) {
       return false;
@@ -91,6 +92,7 @@ public abstract class UndoableBackgroundTask<V> extends BackgroundTask<V>
    * 
    * @see javax.swing.undo.UndoableEdit#canRedo()
    */
+  @Override
   public boolean canRedo() {
     return alive && !hasBeenDone;
   }
@@ -100,6 +102,7 @@ public abstract class UndoableBackgroundTask<V> extends BackgroundTask<V>
    * 
    * @see javax.swing.undo.UndoableEdit#canUndo()
    */
+  @Override
   public boolean canUndo() {
     return alive && hasBeenDone;
   }
@@ -109,6 +112,7 @@ public abstract class UndoableBackgroundTask<V> extends BackgroundTask<V>
    * 
    * @see javax.swing.undo.UndoableEdit#die()
    */
+  @Override
   public void die() {
     alive = false;
   }
@@ -116,6 +120,7 @@ public abstract class UndoableBackgroundTask<V> extends BackgroundTask<V>
   /**
    * @see javax.swing.undo.UndoableEdit#getPresentationName()
    */
+  @Override
   public String getPresentationName() {
     String presentationName = ""; //$NON-NLS-1$
     if (group != null) {
@@ -128,6 +133,7 @@ public abstract class UndoableBackgroundTask<V> extends BackgroundTask<V>
   /**
    * @see javax.swing.undo.UndoableEdit#getRedoPresentationName()
    */
+  @Override
   public String getRedoPresentationName() {
     String presentationName = UIManager
         .getString(REDO_TEXT_KEY) //$NON-NLS-1$
@@ -138,6 +144,7 @@ public abstract class UndoableBackgroundTask<V> extends BackgroundTask<V>
   /**
    * @see javax.swing.undo.UndoableEdit#getUndoPresentationName()
    */
+  @Override
   public String getUndoPresentationName() {
     String presentationName = UIManager
         .getString(UNDO_TEXT_KEY) //$NON-NLS-1$
@@ -148,6 +155,7 @@ public abstract class UndoableBackgroundTask<V> extends BackgroundTask<V>
   /**
    * @see javax.swing.undo.UndoableEdit#isSignificant()
    */
+  @Override
   public boolean isSignificant() {
     // Background task are significant, where as individual edit for images
     // aren't
@@ -161,6 +169,7 @@ public abstract class UndoableBackgroundTask<V> extends BackgroundTask<V>
    * 
    * @see javax.swing.undo.UndoableEdit#redo()
    */
+  @Override
   public void redo() {
     if (!canRedo()) {
       throw new CannotRedoException();
@@ -177,6 +186,7 @@ public abstract class UndoableBackgroundTask<V> extends BackgroundTask<V>
    * 
    * @see javax.swing.undo.UndoableEdit#replaceEdit(javax.swing.undo.UndoableEdit)
    */
+  @Override
   public boolean replaceEdit(UndoableEdit anEdit) {
     return false;
   }
@@ -188,6 +198,7 @@ public abstract class UndoableBackgroundTask<V> extends BackgroundTask<V>
    * 
    * @see javax.swing.undo.UndoableEdit#undo()
    */
+  @Override
   public void undo() {
     if (!canUndo()) {
       throw new CannotUndoException();

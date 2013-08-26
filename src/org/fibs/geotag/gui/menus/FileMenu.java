@@ -110,6 +110,7 @@ public class FileMenu extends JMenu implements MenuConstants {
     this.progressBar = progressBar;
     addFileItem = new JMenuItem(ADD_FILE + ELLIPSIS);
     addFileItem.addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(ActionEvent e) {
         addFile();
       }
@@ -118,6 +119,7 @@ public class FileMenu extends JMenu implements MenuConstants {
 
     addDirectoryItem = new JMenuItem(ADD_FILES + ELLIPSIS);
     addDirectoryItem.addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(ActionEvent e) {
         addDirectory();
       }
@@ -129,6 +131,7 @@ public class FileMenu extends JMenu implements MenuConstants {
 
     addTrackItem = new JMenuItem(LOAD_TRACKS_FROM_FILE + ELLIPSIS);
     addTrackItem.addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(ActionEvent e) {
         addTrackFromFile();
       }
@@ -137,6 +140,7 @@ public class FileMenu extends JMenu implements MenuConstants {
 
     saveTrackItem = new JMenuItem(SAVE_TRACK + ELLIPSIS);
     saveTrackItem.addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(ActionEvent e) {
         saveTrack();
       }
@@ -146,6 +150,7 @@ public class FileMenu extends JMenu implements MenuConstants {
 
     loadTrackFromGpsItem = new JMenuItem(LOAD_TRACK_FROM_GPS);
     loadTrackFromGpsItem.addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(ActionEvent e) {
         loadTracksFromGps();
       }
@@ -155,6 +160,7 @@ public class FileMenu extends JMenu implements MenuConstants {
 
     settingsItem = new JMenuItem(SETTINGS + ELLIPSIS);
     settingsItem.addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(ActionEvent e) {
         // remember availability of dcraw
         boolean dcrawAvailable = Dcraw.isAvailable();

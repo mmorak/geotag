@@ -50,10 +50,12 @@ import com.topografix.gpx._1._0.Gpx.Trk.Trkseg.Trkpt;
  */
 public class TrackMatcher {
 	/** Number of matches performed - used for speed measurements. */
-	private int matchesPerformed = 0;
+	@SuppressWarnings("unused")
+  private int matchesPerformed = 0;
 
 	/** Total time used to match tracks - used for speed measurements. */
-	private double totalTime = 0.0;
+	@SuppressWarnings("unused")
+  private double totalTime = 0.0;
 
 	/** We keep track of how many track segments don't need looking at. */
 	private int startIndex = 0;

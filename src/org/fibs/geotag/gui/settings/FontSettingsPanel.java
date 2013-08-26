@@ -71,6 +71,7 @@ public class FontSettingsPanel extends SettingsPanel {
     fontPanel.add(textField, BorderLayout.CENTER);
     JButton browseButton = new JButton("..."); //$NON-NLS-1$
     browseButton.addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(ActionEvent e) {
         Font font = FontUtil.fontFromID(Settings
             .get(getSetting(),

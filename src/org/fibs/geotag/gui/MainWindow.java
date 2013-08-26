@@ -227,6 +227,7 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
     GlobalUndoManager.getManager().setLimit(-1); // no limit
     // enable drag and drop of image files
     new FileDrop(this, new FileDrop.Listener() {
+      @Override
       public void filesDropped(File[] files) {
         ExifReaderTask task = new ExifReaderTask(ADD_FILES, getTableModel(),
             files);
@@ -404,6 +405,7 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
     JMenuItem whatNextItem = new JMenuItem(i18n
         .tr("What next?")); //$NON-NLS-1$
     whatNextItem.addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(ActionEvent e) {
         WhatNext.helpWhatNext(MainWindow.this, getTableModel());
       }
@@ -414,6 +416,7 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
     final String about = i18n.tr("About") + ' ' + Geotag.NAME; //$NON-NLS-1$
     JMenuItem aboutItem = new JMenuItem(about + ELLIPSIS);
     aboutItem.addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(ActionEvent e) {
         (new AboutDialog(MainWindow.this, about)).setVisible(true);
       }
@@ -424,6 +427,7 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
     JMenuItem websiteItem = new JMenuItem(String.format(i18n
         .tr("%s web site") + ELLIPSIS, Geotag.NAME)); //$NON-NLS-1$
     websiteItem.addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(ActionEvent e) {
         BrowserLauncher.openURL(Settings.get(SETTING.BROWSER, null),
             Geotag.WEBSITE);
@@ -445,6 +449,7 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
 
     undoItem = new JMenuItem();
     undoItem.addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(ActionEvent e) {
         String action = GlobalUndoManager.getManager()
             .getUndoPresentationName();
@@ -460,6 +465,7 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
 
     redoItem = new JMenuItem();
     redoItem.addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(ActionEvent e) {
         String action = GlobalUndoManager.getManager()
             .getRedoPresentationName();
@@ -474,6 +480,7 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
 
     cancelItem = new JMenuItem(i18n.tr("Cancel")); //$NON-NLS-1$
     cancelItem.addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(ActionEvent e) {
         if (getBackgroundTask() != null) {
           getBackgroundTask().interruptRequest();
@@ -539,6 +546,7 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
    * 
    * @param externalUpdates
    */
+  @Override
   public void processExternalUpdates(List<ExternalUpdate> externalUpdates) {
     for (ExternalUpdate externalUpdate : externalUpdates) {
       pendingExternalUpdates.add(externalUpdate);
@@ -632,6 +640,7 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
   /**
    * @see org.fibs.geotag.tasks.BackgroundTaskListener#backgroundTaskStarted(org.fibs.geotag.tasks.BackgroundTask)
    */
+  @Override
   public void backgroundTaskStarted(BackgroundTask<?> task) {
     // System.out.println("Started "+task.getName());
     backgroundTask = task;
@@ -661,6 +670,7 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
    * @see org.fibs.geotag.tasks.BackgroundTaskListener#backgroundTaskProgress(org.fibs.geotag.tasks.BackgroundTask,
    *      java.lang.String)
    */
+  @Override
   public void backgroundTaskProgress(BackgroundTask<?> task,
       String progressMessage) {
     // System.out.println(progressMessage);
@@ -676,6 +686,7 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
   /**
    * @see org.fibs.geotag.tasks.BackgroundTaskListener#backgroundTaskFinished(org.fibs.geotag.tasks.BackgroundTask)
    */
+  @Override
   public void backgroundTaskFinished(BackgroundTask<?> task) {
     // System.out.println("Finished "+task.getName());
     getProgressBar().setValue(task.getMinProgress());

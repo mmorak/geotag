@@ -37,6 +37,7 @@ public class ResourceHandler implements ContextHandler {
    *      java.lang.String, java.lang.String, java.util.Properties,
    *      java.util.Properties)
    */
+  @Override
   public Response serve(WebServer server, String uri, String method,
       Properties header, Properties parms) {
     InputStream stream = WebServer.class.getClassLoader().getResourceAsStream(

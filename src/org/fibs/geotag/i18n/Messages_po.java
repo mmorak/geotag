@@ -92,6 +92,7 @@ public class Messages_po extends ResourceBundle {
           msgStr = null;
         }
       }
+      bufferedReader.close();
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -114,10 +115,12 @@ public class Messages_po extends ResourceBundle {
     final Iterator<String> iterator = resourceMap.keySet().iterator();
     return new Enumeration<String>() {
 
+      @Override
       public boolean hasMoreElements() {
         return iterator.hasNext();
       }
 
+      @Override
       public String nextElement() {
         return iterator.next();
       }

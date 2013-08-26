@@ -200,6 +200,7 @@ public class ExiftoolReader implements ExifReader {
    *          Reuse this ImageInfo if not null, create new one otherwise
    * @return The {@link ImageInfo} for that file
    */
+  @Override
   public ImageInfo readExifData(File file, ImageInfo reuseImageInfo) {
     ImageInfo imageInfo = reuseImageInfo;
     // First we build the command line

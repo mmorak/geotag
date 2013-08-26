@@ -193,6 +193,7 @@ public class ImagesTable extends NavigableTable {
     getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(
         KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0, false), "downArrow"); //$NON-NLS-1$
     AbstractAction downArrow = new AbstractAction() {
+      @Override
       public void actionPerformed(ActionEvent evt) {
         // System.out.println("DOWN");
       }
@@ -201,6 +202,7 @@ public class ImagesTable extends NavigableTable {
     getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(
         KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0, false), "upArrow"); //$NON-NLS-1$
     AbstractAction upArrow = new AbstractAction() {
+      @Override
       public void actionPerformed(ActionEvent evt) {
         // System.out.println("UP");
       }
@@ -209,6 +211,7 @@ public class ImagesTable extends NavigableTable {
     getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(
         KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0, false), "leftArrow"); //$NON-NLS-1$
     AbstractAction leftArrow = new AbstractAction() {
+      @Override
       public void actionPerformed(ActionEvent evt) {
         // System.out.println("LEFT");
       }
@@ -217,6 +220,7 @@ public class ImagesTable extends NavigableTable {
     getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(
         KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0, false), "rightArrow"); //$NON-NLS-1$
     AbstractAction rightArrow = new AbstractAction() {
+      @Override
       public void actionPerformed(ActionEvent evt) {
         // System.out.println("RIGHT");
       }

@@ -207,6 +207,7 @@ public class TracksHandler implements ContextHandler {
   private String tracksToXml(List<Trkseg> segments) {
     StringBuilder stringBuilder = new StringBuilder();
     stringBuilder.append("<tracks>\n"); //$NON-NLS-1$
+    @SuppressWarnings("unused")
     int trackPoints = 0;
     for (Trkseg trkseg : segments) {
       trackPoints += trkseg.getTrkpt().size();

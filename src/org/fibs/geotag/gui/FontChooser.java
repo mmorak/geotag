@@ -147,7 +147,7 @@ public class FontChooser extends JDialog {
     JPanel fontSelectionPanel = new JPanel(new GridLayout(1, 2));
 
     // It contains one combo box for the font family name:
-    final JComboBox fontNamesComboBox = new JComboBox(fontList);
+    final JComboBox<?> fontNamesComboBox = new JComboBox<Object>(fontList);
     fontNamesComboBox.setSelectedItem(displayedFont.getFamily());
     fontSelectionPanel.add(fontNamesComboBox);
 
@@ -159,6 +159,7 @@ public class FontChooser extends JDialog {
     // Whenever the selection in the combo boxe or the spinner changes,
     // we need to update the displayedFont and repaint the sample text
     ItemListener itemListener = new ItemListener() {
+      @Override
       public void itemStateChanged(ItemEvent e) {
         String fontName = (String) fontNamesComboBox.getSelectedItem();
         String fontSize = ((Integer) fontSizesSpinner.getValue()).toString();
@@ -190,6 +191,7 @@ public class FontChooser extends JDialog {
     JPanel buttonPanel = new JPanel(new GridLayout(1, 2));
     JButton okButton = new JButton(i18n.tr("OK")); //$NON-NLS-1$
     okButton.addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(ActionEvent e) {
         dispose();
       }
@@ -198,6 +200,7 @@ public class FontChooser extends JDialog {
 
     JButton cancelButton = new JButton(i18n.tr("Cancel")); //$NON-NLS-1$
     cancelButton.addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(ActionEvent e) {
         setDisplayedFont(null);
         dispose();

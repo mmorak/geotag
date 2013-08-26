@@ -56,6 +56,7 @@ public class UpdateHandler implements ContextHandler {
    *      java.lang.String, java.lang.String, java.util.Properties,
    *      java.util.Properties)
    */
+  @Override
   public Response serve(WebServer server, String uri, String method,
       Properties header, Properties parms) {
     Double latitude = null;
@@ -84,6 +85,7 @@ public class UpdateHandler implements ContextHandler {
       updateList.add(externalUpdate);
       // Notify the parent, but make sure its done in the event thread
       SwingUtilities.invokeLater(new Runnable() {
+        @Override
         public void run() {
           getParent().processExternalUpdates(updateList);
         }

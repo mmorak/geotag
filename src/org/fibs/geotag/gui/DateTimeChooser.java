@@ -303,7 +303,7 @@ public class DateTimeChooser extends JDialog {
     for (String timezoneId : availableTimeZones) {
       timeZoneNames.add(timezoneId);
     }
-    final JComboBox timezoneComboBox = new JComboBox(timeZoneNames.toArray()) {
+    final JComboBox<?> timezoneComboBox = new JComboBox<Object>(timeZoneNames.toArray()) {
       @Override
       public void actionPerformed(ActionEvent event) {
         setCurrentZone(TimeZone.getTimeZone((String) getSelectedItem()));
@@ -592,6 +592,7 @@ public class DateTimeChooser extends JDialog {
     /**
      * @see javax.swing.event.ChangeListener#stateChanged(javax.swing.event.ChangeEvent)
      */
+    @Override
     public void stateChanged(ChangeEvent e) {
       // override in instances
     }

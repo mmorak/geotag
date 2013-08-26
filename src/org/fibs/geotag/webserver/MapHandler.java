@@ -50,6 +50,7 @@ public class MapHandler implements ContextHandler {
    *      java.lang.String, java.lang.String, java.util.Properties,
    *      java.util.Properties)
    */
+  @Override
   public Response serve(WebServer server, String uri, String method,
       Properties header, Properties parms) {
 

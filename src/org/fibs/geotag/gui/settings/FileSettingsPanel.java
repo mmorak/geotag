@@ -69,6 +69,7 @@ public class FileSettingsPanel extends SettingsPanel {
     filePanel.add(textField, BorderLayout.CENTER);
     JButton browseButton = new JButton("..."); //$NON-NLS-1$
     browseButton.addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(ActionEvent e) {
         JFileChooser fileChooser = new JFileChooser();
         if (fileChooser.showOpenDialog(FileSettingsPanel.this) == JFileChooser.APPROVE_OPTION) {

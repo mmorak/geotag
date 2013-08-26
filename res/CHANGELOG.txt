@@ -1,3 +1,7 @@
+Release 0.085
+  Removed several compile warnings.
+  Fixed problems with Java 7.
+
 Release 0.084
   Release 0.083 failed due to unsigned jar.
   Re-releasing. Added jar signature verification
