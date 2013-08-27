@@ -1,3 +1,6 @@
+Release 0.086
+  Fixed problem with Java 6
+
 Release 0.085
   Removed several compile warnings.
   Fixed problems with Java 7.
