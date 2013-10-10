@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="MacRoman" standalone="no"?>
+<?xml version="1.0" encoding="US-ASCII" standalone="no"?>
 <jardesc>
-    <jar path="/Users/andreas/Documents/workspace/Geotag/geotag.jar"/>
+    <jar path="/Users/andreas/Development/workspace/Geotag/geotag.jar"/>
     <options buildIfNeeded="true" compress="true" descriptionLocation="/Geotag/geotag.jardesc" exportErrors="true" exportWarnings="true" includeDirectoryEntries="true" overwrite="false" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
     <storedRefactorings deprecationInfo="true" structuralOnly="false"/>
     <selectedProjects/>
@@ -12,7 +12,7 @@
     </manifest>
     <selectedElements exportClassFiles="false" exportJavaFiles="false" exportOutputFolder="true">
         <file path="/Geotag/i18n/i18n.properties"/>
-        <javaElement handleIdentifier="=Geotag/src"/>
         <javaElement handleIdentifier="=Geotag/res"/>
+        <javaElement handleIdentifier="=Geotag/src"/>
     </selectedElements>
 </jardesc>
