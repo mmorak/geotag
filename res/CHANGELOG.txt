@@ -1,3 +1,6 @@
+Release 0.088
+  Removed warning due to new Java 7 security settings
+  
 Release 0.087
   New Russian translation by Анатолий Стреж
   

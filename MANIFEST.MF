@@ -1,3 +1,5 @@
 Manifest-Version: 1.0
 Main-Class: org.fibs.geotag.Geotag
+Application-Name: Geotag
 SplashScreen-Image: images/geotag-128.png
+Permissions: all-permissions
