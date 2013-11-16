@@ -183,15 +183,21 @@ public class MapHandler implements ContextHandler {
    */
   private void addVariable(StringBuilder page, JavascriptVaraibles variable) {
     String value = i18n.tr(variable.getMessagesKey());
+    StringBuffer buffer = new StringBuffer();
     for (int index = 0; index < value.length(); index++) {
       char character = value.charAt(index);
       if (character < ' ' || (character >= '\u0080' && character < '\u00a0') ||
           (character >= '\u2000' && character < '\u2100')) {
         System.out.println("Invalid character at posistion "+index+" in "+value);
       }
+      if (character < ' ' || character > 127) {
+        buffer.append("&#"+(int)character+";");
+      } else {
+        buffer.append(character);
+      }
     }
     page
-        .append("  var ").append(variable.toString()).append(" = '").append(value).append("'\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        .append("  var ").append(variable.toString()).append(" = '").append(buffer.toString()).append("'\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
   }
   
 }

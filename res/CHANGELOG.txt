@@ -1,3 +1,11 @@
+Release 0.089
+  Almost complete rewrite of the Google Maps functionality.
+  Google Maps will switch off version 2 of their API on Nov 19, 2013
+  and Version 3 of the API is very different, so I expect problems.
+  Mouse wheel zoom is now enabled by default in Google maps and the
+  option to turn it on/off has been removed. In case of problems, please let
+  me know early.
+  
 Release 0.088
   Removed warning due to new Java 7 security settings
   

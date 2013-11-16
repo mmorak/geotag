@@ -207,7 +207,9 @@ public final class Settings {
     /** Preferences key for number of clicks to edit */
     CLICKS_TO_EDIT,
     /** Preferences key for file types that are supported by reading only XMP files */
-    FILE_TYPES_SUPPORTED_BY_XMP;
+    FILE_TYPES_SUPPORTED_BY_XMP,
+    /** Preferences key for the Google Maps API version */
+    GOOGLE_MAPS_API_VERDSION;
 
     /**
      * For the actual key I prefer lower case keys with dots.
@@ -305,7 +307,16 @@ public final class Settings {
 
   /** Default value for clicks to edit */
   public static final int DEFAULT_CLICKS_TO_EDIT = 1;
-
+  
+  /** Value for Google Maps API version 2 */
+  public static final String MAPS_API_2 = "2";
+  
+  /** Value for Google Maps API version 3 */
+  public static final String MAPS_API_3 = "3";
+  
+  /** Values for Google Maps API versions */
+  public static final String[] MAPS_API_VERSIONS = {MAPS_API_2, MAPS_API_3};
+  
   /** The preferences for the main package. */
   private static Preferences preferences = Preferences
       .userNodeForPackage(Geotag.class);

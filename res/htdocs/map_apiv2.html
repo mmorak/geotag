@@ -22,7 +22,8 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
     <!-- The Google maps key is valid for http://localhost:4321 only -->
-    <script type="text/javascript" src="//maps.googleapis.com/maps/api/js?key=AIzaSyCpz7XZAfSH8PKUG2hS9S56iSazDENFdn4&sensor=false"></script>
+    <script src="http://maps.google.com/maps?file=api&v=2&key=ABQIAAAAh0IkFNUh1ieQEJZEue_qZBS03xNesDUUqKa_S-7bp9O40CrAfBSM2kqpbLyL8GxludNvULr37Z1TGg" type="text/javascript"></script>
+    <script src="HtmlControlv2.js" type="text/javascript"></script>
     <style type="text/css">
       html, body, #map {
         width: 100%;
@@ -40,9 +41,9 @@
          top: 30px;
          right: 7px;
          position: absolute;
-         color: black;
-         background-color: white;
-         border: 1px solid black;
+         color: #000000;
+         background-color: #FFFFFF;
+         border: 1px solid #000000;
          padding: 3px;
          font-size: 75%;
          font-weight: bold;
@@ -69,7 +70,7 @@
       Your browser does not work with Google Maps.
     </div>
     
-#includescript map.js  // this dirty hack is thanks to Internet Explorer
+#includescript map_apiv2.js  // this dirty hack is thanks to Internet Explorer
     
   </body>
 </html>

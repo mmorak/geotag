@@ -234,8 +234,13 @@ public class ShowOnMapMenu extends JMenu implements ActionListener,
         break;
       }
     }
-    String url = "http://localhost:4321/map/map.html?" + //$NON-NLS-1$
-        "latitude=" //$NON-NLS-1$
+    String url = "http://localhost:4321/map/map.html?"; //$NON-NLS-1$
+    String mapsApiVersion = Settings.MAPS_API_VERSIONS[Settings.get(SETTING.GOOGLE_MAPS_API_VERDSION, 0)];
+    if (mapsApiVersion.equals(Settings.MAPS_API_2)) {
+      url = "http://localhost:4321/map/map_apiv2.html?";
+    }
+    url = url+ "apiVersion="+mapsApiVersion+"&";
+    url = url + "latitude=" //$NON-NLS-1$
         + latitude + "&longitude=" //$NON-NLS-1$
         + longitude + "&direction=" //$NON-NLS-1$
         + showDirection + "&zoom=" //$NON-NLS-1$

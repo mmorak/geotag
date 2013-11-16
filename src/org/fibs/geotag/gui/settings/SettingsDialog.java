@@ -304,6 +304,9 @@ public class SettingsDialog extends JDialog implements TreeSelectionListener {
     FileSettingsPanel browserPath = new FileSettingsPanel(parent, i18n
         .tr("Browser path"), SETTING.BROWSER, ""); //$NON-NLS-1$//$NON-NLS-2$
     addPanel(browser, browserPath);
+    
+    ChoiceSettingsPanel mapsApiVersion = new ChoiceSettingsPanel(parent, "Google Maps API Version", SETTING.GOOGLE_MAPS_API_VERDSION, Settings.MAPS_API_VERSIONS  ,1);
+    addPanel(browser, mapsApiVersion);
 
     DefaultMutableTreeNode exiftool = new DefaultMutableTreeNode(i18n
         .tr("Exiftool")); //$NON-NLS-1$
