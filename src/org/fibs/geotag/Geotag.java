@@ -84,6 +84,7 @@ public final class Geotag {
     System.out.print(System.getProperty("java.vm.name") + " (");
     System.out.print(System.getProperty("java.vm.version") + " , ");
     System.out.println(System.getProperty("java.vm.info") + ")");
+    System.out.println(System.getProperty("java.io.tmpdir")+ File.separator + NAME + ".log");
   }
 
   /**

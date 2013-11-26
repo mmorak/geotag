@@ -1,3 +1,6 @@
+Release 0.090
+  Removed references to Google MAps API version 2 as it is now obsolete
+  
 Release 0.089
   Almost complete rewrite of the Google Maps functionality.
   Google Maps will switch off version 2 of their API on Nov 19, 2013
