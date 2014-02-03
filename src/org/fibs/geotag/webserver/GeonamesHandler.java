@@ -26,7 +26,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.Properties;
 
-import org.fibs.geotag.geonames.Geonames;
+import org.fibs.geotag.geonames.GeonamesService;
 import org.fibs.geotag.util.Constants;
 import org.fibs.geotag.util.Proxies;
 
@@ -50,18 +50,15 @@ public class GeonamesHandler implements ContextHandler {
   public Response serve(WebServer server, String uri, String method,
       Properties header, Properties parms) {
     System.out.println(uri);
-    StringBuilder geonamesUrl = new StringBuilder(Geonames.getURL());
-    geonamesUrl.append(uri);
+    GeonamesService service = new GeonamesService(uri);
     Object[] keys = parms.keySet().toArray();
     for (int i = 0; i < keys.length; i++) {
-      geonamesUrl.append(i == 0 ? '?' : '&');
-      geonamesUrl.append(keys[i]);
-      geonamesUrl.append('=');
-      geonamesUrl.append(parms.get(keys[i]));
+      service.addParameter(""+keys[i], ""+parms.get(keys[i]));
     }
+    String geonamesUrl = service.buildURL();
     System.out.println(geonamesUrl.toString());
     try {
-      URL url = new URL(geonamesUrl.toString());
+      URL url = new URL(geonamesUrl);
       URLConnection connection = url.openConnection(Proxies.getProxy());
       // 30 second emergency time out
       connection.setReadTimeout((int) Constants.ONE_MINUTE_IN_MILLIS / 2);

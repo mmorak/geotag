@@ -68,9 +68,10 @@ public class LocationHandler extends DefaultHandler {
       // This object is the context handler
       xmlReader.setContentHandler(this);
       // Build the request
-      // String url = Geonames.GEONAMES_URL + "/findNearbyPlaceName?lat="
-      String url = Geonames.getURL() + "/findNearby?lat=" //$NON-NLS-1$
-          + latitude + "&lng=" + longitude + "&style=FULL"; //$NON-NLS-1$ //$NON-NLS-2$
+      GeonamesService service = new GeonamesService(GeonamesService.FIND_NEARBY);
+      service.addParameter("lat", latitude);
+      service.addParameter("lng", longitude);
+      service.addParameter("style", "FULL");
       boolean useRadius = Settings.get(SETTING.GEONAMES_USE_RADIUS, false);
       if (useRadius) {
         DISTANCE unit = Units.DISTANCE.values()[Settings.get(
@@ -80,18 +81,19 @@ public class LocationHandler extends DefaultHandler {
         double radiusKm = Units
             .convert(radius, unit, Units.DISTANCE.KILOMETRES);
         if (radiusKm != 0) {
-          url += "&radius=" + radiusKm; //$NON-NLS-1$
+          service.addParameter("radius", radiusKm); //$NON-NLS-1$
         }
       }
       int maxRows = Settings.get(SETTING.GEONAMES_MAX_ROWS,
           Settings.GEONAMES_DEFAULT_MAX_ROWS);
-      url += "&maxRows=" + maxRows; //$NON-NLS-1$
+      service.addParameter("maxRows", maxRows); //$NON-NLS-1$
       // finally the language
       String language = Locale.getDefault().getLanguage();
       if (Settings.get(SETTING.GEONAMES_OVERRIDE_LANGUAGE, false)) {
         language = Settings.get(SETTING.GEONAMES_LANGUAGE, ""); //$NON-NLS-1$
       }
-      url += "&lang=" + language; //$NON-NLS-1$
+      service.addParameter("lang", language); //$NON-NLS-1$
+      String url = service.buildURL();
       System.out.println(url);
       URL request = new URL(url);
       URLConnection connection = request.openConnection(Proxies.getProxy());

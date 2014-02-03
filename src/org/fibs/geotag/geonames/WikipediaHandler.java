@@ -66,17 +66,20 @@ public class WikipediaHandler extends DefaultHandler {
       // This object is the context handler
       xmlReader.setContentHandler(this);
       // Build the request
-      String url = Geonames.getURL()+"/findNearbyWikipedia?lat=" + latitude + "&lng=" + longitude; //$NON-NLS-1$ //$NON-NLS-2$
+      GeonamesService service = new GeonamesService(GeonamesService.FIND_NEARBY_WIKIPEDIA);
+      service.addParameter("lat", latitude);
+      service.addParameter("lng", longitude); //$NON-NLS-1$
       // how many entries should we retrieve
       int maxRows = Settings.get(SETTING.GEONAMES_WIKIPEDIA_ENTRIES,
           Settings.GEONAMES_DEFAULT_WIKIPEDIA_ENTRIES);
-      url += "&maxRows=" + maxRows; //$NON-NLS-1$
+      service.addParameter("maxRows", maxRows); //$NON-NLS-1$
       // finally the language
       String language = Locale.getDefault().getLanguage();
       if (Settings.get(SETTING.GEONAMES_OVERRIDE_LANGUAGE, false)) {
         language = Settings.get(SETTING.GEONAMES_LANGUAGE, ""); //$NON-NLS-1$
       }
-      url += "&lang=" + language; //$NON-NLS-1$
+      service.addParameter("lang", language); //$NON-NLS-1$
+      String url = service.buildURL();
       URL request = new URL(url);
       URLConnection connection = request.openConnection(Proxies.getProxy());
       // 30 second time out:

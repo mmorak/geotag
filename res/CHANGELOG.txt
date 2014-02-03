@@ -1,3 +1,6 @@
+Release 0.091
+  The geonames.org API had changed slightly.
+
 Release 0.090
   Removed references to Google MAps API version 2 as it is now obsolete
   
