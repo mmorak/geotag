@@ -1,6 +1,6 @@
 /**
  * Geotag
- * Copyright (C) 2007-2010 Andreas Schneider
+ * Copyright (C) 2007-2014 Andreas Schneider
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,6 +21,7 @@ package org.fibs.geotag.track;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
@@ -29,15 +30,15 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
+import com.topografix.gpx._1._0.Gpx;
+import com.topografix.gpx._1._0.Gpx.Trk;
+import com.topografix.gpx._1._0.Gpx.Trk.Trkseg;
+import com.topografix.gpx._1._0.Gpx.Trk.Trkseg.Trkpt;
+import com.topografix.gpx._1._0.ObjectFactory;
 import com.topografix.gpx._1._1.GpxType;
 import com.topografix.gpx._1._1.TrkType;
 import com.topografix.gpx._1._1.TrksegType;
 import com.topografix.gpx._1._1.WptType;
-import com.topografix.gpx._1._0.Gpx;
-import com.topografix.gpx._1._0.ObjectFactory;
-import com.topografix.gpx._1._0.Gpx.Trk;
-import com.topografix.gpx._1._0.Gpx.Trk.Trkseg;
-import com.topografix.gpx._1._0.Gpx.Trk.Trkseg.Trkpt;
 
 /**
  * A class reading GPX 1.1 files.
@@ -61,10 +62,15 @@ public final class GpxOneOneReader {
    */
   public static Gpx read(File file) {
     try {
-      GpxType gpxType = read(new FileInputStream(file));
+      FileInputStream fileInputStream = new FileInputStream(file);
+      GpxType gpxType = read(fileInputStream);
       // now convert the read data to GPX 1.0 format
-      return convert(gpxType);
+      Gpx gpx = convert(gpxType);
+      fileInputStream.close();
+      return gpx;
     } catch (FileNotFoundException e) {
+      e.printStackTrace();
+    } catch (IOException e) {
       e.printStackTrace();
     }
     return null;

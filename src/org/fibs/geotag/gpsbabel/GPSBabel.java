@@ -1,6 +1,6 @@
 /**
  * Geotag
- * Copyright (C) 2007-2010 Andreas Schneider
+ * Copyright (C) 2007-2014 Andreas Schneider
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -70,8 +70,7 @@ public final class GPSBabel {
       process = processBuilder.redirectErrorStream(true).start();
       // now start a thread that reads the input stream of the process and
       // writes it to stdout
-      final InputStream inputStream = process.getInputStream();
-      new InputStreamGobbler(inputStream, System.out).start();
+      new InputStreamGobbler(process, System.out).start();
       // we wait for the process to finish
       process.waitFor();
     } catch (IOException e) {
@@ -95,13 +94,13 @@ public final class GPSBabel {
    * @return a sensible guess of where the serial port is.
    */
   public static String getDefaultDevice() {
-    if (OperatingSystem.isLinux()) { //$NON-NLS-1$
+    if (OperatingSystem.isLinux()) {
       String file = "/dev/ttyUSB0"; // my personal preference :-) //$NON-NLS-1$
       if ((new File(file)).exists()) {
         return file;
       }
       return "/dev/ttyS0"; // sensible default //$NON-NLS-1$
-    } else if (OperatingSystem.isWindows()) { //$NON-NLS-1$
+    } else if (OperatingSystem.isWindows()) {
       return "COM1:"; //$NON-NLS-1$
     }
     return "serial"; // user should change this //$NON-NLS-1$
@@ -161,6 +160,7 @@ public final class GPSBabel {
       gobbler.start();
       // we wait for the process to finish
       process.waitFor();
+      inputStream.close();
     } catch (IOException e) {
       e.printStackTrace();
     } catch (InterruptedException e) {

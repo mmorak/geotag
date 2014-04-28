@@ -1,6 +1,6 @@
 /**
  * Geotag
- * Copyright (C) 2007-2010 Andreas Schneider
+ * Copyright (C) 2007-2014 Andreas Schneider
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -176,7 +176,10 @@ public final class GoogleEarthLauncher {
         marshaller.setProperty("jaxb.formatted.output", Boolean.TRUE); //$NON-NLS-1$
         // finally we write the whole kml to the output stream
         marshaller.marshal(factory.createKml(kml), outputStream);
+        outputStream.close();
       } catch (FileNotFoundException e) {
+        e.printStackTrace();
+      } catch (IOException e) {
         e.printStackTrace();
       }
       openKmlFile(file);
@@ -202,7 +205,7 @@ public final class GoogleEarthLauncher {
         Runtime.getRuntime().exec(
             "rundll32 url.dll,FileProtocolHandler " + file.getPath()); //$NON-NLS-1$
       } else { // assume Unix or Linux
-        String executable = Settings.get(SETTING.GOOGLE_EARTH_PATH, "googleearth");
+        String executable = Settings.get(SETTING.GOOGLE_EARTH_PATH, "googleearth"); //$NON-NLS-1$
         if (Runtime.getRuntime().exec(new String[] { "which", executable }) //$NON-NLS-1$
             .waitFor() != 0) {
           throw new Exception(String.format(i18n.tr("Could not find '%1$s' on $PATH"), executable)); //$NON-NLS-1$

@@ -1,6 +1,6 @@
 /**
  * Geotag
- * Copyright (C) 2007-2010 Andreas Schneider
+ * Copyright (C) 2007-2014 Andreas Schneider
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -35,6 +35,7 @@ import org.fibs.geotag.data.UpdateGPSLatitude;
 import org.fibs.geotag.data.UpdateGPSLongitude;
 import org.fibs.geotag.data.UpdateLocationName;
 import org.fibs.geotag.data.UpdateProvinceName;
+import org.fibs.geotag.data.UpdateUserComment;
 import org.fibs.geotag.data.ImageInfo.DATA_SOURCE;
 import org.fibs.geotag.util.Constants;
 import org.fibs.geotag.util.Units.ALTITUDE;
@@ -318,6 +319,30 @@ public class MetadataExtractorReader implements ExifReader {
       if (directory.containsTag(ExifDirectory.TAG_ORIENTATION)) {
         int orientation = directory.getInt(ExifDirectory.TAG_ORIENTATION);
         imageInfo.setOrientation(Integer.toString(orientation));
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    try {
+      if (directory.containsTag(ExifDirectory.TAG_EXIF_IMAGE_WIDTH)) {
+        int width = directory.getInt(ExifDirectory.TAG_EXIF_IMAGE_WIDTH);
+        imageInfo.setWidth(width);
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    try {
+      if (directory.containsTag(ExifDirectory.TAG_EXIF_IMAGE_HEIGHT)) {
+        int height = directory.getInt(ExifDirectory.TAG_EXIF_IMAGE_HEIGHT);
+        imageInfo.setHeight(height);
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    try {
+      if (directory.containsTag(ExifDirectory.TAG_USER_COMMENT)) {
+        String comment = directory.getDescription(ExifDirectory.TAG_USER_COMMENT);
+        new UpdateUserComment(imageInfo, comment, ImageInfo.DATA_SOURCE.IMAGE);
       }
     } catch (Exception e) {
       e.printStackTrace();

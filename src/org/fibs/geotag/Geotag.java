@@ -1,6 +1,6 @@
 /**
  * Geotag
- * Copyright (C) 2007-2010 Andreas Schneider
+ * Copyright (C) 2007-2014 Andreas Schneider
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -77,6 +77,7 @@ public final class Geotag {
   /**
    * 
    */
+  @SuppressWarnings("nls")
   private static void logJavaVersion() {
     System.out.println("java version " + System.getProperty("java.version"));
     System.out.print(System.getProperty("java.runtime.name") + " (");
@@ -104,7 +105,7 @@ public final class Geotag {
 
       for(int i=0; i< urls.length; i++)
       {
-          System.out.println("URL: "+urls[i].getFile());
+          System.out.println("URL: "+urls[i].getFile()); //$NON-NLS-1$
       }
     } catch (Exception e) {
       e.printStackTrace();
@@ -135,7 +136,7 @@ public final class Geotag {
         // start just after the equals sign
         String value = arg.substring(equalsPos + 1);
         // now see what to do with them
-        if (key.equals("po") && value.length() > 0) {
+        if (key.equals("po") && value.length() > 0) { //$NON-NLS-1$
           Messages_po.processPoFile(value);
           I18n.setOverrideBundle(new Messages_po());
         } else if (key.equals("language") && value.length() > 0) { //$NON-NLS-1$
@@ -152,6 +153,7 @@ public final class Geotag {
       File logFile = new File(System.getProperty("java.io.tmpdir") //$NON-NLS-1$
           + File.separator + NAME + ".log"); //$NON-NLS-1$
       try {
+        @SuppressWarnings("resource")
         PrintStream printStream = new PrintStream(logFile);
         System.setOut(printStream);
         System.setErr(printStream);

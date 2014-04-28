@@ -1,6 +1,6 @@
 /**
  * Geotag
- * Copyright (C) 2007-2010 Andreas Schneider
+ * Copyright (C) 2007-2014 Andreas Schneider
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -53,7 +53,7 @@ public class GeonamesHandler implements ContextHandler {
     GeonamesService service = new GeonamesService(uri);
     Object[] keys = parms.keySet().toArray();
     for (int i = 0; i < keys.length; i++) {
-      service.addParameter(""+keys[i], ""+parms.get(keys[i]));
+      service.addParameter(""+keys[i], ""+parms.get(keys[i])); //$NON-NLS-1$ //$NON-NLS-2$
     }
     String geonamesUrl = service.buildURL();
     System.out.println(geonamesUrl.toString());
@@ -71,8 +71,11 @@ public class GeonamesHandler implements ContextHandler {
       while ((read = inputStream.read(buffer)) != -1) {
         byteArrayOutputStream.write(buffer, 0, read);
       }
-      return server.xmlResponse(byteArrayOutputStream);
-
+      Response response =  server.xmlResponse(byteArrayOutputStream);
+      
+      inputStream.close();
+      byteArrayOutputStream.close();
+      return response;
     } catch (MalformedURLException e) {
       e.printStackTrace();
     } catch (IOException e) {

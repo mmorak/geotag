@@ -1,6 +1,6 @@
 /**
  * Geotag
- * Copyright (C) 2007-2010 Andreas Schneider
+ * Copyright (C) 2007-2014 Andreas Schneider
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,6 +23,7 @@ import org.fibs.geotag.data.UpdateCityName;
 import org.fibs.geotag.data.UpdateCountryName;
 import org.fibs.geotag.data.UpdateLocationName;
 import org.fibs.geotag.data.UpdateProvinceName;
+import org.fibs.geotag.data.UpdateUserComment;
 import org.fibs.geotag.data.ImageInfo.DATA_SOURCE;
 import org.fibs.geotag.table.ImagesTableColumns.COLUMN;
 import org.xnap.commons.i18n.I18n;
@@ -115,6 +116,9 @@ public class ManualEditTask extends UndoableBackgroundTask<ImageInfo> {
           break;
         case COUNTRY_NAME:
           new UpdateCountryName(imageInfo, newValue, DATA_SOURCE.MANUAL);
+          break;
+        case USER_COMMENT:
+          new UpdateUserComment(imageInfo, newValue, DATA_SOURCE.MANUAL);
           break;
         default:
           break;

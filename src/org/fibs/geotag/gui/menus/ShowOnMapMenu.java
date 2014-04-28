@@ -1,6 +1,6 @@
 /**
  * Geotag
- * Copyright (C) 2007-2010 Andreas Schneider
+ * Copyright (C) 2007-2014 Andreas Schneider
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -235,7 +235,7 @@ public class ShowOnMapMenu extends JMenu implements ActionListener,
       }
     }
     String url = "http://localhost:4321/map/map.html?"; //$NON-NLS-1$
-    url = url+ "apiVersion=3&";
+    url = url+ "apiVersion=3&"; //$NON-NLS-1$
     url = url + "latitude=" //$NON-NLS-1$
         + latitude + "&longitude=" //$NON-NLS-1$
         + longitude + "&direction=" //$NON-NLS-1$

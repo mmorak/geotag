@@ -1,6 +1,6 @@
 /**
  * Geotag
- * Copyright (C) 2007-2011 Andreas Schneider
+ * Copyright (C) 2007-2014 Andreas Schneider
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -38,13 +38,13 @@ public class FlattrMenuItem extends JMenuItem {
   private ImageOrTextMenuItemUI menuItemUI = null;
   
   /** The action command used by this button */
-  private static final String FLATTR = "flattr";
+  private static final String FLATTR = "flattr"; //$NON-NLS-1$
   
   /**
    * Create a Flattr button for Geotag
    */
   public FlattrMenuItem() {
-    this("http://flattr.com/thing/141685/Geotag");
+    this("http://flattr.com/thing/141685/Geotag"); //$NON-NLS-1$
   }
   
 
@@ -56,7 +56,7 @@ public class FlattrMenuItem extends JMenuItem {
     PropertyChangeListener imageListener = new PropertyChangeListener() {
       @Override
       public void propertyChange(PropertyChangeEvent event) {
-        if ("state".equals(event.getPropertyName())
+        if ("state".equals(event.getPropertyName()) //$NON-NLS-1$
             && StateValue.DONE.equals(event.getNewValue())) {
           menuItemUI.setBackgroundImage(FlattrImageLoader.getImageIcon());
           repaint();

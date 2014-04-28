@@ -1,6 +1,6 @@
 /**
  * Geotag
- * Copyright (C) 2007-2010 Andreas Schneider
+ * Copyright (C) 2007-2014 Andreas Schneider
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -18,6 +18,7 @@
 
 package org.fibs.geotag.webserver;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
@@ -43,8 +44,14 @@ public class ResourceHandler implements ContextHandler {
     InputStream stream = WebServer.class.getClassLoader().getResourceAsStream(
         "htdocs" + uri); //$NON-NLS-1$
     if (stream != null) {
-      return server.new Response(NanoHTTPD.HTTP_OK, server.mimeType(uri),
+      Response response = server.new Response(NanoHTTPD.HTTP_OK, server.mimeType(uri),
           stream);
+      try {
+        stream.close();
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+      return response;
     }
     return server.new Response(NanoHTTPD.HTTP_NOTFOUND,
         NanoHTTPD.MIME_PLAINTEXT, WebServer.FILE_NOT_FOUND);

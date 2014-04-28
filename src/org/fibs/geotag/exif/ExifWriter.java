@@ -1,6 +1,6 @@
 /**
  * Geotag
- * Copyright (C) 2007-2010 Andreas Schneider
+ * Copyright (C) 2007-2014 Andreas Schneider
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,7 +23,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
@@ -134,9 +133,7 @@ public class ExifWriter {
       for (String argument : arguments) {
         argumentsWriter.write(argument + "\n"); //$NON-NLS-1$
       }
-      argumentsWriter.flush();
-      argumentsWriter.close();
-      argumentsOutputStream.close();
+
     } catch (UnsupportedEncodingException e1) {
       e1.printStackTrace();
     } catch (FileNotFoundException e) {
@@ -145,18 +142,35 @@ public class ExifWriter {
       e.printStackTrace();
     }
 
+    try {
+      argumentsWriter.flush();
+    } catch (IOException e1) {
+      e1.printStackTrace();
+    }
+    try {
+      argumentsWriter.close();
+    } catch (IOException e1) {
+      e1.printStackTrace();
+    }
+    try {
+      argumentsOutputStream.close();
+    } catch (IOException e1) {
+      e1.printStackTrace();
+    }
+
     ProcessBuilder processBuilder = new ProcessBuilder(command);
     try {
       Process process = processBuilder.redirectErrorStream(true).start();
       // now start a thread that reads the input stream of the process and
       // writes it to stdout
-      final InputStream inputStream = process.getInputStream();
       ByteArrayOutputStream exiftoolOutput = new ByteArrayOutputStream();
-      new InputStreamGobbler(inputStream, exiftoolOutput).start();
+      new InputStreamGobbler(process, exiftoolOutput).start();
       // we wait for the process to finish
       process.waitFor();
       System.out.println(exiftoolOutput.toString());
-      success = ! exiftoolOutput.toString().contains("files weren't updated due to errors"); //$NON-NLS-1$
+      success = !exiftoolOutput.toString().contains(
+          "files weren't updated due to errors"); //$NON-NLS-1$
+      exiftoolOutput.close();
     } catch (IOException e) {
       e.printStackTrace();
     } catch (InterruptedException e) {
@@ -231,28 +245,37 @@ public class ExifWriter {
         arguments.add("-GPSTimeStamp=" + time); //$NON-NLS-1$
       }
     }
+    
+    String userComment = imageInfo.getUserComment();
+    if (userComment != null) {
+      arguments.add("-UserComment="+userComment); //$NON-NLS-1$
+    }
     // Now for IPTC location data
-    
+
     String locationName = imageInfo.getLocationName();
-    arguments.add("-IPTC:ContentLocationName=" + (locationName == null ? "" : locationName)); //$NON-NLS-1$
-    // also write this to the Sub-Location 
-    arguments.add("-IPTC:Sub-Location=" + (locationName == null ? "" : locationName)); //$NON-NLS-1$
-    
+    arguments
+        .add("-IPTC:ContentLocationName=" + (locationName == null ? "" : locationName)); //$NON-NLS-1$ //$NON-NLS-2$
+    // also write this to the Sub-Location
+    arguments
+        .add("-IPTC:Sub-Location=" + (locationName == null ? "" : locationName)); //$NON-NLS-1$ //$NON-NLS-2$
+
     String city = imageInfo.getCityName();
-    arguments.add("-IPTC:City=" + (city == null ? "" : city)); //$NON-NLS-1$
+    arguments.add("-IPTC:City=" + (city == null ? "" : city)); //$NON-NLS-1$ //$NON-NLS-2$
 
     String province = imageInfo.getProvinceName();
-    arguments.add("-IPTC:Province-State=" + (province == null ? "" : province)); //$NON-NLS-1$
+    arguments.add("-IPTC:Province-State=" + (province == null ? "" : province)); //$NON-NLS-1$ //$NON-NLS-2$
 
     String country = imageInfo.getCountryName();
-    arguments.add("-IPTC:Country-PrimaryLocationName=" + (country == null ? "" : country)); //$NON-NLS-1$
+    arguments
+        .add("-IPTC:Country-PrimaryLocationName=" + (country == null ? "" : country)); //$NON-NLS-1$ //$NON-NLS-2$
 
-    // overwrite files directly instead of following default behavior to create backups
+    // overwrite files directly instead of following default behavior to create
+    // backups
     boolean createBackups = Settings.get(SETTING.CREATE_BACKUPS, true);
     if (!createBackups) {
-      arguments.add("-overwrite_original");
+      arguments.add("-overwrite_original"); //$NON-NLS-1$
     }
-    
+
     for (String string : arguments) {
       System.out.print(string + ' ');
     }
@@ -329,7 +352,7 @@ public class ExifWriter {
         }
         // Add 'Z' as a timezone if none is specified
         String zone = ""; //$NON-NLS-1$
-        if (!time.endsWith("Z") && !time.contains("-") && !time.contains("+") ) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        if (!time.endsWith("Z") && !time.contains("-") && !time.contains("+")) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
           zone = "Z"; //$NON-NLS-1$
         }
         arguments.add(tag + '"' + date + ' ' + time + zone + '"');

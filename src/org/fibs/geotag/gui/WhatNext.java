@@ -1,6 +1,6 @@
 /**
  * Geotag
- * Copyright (C) 2007-2010 Andreas Schneider
+ * Copyright (C) 2007-2014 Andreas Schneider
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -67,7 +67,7 @@ public final class WhatNext {
   private static final int MAX_LINE_LENGTH = 60;
   
   /** Either "->" or the correct Unicode character */
-  private static final String RIGHT_ARROW = "\u2192";
+  private static final String RIGHT_ARROW = "\u2192"; //$NON-NLS-1$
 
   /**
    * This method tries to see where in the work flow we are and gives the use a
@@ -156,7 +156,7 @@ public final class WhatNext {
     message.append("</html"); //$NON-NLS-1$
     JEditorPane editorPane = new JEditorPane();
     editorPane.setEditable(false);
-    editorPane.setContentType("text/html");
+    editorPane.setContentType("text/html"); //$NON-NLS-1$
     editorPane.setText(message.toString());
     editorPane.setOpaque(false);
     editorPane.setFont(new JLabel().getFont());
@@ -403,11 +403,11 @@ public final class WhatNext {
       return;
     }
     StringBuilder builder =new StringBuilder();
-    builder.append("Your language seems to be <b>");
+    builder.append("Your language seems to be <b>"); //$NON-NLS-1$
     builder.append(Locale.getDefault().getDisplayName());
-    builder.append("</b> and we don't have a translation for it. ");
-    builder.append("To find out how to help");
-    builder.append( " <a href=\"http://geotag.sourceforge.net/?q=node/24\">click&nbsp;here</a>.");
+    builder.append("</b> and we don't have a translation for it. "); //$NON-NLS-1$
+    builder.append("To find out how to help"); //$NON-NLS-1$
+    builder.append( " <a href=\"http://geotag.sourceforge.net/?q=node/24\">click&nbsp;here</a>."); //$NON-NLS-1$
     suggestions.add(builder.toString());
   }
 

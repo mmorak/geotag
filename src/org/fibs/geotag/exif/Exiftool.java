@@ -1,6 +1,6 @@
 /**
  * Geotag
- * Copyright (C) 2007-2010 Andreas Schneider
+ * Copyright (C) 2007-2014 Andreas Schneider
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,7 +20,6 @@ package org.fibs.geotag.exif;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -80,9 +79,8 @@ public final class Exiftool {
       Process process = processBuilder.redirectErrorStream(true).start();
       // now start a thread that reads the input stream of the process and
       // writes it to stdout
-      final InputStream inputStream = process.getInputStream();
       ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-      new InputStreamGobbler(inputStream, outputStream).start();
+      new InputStreamGobbler(process, outputStream).start();
       // we wait for the process to finish
       process.waitFor();
       byte[] output = outputStream.toByteArray();

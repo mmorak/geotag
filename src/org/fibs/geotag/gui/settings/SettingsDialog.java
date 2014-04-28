@@ -1,6 +1,6 @@
 /**
  * Geotag
- * Copyright (C) 2007-2010 Andreas Schneider
+ * Copyright (C) 2007-2014 Andreas Schneider
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -276,7 +276,19 @@ public class SettingsDialog extends JDialog implements TreeSelectionListener {
     StringSettingsPanel kmlImagePath = new StringSettingsPanel(parent, i18n
         .tr("KML image path"), SETTING.KML_IMAGE_PATH, ""); //$NON-NLS-1$ //$NON-NLS-2$
     addPanel(googleearth, kmlImagePath);
-
+    
+    StringSettingsPanel kmlIconUrl = new StringSettingsPanel(parent,
+        i18n.tr("KML icon URL"), SETTING.KML_ICON_URL, Settings.KML_DEFAULT_ICON_URL); //$NON-NLS-1$
+    addPanel(googleearth, kmlIconUrl);
+    
+    StringSettingsPanel kmlDescriptionHeader = new StringSettingsPanel(parent,
+        i18n.tr("KML description header"), SETTING.KML_DESCRIPTION_HEADER, "");  //$NON-NLS-1$//$NON-NLS-2$
+    addPanel(googleearth, kmlDescriptionHeader);
+    
+    StringSettingsPanel kmlDescriptionFooter = new StringSettingsPanel(parent,
+        i18n.tr("KML description footer"), SETTING.KML_DESCRIPTION_FOOTER, "");  //$NON-NLS-1$//$NON-NLS-2$
+    addPanel(googleearth, kmlDescriptionFooter);
+    
     export.add(googleearth);
 
     top.add(export);
@@ -356,7 +368,7 @@ public class SettingsDialog extends JDialog implements TreeSelectionListener {
     if (OperatingSystem.isLinux()) {
       // only Linux needs to know the path to googleeath
       // Windows and MacOS launch the kml files
-      DefaultMutableTreeNode googleEarth = new DefaultMutableTreeNode(i18n.tr("Google Earth"));
+      DefaultMutableTreeNode googleEarth = new DefaultMutableTreeNode(i18n.tr("Google Earth")); //$NON-NLS-1$
       FileSettingsPanel googleEarthPath = new FileSettingsPanel(parent, i18n
           .tr("Google Earth path"), SETTING.GOOGLE_EARTH_PATH, "googleearth"); //$NON-NLS-1$ //$NON-NLS-2$
       addPanel(googleEarth, googleEarthPath);

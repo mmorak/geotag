@@ -1,3 +1,12 @@
+Release 0.094
+  Added Greek translation by geogeo.gr
+  
+Release 0.093
+  Added a description column to allow direct editing of EXIF user comment
+  Icon in KML/KMZ export now configurable.
+  Optional header/footer fields for KML/KMZ export. Use at own risk.
+  Updated copyright notices in all source files.
+  
 Release 0.092
   Fixed deployment problems
   
@@ -5,7 +14,7 @@ Release 0.091
   The geonames.org API had changed slightly.
 
 Release 0.090
-  Removed references to Google MAps API version 2 as it is now obsolete
+  Removed references to Google Maps API version 2 as it is now obsolete
   
 Release 0.089
   Almost complete rewrite of the Google Maps functionality.

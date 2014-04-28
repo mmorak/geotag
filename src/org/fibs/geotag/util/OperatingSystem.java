@@ -1,6 +1,6 @@
 /**
  * Geotag
- * Copyright (C) 2007-2010 Andreas Schneider
+ * Copyright (C) 2007-2014 Andreas Schneider
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -28,21 +28,21 @@ public class OperatingSystem {
    */
   public static boolean isLinux() {
     String osName = System.getProperty("os.name"); //$NON-NLS-1$
-    return "Linux".equals(osName);
+    return "Linux".equals(osName); //$NON-NLS-1$
   }
   /**
    * @return True if operating system is Windows
    */
   public static boolean isWindows() {
     String osName = System.getProperty("os.name"); //$NON-NLS-1$
-    return osName != null && osName.startsWith("Windows");
+    return osName != null && osName.startsWith("Windows"); //$NON-NLS-1$
   }
   /**
    * @return True if operating system is Mac OS
    */
   public static boolean isMacOS() {
     String osName = System.getProperty("os.name"); //$NON-NLS-1$
-    return osName != null && osName.startsWith("Mac OS");    
+    return osName != null && osName.startsWith("Mac OS");     //$NON-NLS-1$
   }
   
 }

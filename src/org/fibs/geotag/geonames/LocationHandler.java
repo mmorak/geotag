@@ -1,6 +1,6 @@
 /**
  * Geotag
- * Copyright (C) 2007-2010 Andreas Schneider
+ * Copyright (C) 2007-2014 Andreas Schneider
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -69,9 +69,9 @@ public class LocationHandler extends DefaultHandler {
       xmlReader.setContentHandler(this);
       // Build the request
       GeonamesService service = new GeonamesService(GeonamesService.FIND_NEARBY);
-      service.addParameter("lat", latitude);
-      service.addParameter("lng", longitude);
-      service.addParameter("style", "FULL");
+      service.addParameter("lat", latitude); //$NON-NLS-1$
+      service.addParameter("lng", longitude); //$NON-NLS-1$
+      service.addParameter("style", "FULL"); //$NON-NLS-1$ //$NON-NLS-2$
       boolean useRadius = Settings.get(SETTING.GEONAMES_USE_RADIUS, false);
       if (useRadius) {
         DISTANCE unit = Units.DISTANCE.values()[Settings.get(
@@ -101,6 +101,7 @@ public class LocationHandler extends DefaultHandler {
       connection.setReadTimeout((int) Constants.ONE_MINUTE_IN_MILLIS / 2);
       InputStream inputStream = connection.getInputStream();
       xmlReader.parse(new InputSource(inputStream));
+      inputStream.close();
     } catch (MalformedURLException e) {
       e.printStackTrace();
     } catch (SAXException e) {

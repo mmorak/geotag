@@ -1,6 +1,6 @@
 /**
  * Geotag
- * Copyright (C) 2007-2010 Andreas Schneider
+ * Copyright (C) 2007-2014 Andreas Schneider
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -100,6 +100,9 @@ public class ArrowIcon implements Icon {
         triangle.addPoint(x, y + size);
         triangle.addPoint(x + size, y + size / 2);
         break;
+     default:
+       // nothing to be done
+       break;
     }
     g.fillPolygon(triangle);
   }

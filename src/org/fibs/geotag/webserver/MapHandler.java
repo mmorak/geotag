@@ -1,6 +1,6 @@
 /**
  * Geotag
- * Copyright (C) 2007-2010 Andreas Schneider
+ * Copyright (C) 2007-2014 Andreas Schneider
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -56,8 +56,14 @@ public class MapHandler implements ContextHandler {
 
     InputStream stream = createPage(uri);
     if (stream != null) {
-      return server.new Response(NanoHTTPD.HTTP_OK, server.mimeType(uri),
+      Response response = server.new Response(NanoHTTPD.HTTP_OK, server.mimeType(uri),
           stream);
+      try {
+        stream.close();
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+      return response;
     }
     return server.new Response(NanoHTTPD.HTTP_NOTFOUND,
         NanoHTTPD.MIME_PLAINTEXT, WebServer.FILE_NOT_FOUND);
@@ -188,10 +194,10 @@ public class MapHandler implements ContextHandler {
       char character = value.charAt(index);
       if (character < ' ' || (character >= '\u0080' && character < '\u00a0') ||
           (character >= '\u2000' && character < '\u2100')) {
-        System.out.println("Invalid character at posistion "+index+" in "+value);
+        System.out.println("Invalid character at posistion "+index+" in "+value); //$NON-NLS-1$ //$NON-NLS-2$
       }
       if (character < ' ' || character > 127) {
-        buffer.append("&#"+(int)character+";");
+        buffer.append("&#"+(int)character+";"); //$NON-NLS-1$ //$NON-NLS-2$
       } else {
         buffer.append(character);
       }

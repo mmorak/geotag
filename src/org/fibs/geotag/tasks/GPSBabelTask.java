@@ -1,6 +1,6 @@
 /**
  * Geotag
- * Copyright (C) 2007-2010 Andreas Schneider
+ * Copyright (C) 2007-2014 Andreas Schneider
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -19,6 +19,7 @@
 package org.fibs.geotag.tasks;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -209,7 +210,7 @@ public class GPSBabelTask extends BackgroundTask<Gpx> {
      * Constructor.
      */
     public Gobbler() {
-      super(null, null);
+      super((InputStream)null, null);
     }
 
     /**
@@ -246,8 +247,12 @@ public class GPSBabelTask extends BackgroundTask<Gpx> {
           }
         }
         // the for loop terminated (a -1 byte was read)
-        inputStream.close();
       } catch (Exception e) {
+        e.printStackTrace();
+      }
+      try {
+        inputStream.close();
+      } catch (IOException e) {
         e.printStackTrace();
       }
     }

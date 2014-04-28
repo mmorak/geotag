@@ -1,6 +1,6 @@
 /**
  * Geotag
- * Copyright (C) 2007-2010 Andreas Schneider
+ * Copyright (C) 2007-2014 Andreas Schneider
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -342,6 +342,9 @@ public class ImagesTable extends NavigableTable {
         case COUNTRY_NAME:
           preferredWidth = defaultCountryNameWidth(fontMetrics);
           break;
+        case USER_COMMENT:
+          preferredWidth = defaultUserCommentWidth(fontMetrics);
+          break;
         default:
           break;
       }
@@ -495,6 +498,14 @@ public class ImagesTable extends NavigableTable {
   private int defaultCountryNameWidth(FontMetrics fontMetrics) {
     return fontMetrics.stringWidth("United Kingdom"); //$NON-NLS-1$
   }
+  
+  /**
+   * @param fontMetrics
+   * @return the default user comment string width
+   */
+  private int defaultUserCommentWidth(FontMetrics fontMetrics) {
+    return fontMetrics.stringWidth("Some sort of description"); //$NON-NLS-1$
+  }  
 
   /**
    * @see javax.swing.JTable#prepareRenderer(javax.swing.table.TableCellRenderer,

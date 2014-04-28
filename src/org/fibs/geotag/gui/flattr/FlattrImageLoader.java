@@ -1,6 +1,6 @@
 /**
  * Geotag
- * Copyright (C) 2007-2011 Andreas Schneider
+ * Copyright (C) 2007-2014 Andreas Schneider
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -31,7 +31,7 @@ import javax.swing.SwingWorker;
 public class FlattrImageLoader {
   
   /** The alternative text for the button */
-  public static final String ALTERNATIVE_TEXT = "Flattr this!";
+  public static final String ALTERNATIVE_TEXT = "Flattr this!"; //$NON-NLS-1$
   
   /** The background loader for the image */
   private static SwingWorker<ImageIcon, Void> imageLoader;
@@ -63,7 +63,7 @@ public class FlattrImageLoader {
       @Override
       protected ImageIcon doInBackground() throws Exception {
         // The URL of the static flattr image
-        URL imageUrl = new URL("http://api.flattr.com/button/flattr-badge-large.png");
+        URL imageUrl = new URL("http://api.flattr.com/button/flattr-badge-large.png"); //$NON-NLS-1$
         // This can take a while - that's why this is in a SwingWorker
         ImageIcon icon = new ImageIcon(imageUrl);
         return icon;

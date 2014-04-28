@@ -1,6 +1,6 @@
 /**
  * Geotag
- * Copyright (C) 2007-2010 Andreas Schneider
+ * Copyright (C) 2007-2014 Andreas Schneider
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -46,7 +46,9 @@ public class GpxWriter implements TrackWriter {
    */
   @Override
   public void write(Gpx gpx, File file) throws Exception {
-    write(gpx, new FileOutputStream(file));
+    FileOutputStream fileOutputStream = new FileOutputStream(file);
+    write(gpx, fileOutputStream);
+    fileOutputStream.close();
   }
   /**
    * @see org.fibs.geotag.track.TrackWriter#write(com.topografix.gpx._1._0.Gpx, java.io.OutputStream)

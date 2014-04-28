@@ -1,6 +1,6 @@
 /**
  * Geotag
- * Copyright (C) 2007-2010 Andreas Schneider
+ * Copyright (C) 2007-2014 Andreas Schneider
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -248,8 +248,9 @@ public abstract class ImageFileFilter extends javax.swing.filechooser.FileFilter
         return TIFF_IMAGES_FILTER;
       case CUSTOM_FILE_WITH_XMP:
         return CUSTOM_FILE_WITH_XMP_FILTER;
+      default:
+        return ALL_IMAGES_FILTER;
     }
-    return ALL_IMAGES_FILTER;
   }
   
   /**

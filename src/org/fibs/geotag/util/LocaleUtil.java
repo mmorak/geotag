@@ -1,6 +1,6 @@
 /**
  * Geotag
- * Copyright (C) 2007-2010 Andreas Schneider
+ * Copyright (C) 2007-2014 Andreas Schneider
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -28,7 +28,7 @@ import java.util.StringTokenizer;
  * 
  */
 public class LocaleUtil {
-
+  
   /**
    * @param text
    *          A string containing one or more of the language, country and
@@ -71,6 +71,7 @@ public class LocaleUtil {
    * @param locale A locale
    * @return A good guess if a translation is available
    */
+  @SuppressWarnings("nls")
   public static final boolean translationAvailable(Locale locale) {
     String localeName = localeToString(locale);
     if ("en".equals(localeName)) {

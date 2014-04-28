@@ -1,6 +1,6 @@
 /**
  * Geotag
- * Copyright (C) 2007-2010 Andreas Schneider
+ * Copyright (C) 2007-2014 Andreas Schneider
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -45,6 +45,7 @@ public class KmlTest extends TestCase {
         .getResourceAsStream("all.gpx"); //$NON-NLS-1$
     assertNotNull(stream);
     gpx = GpxReader.read(stream);
+    stream.close();
     assertNotNull(gpx);
   }
 

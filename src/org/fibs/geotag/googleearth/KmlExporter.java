@@ -1,6 +1,6 @@
 /**
  * Geotag
- * Copyright (C) 2007-2010 Andreas Schneider
+ * Copyright (C) 2007-2014 Andreas Schneider
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -123,7 +123,13 @@ public class KmlExporter {
       IconStyleType iconStyle = factory.createIconStyleType();
 
       IconStyleIconType icon = factory.createIconStyleIconType();
-      icon.setHref("http://maps.google.com/mapfiles/kml/pal4/icon46.png"); //$NON-NLS-1$
+      String iconURL = Settings.get(SETTING.KML_ICON_URL, Settings.KML_DEFAULT_ICON_URL);
+      if ("".equals(iconURL)) { //$NON-NLS-1$
+        iconURL = Settings.KML_DEFAULT_ICON_URL;
+        Settings.put(SETTING.KML_ICON_URL, iconURL);
+        Settings.flush();
+      }
+      icon.setHref(iconURL);
       iconStyle.setIcon(icon);
       style.setIconStyle(iconStyle);
 
@@ -157,6 +163,10 @@ public class KmlExporter {
         timeStamp.setWhen(dateFormat.format(date));
         placemark.setTimePrimitive(factory.createTimeStamp(timeStamp));
         StringBuilder description = new StringBuilder();
+        String header = Settings.get(SETTING.KML_DESCRIPTION_HEADER, ""); //$NON-NLS-1$
+        if (header != null && header.length() > 0) {
+          description.append(header);
+        }
         // clicking on the image opens the image via imagePath
         description.append("<a href=\""); //$NON-NLS-1$
         description.append(imagePath);
@@ -177,9 +187,18 @@ public class KmlExporter {
                     description.append("\"/>"); //$NON-NLS-1$
         }
         description.append("</a>"); //$NON-NLS-1$
+        String userComment = imageInfo.getUserComment();
+        if (userComment != null && ! "".equals(userComment)) { //$NON-NLS-1$
+          // We have a user comment
+          description.append("<br>").append(userComment); //$NON-NLS-1$
+        }
         String locString = getLocationString(imageInfo);
         if (locString != null) {
           description.append("<br>").append(locString); //$NON-NLS-1$
+        }
+        String footer = Settings.get(SETTING.KML_DESCRIPTION_FOOTER, ""); //$NON-NLS-1$
+        if (footer != null && footer.length() > 0) {
+          description.append(footer);
         }
         placemark.setDescription(description.toString());
         PointType point = factory.createPointType();

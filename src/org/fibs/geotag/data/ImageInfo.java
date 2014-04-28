@@ -1,6 +1,6 @@
 /**
  * Geotag
- * Copyright (C) 2007-2010 Andreas Schneider
+ * Copyright (C) 2007-2014 Andreas Schneider
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -160,6 +160,9 @@ public class ImageInfo implements Comparable<ImageInfo> {
 
   /** The province/state etc name for this image. */
   private String provinceName;
+  
+  /** The user comment of the image*/
+  private String userComment;
 
   /** The Orientation EXIF entry. */
   private String orientation;
@@ -705,6 +708,25 @@ public class ImageInfo implements Comparable<ImageInfo> {
     this.source = source;
   }
 
+  /**
+   * @return the userComment
+   */
+  public String getUserComment() {
+    return userComment;
+  }
+
+  /**
+   * This has package visibility to force use of undo-able edits.
+   * 
+   * @param userComment
+   *          the userCVomment to set
+   * @param source
+   */
+  void setUserComment(String userComment, DATA_SOURCE source) {
+    this.userComment = userComment;
+    this.source = source;
+  }
+  
   /**
    * @return the nearbyLocations
    */

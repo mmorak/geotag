@@ -1,6 +1,6 @@
 /**
  * Geotag
- * Copyright (C) 2007-2010 Andreas Schneider
+ * Copyright (C) 2007-2014 Andreas Schneider
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -64,13 +64,13 @@ public class GeonamesService {
   }
 
   /** service name for finding nearby locations */
-  static final String FIND_NEARBY = "findNearby";
+  static final String FIND_NEARBY = "findNearby"; //$NON-NLS-1$
 
   /** service name for finding nearby Wikipedia entries */
-  static final String FIND_NEARBY_WIKIPEDIA = "findNearbyWikipedia";
+  static final String FIND_NEARBY_WIKIPEDIA = "findNearbyWikipedia"; //$NON-NLS-1$
 
   /** service name for finding altitudes */
-  static final String ALTITUDE = "srtm3";
+  static final String ALTITUDE = "srtm3"; //$NON-NLS-1$
 
   /** The service name */
   private String serviceName;
@@ -98,7 +98,7 @@ public class GeonamesService {
    * @param value
    */
   public void addParameter(String name, int value) {
-    parameters.add(new Parameter(name, "" + value));
+    parameters.add(new Parameter(name, "" + value)); //$NON-NLS-1$
   }
 
   /**
@@ -106,7 +106,7 @@ public class GeonamesService {
    * @param value
    */
   public void addParameter(String name, double value) {
-    parameters.add(new Parameter(name, "" + value));
+    parameters.add(new Parameter(name, "" + value)); //$NON-NLS-1$
   }
 
   /**
@@ -136,8 +136,8 @@ public class GeonamesService {
       url.append('&'); // this works even for the last parameter as we add the
                        // username
     }
-    url.append("username=");
-    url.append("geotag");
+    url.append("username="); //$NON-NLS-1$
+    url.append("geotag"); //$NON-NLS-1$
 
     return url.toString();
   }

@@ -1,6 +1,6 @@
 /**
  * Geotag
- * Copyright (C) 2007-2010 Andreas Schneider
+ * Copyright (C) 2007-2014 Andreas Schneider
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -114,6 +114,11 @@ public final class MissingLicenseFinder {
       processDirectory(directory);
       System.out.println("Failures: " + filesFailed + "/" + filesChecked); //$NON-NLS-1$//$NON-NLS-2$
       System.out.println("Corrected: "+filesCorrected + "/" +filesFailed); //$NON-NLS-1$ //$NON-NLS-2$
+      if (filesFailed > 0 && filesCorrected != filesFailed) {
+        System.out.println("To fix all failed files re-run with OVERWRITE set to true"); //$NON-NLS-1$
+      } else {
+        System.out.println("All is well"); //$NON-NLS-1$
+      }
     }
   }
 

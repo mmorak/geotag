@@ -1,6 +1,6 @@
 /**
  * Geotag
- * Copyright (C) 2007-2010 Andreas Schneider
+ * Copyright (C) 2007-2014 Andreas Schneider
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -84,8 +84,9 @@ public class ImagesTableModel extends AbstractTableModel {
       i18n.tr("Location"), //$NON-NLS-1$
       i18n.tr("City"), //$NON-NLS-1$
       i18n.tr("Province"), //$NON-NLS-1$
-      i18n.tr("Country") }; //$NON-NLS-1$
-
+      i18n.tr("Country"), //$NON-NLS-1$
+      i18n.tr("Description") }; //$NON-NLS-1$
+      
   /** How many decimals of the latitude to display. */
   public static final int LATITUDE_DECIMALS = 7;
 
@@ -224,6 +225,8 @@ public class ImagesTableModel extends AbstractTableModel {
       case PROVINCE_NAME:
       case COUNTRY_NAME:
         return true;
+      case USER_COMMENT:
+        return true;
       default:
         return false;
     }
@@ -309,6 +312,8 @@ public class ImagesTableModel extends AbstractTableModel {
         return imageInfo.getProvinceName();
       case COUNTRY_NAME:
         return imageInfo.getCountryName();
+      case USER_COMMENT:
+        return imageInfo.getUserComment();
       default:
         return null;
     }
@@ -358,11 +363,31 @@ public class ImagesTableModel extends AbstractTableModel {
       case COUNTRY_NAME:
         setCountryName(value, imageInfo, column, columnName);
         break;
+      case USER_COMMENT:
+        setUserComment(value, imageInfo, column, columnName);
+        break;
       default:
         break;
     }
   }
 
+  /**
+   * @param value
+   * @param imageInfo
+   * @param column
+   * @param columnName
+   */
+  private void setUserComment(Object value, ImageInfo imageInfo, COLUMN column,
+      String columnName) {
+    String oldString;
+    String newString;
+    newString = (String) value;
+    oldString = imageInfo.getUserComment();
+    if (!Util.sameContent(oldString, newString)) {
+      commitManualEdit(imageInfo, column, columnName, newString);
+    }
+  }
+  
   /**
    * @param value
    * @param imageInfo

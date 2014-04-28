@@ -1,6 +1,6 @@
 /**
  * Geotag
- * Copyright (C) 2007-2010 Andreas Schneider
+ * Copyright (C) 2007-2014 Andreas Schneider
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -52,8 +52,9 @@ public class TiffImageFile extends ImageFile {
   @Override
   public BufferedImage read() throws IOException {
     ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+    FileInputStream fileInputStream = new FileInputStream(getFile());
     InputStreamGobbler gobbler = new ImageInputStreamGobbler(
-        new FileInputStream(getFile()), outputStream);
+        fileInputStream, outputStream);
     gobbler.start();
     // we wait for the process to finish
     try {
@@ -69,6 +70,8 @@ public class TiffImageFile extends ImageFile {
     tiff.read(outputStream.toByteArray());
     Image image = tiff.getImage(0);
     BufferedImage bufferedImage = ImageUtil.bufferImage(image);
+    fileInputStream.close();
+    outputStream.close();
     if (bufferedImage == null) {
       throw new IOException();
     }

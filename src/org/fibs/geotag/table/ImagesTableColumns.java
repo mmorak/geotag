@@ -1,6 +1,6 @@
 /**
  * Geotag
- * Copyright (C) 2007-2010 Andreas Schneider
+ * Copyright (C) 2007-2014 Andreas Schneider
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -72,7 +72,9 @@ public final class ImagesTableColumns {
     /** The column for the province/state etc name. */
     PROVINCE_NAME,
     /** The column for the country name. */
-    COUNTRY_NAME
+    COUNTRY_NAME,
+    /** The column for the user comment */
+    USER_COMMENT
   }
 
   /**
@@ -111,6 +113,8 @@ public final class ImagesTableColumns {
         return i18n.tr("Province/State name"); //$NON-NLS-1$
       case COUNTRY_NAME:
         return i18n.tr("Country name"); //$NON-NLS-1$
+      case USER_COMMENT:
+        return i18n.tr("Description"); //$NON-NLS-1$
       default:
         return null;
     }

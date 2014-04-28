@@ -1,6 +1,6 @@
 /**
  * Geotag
- * Copyright (C) 2007-2010 Andreas Schneider
+ * Copyright (C) 2007-2014 Andreas Schneider
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -40,6 +40,7 @@ import org.fibs.geotag.data.UpdateGPSLatitude;
 import org.fibs.geotag.data.UpdateGPSLongitude;
 import org.fibs.geotag.data.UpdateLocationName;
 import org.fibs.geotag.data.UpdateProvinceName;
+import org.fibs.geotag.data.UpdateUserComment;
 import org.fibs.geotag.data.ImageInfo.DATA_SOURCE;
 import org.fibs.geotag.image.FileTypes;
 import org.fibs.geotag.util.Units.ALTITUDE;
@@ -82,7 +83,13 @@ public class ExiftoolReader implements ExifReader {
 
   /** exiftool Orientation output lines start with this text. */
   private static final String ORIENTATION_TAG = "Orientation: "; //$NON-NLS-1$
-
+  
+  /** exiftool ImageWidth output lines start with this text */
+  private static final String IMAGE_WIDTH_TAG = "ImageWidth: "; //$NON-NLS-1$
+  
+  /** exiftool ImageHeight output lines start with this text */
+  private static final String IMAGE_HEIGHT_TAG = "ImageHeight: "; //$NON-NLS-1$
+  
   /** exiftool EXIF Location output lines start with this text. */
   private static final String LOCATION_TAG = "ContentLocationName: "; //$NON-NLS-1$
   
@@ -106,6 +113,9 @@ public class ExiftoolReader implements ExifReader {
 
   /** exiftool XMP state output lines start with this text. */
   private static final String STATE_TAG = "State: "; //$NON-NLS-1$
+  
+  /** exiftool UserCo,ment lines start with this text. */
+  private static final String USER_COMMENT_TAG = "UserComment: "; //$NON-NLS-1$
 
   /**
    * Create the exiftool command line arguments.
@@ -114,7 +124,7 @@ public class ExiftoolReader implements ExifReader {
    */
   private String[] exifToolArguments() {
     List<String> args = new ArrayList<String>();
-    // -S generates short outputoutput
+    // -S generates short output
     args.add("-S"); //$NON-NLS-1$
     // -n generates numeric output (not descriptive)
     args.add("-n"); //$NON-NLS-1$
@@ -129,12 +139,14 @@ public class ExiftoolReader implements ExifReader {
     // retrieve the altitude
     args.add("-GPSAltitude"); //$NON-NLS-1$
     // retrieve the direction
-    args.add("-GPSImgDirection");
-    args.add("-GPSImgDirectionRef");
+    args.add("-GPSImgDirection"); //$NON-NLS-1$
+    args.add("-GPSImgDirectionRef"); //$NON-NLS-1$
     // retrieve the GPS date/time
     args.add("-GPSDateTime"); //$NON-NLS-1$
-    // retrieve the image orientation
+    // retrieve the image orientation, width and height
     args.add("-Orientation"); //$NON-NLS-1$
+    args.add("-ImageWidth"); //$NON-NLS-1$
+    args.add("-ImageHeight"); //$NON-NLS-1$
     // retrieve IPTC image location
     args.add("-ContentLocationName"); //$NON-NLS-1$
     // retrieve sub-location (seems better choice than content location)
@@ -145,6 +157,8 @@ public class ExiftoolReader implements ExifReader {
     args.add("-Country-PrimaryLocationName"); //$NON-NLS-1$
     // retrieve IPTC province/state
     args.add("-Province-State"); //$NON-NLS-1$
+    // retrieve user comment
+    args.add("-UserComment"); //$NON-NLS-1$
     return args.toArray(new String[0]);
   }
 
@@ -176,10 +190,12 @@ public class ExiftoolReader implements ExifReader {
       args.add("-XMP:GPSDateTime"); //$NON-NLS-1$
     }
     // retrieve the direction
-    args.add("-XMP:GPSImgDirection");
-    args.add("-XMP:GPSImgDirectionRef");
-    // retrieve the image orientation
+    args.add("-XMP:GPSImgDirection"); //$NON-NLS-1$
+    args.add("-XMP:GPSImgDirectionRef"); //$NON-NLS-1$
+    // retrieve the image orientation width and height
     args.add("-XMP:Orientation"); //$NON-NLS-1$
+    args.add("-XMP:ImageWidth"); //$NON-NLS-1$
+    args.add("-XMP:ImageHeight"); //$NON-NLS-1$
     // retrieve the image location
     args.add("-XMP:Location"); //$NON-NLS-1$
     // retrieve XMP City
@@ -188,6 +204,9 @@ public class ExiftoolReader implements ExifReader {
     args.add("-XMP:Country"); //$NON-NLS-1$
     // retrieve XMP state
     args.add("-XMP:State"); //$NON-NLS-1$
+    // retrieve XMP user comment
+    args.add("-XMP:UserComment"); //$NON-NLS-1$
+
     return args.toArray(new String[0]);
   }
 
@@ -286,24 +305,24 @@ public class ExiftoolReader implements ExifReader {
         } else if (text.startsWith(GPS_LATITUDE_TAG)) {
           String latitude = text.substring(GPS_LATITUDE_TAG.length());
           // Exiftool translates undef() as "0" in numeric mode
-          if (! "0".equals(latitude)) {
+          if (! "0".equals(latitude)) { //$NON-NLS-1$
             new UpdateGPSLatitude(imageInfo, latitude, ImageInfo.DATA_SOURCE.IMAGE);
           }
         } else if (text.startsWith(GPS_LONGITUDE_TAG)) {
           String longitude = text.substring(GPS_LONGITUDE_TAG.length());
           // Exiftool translates undef() as "0" in numeric mode
-          if (! "0".equals(longitude)) {
+          if (! "0".equals(longitude)) { //$NON-NLS-1$
             new UpdateGPSLongitude(imageInfo, longitude, ImageInfo.DATA_SOURCE.IMAGE);
           }
         } else if (text.startsWith(GPS_ALTITUDE_TAG)) {
           String altitude = text.substring(GPS_ALTITUDE_TAG.length());
-          if (! "undef".equals(altitude)) {
+          if (! "undef".equals(altitude)) { //$NON-NLS-1$
             // altitudes in exif data are in metres
             new UpdateGPSAltitude(imageInfo, altitude, ImageInfo.DATA_SOURCE.IMAGE, ALTITUDE.METRES);
           }
         } else if (text.startsWith(GPS_IMG_DIRECTION_TAG)) {
           String direction = text.substring(GPS_IMG_DIRECTION_TAG.length());
-          if (! "undef".equals(direction)) {
+          if (! "undef".equals(direction)) { //$NON-NLS-1$
             new UpdateGPSImgDirection(imageInfo, direction, DATA_SOURCE.IMAGE);
           }
         } else if (text.startsWith(GPS_DATE_TIME_TAG)) {
@@ -325,6 +344,20 @@ public class ExiftoolReader implements ExifReader {
           }
         } else if (text.startsWith(ORIENTATION_TAG)) {
           imageInfo.setOrientation(text.substring(ORIENTATION_TAG.length()));
+        } else if (text.startsWith(IMAGE_WIDTH_TAG)) {
+          try {
+            int width = Integer.parseInt(text.substring(IMAGE_WIDTH_TAG.length()));
+            imageInfo.setWidth(width);
+          } catch (NumberFormatException e) {
+            e.printStackTrace();
+          }
+        } else if (text.startsWith(IMAGE_HEIGHT_TAG)) {
+          try {
+            int height = Integer.parseInt(text.substring(IMAGE_HEIGHT_TAG.length()));
+            imageInfo.setHeight(height);
+          } catch (NumberFormatException e) {
+            e.printStackTrace();
+          }
         } else if (text.startsWith(LOCATION_TAG)) {
           new UpdateLocationName(imageInfo, text.substring(LOCATION_TAG
               .length()), DATA_SOURCE.IMAGE);
@@ -348,6 +381,9 @@ public class ExiftoolReader implements ExifReader {
               .length()), DATA_SOURCE.IMAGE);
         } else if (text.startsWith(STATE_TAG)) {
           new UpdateProvinceName(imageInfo, text.substring(STATE_TAG.length()),
+              DATA_SOURCE.IMAGE);
+        } else if (text.startsWith(USER_COMMENT_TAG)) {
+          new UpdateUserComment(imageInfo, text.substring(USER_COMMENT_TAG.length()), 
               DATA_SOURCE.IMAGE);
         } else if (text.startsWith(ERROR_TAG)) {
           // throw exception with text, caught below

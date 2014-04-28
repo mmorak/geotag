@@ -1,6 +1,6 @@
 /**
  * Geotag
- * Copyright (C) 2007-2010 Andreas Schneider
+ * Copyright (C) 2007-2014 Andreas Schneider
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -89,10 +89,10 @@ public final class Dcraw {
       Process process = processBuilder.redirectErrorStream(true).start();
       // now start a thread that reads the input stream of the process and
       // writes it to stdout
-      final InputStream inputStream = process.getInputStream();
-      new InputStreamGobbler(inputStream, System.out).start();
+      new InputStreamGobbler(process, System.out).start();
       // we wait for the process to finish
       process.waitFor();
+      //inputStream.close();
     } catch (IOException e) {
       e.printStackTrace();
       found = false;
@@ -154,6 +154,8 @@ public final class Dcraw {
       // there might be an error message in there though, which we check first
       // String imageDataString = new String(imageData);
       byte[] filenameBytes = rawFile.getPath().getBytes();
+      inputStream.close();
+      outputStream.close();
       if (Util.startsWith(imageData, filenameBytes)) {
         // The image path is certainly not part of the image
         // dcraw error messages however start with it.

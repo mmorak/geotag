@@ -1,6 +1,6 @@
 /**
  * Geotag
- * Copyright (C) 2007-2010 Andreas Schneider
+ * Copyright (C) 2007-2014 Andreas Schneider
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -46,10 +46,10 @@ public class Messages_po extends ResourceBundle {
   static Map<String, String> resourceMap = new HashMap<String, String>();
 
   /** Constant to recognise msgid from po file */
-  private static String MSGID = "msgid \"";
+  private static String MSGID = "msgid \""; //$NON-NLS-1$
 
   /** Constant to recognise msgstr from po file*/
-  private static String MSGSTR = "msgstr \"";
+  private static String MSGSTR = "msgstr \""; //$NON-NLS-1$
 
   /**
     Process po file with that name
@@ -58,20 +58,20 @@ public class Messages_po extends ResourceBundle {
   public static void processPoFile(String fileName) {
     File poFile = new File(fileName);
     if (!poFile.exists()) {
-      System.out.println("Can't find file " + fileName);
+      System.out.println("Can't find file " + fileName); //$NON-NLS-1$
       return;
     }
     String lineFromFile = null;
     StringBuilder msgId = null;
     StringBuilder msgStr = null;
     try {
-      BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(poFile),"UTF-8"));
+      BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(poFile),"UTF-8")); //$NON-NLS-1$
       while ((lineFromFile = bufferedReader.readLine()) != null) {
         if (lineFromFile.startsWith(MSGID)) {
           msgId = new StringBuilder();
           msgId.append(lineFromFile.substring(MSGID.length(), lineFromFile
               .length() - 1));
-        } else if (lineFromFile.startsWith("\"")) {
+        } else if (lineFromFile.startsWith("\"")) { //$NON-NLS-1$
           String content = lineFromFile.substring(1, lineFromFile.length() - 1);
           if (msgStr != null) {
             msgStr.append(content);
@@ -85,7 +85,7 @@ public class Messages_po extends ResourceBundle {
         } else {
           if (msgId != null && msgId.length() > 0 && msgStr != null
               && msgStr.length() > 0) {
-            System.out.println(msgId.toString() + "=" + msgStr.toString());
+            System.out.println(msgId.toString() + "=" + msgStr.toString()); //$NON-NLS-1$
             resourceMap.put(msgId.toString(), msgStr.toString());
           }
           msgId = null;

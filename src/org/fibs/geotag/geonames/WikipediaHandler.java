@@ -1,6 +1,6 @@
 /**
  * Geotag
- * Copyright (C) 2007-2010 Andreas Schneider
+ * Copyright (C) 2007-2014 Andreas Schneider
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -67,7 +67,7 @@ public class WikipediaHandler extends DefaultHandler {
       xmlReader.setContentHandler(this);
       // Build the request
       GeonamesService service = new GeonamesService(GeonamesService.FIND_NEARBY_WIKIPEDIA);
-      service.addParameter("lat", latitude);
+      service.addParameter("lat", latitude); //$NON-NLS-1$
       service.addParameter("lng", longitude); //$NON-NLS-1$
       // how many entries should we retrieve
       int maxRows = Settings.get(SETTING.GEONAMES_WIKIPEDIA_ENTRIES,
@@ -86,6 +86,7 @@ public class WikipediaHandler extends DefaultHandler {
       connection.setReadTimeout((int) Constants.ONE_MINUTE_IN_MILLIS / 2);
       InputStream inputStream = connection.getInputStream();
       xmlReader.parse(new InputSource(inputStream));
+      inputStream.close();
     } catch (MalformedURLException e) {
       e.printStackTrace();
     } catch (SAXException e) {

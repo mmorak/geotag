@@ -1,6 +1,6 @@
 /**
  * Geotag
- * Copyright (C) 2007-2010 Andreas Schneider
+ * Copyright (C) 2007-2014 Andreas Schneider
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -42,8 +42,21 @@ public class InputStreamGobbler extends Thread {
   private OutputStream outputStream;
 
   /** The size of the buffer used to read the input stream. */
-  private int bufferSize = Constants.ONE_K; // small buffer size for reading process
-                                    // output
+  private int bufferSize = Constants.ONE_K; // small buffer size for reading
+                                            // process
+
+  // output
+
+  /**
+   * @param process
+   *          The Process whose InputStream to gobble up
+   * @param outputStream
+   *          The (optional) OutputStream to echo the InputStream to, can be
+   *          null.
+   */
+  public InputStreamGobbler(Process process, OutputStream outputStream) {
+    this(process.getInputStream(), outputStream);
+  }
 
   /**
    * @param inputStream
@@ -116,7 +129,8 @@ public class InputStreamGobbler extends Thread {
   }
 
   /**
-   * @param bufferSize the bufferSize to set
+   * @param bufferSize
+   *          the bufferSize to set
    */
   protected void setBufferSize(int bufferSize) {
     this.bufferSize = bufferSize;

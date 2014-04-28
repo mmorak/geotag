@@ -1,6 +1,6 @@
 /**
  * Geotag
- * Copyright (C) 2007-2010 Andreas Schneider
+ * Copyright (C) 2007-2014 Andreas Schneider
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -17,6 +17,7 @@
  */
 package org.fibs.geotag.track;
 
+import java.io.IOException;
 import java.io.InputStream;
 
 import junit.framework.TestCase;
@@ -46,6 +47,11 @@ public class TrackStoreTest extends TestCase {
     InputStream stream = TrackStoreTest.class.getClassLoader().getResourceAsStream("all.gpx"); //$NON-NLS-1$
     assertNotNull(stream);
     Gpx gpx = GpxReader.read(stream);
+    try {
+      stream.close();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
     assertNotNull(gpx);
     TrackStore.getTrackStore().addGPX(gpx);
     assertTrue(TrackStore.getTrackStore().hasTracks());

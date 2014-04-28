@@ -1,6 +1,6 @@
 /**
  * Geotag
- * Copyright (C) 2007-2010 Andreas Schneider
+ * Copyright (C) 2007-2014 Andreas Schneider
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -104,6 +104,8 @@ public final class Settings {
     PROVINCE_NAME_WIDTH,
     /** Preferences key for the country name column width. */
     COUNTRY_NAME_WIDTH,
+    /** Preferences key for user comment column width */
+    USER_COMMENT_WIDTH,
     /** Preferences key for the image name column position. */
     IMAGE_NAME_POSITION,
     /** Preferences key for the GPS time column position. */
@@ -128,6 +130,8 @@ public final class Settings {
     PROVINCE_NAME_POSITION,
     /** Preferences key for the country name column position. */
     COUNTRY_NAME_POSITION,
+    /** Preferences key for user comment column position */
+    USER_COMMENT_POSITION,
     /** Preferences key for the font used. */
     FONT,
     /** Preferences key for the last zoom level used in Google Maps. */
@@ -161,6 +165,12 @@ public final class Settings {
      * path.
      */
     KML_IMAGE_PATH,
+    /** Preferences key for the icon used in KML files */
+    KML_ICON_URL,
+    /** Preferences key for KML description header */
+    KML_DESCRIPTION_HEADER,
+    /** Preferences key for KML description footer */
+    KML_DESCRIPTION_FOOTER,
     /** Preferences key for the geonames URL */
     GEONAMES_URL,
     /** Preferences key for using geonames search radius. */
@@ -208,6 +218,7 @@ public final class Settings {
     CLICKS_TO_EDIT,
     /** Preferences key for file types that are supported by reading only XMP files */
     FILE_TYPES_SUPPORTED_BY_XMP;
+
 
     /**
      * For the actual key I prefer lower case keys with dots.
@@ -282,8 +293,11 @@ public final class Settings {
     }
   }
 
+  /** Default value for icon URL used in KML/KMZ exports */
+  public static final String KML_DEFAULT_ICON_URL = "http://maps.google.com/mapfiles/kml/pal4/icon46.png"; //$NON-NLS-1$
+  
   /** Default value for GEONAMES_URL */
-  public static final String GEONAMES_DEFAULT_URL = "ws.geonames.org"; //$NON-NLS-1$
+  public static final String GEONAMES_DEFAULT_URL = "api.geonames.org"; //$NON-NLS-1$
 
   /** Default value for GEONAMES_RADIUS. */
   public static final int GEONAMES_DEFAULT_RADIUS = 5;
@@ -307,10 +321,10 @@ public final class Settings {
   public static final int DEFAULT_CLICKS_TO_EDIT = 1;
   
   /** Value for Google Maps API version 2 */
-  public static final String MAPS_API_2 = "2";
+  public static final String MAPS_API_2 = "2"; //$NON-NLS-1$
   
   /** Value for Google Maps API version 3 */
-  public static final String MAPS_API_3 = "3";
+  public static final String MAPS_API_3 = "3"; //$NON-NLS-1$
   
   /** Values for Google Maps API versions */
   public static final String[] MAPS_API_VERSIONS = {MAPS_API_2, MAPS_API_3};

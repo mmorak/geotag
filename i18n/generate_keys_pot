@@ -1,4 +1,6 @@
 #!/bin/bash
+cp keys.pot keys.pot.old
 find ../src/org/fibs -name *.java > filelist
 xgettext -cTranslators -ktr -language=java -o keys.pot -f filelist
 rm filelist
+diff keys.pot.old keys.pot
