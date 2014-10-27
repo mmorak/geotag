@@ -1,3 +1,6 @@
+Release 0.095
+  Added Swedish translation by Per-Erik Johansson
+  
 Release 0.094
   Added Greek translation by geogeo.gr
   
