@@ -18,5 +18,6 @@ compile pl
 compile ru
 compile el
 compile sv
+compile it
 cd ../i18n
 echo Refresh bin folder in Eclipse

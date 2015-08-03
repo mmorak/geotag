@@ -1,6 +1,6 @@
 /**
  * Geotag
- * Copyright (C) 2007-2014 Andreas Schneider
+ * Copyright (C) 2007-2015 Andreas Schneider
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -40,7 +40,7 @@ import javax.swing.JFileChooser;
 public final class MissingLicenseFinder {
 
   /** Overwrite files if true */
-  private static boolean OVERWRITE = false;
+  private static boolean OVERWRITE = true;
   
   /** Number of files checked. */
   private static int filesChecked = 0;
