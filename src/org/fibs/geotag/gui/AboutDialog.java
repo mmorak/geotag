@@ -1,6 +1,6 @@
 /**
  * Geotag
- * Copyright (C) 2007-2015 Andreas Schneider
+ * Copyright (C) 2007-2016 Andreas Schneider
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -109,7 +109,7 @@ public class AboutDialog extends JDialog implements HyperlinkListener {
     // show a copyright notice
     message.append(i18n.tr("Copyright")).append(' ') //$NON-NLS-1$
         .append('\u00a9').append(' '); // \u00a9 is the copyright symbol
-    message.append("2007-2015").append(' '); //$NON-NLS-1$
+    message.append("2007-2016").append(' '); //$NON-NLS-1$
     message.append("Andreas Schneider"); //$NON-NLS-1$
     message.append("<br><br></center>"); //$NON-NLS-1$
     header.setText(message.toString());

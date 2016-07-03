@@ -427,6 +427,7 @@
       mapTypeControl: true,
       panControl: true,
       zoomControl: true,
+      tilt: 0,
   };
   var map = new google.maps.Map(document.getElementById("map"), mapOptions)
   //map.addListener("projection_changed", mapProjectionReady)
