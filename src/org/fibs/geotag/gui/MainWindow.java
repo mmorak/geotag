@@ -569,7 +569,7 @@ public class MainWindow extends JFrame implements BackgroundTaskListener,
       if (selectedRows.length > 0) {
         List<ImageInfo> selectedImages = new ArrayList<ImageInfo>();
         for (int row = 0; row < selectedRows.length; row++) {
-          selectedImages.add(tableModel.getImageInfo(row));
+          selectedImages.add(tableModel.getImageInfo(selectedRows[row]));
         }
         // Now we can apply the new coordinates to the selected images
         ClipboardUpdateTask task = new ClipboardUpdateTask(
