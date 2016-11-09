@@ -45,6 +45,7 @@ import org.fibs.geotag.Settings;
 import org.fibs.geotag.Settings.SETTING;
 import org.fibs.geotag.data.ImageInfo;
 import org.fibs.geotag.util.Airy;
+import org.fibs.geotag.util.OperatingSystem;
 import org.xnap.commons.i18n.I18n;
 import org.xnap.commons.i18n.I18nFactory;
 
@@ -169,9 +170,15 @@ public class KmlExporter {
         }
         // clicking on the image opens the image via imagePath
         description.append("<a href=\""); //$NON-NLS-1$
+        if (OperatingSystem.isWindows()) {
+          description.append("file:///"); //$NON-NLS-1$
+        }
         description.append(imagePath);
         // the image has two possible sources:
         description.append("\"><img src=\""); //$NON-NLS-1$
+        if (OperatingSystem.isWindows()) {
+          description.append("file:///"); //$NON-NLS-1$
+        }
         if (kmz && Settings.get(SETTING.KMZ_STORE_THUMBNAILS, false)) {
           // image is stored in the KMZ file
           description.append(KMZ_IMAGE_FOLDER);

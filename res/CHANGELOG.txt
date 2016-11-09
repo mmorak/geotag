@@ -1,3 +1,6 @@
+Release 0.100
+  Fixed a Google Earth problem on Windows
+
 Release 0.099
   Fixed a clipboard issue
   

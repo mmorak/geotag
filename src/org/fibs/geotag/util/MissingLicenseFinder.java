@@ -193,11 +193,16 @@ public final class MissingLicenseFinder {
     } finally {
         try {
           if (bufferedReader != null) {
-          bufferedReader.close();
+            bufferedReader.close();
           }
         } catch (IOException e) {
           e.printStackTrace();
         }
+    }
+    try {
+      tempFileWriter.close();
+    } catch (IOException e) {
+      e.printStackTrace();
     }
   }
   
