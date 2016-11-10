@@ -112,16 +112,15 @@ public class ExifWriter {
       argumentsWriter = new OutputStreamWriter(argumentsOutputStream, "UTF-8"); //$NON-NLS-1$
     } catch (IOException e) {
       e.printStackTrace();
-      return false;
-    } finally {
       if (argumentsOutputStream != null) {
         try {
           argumentsOutputStream.close();
-        } catch (IOException e) {
-          e.printStackTrace();
+        } catch (IOException e1) {
+          e1.printStackTrace();
         }
       }
-    }
+      return false;
+    } 
     // first we build the command
     List<String> command = new ArrayList<String>();
     // the command name
