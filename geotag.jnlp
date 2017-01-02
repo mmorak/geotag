@@ -20,7 +20,7 @@
         <offline-allowed/>
    </information>
    <resources>     
-       <jar href="http://downloads.sourceforge.net/geotag/geotag-VERSION.jar"/>   
+       <jar href="http://kent.dl.sourceforge.net/project/geotag/geotag/VERSION/geotag-VERSION.jar"/>   
        <java version="1.6+" href="http://java.sun.com/products/autodl/j2se" initial-heap-size="128m" max-heap-size="512m" />
        <java version="1.6+" initial-heap-size="128m" max-heap-size="512m" />
    </resources>

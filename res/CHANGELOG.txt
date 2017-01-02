@@ -1,3 +1,6 @@
+Release 0.102
+  Workaround for Webstart redirect problem.
+  
 Release 0.101
   Fixed problem when writing changed images.
   
