@@ -356,7 +356,7 @@ public class ExifWriter {
         String time = tokenizer.nextToken();
         // The tag to write changed with exiftool 7.04
         String tag = "-XMP:GPSTimeStamp="; // up to 7.03 //$NON-NLS-1$
-        if ("7.04".compareTo(Exiftool.getVersion()) <= 0) { //$NON-NLS-1$
+        if (Exiftool.versionAtLeast(7,04)) {
           tag = "-XMP:GPSDateTime="; // since 7.04 //$NON-NLS-1$
         }
         // Add 'Z' as a timezone if none is specified

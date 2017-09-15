@@ -155,20 +155,19 @@ public enum FileTypes {
       }
       if (extension.equals("rw2")) { //$NON-NLS-1$
         // Panasonic RW2 files are read/write supported since Exiftool 7.73
-        if (Exiftool.getVersion() != null && Exiftool.getVersion().compareTo("7.73") >=0) { //$NON-NLS-1$
+        if (Exiftool.versionAtLeast(7,73)) { 
           return true;
         }
       }
       if (extension.equals("nrw")) { //$NON-NLS-1$
         // Nikon NRW files are read/write supported since Exiftool 7.90 (or thereabouts)
-        if (Exiftool.getVersion() != null && Exiftool.getVersion().compareTo("7.90") >=0) { //$NON-NLS-1$
+        if (Exiftool.versionAtLeast(7,90)) { 
           return true;
         }
       }
       if (extension.equals("srw")) { //$NON-NLS-1$
         // Samsung SRW files are read/write supported since Exiftool 8.13
-        if (Exiftool.getVersion() != null && Exiftool.getVersion().compareTo("8.13") >=0) { //$NON-NLS-1$
-          return true;
+        if (Exiftool.versionAtLeast(8,13)) {           return true;
         }
       }
     }

@@ -22,6 +22,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import org.fibs.geotag.Settings;
 import org.fibs.geotag.Settings.SETTING;
@@ -46,21 +47,33 @@ public final class Exiftool {
    */
   private static boolean available = false;
 
-  /** The version string extracted from exiftool output. */
-  private static String version = null;
-
+  /** The major version string extracted from exiftool output. */
+  private static int installedMajorVersion = 0;
+  /** The minor version string extracted from exiftool output. */
+  private static int installedMinorVersion = 0;
+  
   /**
    * @return True if exiftool has been detected
    */
   public static boolean isAvailable() {
     return available;
   }
-
+  
   /**
-   * @return The exiftool version string if available, null if not.
+   * Check if Exiftool is recent enough 
+   * @param requiredMajorVersion
+   * @param requiredMinorVersion
+   * @return true if Exiftool is at least of the the given version
    */
-  public static String getVersion() {
-    return version;
+  public static boolean versionAtLeast(int requiredMajorVersion, int requiredMinorVersion) {
+    if (installedMajorVersion > requiredMajorVersion) {
+      return true;
+    }
+    if (installedMajorVersion == requiredMajorVersion 
+        && installedMinorVersion >= requiredMinorVersion) {
+      return true;
+    }
+    return false;
   }
 
   /**
@@ -85,8 +98,11 @@ public final class Exiftool {
       process.waitFor();
       byte[] output = outputStream.toByteArray();
       String outputText = new String(output);
-      version = outputText.trim();
-      System.out.println("Exiftool " + version); //$NON-NLS-1$
+      String versionString = outputText.trim();
+      StringTokenizer tokenizer = new StringTokenizer(versionString, ".,"); //$NON-NLS-1$
+      installedMajorVersion = Integer.parseInt(tokenizer.nextToken());
+      installedMinorVersion = Integer.parseInt(tokenizer.nextToken());
+      System.out.println("Exiftool " + installedMajorVersion+'-'+installedMinorVersion); //$NON-NLS-1$
     } catch (IOException e) {
       e.printStackTrace();
       found = false;

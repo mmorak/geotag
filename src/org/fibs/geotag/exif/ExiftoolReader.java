@@ -182,7 +182,7 @@ public class ExiftoolReader implements ExifReader {
     // retrieve the altitude
     args.add("-GPSAltitude"); //$NON-NLS-1$
     // retrieve the GPS date/time - this changed in version 7.04 of exiftool
-    if ("7.04".compareTo(Exiftool.getVersion()) > 0) { //$NON-NLS-1$
+    if (Exiftool.versionAtLeast(7,04)) {
       // old behaviour
       args.add("-XMP:GPSTimeStamp"); //$NON-NLS-1$
     } else {
